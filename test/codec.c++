@@ -78,7 +78,6 @@ TEST_CASE("utf8", "UTF-8 codec") {
     }
 }
 
-#if 0
 TEST_CASE("utf16le", "UTF-16LE codec") {
     using namespace ogonek::literal;
 
@@ -102,7 +101,7 @@ TEST_CASE("utf16le", "UTF-16LE codec") {
     SECTION("decode", "Decoding UTF-16LE") {
         ogonek::codec::utf16le codec;
 
-        auto encoded1 = { 0x1E_b, 0xA0_b };
+        auto encoded1 = { 0xA0_b, 0x1E_b };
         auto it1 = encoded1.begin();
         auto decoded1 = codec.decode(it1);
         REQUIRE(it1 == encoded1.end());
@@ -115,7 +114,6 @@ TEST_CASE("utf16le", "UTF-16LE codec") {
         REQUIRE(decoded2 == 0x1F4A9_u);
     }
 }
-#endif
 
 TEST_CASE("utf16be", "UTF-16BE codec") {
     using namespace ogonek::literal;
@@ -154,7 +152,6 @@ TEST_CASE("utf16be", "UTF-16BE codec") {
     }
 }
 
-#if 0
 TEST_CASE("utf32le", "UTF-32LE codec") {
     using namespace ogonek::literal;
 
@@ -179,7 +176,6 @@ TEST_CASE("utf32le", "UTF-32LE codec") {
         REQUIRE(decoded == 0x1F4A9_u);
     }
 }
-#endif
 
 
 TEST_CASE("utf32be", "UTF-32BE codec") {

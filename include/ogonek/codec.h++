@@ -26,11 +26,10 @@
 
 #include "types.h++"
 
-#include <boost/endian/integers.hpp>
-
 #include <cassert>
 #include <cstddef>
 #include <array>
+#include <tuple>
 #include <utility>
 
 namespace ogonek {
@@ -51,6 +50,9 @@ namespace ogonek {
                 iterator end() { return inner.end(); }
                 const_iterator end() const { return inner.end(); }
 
+                T& operator[](std::ptrdiff_t i) { return inner[i]; }
+                T const& operator[](std::ptrdiff_t i) const { return inner[i]; }
+
                 std::size_t size() const { return used; }
 
             private:
@@ -59,12 +61,15 @@ namespace ogonek {
             };
         } // namespace detail
 
-        using endianness = boost::endian::endianness;
+        enum class byte_order {
+            big_endian,
+            little_endian
+        };
 
         struct utf8 {
             static constexpr bool is_fixed_width = false;
-            static constexpr bool max_width = 4;
-            detail::partial_array_range<byte, 4> encode(codepoint c) {
+            static constexpr std::size_t max_width = 4;
+            detail::partial_array_range<byte, max_width> encode(codepoint c) {
                 assert(c < 0x200000); // TODO: invalids are UB?
                 if(c < 0x80) {
                     return { byte(c & 0x7F) };
@@ -109,67 +114,139 @@ namespace ogonek {
                 } 
             }
         };
-        // TODO: handle endianness
+        namespace utf16_detail {
+            template <byte_order ByteOrder>
+            struct endian;
+            template <>
+            struct endian<byte_order::big_endian> {
+                template <typename Array = detail::partial_array_range<byte, 4>>
+                static Array make_array(byte a, byte b) {
+                    return Array { a, b };
+                }
+                template <typename Array = detail::partial_array_range<byte, 4>>
+                static Array make_array(byte a, byte b, byte c, byte d) {
+                    return Array { a, b, c, d };
+                }
+                template <typename Array>
+                static codepoint make_code_unit(Array t) {
+                    return (t[0] << 8) | t[1];
+                }
+            };
+            template <>
+            struct endian<byte_order::little_endian> {
+                template <typename Array = detail::partial_array_range<byte, 4>>
+                static Array make_array(byte a, byte b) {
+                    return Array { b, a };
+                }
+                template <typename Array = detail::partial_array_range<byte, 4>>
+                static Array make_array(byte a, byte b, byte c, byte d) {
+                    return Array { b, a, d, c };
+                }
+                template <typename Array>
+                static codepoint make_code_unit(Array t) {
+                    return (t[1] << 8) | t[0];
+                }
+            };
+        } // namespace utf16_detail
+
+        template <byte_order ByteOrder>
         struct utf16 {
             static constexpr bool is_fixed_width = false;
-            static constexpr bool max_width = 4;
-            detail::partial_array_range<byte, 4> encode(codepoint c) {
+            static constexpr std::size_t max_width = 4;
+            detail::partial_array_range<byte, max_width> encode(codepoint c) {
+                using Array = detail::partial_array_range<byte, max_width>;
                 assert(c < 0x200000); // TODO: invalids are UB?
                 if(c < 0x10000) {
-                    return { byte((c & 0xFF00) >> 8),
-                             byte(c & 0xFF) };
+                    return utf16_detail::endian<ByteOrder>::make_array(
+                             (c & 0xFF00) >> 8,
+                             c & 0xFF);
                 } else {
                     auto normal = c - 0x10000;
                     auto lead = 0xD800 + ((normal & 0xFFC00) >> 10);
                     auto trail = 0xDC00 + (normal & 0x3FF);
-                    return { byte((lead & 0xFF00) >> 8),
-                             byte(lead & 0xFF),
-                             byte((trail & 0xFF00) >> 8),
-                             byte(trail & 0xFF) };
+                    return utf16_detail::endian<ByteOrder>::make_array(
+                             (lead & 0xFF00) >> 8,
+                             lead & 0xFF,
+                             (trail & 0xFF00) >> 8,
+                             trail & 0xFF);
                 }
             }
             template <typename InputIterator>
             codepoint decode(InputIterator& first) {
-                codepoint b0 = *first++;
-                codepoint b1 = *first++;
-                auto lead = (b0 << 8) | b1;
+                std::array<byte, 2> leads { { *first++, *first++ } };
+                auto lead = utf16_detail::endian<ByteOrder>::make_code_unit(leads);
                 if(lead < 0xD800 || lead > 0xDFFF) {
                     return lead;
                 } else {
-                    codepoint b2 = *first++;
-                    codepoint b3 = *first++;
-                    auto trail = (b2 << 8) | b3;
+                    std::array<byte, 2> trails { { *first++, *first++ } };
+                    auto trail = utf16_detail::endian<ByteOrder>::make_code_unit(trails);
                     auto top = lead - 0xD800;
                     auto low = trail - 0xDC00;
                     return 0x10000 + ((top << 10) | low);
                 }
             }
         };
-        using utf16be = utf16;
-        //using utf16le = utf16;
+        using utf16be = utf16<byte_order::big_endian>;
+        using utf16le = utf16<byte_order::little_endian>;
 
+        namespace utf32_detail {
+            template <byte_order ByteOrder>
+            struct endian;
+            template <>
+            struct endian<byte_order::big_endian> {
+                template <typename Array = std::array<byte, 4>>
+                static Array make_array(byte a, byte b, byte c, byte d) {
+                    return Array {{ a, b, c, d }};
+                }
+                template <typename Array>
+                static codepoint make_code_unit(Array t) {
+                    codepoint result = 0;
+                    for(int i = 0; i < 4; ++i) {
+                        result <<= 8;
+                        result |= t[i];
+                    }
+                    return result;
+                }
+            };
+            template <>
+            struct endian<byte_order::little_endian> {
+                template <typename Array = std::array<byte, 4>>
+                static Array make_array(byte a, byte b, byte c, byte d) {
+                    return Array {{ d, c, b, a }};
+                }
+                template <typename Array>
+                static codepoint make_code_unit(Array t) {
+                    codepoint result = 0;
+                    for(int i = 0; i < 4; ++i) {
+                        result <<= 8;
+                        result |= t[3-i];
+                    }
+                    return result;
+                }
+            };
+        } // namespace utf32_detail
+
+        template <byte_order ByteOrder>
         struct utf32 {
             static constexpr bool is_fixed_width = true;
-            static constexpr bool max_width = 4;
-            std::array<byte, 4> encode(codepoint c) {
+            static constexpr std::size_t max_width = 4;
+            std::array<byte, max_width> encode(codepoint c) {
+                using Array = std::array<byte, max_width>;
                 assert(c < 0x200000); // TODO: invalids are UB?
-                return {{ byte(0),
-                         byte((c & 0x1F0000) >> 16),
-                         byte((c & 0xFF00) >> 8),
-                         byte(c & 0xFF) }};
+                return utf32_detail::endian<ByteOrder>::make_array(
+                         0,
+                         (c & 0x1F0000) >> 16,
+                         (c & 0xFF00) >> 8,
+                         c & 0xFF);
             }
             template <typename InputIterator>
             codepoint decode(InputIterator& first) {
-                codepoint result = 0;
-                for(int i = 0; i < 4; ++i) {
-                    result <<= 8;
-                    result |= *first++;
-                }
-                return result;
+                std::array<byte, 4> bytes { { *first++, *first++, *first++, *first++ } };
+                return utf32_detail::endian<ByteOrder>::make_code_unit(bytes);
             }
         };
-        using utf32be = utf32;
-        //using utf32le = utf32;
+        using utf32be = utf32<byte_order::big_endian>;
+        using utf32le = utf32<byte_order::little_endian>;
     } // namespace codec
 } // namespace ogonek
 
