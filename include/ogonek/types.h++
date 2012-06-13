@@ -17,6 +17,12 @@
 namespace ogonek {
     using byte = unsigned char;
     using codepoint = char32_t;
+
+    namespace literal {
+        byte operator"" _b(unsigned long long n) { return static_cast<byte>(n); }
+
+        codepoint operator"" _u(unsigned long long n) { return static_cast<codepoint>(n); }
+    }
 } // namespace ogonek
 
 #endif // OGONEK_TYPES_HPP

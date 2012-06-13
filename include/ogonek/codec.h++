@@ -145,6 +145,9 @@ namespace ogonek {
                 }
             }
         };
+        using utf16be = utf16;
+        //using utf16le = utf16;
+
         struct utf32 {
             static constexpr bool is_fixed_width = true;
             static constexpr bool max_width = 4;
@@ -159,12 +162,14 @@ namespace ogonek {
             codepoint decode(InputIterator& first) {
                 codepoint result = 0;
                 for(int i = 0; i < 4; ++i) {
-                    result << 8;
+                    result <<= 8;
                     result |= *first++;
                 }
                 return result;
             }
         };
+        using utf32be = utf32;
+        //using utf32le = utf32;
     } // namespace codec
 } // namespace ogonek
 

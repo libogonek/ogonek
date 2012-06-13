@@ -14,19 +14,3 @@
 #define CATCH_CONFIG_MAIN
 #include <catch.h++>
 
-#include <ogonek/codec.h++>
-
-TEST_CASE("foo", "bar") {
-    auto x = ogonek::codec::utf8::encode('a');
-    REQUIRE(x.size() == 1);
-    REQUIRE(*x.begin() == 'a');
-
-    x = ogonek::codec::utf8::encode(U"\U0001f4a9"[0]);
-    std::cout << x.size();
-    REQUIRE(x.size() == 4);
-    REQUIRE(*(x.begin()+0) == 0xF0);
-    REQUIRE(*(x.begin()+1) == 0x9F);
-    REQUIRE(*(x.begin()+2) == 0x92);
-    REQUIRE(*(x.begin()+3) == 0xA9);
-}
-
