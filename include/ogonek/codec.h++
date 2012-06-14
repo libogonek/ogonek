@@ -12,13 +12,17 @@
 // Unicode encoder/decoder
 
 // # Codec concept
-// Assume C is a Codec, codec is an instance of C, u is a codepoint, b is a single byte, it is an input iterator
-//    C::is_fixed_width | constexpr bool   | true iff is fixed width
-//    C::max_width      | constexpr size_t | maximum width
-//    C codec;          | C                | creates a new codec
-//    C()               | C                | creates a new codec
-//    codec.encode(c)   | a range of bytes | encodes a codepoint
-//    codec.decode(it)  | codepoint        | decodes a codepoint
+// Assume C is a Codec type, codec is an instance of C, u is a codepoint, b is
+// a byte, [bb, be) is a range of input iterators on bytes, [cb, ce) is a range
+// of input iterators on codepoints, o is an output iterator on bytes.
+//    C::is_fixed_width        | constexpr bool        | true iff is fixed width
+//    C::max_width             | constexpr size_t      | maximum width
+//    C codec;                 | C                     | creates a new codec
+//    C()                      | C                     | creates a new codec
+//    codec.encode_one(c, o)   | void                  | encodes one codepoint
+//    codec.decode_one(bb, be) | codepoint             | decodes codepoints
+//    codec.encode(cb, ce)     | a range of bytes      | encodes codepoints
+//    codec.decode(bb, be)     | a range of codepoints | decodes codepoints
 //TODO: bytes vs code units?
 
 #ifndef OGONEK_CODEC_HPP
@@ -29,35 +33,34 @@
 #include <cassert>
 #include <cstddef>
 #include <array>
+#include <iterator>
 #include <tuple>
 #include <utility>
+#include <vector>
 
 namespace ogonek {
     namespace codec {
         namespace detail {
-            template <typename T, std::size_t N>
-            struct partial_array_range {
-            public:
-                template <typename... U>
-                partial_array_range(U&&... u)
-                : inner {{ std::forward<U>(u)... }}
-                , used { sizeof...(U) } {}
-
-                using iterator = typename std::array<T, N>::iterator;
-                using const_iterator = typename std::array<T, N>::const_iterator;
-                iterator begin() { return inner.begin(); }
-                const_iterator begin() const { return inner.begin(); }
-                iterator end() { return inner.end(); }
-                const_iterator end() const { return inner.end(); }
-
-                T& operator[](std::ptrdiff_t i) { return inner[i]; }
-                T const& operator[](std::ptrdiff_t i) const { return inner[i]; }
-
-                std::size_t size() const { return used; }
-
-            private:
-                std::array<T, N> inner;
-                std::size_t used;
+            template <typename Derived>
+            struct codec_base {
+                template <typename InputIterator>
+                std::vector<byte> encode(InputIterator first, InputIterator last) {
+                    //TODO: optimizations for better iterators
+                    std::vector<byte> result;
+                    for(auto out = std::back_inserter(result); first != last; ++first) {
+                        static_cast<Derived*>(this)->encode_one(*first, out);
+                    }
+                    return result;
+                }
+                template <typename InputIterator>
+                std::vector<codepoint> decode(InputIterator& first, InputIterator last) {
+                    //TODO: return text instead
+                    std::vector<codepoint> result;
+                    while(first != last) {
+                        result.push_back(static_cast<Derived*>(this)->decode_one(first, last));
+                    }
+                    return result;
+                }
             };
         } // namespace detail
 
@@ -66,52 +69,50 @@ namespace ogonek {
             little_endian
         };
 
-        struct utf8 {
+        struct utf8 : detail::codec_base<utf8> {
             static constexpr bool is_fixed_width = false;
             static constexpr std::size_t max_width = 4;
-            detail::partial_array_range<byte, max_width> encode(codepoint c) {
+            template <typename OutputIterator>
+            void encode_one(codepoint c, OutputIterator& out) {
                 assert(c < 0x200000); // TODO: invalids are UB?
                 if(c < 0x80) {
-                    return { byte(c & 0x7F) };
+                    *out++ = byte(c & 0x7F);
                 } else if(c < 0x800) {
-                    return { byte(0xC0 | ((c & 0x3C0) >> 6)),
-                             byte(0x80 | (c & 0x3F)) };
+                    *out++ = 0xC0 | ((c & 0x3C0) >> 6);
+                    *out++ = 0x80 | (c & 0x3F);
                 } else if(c < 0x10000) {
-                    return { byte(0xE0 | ((c & 0xF000) >> 12)),
-                             byte(0x80 | ((c & 0xFC0) >> 6)),
-                             byte(0x80 | (c & 0x3F)) };
+                    *out++ = 0xE0 | ((c & 0xF000) >> 12);
+                    *out++ = 0x80 | ((c & 0xFC0) >> 6);
+                    *out++ = 0x80 | (c & 0x3F);
                 } else {
-                    return { byte(0xF0 | ((c & 0x1C0000) >> 18)),
-                             byte(0x80 | ((c & 0x3F000) >> 12)),
-                             byte(0x80 | ((c & 0xFC0) >> 6)),
-                             byte(0x80 | (c & 0x3F)) };
+                    *out++ = 0xF0 | ((c & 0x1C0000) >> 18);
+                    *out++ = 0x80 | ((c & 0x3F000) >> 12);
+                    *out++ = 0x80 | ((c & 0xFC0) >> 6);
+                    *out++ = 0x80 | (c & 0x3F);
                 }
             }
             template <typename InputIterator>
-            codepoint decode(InputIterator& first) {
+            codepoint decode_one(InputIterator& first, InputIterator /*TODO test last*/) {
                 codepoint u0 = *first++;
                 if((u0 & 0x80) == 0) {
                     return u0;
-                } else {
-                    codepoint u1 = *first++;
-                    if((u0 & 0xE0) != 0xE0) {
-                        return ((u0 & 0x1F) << 6) |
-                               (u1 & 0x3F);
-                    } else {
-                        codepoint u2 = *first++;
-                        if((u0 & 0xF0) != 0xF0) {
-                            return ((u0 & 0x0F) << 12) |
-                                   ((u1 & 0x3F) << 6) |
-                                   (u2 & 0x3F);
-                        } else {
-                            codepoint u3 = *first++;
-                            return ((u0 & 0x07) << 18) |
-                                   ((u1 & 0x3F) << 12) |
-                                   ((u2 & 0x3F) << 6) |
-                                   (u3 & 0x3F);
-                        }
-                    }
-                } 
+                }
+                codepoint u1 = *first++;
+                if((u0 & 0xE0) != 0xE0) {
+                    return ((u0 & 0x1F) << 6) |
+                           (u1 & 0x3F);
+                }
+                codepoint u2 = *first++;
+                if((u0 & 0xF0) != 0xF0) {
+                    return ((u0 & 0x0F) << 12) |
+                           ((u1 & 0x3F) << 6) |
+                           (u2 & 0x3F);
+                }
+                codepoint u3 = *first++;
+                return ((u0 & 0x07) << 18) |
+                       ((u1 & 0x3F) << 12) |
+                       ((u2 & 0x3F) << 6) |
+                       (u3 & 0x3F);
             }
         };
         namespace utf16_detail {
@@ -119,13 +120,17 @@ namespace ogonek {
             struct endian;
             template <>
             struct endian<byte_order::big_endian> {
-                template <typename Array = detail::partial_array_range<byte, 4>>
-                static Array make_array(byte a, byte b) {
-                    return Array { a, b };
+                template <typename OutputIterator>
+                static void output(OutputIterator& out, byte a, byte b) {
+                    *out++ = a;
+                    *out++ = b;
                 }
-                template <typename Array = detail::partial_array_range<byte, 4>>
-                static Array make_array(byte a, byte b, byte c, byte d) {
-                    return Array { a, b, c, d };
+                template <typename OutputIterator>
+                static void output(OutputIterator& out, byte a, byte b, byte c, byte d) {
+                    *out++ = a;
+                    *out++ = b;
+                    *out++ = c;
+                    *out++ = d;
                 }
                 template <typename Array>
                 static codepoint make_code_unit(Array t) {
@@ -134,13 +139,17 @@ namespace ogonek {
             };
             template <>
             struct endian<byte_order::little_endian> {
-                template <typename Array = detail::partial_array_range<byte, 4>>
-                static Array make_array(byte a, byte b) {
-                    return Array { b, a };
+                template <typename OutputIterator>
+                static void output(OutputIterator& out, byte a, byte b) {
+                    *out++ = b;
+                    *out++ = a;
                 }
-                template <typename Array = detail::partial_array_range<byte, 4>>
-                static Array make_array(byte a, byte b, byte c, byte d) {
-                    return Array { b, a, d, c };
+                template <typename OutputIterator>
+                static void output(OutputIterator& out, byte a, byte b, byte c, byte d) {
+                    *out++ = b;
+                    *out++ = a;
+                    *out++ = d;
+                    *out++ = c;
                 }
                 template <typename Array>
                 static codepoint make_code_unit(Array t) {
@@ -150,29 +159,26 @@ namespace ogonek {
         } // namespace utf16_detail
 
         template <byte_order ByteOrder>
-        struct utf16 {
+        struct utf16 : detail::codec_base<utf16<ByteOrder>> {
             static constexpr bool is_fixed_width = false;
             static constexpr std::size_t max_width = 4;
-            detail::partial_array_range<byte, max_width> encode(codepoint c) {
-                using Array = detail::partial_array_range<byte, max_width>;
+            template <typename OutputIterator>
+            void encode_one(codepoint c, OutputIterator& out) {
                 assert(c < 0x200000); // TODO: invalids are UB?
                 if(c < 0x10000) {
-                    return utf16_detail::endian<ByteOrder>::make_array(
-                             (c & 0xFF00) >> 8,
-                             c & 0xFF);
+                    utf16_detail::endian<ByteOrder>::output(out,
+                        (c & 0xFF00) >> 8, c & 0xFF);
                 } else {
                     auto normal = c - 0x10000;
                     auto lead = 0xD800 + ((normal & 0xFFC00) >> 10);
                     auto trail = 0xDC00 + (normal & 0x3FF);
-                    return utf16_detail::endian<ByteOrder>::make_array(
-                             (lead & 0xFF00) >> 8,
-                             lead & 0xFF,
-                             (trail & 0xFF00) >> 8,
-                             trail & 0xFF);
+                    utf16_detail::endian<ByteOrder>::output(out,
+                        (lead & 0xFF00) >> 8, lead & 0xFF,
+                        (trail & 0xFF00) >> 8, trail & 0xFF);
                 }
             }
             template <typename InputIterator>
-            codepoint decode(InputIterator& first) {
+            codepoint decode_one(InputIterator& first, InputIterator /*TODO: use last*/) {
                 std::array<byte, 2> leads { { *first++, *first++ } };
                 auto lead = utf16_detail::endian<ByteOrder>::make_code_unit(leads);
                 if(lead < 0xD800 || lead > 0xDFFF) {
@@ -194,9 +200,12 @@ namespace ogonek {
             struct endian;
             template <>
             struct endian<byte_order::big_endian> {
-                template <typename Array = std::array<byte, 4>>
-                static Array make_array(byte a, byte b, byte c, byte d) {
-                    return Array {{ a, b, c, d }};
+                template <typename OutputIterator>
+                static void output(OutputIterator& out, byte a, byte b, byte c, byte d) {
+                    *out++ = a;
+                    *out++ = b;
+                    *out++ = c;
+                    *out++ = d;
                 }
                 template <typename Array>
                 static codepoint make_code_unit(Array t) {
@@ -210,9 +219,12 @@ namespace ogonek {
             };
             template <>
             struct endian<byte_order::little_endian> {
-                template <typename Array = std::array<byte, 4>>
-                static Array make_array(byte a, byte b, byte c, byte d) {
-                    return Array {{ d, c, b, a }};
+                template <typename OutputIterator>
+                static void output(OutputIterator& out, byte a, byte b, byte c, byte d) {
+                    *out++ = d;
+                    *out++ = c;
+                    *out++ = b;
+                    *out++ = a;
                 }
                 template <typename Array>
                 static codepoint make_code_unit(Array t) {
@@ -227,20 +239,17 @@ namespace ogonek {
         } // namespace utf32_detail
 
         template <byte_order ByteOrder>
-        struct utf32 {
+        struct utf32 : detail::codec_base<utf32<ByteOrder>> {
             static constexpr bool is_fixed_width = true;
             static constexpr std::size_t max_width = 4;
-            std::array<byte, max_width> encode(codepoint c) {
-                using Array = std::array<byte, max_width>;
+            template <typename OutputIterator>
+            void encode_one(codepoint c, OutputIterator& out) {
                 assert(c < 0x200000); // TODO: invalids are UB?
-                return utf32_detail::endian<ByteOrder>::make_array(
-                         0,
-                         (c & 0x1F0000) >> 16,
-                         (c & 0xFF00) >> 8,
-                         c & 0xFF);
+                return utf32_detail::endian<ByteOrder>::output(out,
+                         0, (c & 0x1F0000) >> 16, (c & 0xFF00) >> 8, c & 0xFF);
             }
             template <typename InputIterator>
-            codepoint decode(InputIterator& first) {
+            codepoint decode_one(InputIterator& first, InputIterator /*TODO use last*/) {
                 std::array<byte, 4> bytes { { *first++, *first++, *first++, *first++ } };
                 return utf32_detail::endian<ByteOrder>::make_code_unit(bytes);
             }
