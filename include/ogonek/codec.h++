@@ -14,15 +14,17 @@
 // # Codec concept
 // Assume C is a Codec type, codec is an instance of C, u is a codepoint, b is
 // a byte, [bb, be) is a range of input iterators on bytes, [cb, ce) is a range
-// of input iterators on codepoints, o is an output iterator on bytes.
+// of input iterators on codepoints, bo is an output iterator on bytes, and co
+// is an output iterator on codepoints.
 //    C::is_fixed_width        | constexpr bool        | true iff is fixed width
 //    C::max_width             | constexpr size_t      | maximum width
+//    C::is_reusable           | constexpr bool        | true iff is the codec can be reused
 //    C codec;                 | C                     | creates a new codec
 //    C()                      | C                     | creates a new codec
-//    codec.encode_one(c, o)   | void                  | encodes one codepoint
-//    codec.decode_one(bb, be) | codepoint             | decodes codepoints
-//    codec.encode(cb, ce)     | a range of bytes      | encodes codepoints
-//    codec.decode(bb, be)     | a range of codepoints | decodes codepoints
+//    codec.encode_one(c, bo)  | void                  | encodes one codepoint (optional)
+//    codec.decode_one(bb, be) | codepoint             | decodes one codepoint (optional)
+//    codec.encode(cb, ce, bo) | output iterator       | encodes codepoints
+//    codec.decode(bb, be, co) | output iterator       | decodes codepoints
 //TODO: bytes vs code units?
 
 #ifndef OGONEK_CODEC_HPP
@@ -33,33 +35,27 @@
 #include <cassert>
 #include <cstddef>
 #include <array>
-#include <iterator>
 #include <tuple>
 #include <utility>
-#include <vector>
 
 namespace ogonek {
     namespace codec {
         namespace detail {
             template <typename Derived>
             struct codec_base {
-                template <typename InputIterator>
-                std::vector<byte> encode(InputIterator first, InputIterator last) {
-                    //TODO: optimizations for better iterators
-                    std::vector<byte> result;
-                    for(auto out = std::back_inserter(result); first != last; ++first) {
+                template <typename InputIterator, typename OutputIterator>
+                OutputIterator encode(InputIterator first, InputIterator last, OutputIterator out) {
+                    for(; first != last; ++first) {
                         static_cast<Derived*>(this)->encode_one(*first, out);
                     }
-                    return result;
+                    return out;
                 }
-                template <typename InputIterator>
-                std::vector<codepoint> decode(InputIterator& first, InputIterator last) {
-                    //TODO: return text instead
-                    std::vector<codepoint> result;
+                template <typename InputIterator, typename OutputIterator>
+                OutputIterator decode(InputIterator first, InputIterator last, OutputIterator out) {
                     while(first != last) {
-                        result.push_back(static_cast<Derived*>(this)->decode_one(first, last));
+                        *out++ = static_cast<Derived*>(this)->decode_one(first, last);
                     }
-                    return result;
+                    return out;
                 }
             };
         } // namespace detail
@@ -72,11 +68,12 @@ namespace ogonek {
         struct utf8 : detail::codec_base<utf8> {
             static constexpr bool is_fixed_width = false;
             static constexpr std::size_t max_width = 4;
+            static constexpr bool is_reusable = true;
             template <typename OutputIterator>
             void encode_one(codepoint c, OutputIterator& out) {
                 assert(c < 0x200000); // TODO: invalids are UB?
                 if(c < 0x80) {
-                    *out++ = byte(c & 0x7F);
+                    *out++ = c & 0x7F;
                 } else if(c < 0x800) {
                     *out++ = 0xC0 | ((c & 0x3C0) >> 6);
                     *out++ = 0x80 | (c & 0x3F);
@@ -162,6 +159,7 @@ namespace ogonek {
         struct utf16 : detail::codec_base<utf16<ByteOrder>> {
             static constexpr bool is_fixed_width = false;
             static constexpr std::size_t max_width = 4;
+            static constexpr bool is_reusable = true;
             template <typename OutputIterator>
             void encode_one(codepoint c, OutputIterator& out) {
                 assert(c < 0x200000); // TODO: invalids are UB?
@@ -242,6 +240,7 @@ namespace ogonek {
         struct utf32 : detail::codec_base<utf32<ByteOrder>> {
             static constexpr bool is_fixed_width = true;
             static constexpr std::size_t max_width = 4;
+            static constexpr bool is_reusable = true;
             template <typename OutputIterator>
             void encode_one(codepoint c, OutputIterator& out) {
                 assert(c < 0x200000); // TODO: invalids are UB?
@@ -256,6 +255,139 @@ namespace ogonek {
         };
         using utf32be = utf32<byte_order::big_endian>;
         using utf32le = utf32<byte_order::little_endian>;
+
+        namespace detail {
+            constexpr char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+            unsigned rev_base64(char c) {
+                return std::find(std::begin(base64), std::end(base64), c) - std::begin(base64);
+            }
+        } // namespace detail
+        struct utf7 {
+            static constexpr bool is_fixed_width = true;
+            static constexpr std::size_t max_width = 4;
+            static constexpr bool is_reusable = false;
+        private:
+            bool in_unicode = false;
+
+            template <typename OutputIterator>
+            void enter_ascii(OutputIterator& out) {
+                if(in_unicode) {
+                    flush(out);
+                    *out++ = '-';
+                    in_unicode = false;
+                }
+            }
+            template <typename OutputIterator>
+            void enter_unicode(OutputIterator& out) {
+                if(!in_unicode) {
+                    flush(out);
+                    *out++ = '+';
+                    in_unicode = true;
+                }
+            }
+
+            std::uint16_t state = 0;
+            int state_bits = 0;
+            template <typename OutputIterator>
+            void encode_one(codepoint c, OutputIterator& out) {
+                if(c == '+') {
+                    enter_ascii(out);
+                    *out++ = '+';
+                    *out++ = '-';
+                } else  if((c >= 0x20 && c <= 0x7E && c != '~' && c != '\\')
+                           || (c == '\t' || c == '\r' || c == '\n')) {
+                    // NOTE: all optional direct characters considered
+                    enter_ascii(out);
+                    *out++ = c;
+                } else {
+                    enter_unicode(out);
+                    utf16be u16codec;
+                    auto src = { c };
+                    std::array<byte, 4> u16;
+                    auto end = u16codec.encode(src.begin(), src.end(), u16.begin());
+                    for(auto it = u16.begin(); it != end; ++it) {
+                        auto unit = *it;
+                        state_bits += 2;
+                        *out++ = detail::base64[state | (unit >> state_bits)];
+                        state = (unit & (0x3F >> (6-state_bits))) << (6-state_bits);
+                        if(state_bits == 6) {
+                            *out++ = detail::base64[state];
+                            state = 0;
+                        }
+                        state_bits %= 6;
+                    }
+                }
+            }
+            template <typename OutputIterator>
+            void flush(OutputIterator& out) {
+                if(state_bits != 0) {
+                    *out++ = detail::base64[state];
+                    state = 0;
+                    state_bits = 0;
+                }
+            }
+            template <typename InputIterator>
+            codepoint get_unit(byte& c, InputIterator& first, InputIterator /*TODO use last*/) {
+                state |= c << (10-state_bits);
+                state_bits += 6;
+                for(; state_bits < 10; state_bits += 6) {
+                    c = detail::rev_base64(*first++);
+                    state |= c << (10-state_bits);
+                }
+                c = detail::rev_base64(*first++);
+                codepoint result = state | (c >> (state_bits-10));
+                state = c << (16-(state_bits-10));
+                state_bits -= 10;
+                return result;
+            }
+            template <typename InputIterator>
+            codepoint decode_one(InputIterator& first, InputIterator last) {
+                auto c = *first++;
+                if(in_unicode && c == '-') {
+                    if(first == last) return -1;
+                    c = *first++;
+                    in_unicode = false;
+                } else if(!in_unicode && c == '+') {
+                    c = *first++;
+                    if(c == '-') return '+';
+                    in_unicode = true;
+                    state = 0;
+                    state_bits = 0;
+                }
+                if(!in_unicode) return c;
+                c = detail::rev_base64(c);
+                auto lead = get_unit(c, first, last);
+                if(lead >= 0xD800 && lead < 0xDC00) {
+                    auto trail = get_unit(c, first, last);
+                    auto units = { byte((lead & 0xFF00) >> 8), byte(lead & 0xFF),
+                                   byte((trail & 0xFF00) >> 8), byte(trail & 0xFF) };
+                    utf16be codec;
+                    auto it = units.begin();
+                    return codec.decode_one(it, units.end());
+                } else {
+                    return lead;
+                }
+            }
+        public:
+            template <typename InputIterator, typename OutputIterator>
+            OutputIterator encode(InputIterator first, InputIterator last, OutputIterator out) {
+                for(; first != last; ++first) {
+                    encode_one(*first, out);
+                }
+                flush(out);
+                if(in_unicode) *out++ = '-';
+                return out;
+            }
+            template <typename InputIterator, typename OutputIterator>
+            OutputIterator decode(InputIterator first, InputIterator last, OutputIterator out) {
+                while(first != last) {
+                    auto c = decode_one(first, last);
+                    if(c == -1u) continue;
+                    *out++ = c;
+                }
+                return out;
+            }
+        };
     } // namespace codec
 } // namespace ogonek
 
