@@ -14,13 +14,15 @@
 #ifndef OGONEK_TEXT_HPP
 #define OGONEK_TEXT_HPP
 
-namespace ogonek {
-    using byte = char;
-    using codepoint = char32_t;
+#include "types.h++"
 
+#include <cstddef>
+#include <vector>
+
+namespace ogonek {
     class text {
     private:
-        std::vector<codepoint> codepoints;
+        std::vector<codepoint> codepoints; // TODO: allocators
 
     public:
         class iterator;
@@ -32,6 +34,13 @@ namespace ogonek {
         ~text();
         text& operator=(text const&);
         text& operator=(text&&);
+
+        const_iterator begin() const;
+        const_iterator end() const;
+
+        codepoint const* data() const;
+
+        codepoint operator[](std::ptrdiff_t i) const;
     };
 } // namespace ogonek
 
