@@ -1,4 +1,4 @@
-// Wheels - various C++ utilities
+// Ogonek
 //
 // Written in 2012 by Martinho Fernandes <martinho.fernandes@gmail.com>
 //
@@ -70,7 +70,6 @@ namespace ogonek {
         struct utf16 : detail::codec_base<utf16<ByteOrder>> {
             static constexpr bool is_fixed_width = false;
             static constexpr std::size_t max_width = 4;
-            static constexpr bool is_reusable = true;
             static constexpr bool is_stateless = true;
             template <typename OutputIterator>
             void encode_one(codepoint c, OutputIterator& out) {

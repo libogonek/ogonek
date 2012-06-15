@@ -1,4 +1,4 @@
-// Wheels - various C++ utilities
+// Ogonek
 //
 // Written in 2012 by Martinho Fernandes <martinho.fernandes@gmail.com>
 //

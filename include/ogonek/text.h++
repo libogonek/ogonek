@@ -1,4 +1,4 @@
-// Wheels - various C++ utilities
+// Ogonek
 //
 // Written in 2012 by Martinho Fernandes <martinho.fernandes@gmail.com>
 //
@@ -25,8 +25,8 @@ namespace ogonek {
         std::vector<codepoint> codepoints; // TODO: allocators
 
     public:
-        class iterator;
-        class const_iterator;
+        using iterator = std::vector<codepoint>::const_iterator;
+        using const_iterator = std::vector<codepoint>::const_iterator;
 
         text();
         text(text const&);
