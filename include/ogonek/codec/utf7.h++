@@ -43,17 +43,19 @@ namespace ogonek {
 
                 template <typename OutputIterator>
                 void enter_ascii(OutputIterator& out) {
+                    using namespace ogonek::literal;
                     if(in_unicode) {
                         flush(out);
-                        *out++ = '-';
+                        *out++ = '-'_u;
                         in_unicode = false;
                     }
                 }
                 template <typename OutputIterator>
                 void enter_unicode(OutputIterator& out) {
+                    using namespace ogonek::literal;
                     if(!in_unicode) {
                         flush(out);
-                        *out++ = '+';
+                        *out++ = '+'_u;
                         in_unicode = true;
                     }
                 }
@@ -62,12 +64,13 @@ namespace ogonek {
                 int state_bits = 0;
                 template <typename OutputIterator>
                 void encode_one(codepoint c, OutputIterator& out) {
-                    if(c == '+') {
+                    using namespace ogonek::literal;
+                    if(c == '+'_u) {
                         enter_ascii(out);
-                        *out++ = '+';
-                        *out++ = '-';
-                    } else  if((c >= 0x20 && c <= 0x7E && c != '~' && c != '\\')
-                               || (c == '\t' || c == '\r' || c == '\n')) {
+                        *out++ = '+'_u;
+                        *out++ = '-'_u;
+                    } else  if((c >= 0x20_u && c <= 0x7E_u && c != '~'_u && c != '\\'_u)
+                               || (c == '\t'_u || c == '\r'_u || c == '\n'_u)) {
                         // NOTE: all optional direct characters considered
                         enter_ascii(out);
                         *out++ = c;
@@ -114,14 +117,15 @@ namespace ogonek {
                 }
                 template <typename InputIterator>
                 codepoint decode_one(InputIterator& first, InputIterator last) {
+                    using namespace ogonek::literal;
                     auto c = *first++;
-                    if(in_unicode && c == '-') {
+                    if(in_unicode && c == '-'_u) {
                         if(first == last) return -1;
                         c = *first++;
                         in_unicode = false;
-                    } else if(!in_unicode && c == '+') {
+                    } else if(!in_unicode && c == '+'_u) {
                         c = *first++;
-                        if(c == '-') return '+';
+                        if(c == '-'_u) return '+'_u;
                         in_unicode = true;
                         state = 0;
                         state_bits = 0;
@@ -144,12 +148,13 @@ namespace ogonek {
         public:
             template <typename InputIterator, typename OutputIterator>
             OutputIterator encode(InputIterator first, InputIterator last, OutputIterator out) {
+                using namespace ogonek::literal;
                 state s;
                 for(; first != last; ++first) {
                     s.encode_one(*first, out);
                 }
                 s.flush(out);
-                if(s.in_unicode) *out++ = '-';
+                if(s.in_unicode) *out++ = '-'_u;
                 return out;
             }
             template <typename InputIterator, typename OutputIterator>

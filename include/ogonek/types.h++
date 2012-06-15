@@ -19,9 +19,11 @@ namespace ogonek {
     using codepoint = char32_t;
 
     namespace literal {
-        byte operator"" _b(unsigned long long n) { return static_cast<byte>(n); }
+        constexpr byte operator"" _b(unsigned long long n) { return static_cast<byte>(n); }
 
-        codepoint operator"" _u(unsigned long long n) { return static_cast<codepoint>(n); }
+        constexpr codepoint operator"" _u(unsigned long long n) { return static_cast<codepoint>(n); }
+        // assuming ASCII :P
+        constexpr codepoint operator"" _u(char c) { return static_cast<codepoint>(c); }
     }
 } // namespace ogonek
 
