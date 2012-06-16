@@ -16,31 +16,104 @@
 
 #include "types.h++"
 
+#include <wheels/iterator.h++>
+#include <wheels/meta.h++>
+
 #include <cstddef>
+#include <initializer_list>
+#include <iterator>
+#include <string>
 #include <vector>
 
 namespace ogonek {
+    namespace detail {
+        template <typename T>
+        struct is_byte_impl : wheels::Bool<false> {};
+        template <>
+        struct is_byte_impl<char> : wheels::Bool<true> {};
+        template <>
+        struct is_byte_impl<unsigned char> : wheels::Bool<true> {};
+        template <>
+        struct is_byte_impl<signed char> : wheels::Bool<true> {};
+
+        template <typename T>
+        struct is_byte : is_byte_impl<wheels::RemoveCv<T>> {};
+
+        template <typename T>
+        struct is_codepoint : std::is_same<codepoint, wheels::RemoveCv<T>> {};
+
+        template <typename Container, typename InputIterator>
+        void reserve_if_random_access(Container& c, InputIterator first, InputIterator last, std::random_access_iterator_tag) {
+            c.reserve(last-first);
+        }
+
+        template <typename Container, typename InputIterator>
+        void reserve_if_random_access(Container& c, InputIterator first, InputIterator last, std::input_iterator_tag) {}
+
+        template <typename Container, typename InputIterator>
+        void reserve_if_random_access(Container& c, InputIterator first, InputIterator last) {
+            reserve_if_random_access(c, first, last, wheels::IteratorCategory<InputIterator>{});
+        }
+    } // namespace detail 
+
     class text {
     private:
         std::vector<codepoint> codepoints; // TODO: allocators
 
     public:
+        using size_type = std::size_t;
+        using difference_type = std::ptrdiff_t;
+        using reference = codepoint const&;
+        using const_reference = codepoint const&;
+
         using iterator = std::vector<codepoint>::const_iterator;
         using const_iterator = std::vector<codepoint>::const_iterator;
+        using reverse_iterator = std::reverse_iterator<iterator>;
+        using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
-        text();
-        text(text const&);
-        text(text&&);
-        ~text();
-        text& operator=(text const&);
-        text& operator=(text&&);
+        text() = default;
+        //TODO: what about convertible thingies?
+        template <typename InputIterator,
+                  wheels::EnableIf<detail::is_codepoint<wheels::ValueType<InputIterator>>>...>
+        text(InputIterator first, InputIterator last) : codepoints(first, last) {}
 
-        const_iterator begin() const;
-        const_iterator end() const;
+        template <typename Codec, typename InputIterator,
+                  wheels::EnableIf<detail::is_byte<wheels::ValueType<InputIterator>>>...>
+        text(InputIterator first, InputIterator last, Codec c) {
+            detail::reserve_if_random_access(codepoints, first, last);
+            c.decode(first, last, std::back_inserter(codepoints));
+        }
 
-        codepoint const* data() const;
+        text(std::string const& str, Codec c)
+        : text(str.begin(), str.end(), c) {}
+        text(char const* str, Codec c)
+        : text(str, str + std::char_traits<char>::length(str), c) {}
+        text(std::initializer_list<char> l, Codec c)
+        : text(l.begin(), l.end(), c) {}
+        text(std::u16string const& str);
+        //: text(str.begin(), str.end(), coded::utf16) {} TODO: convert from code units
+        text(char16_t const* str);
+        //: text(str, str + std::char_traits<char16_t>::length(str), coded::utf16) {} TODO: convert from code units
+        text(std::initializer_list<char16_t> l);
+        //: text(l.begin(), l.end(), coded::utf16) {} TODO: convert from code units
+        text(std::u32string const& str);
+        //: text(str.begin(), str.end(), coded::utf32) {} TODO: convert from code units
+        text(char32_t const* str);
+        //: text(str, str + std::char_traits<char32_t>::length(str), coded::utf32) {} TODO: convert from code units
+        text(std::initializer_list<char32_t> l);
+        //: text(l.begin(), l.end(), coded::utf32) {} TODO: convert from code units
 
-        codepoint operator[](std::ptrdiff_t i) const;
+        text& operator=(std::string const& str);
+        text& operator=(char const* str);
+        text& operator=(std::initializer_list<char> l);
+        text& operator=(std::u16string const& str);
+        text& operator=(char16_t const* str);
+        text& operator=(std::initializer_list<char16_t> l);
+        text& operator=(std::u32string const& str);
+        text& operator=(char32_t const* str);
+        text& operator=(std::initializer_list<char32_t> l);
+
+        codepoint const* data() const noexcept { return codepoints.data(); }
     };
 } // namespace ogonek
 

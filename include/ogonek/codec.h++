@@ -19,14 +19,13 @@
 //
 //    C::is_fixed_width           | constexpr bool        | true iff is fixed width
 //    C::max_width                | constexpr size_t      | maximum width
-//    C::is_stateless             | constexpr bool        | true iff is each codepoint can be encoded individually
-//    C::state                    | typename Trivial      | type of the state (an empty type iff C::is_stateless)
+//    C::state                    | typename Trivial      | type of the state (an empty type iff C is stateless)
 //    C codec;                    | C                     | creates a new codec
 //    C()                         | C                     | creates a new codec
 //    codec.encode(cb, ce, bo)    | output iterator       | encodes codepoints
 //    codec.decode(bb, be, co)    | output iterator       | decodes codepoints
-//    codec.encode_one(c, bo)     | void                  | encodes one codepoint (only available if C::is_stateless)
-//    codec.decode_one(bb, be)    | codepoint             | decodes one codepoint (only available if C::is_stateless)
+//    codec.encode_one(c, bo)     | void                  | encodes one codepoint (only available if C is stateless)
+//    codec.decode_one(bb, be)    | codepoint             | decodes one codepoint (only available if C is stateless)
 //    codec.encode_one(c, bo, s)  | void                  | encodes one codepoint
 //    codec.decode_one(bb, be, s) | codepoint             | decodes one codepoint
 //

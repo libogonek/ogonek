@@ -70,9 +70,10 @@ namespace ogonek {
         struct utf16 : detail::codec_base<utf16<ByteOrder>> {
             static constexpr bool is_fixed_width = false;
             static constexpr std::size_t max_width = 4;
-            static constexpr bool is_stateless = true;
+            struct state {};
+
             template <typename OutputIterator>
-            void encode_one(codepoint c, OutputIterator& out) {
+            void encode_one(codepoint c, OutputIterator& out, state = {}) {
                 assert(c < 0x200000); // TODO: invalids are UB?
                 if(c < 0x10000) {
                     utf16_detail::endian<ByteOrder>::output(out,
@@ -87,7 +88,7 @@ namespace ogonek {
                 }
             }
             template <typename InputIterator>
-            codepoint decode_one(InputIterator& first, InputIterator /*TODO: use last*/) {
+            codepoint decode_one(InputIterator& first, InputIterator /*TODO: use last*/, state = {}) {
                 std::array<byte, 2> leads { { *first++, *first++ } };
                 auto lead = utf16_detail::endian<ByteOrder>::make_code_unit(leads);
                 if(lead < 0xD800 || lead > 0xDFFF) {

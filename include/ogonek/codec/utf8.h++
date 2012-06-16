@@ -26,9 +26,10 @@ namespace ogonek {
         struct utf8 : detail::codec_base<utf8> {
             static constexpr bool is_fixed_width = false;
             static constexpr std::size_t max_width = 4;
-            static constexpr bool is_stateless = true;
+            struct state {};
+
             template <typename OutputIterator>
-            void encode_one(codepoint c, OutputIterator& out) {
+            void encode_one(codepoint c, OutputIterator& out, state = {}) {
                 assert(c < 0x200000); // TODO: invalids are UB?
                 if(c < 0x80) {
                     *out++ = c & 0x7F;
@@ -47,7 +48,7 @@ namespace ogonek {
                 }
             }
             template <typename InputIterator>
-            codepoint decode_one(InputIterator& first, InputIterator /*TODO test last*/) {
+            codepoint decode_one(InputIterator& first, InputIterator /*TODO test last*/, state = {}) {
                 codepoint u0 = *first++;
                 if((u0 & 0x80) == 0) {
                     return u0;

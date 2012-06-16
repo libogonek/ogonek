@@ -36,7 +36,6 @@ namespace ogonek {
             static constexpr bool is_fixed_width = true;
             static constexpr std::size_t max_width = 4;
             static constexpr bool is_stateless = true;
-        private:
             struct state {
                 bool in_unicode = false;
 
@@ -144,7 +143,16 @@ namespace ogonek {
                     }
                 }
             };
-        public:
+
+            template <typename OutputIterator>
+            void encode_one(codepoint c, OutputIterator& out, state& s) {
+                s.encode_one(c, out);
+            }
+            template <typename InputIterator>
+            codepoint decode_one(InputIterator& first, InputIterator last, state& s) {
+                return s.decode_one(first, last);
+            }
+
             template <typename InputIterator, typename OutputIterator>
             OutputIterator encode(InputIterator first, InputIterator last, OutputIterator out) {
                 using namespace ogonek::literal;
