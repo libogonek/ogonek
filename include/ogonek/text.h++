@@ -56,21 +56,24 @@ namespace ogonek {
         }
     } // namespace detail 
 
+    template <typename Codec, template <typename...> class Container = std::vector>
     class text {
     private:
-        std::vector<codepoint> codepoints; // TODO: allocators
+        using code_unit = typename Codec::code_unit;
+
+        Container<code_unit> codepoints;
+
+        using size_type = typename Container<code_unit>::size_type;
+        using difference_type = typename Container<code_unit>::difference_type;
+        using reference = typename Container<code_unit>::reference;
+        using const_reference = typename Container<code_unit>::const_reference;
+
+        using iterator = typename Container<code_unit>::const_iterator;
+        using const_iterator = typename Container<code_unit>::const_iterator;
+        using reverse_iterator = typename Container<code_unit>::reverse_iterator;
+        using const_reverse_iterator = typename Container<code_unit>::const_reverse_iterator;
 
     public:
-        using size_type = std::size_t;
-        using difference_type = std::ptrdiff_t;
-        using reference = codepoint const&;
-        using const_reference = codepoint const&;
-
-        using iterator = std::vector<codepoint>::const_iterator;
-        using const_iterator = std::vector<codepoint>::const_iterator;
-        using reverse_iterator = std::reverse_iterator<iterator>;
-        using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-
         text() = default;
         //TODO: what about convertible thingies?
         template <typename InputIterator,
