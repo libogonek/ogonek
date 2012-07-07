@@ -12,107 +12,116 @@
 // Models of the ByteOrder concept
 
 #include <cstdint>
+#include <array>
 #include <type_traits>
+
+#include "types.h++"
 
 namespace ogonek {
     struct big_endian {
     public:
-        template <typename OutputIterator>
-        static void write(OutputIterator&& out, std::uint16_t u16) {
-            *out++ = (u16 & 0xFF00) >> 8;
-            *out++ = (u16 & 0x00FF) >> 0;
+        static std::array<byte, 2> map(std::uint16_t u16) {
+            return std::array<byte, 2> {{
+                byte((u16 & 0xFF00) >> 8),
+                byte((u16 & 0x00FF) >> 0),
+            }};
         }
-        template <typename OutputIterator>
-        static void write(OutputIterator&& out, std::uint32_t u32) {
-            *out++ = (u32 & 0xFF000000) >> 24;
-            *out++ = (u32 & 0x00FF0000) >> 16;
-            *out++ = (u32 & 0x0000FF00) >> 8;
-            *out++ = (u32 & 0x000000FF) >> 0;
+        static std::array<byte, 4> map(std::uint32_t u32) {
+            return std::array<byte, 4> {{
+                byte((u32 & 0xFF000000) >> 24),
+                byte((u32 & 0x00FF0000) >> 16),
+                byte((u32 & 0x0000FF00) >> 8),
+                byte((u32 & 0x000000FF) >> 0),
+            }};
         }
-        template <typename OutputIterator, typename DoNotConvert>
-        static void write(OutputIterator, DoNotConvert) = delete;
+        template <typename DoNotConvert>
+        static void map(DoNotConvert) = delete;
 
     private:
-        template <typename T>
+        template <int N>
         struct reader;
 
     public:
-        template <typename T, typename InputIterator>
-        static T read(InputIterator&& it) {
-            static_assert(std::is_same<T, std::uint16_t>::value || std::is_same<T, std::uint32_t>::value,
-                          "Return type must be an unsigned 16- or 32-bit integer");
-            return reader<T>::read(it);
+        template <int N, typename Range>
+        static typename reader<N>::type unmap(Range&& r) {
+            static_assert(N == 2 || N == 4, "Unmapped type must be have 2 or 4 bytes");
+            return reader<N>::read(r.begin());
         }
     };
 
     template <>
-    struct big_endian::reader<std::uint16_t> {
+    struct big_endian::reader<2> {
+        using type = std::uint16_t;
         template <typename InputIterator>
-        static std::uint16_t read(InputIterator& it) {
-            std::uint16_t b0 = *it++;
-            std::uint16_t b1 = *it++;
+        static type read(InputIterator it) {
+            type b0 = *it++;
+            type b1 = *it++;
             return (b0 << 8) | b1;
         }
     };
     template <>
-    struct big_endian::reader<std::uint32_t> {
+    struct big_endian::reader<4> {
+        using type = std::uint32_t;
         template <typename InputIterator>
-        static std::uint32_t read(InputIterator& it) {
-            std::uint32_t b0 = *it++;
-            std::uint32_t b1 = *it++;
-            std::uint32_t b2 = *it++;
-            std::uint32_t b3 = *it++;
+        static type read(InputIterator it) {
+            type b0 = *it++;
+            type b1 = *it++;
+            type b2 = *it++;
+            type b3 = *it++;
             return (b0 << 24) | (b1 << 16) | (b2 << 8) | b3;
         }
     };
 
     struct little_endian {
     public:
-        template <typename OutputIterator>
-        static void write(OutputIterator&& out, std::uint16_t u16) {
-            *out++ = (u16 & 0x00FF) >> 0;
-            *out++ = (u16 & 0xFF00) >> 8;
+        static std::array<byte, 2> map(std::uint16_t u16) {
+            return std::array<byte, 2> {{
+                byte((u16 & 0x00FF) >> 0),
+                byte((u16 & 0xFF00) >> 8),
+            }};
         }
-        template <typename OutputIterator>
-        static void write(OutputIterator&& out, std::uint32_t u32) {
-            *out++ = (u32 & 0x000000FF) >> 0;
-            *out++ = (u32 & 0x0000FF00) >> 8;
-            *out++ = (u32 & 0x00FF0000) >> 16;
-            *out++ = (u32 & 0xFF000000) >> 24;
+        static std::array<byte, 4> map(std::uint32_t u32) {
+            return std::array<byte, 4> {{
+                byte((u32 & 0x000000FF) >> 0),
+                byte((u32 & 0x0000FF00) >> 8),
+                byte((u32 & 0x00FF0000) >> 16),
+                byte((u32 & 0xFF000000) >> 24),
+            }};
         }
-        template <typename OutputIterator, typename DoNotConvert>
-        static void write(OutputIterator, DoNotConvert) = delete;
+        template <typename DoNotConvert>
+        static void map(DoNotConvert) = delete;
 
     private:
-        template <typename T>
+        template <int N>
         struct reader;
 
     public:
-        template <typename T, typename InputIterator>
-        static T read(InputIterator&& it) {
-            static_assert(std::is_same<T, std::uint16_t>::value || std::is_same<T, std::uint32_t>::value,
-                          "Return type must be an unsigned 16- or 32-bit integer");
-            return reader<T>::read(it);
+        template <int N, typename Range>
+        static typename reader<N>::type unmap(Range&& r) {
+            static_assert(N == 2 || N == 4, "Unmapped type must be have 2 or 4 bytes");
+            return reader<N>::read(r.begin());
         }
     };
 
     template <>
-    struct little_endian::reader<std::uint16_t> {
+    struct little_endian::reader<2> {
+        using type = std::uint16_t;
         template <typename InputIterator>
-        static std::uint16_t read(InputIterator& it) {
-            std::uint16_t b0 = *it++;
-            std::uint16_t b1 = *it++;
+        static type read(InputIterator it) {
+            type b0 = *it++;
+            type b1 = *it++;
             return (b1 << 8) | b0;
         }
     };
     template <>
-    struct little_endian::reader<std::uint32_t> {
+    struct little_endian::reader<4> {
+        using type = std::uint32_t;
         template <typename InputIterator>
-        static std::uint32_t read(InputIterator& it) {
-            std::uint32_t b0 = *it++;
-            std::uint32_t b1 = *it++;
-            std::uint32_t b2 = *it++;
-            std::uint32_t b3 = *it++;
+        static type read(InputIterator it) {
+            type b0 = *it++;
+            type b1 = *it++;
+            type b2 = *it++;
+            type b3 = *it++;
             return (b3 << 24) | (b2 << 16) | (b1 << 8) | b0;
         }
     };

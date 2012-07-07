@@ -1,4 +1,4 @@
-// Wheels - various C++ utilities
+// Ogonek
 //
 // Written in 2012 by Martinho Fernandes <martinho.fernandes@gmail.com>
 //
@@ -22,7 +22,8 @@ namespace ogonek {
         constexpr byte operator"" _b(unsigned long long n) { return static_cast<byte>(n); }
 
         constexpr codepoint operator"" _u(unsigned long long n) { return static_cast<codepoint>(n); }
-        // assuming ASCII :P
+
+        // TODO assuming ASCII here :P
         constexpr codepoint operator"" _u(char c) { return static_cast<codepoint>(c); }
     }
 } // namespace ogonek
