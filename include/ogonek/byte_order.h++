@@ -42,10 +42,10 @@ namespace ogonek {
         struct reader;
 
     public:
-        template <int N, typename Range>
-        static typename reader<N>::type unmap(Range&& r) {
+        template <int N, typename InputIterator>
+        static typename reader<N>::type unmap(InputIterator it) {
             static_assert(N == 2 || N == 4, "Unmapped type must be have 2 or 4 bytes");
-            return reader<N>::read(r.begin());
+            return reader<N>::read(it);
         }
     };
 
@@ -96,10 +96,10 @@ namespace ogonek {
         struct reader;
 
     public:
-        template <int N, typename Range>
-        static typename reader<N>::type unmap(Range&& r) {
+        template <int N, typename InputIterator>
+        static typename reader<N>::type unmap(InputIterator it) {
             static_assert(N == 2 || N == 4, "Unmapped type must be have 2 or 4 bytes");
-            return reader<N>::read(r.begin());
+            return reader<N>::read(it);
         }
     };
 
