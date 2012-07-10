@@ -55,7 +55,7 @@ namespace ogonek {
             out = *first++;
             return { first, r.end() };
         }
-        template <typename InputIterator>
+        template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&) {
             return decode_one(r, out);
         }
