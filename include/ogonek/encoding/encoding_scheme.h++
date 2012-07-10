@@ -46,20 +46,26 @@ namespace ogonek {
         template <typename OutputIterator>
         static OutputIterator encode_one(codepoint u, OutputIterator out, state& s) {
             std::array<typename EncodingForm::code_unit, EncodingForm::max_width> units;
-            auto end = EncodingForm::encode_one(*first, units.begin(), s);
-            return std::copy(units.begin(), end, out);
+            auto end = EncodingForm::encode_one(u, units.begin(), s);
+            return std::copy(units.begin(), end, out); // TODO: WRONG!
         }
 
         template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out) {
             state s {};
-            return decode_one(first, last, out, s);
+            return decode_one(r, out, s);
         }
-        template <typename InputIterator>
+        template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s) {
             // TODO
         }
     };
+    class utf16;
+    class utf32;
+    using utf16be = encoding_scheme<utf16, big_endian>;
+    using utf16le = encoding_scheme<utf16, little_endian>;
+    using utf32be = encoding_scheme<utf32, big_endian>;
+    using utf32le = encoding_scheme<utf32, little_endian>;
 } // namespace ogonek
 
 #endif // OGONEK_ENCODING_ENCODING_SCHEME_HPP

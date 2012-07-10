@@ -14,6 +14,7 @@
 #include <ogonek/encoding/utf8.h++>
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf32.h++>
+#include <ogonek/encoding/utf7.h++>
 #include <ogonek/types.h++>
 
 #include <catch.h++>
@@ -98,6 +99,48 @@ TEST_CASE("utf32", "UTF-32 encoding form") {
         CHECK(decoded[1] == 0x00C5_u);
         CHECK(decoded[2] == 0x1EA0_u);
         CHECK(decoded[3] == 0x1F4A9_u);
+    }
+}
+
+TEST_CASE("utf7", "UTF-7 codec") {
+    using namespace ogonek::literal;
+
+    SECTION("encode", "Encoding UTF-7") {
+        auto decoded = { 0xA3_u, 0x2020_u, 0x31_u, 0x34_u, 0x66_u, 0x1E99_u };
+        std::vector<ogonek::byte> encoded;
+        ogonek::utf7::encode(decoded, std::back_inserter(encoded));
+        REQUIRE(encoded.size() == 16);
+        CHECK(encoded[0] == 0x2B_b);
+        CHECK(encoded[1] == 0x41_b);
+        CHECK(encoded[2] == 0x4B_b);
+        CHECK(encoded[3] == 0x4D_b);
+        CHECK(encoded[4] == 0x67_b);
+        CHECK(encoded[5] == 0x49_b);
+        CHECK(encoded[6] == 0x41_b);
+        CHECK(encoded[7] == 0x2D_b);
+        CHECK(encoded[8] == 0x31_b);
+        CHECK(encoded[9] == 0x34_b);
+        CHECK(encoded[10] == 0x66_b);
+        CHECK(encoded[11] == 0x2B_b);
+        CHECK(encoded[12] == 0x48_b);
+        CHECK(encoded[13] == 0x70_b);
+        CHECK(encoded[14] == 0x6B_b);
+        CHECK(encoded[15] == 0x2D_b);
+    }
+    SECTION("decode", "Decoding UTF-7") {
+        auto encoded = { 0x2B_b, 0x41_b, 0x4B_b, 0x4D_b,
+                         0x67_b, 0x49_b, 0x41_b, 0x2D_b,
+                         0x31_b, 0x34_b, 0x66_b, 0x2B_b,
+                         0x48_b, 0x70_b, 0x6B_b, 0x2D_b };
+        std::vector<ogonek::codepoint> decoded;
+        ogonek::utf7::decode(encoded, std::back_inserter(decoded));
+        REQUIRE(decoded.size() == 6);
+        CHECK(decoded[0] == 0xA3_u);
+        CHECK(decoded[1] == 0x2020_u);
+        CHECK(decoded[2] == 0x31_u);
+        CHECK(decoded[3] == 0x34_u);
+        CHECK(decoded[4] == 0x66_u);
+        CHECK(decoded[5] == 0x1E99_u);
     }
 }
 

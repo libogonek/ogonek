@@ -18,15 +18,9 @@
 
 #include <boost/range/sub_range.hpp>
 
-#if 0
-            template <typename InputIterator>
-            codepoint decode_one(InputIterator& first, InputIterator /*TODO test last*/, state = {}) {
-            }
-#endif
-
 namespace ogonek {
     struct utf8 {
-        using code_unit = char;
+        using code_unit = byte;
         static constexpr bool is_fixed_width = false;
         static constexpr std::size_t max_width = 4;
         static constexpr bool is_self_synchronizing = true;
@@ -109,6 +103,4 @@ namespace ogonek {
 } // namespace ogonek
 
 #endif // OGONEK_ENCODING_UTF8_HPP
-
-
 
