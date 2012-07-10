@@ -23,23 +23,23 @@ TEST_CASE("utf8", "UTF-8 encoding form") {
 
     SECTION("encode", "Encoding UTF-8") {
         auto decoded = { 0x0041_u, 0x00C5_u, 0x1EA0_u, 0x1F4A9_u };
-        std::vector<char> encoded;
+        std::vector<ogonek::byte> encoded;
         ogonek::utf8::encode(decoded, std::back_inserter(encoded));
         REQUIRE(encoded.size() == 10);
-        CHECK(encoded[0] == 0x41);
-        CHECK(encoded[1] == 0xC3);
-        CHECK(encoded[2] == 0x85);
-        CHECK(encoded[3] == 0xE1);
-        CHECK(encoded[4] == 0xBA);
-        CHECK(encoded[5] == 0xA0);
-        CHECK(encoded[6] == 0xF0);
-        CHECK(encoded[7] == 0x9F);
-        CHECK(encoded[8] == 0x92);
-        CHECK(encoded[9] == 0xA9);
+        CHECK(encoded[0] == 0x41_b);
+        CHECK(encoded[1] == 0xC3_b);
+        CHECK(encoded[2] == 0x85_b);
+        CHECK(encoded[3] == 0xE1_b);
+        CHECK(encoded[4] == 0xBA_b);
+        CHECK(encoded[5] == 0xA0_b);
+        CHECK(encoded[6] == 0xF0_b);
+        CHECK(encoded[7] == 0x9F_b);
+        CHECK(encoded[8] == 0x92_b);
+        CHECK(encoded[9] == 0xA9_b);
     }
     SECTION("decode", "Decoding UTF-16") {
-        std::initializer_list<char> encoded = { 0x41, 0xC3, 0x85, 0xE1, 0xBA,
-                                                0xA0, 0xF0, 0x9F, 0x92, 0xA9 };
+        std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC3_b, 0x85_b, 0xE1_b, 0xBA_b,
+                                                        0xA0_b, 0xF0_b, 0x9F_b, 0x92_b, 0xA9_b };
         std::vector<ogonek::codepoint> decoded;
         ogonek::utf8::decode(encoded, std::back_inserter(decoded));
         REQUIRE(decoded.size() == 4);
