@@ -38,11 +38,9 @@ namespace ogonek {
         }
         template <typename SinglePassRange, typename OutputIterator>
         static OutputIterator decode(SinglePassRange const& r, OutputIterator out) {
-            using boost::begin;
-            using boost::end;
-            for(boost::sub_range<SinglePassRange> sr { r }; !boost::empty(sr); ) {
+            for(boost::sub_range<SinglePassRange> slice { r }; !boost::empty(slice); ) {
                 codepoint c;
-                sr = decode_one(sr, c);
+                slice = decode_one(slice, c);
                 *out++ = c;
             }
             return out;
@@ -66,7 +64,7 @@ namespace ogonek {
 
         template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out) {
-            auto first = r.begin();
+            auto first = boost::begin(r);
             auto lead = *first++;
             if(lead < 0xD800 || lead > 0xDFFF) {
                 out = lead;
@@ -76,7 +74,7 @@ namespace ogonek {
                 auto lo = trail - 0xDC00;
                 out = 0x10000 + ((hi << 10) | lo);
             }
-            return { first, r.end() };
+            return { first, boost::end(r) };
         }
         template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&) {

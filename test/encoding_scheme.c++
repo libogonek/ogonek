@@ -149,14 +149,12 @@ TEST_CASE("utf32be", "UTF-32BE codec") {
         CHECK(encoded[15] == 0xA9_b);
     }
     SECTION("decode", "Decoding UTF-32BE") {
-        ogonek::codec::utf32be codec;
-
         auto encoded = { 0x00_b, 0x00_b, 0x00_b, 0x41_b,
                          0x00_b, 0x00_b, 0x00_b, 0xC5_b,
                          0x00_b, 0x00_b, 0x1E_b, 0xA0_b,
                          0x00_b, 0x01_b, 0xF4_b, 0xA9_b };
         std::vector<ogonek::codepoint> decoded;
-        codec.decode(encoded.begin(), encoded.end(), std::back_inserter(decoded));
+        ogonek::utf32be::decode(encoded, std::back_inserter(decoded));
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == 0x0041_u);
         CHECK(decoded[1] == 0x00C5_u);

@@ -17,6 +17,8 @@
 #include "../types.h++"
 
 #include <boost/range/sub_range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
 
 namespace ogonek {
     struct utf32 {
@@ -51,9 +53,9 @@ namespace ogonek {
 
         template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out) {
-            auto first = r.begin();
+            auto first = boost::begin(r);
             out = *first++;
-            return { first, r.end() };
+            return { first, boost::end(r) };
         }
         template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&) {

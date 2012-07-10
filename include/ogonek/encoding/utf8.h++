@@ -17,6 +17,9 @@
 #include "../types.h++"
 
 #include <boost/range/sub_range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/empty.hpp>
 
 namespace ogonek {
     struct utf8 {
@@ -35,11 +38,9 @@ namespace ogonek {
         }
         template <typename SinglePassRange, typename OutputIterator>
         static OutputIterator decode(SinglePassRange const& r, OutputIterator out) {
-            using boost::begin;
-            using boost::end;
-            for(boost::sub_range<SinglePassRange> sr { r }; !boost::empty(sr); ) {
+            for(boost::sub_range<SinglePassRange> slice { r }; !boost::empty(slice); ) {
                 codepoint c;
-                sr = decode_one(sr, c);
+                slice = decode_one(slice, c);
                 *out++ = c;
             }
             return out;
@@ -69,31 +70,31 @@ namespace ogonek {
 
         template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out) {
-            auto first = r.begin();
+            auto first = boost::begin(r);
             codepoint u0 = *first++;
             if((u0 & 0x80) == 0) {
                 out = u0;
-                return { first, r.end() };
+                return { first, boost::end(r) };
             }
             codepoint u1 = *first++;
             if((u0 & 0xE0) != 0xE0) {
                 out = ((u0 & 0x1F) << 6) |
                       (u1 & 0x3F);
-                return { first, r.end() };
+                return { first, boost::end(r) };
             }
             codepoint u2 = *first++;
             if((u0 & 0xF0) != 0xF0) {
                 out = ((u0 & 0x0F) << 12) |
                       ((u1 & 0x3F) << 6) |
                       (u2 & 0x3F);
-                return { first, r.end() };
+                return { first, boost::end(r) };
             }
             codepoint u3 = *first++;
             out = ((u0 & 0x07) << 18) |
                   ((u1 & 0x3F) << 12) |
                   ((u2 & 0x3F) << 6) |
                   (u3 & 0x3F);
-            return { first, r.end() };
+            return { first, boost::end(r) };
         }
         template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&) {
