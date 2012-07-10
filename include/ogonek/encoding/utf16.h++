@@ -17,6 +17,9 @@
 #include "../types.h++"
 
 #include <boost/range/sub_range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/empty.hpp>
 
 namespace ogonek {
     struct utf16 {
@@ -29,13 +32,17 @@ namespace ogonek {
         template <typename SinglePassRange, typename OutputIterator>
         static OutputIterator encode(SinglePassRange const& r, OutputIterator out) {
             for(auto u : r) {
-                *out++ = u;
+                out = encode_one(u, out);
             }
             return out;
         }
         template <typename SinglePassRange, typename OutputIterator>
         static OutputIterator decode(SinglePassRange const& r, OutputIterator out) {
-            for(auto c : r) {
+            using boost::begin;
+            using boost::end;
+            for(boost::sub_range<SinglePassRange> sr { r }; !boost::empty(sr); ) {
+                codepoint c;
+                sr = decode_one(sr, c);
                 *out++ = c;
             }
             return out;
@@ -43,7 +50,15 @@ namespace ogonek {
 
         template <typename OutputIterator>
         static OutputIterator encode_one(codepoint u, OutputIterator out) {
-            *out++ = u;
+            if(u <= 0xFFFF) {
+                *out++ = u;
+            } else {
+                auto normal = u - 0x10000;
+                auto lead = 0xD800 + ((normal & 0xFFC00) >> 10);
+                auto trail = 0xDC00 + (normal & 0x3FF);
+                *out++ = lead;
+                *out++ = trail;
+            }
             return out;
         }
         template <typename OutputIterator>
@@ -52,7 +67,15 @@ namespace ogonek {
         template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out) {
             auto first = r.begin();
-            out = *first++;
+            auto lead = *first++;
+            if(lead < 0xD800 || lead > 0xDFFF) {
+                out = lead;
+            } else {
+                auto trail = *first++;
+                auto hi = lead - 0xD800;
+                auto lo = trail - 0xDC00;
+                out = 0x10000 + ((hi << 10) | lo);
+            }
             return { first, r.end() };
         }
         template <typename SinglePassRange>

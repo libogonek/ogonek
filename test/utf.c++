@@ -37,7 +37,7 @@ TEST_CASE("utf8", "UTF-8 encoding form") {
         CHECK(encoded[8] == 0x92_b);
         CHECK(encoded[9] == 0xA9_b);
     }
-    SECTION("decode", "Decoding UTF-16") {
+    SECTION("decode", "Decoding UTF-8") {
         std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC3_b, 0x85_b, 0xE1_b, 0xBA_b,
                                                         0xA0_b, 0xF0_b, 0x9F_b, 0x92_b, 0xA9_b };
         std::vector<ogonek::codepoint> decoded;
