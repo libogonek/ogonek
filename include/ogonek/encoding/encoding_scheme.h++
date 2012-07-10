@@ -18,6 +18,8 @@
 #include "../types.h++"
 
 #include <boost/range/sub_range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/sub_range.hpp>
 
 namespace ogonek {
     template <typename EncodingForm, typename ByteOrder>
@@ -45,9 +47,15 @@ namespace ogonek {
         }
         template <typename OutputIterator>
         static OutputIterator encode_one(codepoint u, OutputIterator out, state& s) {
+            using boost::begin;
+            using boost::end;
             std::array<typename EncodingForm::code_unit, EncodingForm::max_width> units;
             auto end = EncodingForm::encode_one(u, units.begin(), s);
-            return std::copy(units.begin(), end, out); // TODO: WRONG!
+            for(auto it = units.begin(); it != end; ++it) {
+                auto bytes = ByteOrder::map(*it);
+                out = std::copy(bytes.begin(), bytes.end(), out);
+            }
+            return out;
         }
 
         template <typename SinglePassRange>
