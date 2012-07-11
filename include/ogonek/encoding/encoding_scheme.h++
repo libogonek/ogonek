@@ -49,8 +49,8 @@ namespace ogonek {
             byte_ordered_iterator<ByteOrder, Integer, Iterator>,
             Integer,
             typename std::iterator_traits<Iterator>::iterator_category,
-            Integer> {
-        public:
+            Integer
+        > {
             byte_ordered_iterator(Iterator it) : it(it) {
                 increment();
             }
@@ -75,7 +75,6 @@ namespace ogonek {
                 return (that.it - it) / sizeof(Integer);
             }
 
-        private:
             Iterator it;
             Integer i;
         };
@@ -141,15 +140,13 @@ namespace ogonek {
 
         template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s) {
-            //auto first = boost::begin(r);
-            //ByteOrder::unmap<sizeof(typename EncodingForm::code_unit)>(first); // TODO review unmap to work with input iterators!
-            // TODO fsck, need an actual range: how many code units to read?
-            // or maybe the EncodingForm needs expanding?
-
-            // TODO
-            out = 0;
-            s = s;
-            return { r }; //{ first, boost::end(r) };
+            using iterator = typename boost::range_iterator<SinglePassRange>::type;
+            using code_unit_range = encoding_scheme_detail::byte_ordered_range<ByteOrder, typename EncodingForm::code_unit, SinglePassRange>;
+            code_unit_range range {
+                iterator { boost::begin(r) }, iterator { boost::end(r) }
+            };
+            auto remaining = EncodingForm::decode_one(range, out, s);
+            return { remaining.begin().it, remaining.end().it };
         }
     };
     class utf16;
