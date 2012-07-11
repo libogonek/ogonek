@@ -34,12 +34,16 @@ TEST_CASE("big_endian", "Big endian byte order") {
     }
     SECTION("read16", "Reading 16-bit values") {
         std::array<std::uint8_t, 2> bytes {{ 0x12, 0x34 }};
-        std::uint16_t x = ogonek::big_endian::unmap<2>(bytes.begin());
+        std::uint16_t x;
+        auto it = ogonek::big_endian::unmap(bytes.begin(), x);
+        REQUIRE(it == bytes.begin() + 2);
         REQUIRE(x == 0x1234);
     }
     SECTION("read32", "Reading 32-bit values") {
         std::array<std::uint8_t, 4> bytes {{ 0x12, 0x34, 0x56, 0x78 }};
-        std::uint32_t x = ogonek::big_endian::unmap<4>(bytes.begin());
+        std::uint32_t x;
+        auto it = ogonek::big_endian::unmap(bytes.begin(), x);
+        REQUIRE(it == bytes.begin() + 4);
         REQUIRE(x == 0x12345678);
     }
 }
@@ -60,12 +64,16 @@ TEST_CASE("little_endian", "Little endian byte order") {
     }
     SECTION("read16", "Reading 16-bit values") {
         std::array<std::uint8_t, 2> bytes {{ 0x34, 0x12 }};
-        std::uint16_t x = ogonek::little_endian::unmap<2>(bytes.begin());
+        std::uint16_t x;
+        auto it = ogonek::little_endian::unmap(bytes.begin(), x);
+        REQUIRE(it == bytes.begin() + 2);
         REQUIRE(x == 0x1234);
     }
     SECTION("read32", "Reading 32-bit values") {
         std::array<std::uint8_t, 4> bytes {{ 0x78, 0x56, 0x34, 0x12 }};
-        std::uint32_t x = ogonek::little_endian::unmap<4>(bytes.begin());
+        std::uint32_t x;
+        auto it = ogonek::little_endian::unmap(bytes.begin(), x);
+        REQUIRE(it == bytes.begin() + 4);
         REQUIRE(x == 0x12345678);
     }
 }

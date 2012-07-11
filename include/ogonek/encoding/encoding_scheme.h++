@@ -17,12 +17,15 @@
 #include "../byte_order.h++"
 #include "../types.h++"
 
+#include <boost/iterator/iterator_facade.hpp>
+#include <boost/range/iterator.hpp>
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 #include <boost/range/empty.hpp>
 
 #include <cstdint>
+#include <iterator>
 #include <type_traits>
 
 namespace ogonek {
@@ -39,7 +42,56 @@ namespace ogonek {
         struct uint<T, 8> { using type = std::uint64_t; };
         template <typename T>
         using Uint = typename uint<T>::type;
+
+        template <typename ByteOrder, typename Integer, typename Iterator>
+        struct byte_ordered_iterator
+        : boost::iterator_facade<
+            byte_ordered_iterator<ByteOrder, Integer, Iterator>,
+            Integer,
+            typename std::iterator_traits<Iterator>::iterator_category,
+            Integer> {
+        public:
+            byte_ordered_iterator(Iterator it) : it(it) {
+                increment();
+            }
+            Integer dereference() const {
+                return i;
+            }
+            bool equal(byte_ordered_iterator const& that) const {
+                return it == that.it;
+            }
+            void increment() {
+                it = ByteOrder::unmap(it, i);
+            }
+            void decrement() {
+                std::advance(it, -sizeof(Integer)-1);
+                increment();
+            }
+            void advance(std::ptrdiff_t n) {
+                std::advance(it, sizeof(Integer)*(n-1));
+                increment();
+            }
+            std::ptrdiff_t distance_to(byte_ordered_iterator const& that) const {
+                return (that.it - it) / sizeof(Integer);
+            }
+
+        private:
+            Iterator it;
+            Integer i;
+        };
+
+        template <typename ByteOrder, typename Integer, typename SinglePassRange>
+        using byte_ordered_range = boost::sub_range<boost::iterator_range<
+                                       byte_ordered_iterator<
+                                           ByteOrder,
+                                           Integer,
+                                           typename boost::range_iterator<SinglePassRange>::type>>>;
+        template <typename Integer, typename SinglePassRange>
+        using big_endian_range = byte_ordered_range<big_endian, Integer, SinglePassRange>;
+        template <typename Integer, typename SinglePassRange>
+        using little_endian_range = byte_ordered_range<little_endian, Integer, SinglePassRange>;
     } // namespace encoding_scheme_detail
+
     template <typename EncodingForm, typename ByteOrder>
     struct encoding_scheme {
         static constexpr bool is_fixed_width = EncodingForm::is_fixed_width;
@@ -86,6 +138,7 @@ namespace ogonek {
             state s {};
             return decode_one(r, out, s);
         }
+
         template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s) {
             //auto first = boost::begin(r);

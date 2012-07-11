@@ -11,11 +11,11 @@
 
 // Models of the ByteOrder concept
 
+#include "types.h++"
+
 #include <cstdint>
 #include <array>
 #include <type_traits>
-
-#include "types.h++"
 
 namespace ogonek {
     struct big_endian {
@@ -42,10 +42,12 @@ namespace ogonek {
         struct reader;
 
     public:
-        template <int N, typename InputIterator>
-        static typename reader<N>::type unmap(InputIterator it) {
-            static_assert(N == 2 || N == 4, "Unmapped type must be have 2 or 4 bytes");
-            return reader<N>::read(it);
+        template <typename InputIterator, typename Integer>
+        static InputIterator unmap(InputIterator it, Integer& out) {
+            static_assert(std::is_integral<Integer>::value, "Unmapped type must be integral");
+            static_assert(sizeof(Integer) == 2 || sizeof(Integer) == 4, "Unmapped type must be have 2 or 4 bytes");
+            out = reader<sizeof(Integer)>::read(it);
+            return it;
         }
     };
 
@@ -53,7 +55,7 @@ namespace ogonek {
     struct big_endian::reader<2> {
         using type = std::uint16_t;
         template <typename InputIterator>
-        static type read(InputIterator it) {
+        static type read(InputIterator& it) {
             type b0 = *it++;
             type b1 = *it++;
             return (b0 << 8) | b1;
@@ -63,7 +65,7 @@ namespace ogonek {
     struct big_endian::reader<4> {
         using type = std::uint32_t;
         template <typename InputIterator>
-        static type read(InputIterator it) {
+        static type read(InputIterator& it) {
             type b0 = *it++;
             type b1 = *it++;
             type b2 = *it++;
@@ -96,10 +98,12 @@ namespace ogonek {
         struct reader;
 
     public:
-        template <int N, typename InputIterator>
-        static typename reader<N>::type unmap(InputIterator it) {
-            static_assert(N == 2 || N == 4, "Unmapped type must be have 2 or 4 bytes");
-            return reader<N>::read(it);
+        template <typename InputIterator, typename Integer>
+        static InputIterator unmap(InputIterator it, Integer& out) {
+            static_assert(std::is_integral<Integer>::value, "Unmapped type must be integral");
+            static_assert(sizeof(Integer) == 2 || sizeof(Integer) == 4, "Unmapped type must be have 2 or 4 bytes");
+            out = reader<sizeof(Integer)>::read(it);
+            return it;
         }
     };
 
@@ -107,7 +111,7 @@ namespace ogonek {
     struct little_endian::reader<2> {
         using type = std::uint16_t;
         template <typename InputIterator>
-        static type read(InputIterator it) {
+        static type read(InputIterator& it) {
             type b0 = *it++;
             type b1 = *it++;
             return (b1 << 8) | b0;
@@ -117,7 +121,7 @@ namespace ogonek {
     struct little_endian::reader<4> {
         using type = std::uint32_t;
         template <typename InputIterator>
-        static type read(InputIterator it) {
+        static type read(InputIterator& it) {
             type b0 = *it++;
             type b1 = *it++;
             type b2 = *it++;
