@@ -19,6 +19,9 @@
 #include "encoding_scheme.h++"
 
 #include <boost/range/sub_range.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/range/empty.hpp>
 
 namespace ogonek {
     namespace utf7_detail {
@@ -59,6 +62,7 @@ namespace ogonek {
 
             std::uint16_t state = 0;
             int state_bits = 0;
+            // TODO: fix weird legacy interface
             template <typename OutputIterator>
             void encode_one(codepoint u, OutputIterator& out) {
                 using namespace ogonek::literal;
@@ -133,9 +137,9 @@ namespace ogonek {
                     auto trail = get_unit(c, first, last);
                     auto units = { byte((lead & 0xFF00) >> 8), byte(lead & 0xFF),
                                    byte((trail & 0xFF00) >> 8), byte(trail & 0xFF) };
-                    utf16be codec;
-                    auto it = units.begin();
-                    return codec.decode_one(it, units.end());
+                    codepoint result;
+                    utf16be::decode_one(units, result);
+                    return result;
                 } else {
                     return lead;
                 }
@@ -144,36 +148,36 @@ namespace ogonek {
 
         template <typename SinglePassRange, typename OutputIterator>
         static OutputIterator encode(SinglePassRange const& r, OutputIterator out) {
+            state s {};
             for(auto u : r) {
-                *out++ = u;
+                out = encode_one(u, out, s);
             }
             return out;
         }
         template <typename SinglePassRange, typename OutputIterator>
         static OutputIterator decode(SinglePassRange const& r, OutputIterator out) {
-            for(auto c : r) {
-                *out++ = c;
+            state s {};
+            auto first = boost::begin(r);
+            auto last = boost::end(r);
+            while(first != last) {
+                auto u = s.decode_one(first, last);
+                if(u == -1u) continue;
+                *out++ = u;
             }
             return out;
         }
 
         template <typename OutputIterator>
-        static OutputIterator encode_one(codepoint u, OutputIterator out) {
-            *out++ = u;
+        static OutputIterator encode_one(codepoint u, OutputIterator out, state& s) {
+            s.encode_one(u, out);
             return out;
         }
-        template <typename OutputIterator>
-        static OutputIterator encode_one(codepoint u, OutputIterator out, state&) { return encode_one(u, out); }
 
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out) {
-            auto first = r.begin();
-            out = *first++;
-            return { first, r.end() };
-        }
-        template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&) {
-            return decode_one(r, out);
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s) {
+            auto it = boost::begin(r);
+            out = s.decode_one(it, boost::end(r));
+            return it;
         }
     };
 } // namespace ogonek
