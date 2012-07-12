@@ -42,7 +42,7 @@ TEST_CASE("utf16le", "UTF-16LE codec") {
                          0x1E_b, 0x3D_b, 0xD8_b, 0xA9_b, 0xDC_b };
         std::vector<ogonek::codepoint> decoded;
         ogonek::utf16le::decode(encoded, std::back_inserter(decoded));
-        REQUIRE(decoded.size() == 4);
+        CHECK(decoded.size() == 4);
         CHECK(decoded[0] == 0x0041_u);
         CHECK(decoded[1] == 0x00C5_u);
         CHECK(decoded[2] == 0x1EA0_u);
