@@ -109,7 +109,7 @@ TEST_CASE("utf7", "UTF-7 codec") {
         auto decoded = { 0xA3_u, 0x2020_u, 0x31_u, 0x34_u, 0x66_u, 0x1E99_u };
         std::vector<ogonek::byte> encoded;
         ogonek::utf7::encode(decoded, std::back_inserter(encoded));
-        REQUIRE(encoded.size() == 16);
+        CHECK(encoded.size() == 16);
         CHECK(encoded[0] == 0x2B_b);
         CHECK(encoded[1] == 0x41_b);
         CHECK(encoded[2] == 0x4B_b);

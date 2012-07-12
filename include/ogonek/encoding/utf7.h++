@@ -148,10 +148,13 @@ namespace ogonek {
 
         template <typename SinglePassRange, typename OutputIterator>
         static OutputIterator encode(SinglePassRange const& r, OutputIterator out) {
+            using namespace ogonek::literal;
             state s {};
             for(auto u : r) {
-                out = encode_one(u, out, s);
+                s.encode_one(u, out);
             }
+            s.flush(out);
+            if(s.in_unicode) *out++ = '-'_u;
             return out;
         }
         template <typename SinglePassRange, typename OutputIterator>
