@@ -79,7 +79,7 @@ namespace ogonek {
     template <typename EncodingForm, typename ByteOrder>
     struct encoding_scheme {
         static constexpr bool is_fixed_width = EncodingForm::is_fixed_width;
-        static constexpr std::size_t max_width = EncodingForm::max_width * sizeof(EncodingForm::code_unit);
+        static constexpr std::size_t max_width = EncodingForm::max_width * sizeof(typename EncodingForm::code_unit);
         using state = typename EncodingForm::state;
 
         template <typename SinglePassRange, typename OutputIterator>
