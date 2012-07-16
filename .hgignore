@@ -6,7 +6,7 @@ obj/
 test-results.xml
 *~
 dist/
-
+*.g.*
 Wheels.config
 Wheels.creator
 Wheels.creator.user

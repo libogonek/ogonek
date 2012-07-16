@@ -20,7 +20,7 @@ env.Append(LIBS = [])
 
 if env['toolchain'] == 'clang':
     env.Append(LIBS = [ 'c++', 'supc++' ])
-    env.MergeFlags(['-fcatch-undefined-behavior', '-stdlib=libc++'])
+    env.MergeFlags(['-stdlib=libc++'])
 
 if env['toolchain'] == 'clang':
     env.Replace(CXX = 'clang++')
@@ -45,6 +45,9 @@ release_libs = []
 debug = env.Clone()
 debug.MergeFlags(debug_flags)
 debug.Append(LIBS = debug_libs)
+if env['toolchain'] == 'clang':
+    env.MergeFlags(['-fcatch-undefined-behavior'])
+
 
 release = env.Clone()
 release.MergeFlags(release_flags)
@@ -81,11 +84,11 @@ else:
     test_target = 'bin/test/runtest'
 
 debug.VariantDir(debug_builddir, '.', duplicate=0)
-debug_lib = debug.SharedLibrary(debug_target, prefix(debug_builddir, sources))
+debug_lib = debug.StaticLibrary(debug_target, prefix(debug_builddir, sources))
 debug.Alias('debug', debug_lib)
 
 release.VariantDir(release_builddir, '.', duplicate=0)
-release_lib = release.SharedLibrary(release_target, prefix(release_builddir, sources))
+release_lib = release.StaticLibrary(release_target, prefix(release_builddir, sources))
 release.Alias('release', release_lib)
 
 test.VariantDir(test_builddir, '.', duplicate=0)
@@ -95,7 +98,10 @@ test.AlwaysBuild(test_alias)
 
 ci_alias = test.Alias('ci', [test_program], test_target + ' -s -o test-results.txt')
 
-z = Zip('dist/ogonek.zip', ['README.md', 'COPYING.txt'] + Glob('include/ogonek/*.h++') + Glob('include/ogonek/*/*.h++'))
+z = Zip('dist/ogonek.zip', ['README.md', 'COPYING.txt']
+                           + Glob('include/ogonek/*.h++') + Glob('include/ogonek/*/*.h++')
+                           + Glob('src/*.c++')
+                           + Glob('src/ucd/*.g.inl'))
 zip_alias = Alias('zip', z)
 
 Default('test')

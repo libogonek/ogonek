@@ -147,19 +147,6 @@ bytes, and `uo` is an `OutputIterator` of `codepoints`.
 
 Table: Requirements for `EncodingScheme`
 
-## `codepoint_iterator`
-
-An iterator adaptor that decodes a sequence of code units. It's a template with
-two parameters: encoding form and underlying iterator over code units.
-
-These are at least forward iterators, but depending on the underlying encoding
-and iterator can have more capabilities:
-
-- if the encoding is self synchronizing, the iterator is bidirectional if
-  the underlying iterator is bidirectional;
-- if the encoding has fixed width, the iterators are random-access if the
-  underlying iterators are random-access.
-
 ## `Locale`
 
 Ouch.
