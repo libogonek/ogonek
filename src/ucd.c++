@@ -21,6 +21,7 @@
 #include <iterator>
 #include <limits>
 #include <string>
+#include <vector>
 
 namespace ogonek {
     namespace ucd {
@@ -114,7 +115,9 @@ namespace ogonek {
             return find_property_group(bidi_data, bidi_data_size, u).mirrored;
         }
         codepoint get_bidi_mirrored_glyph(codepoint u) {
-            return find_property_group(bidi_data, bidi_data_size, u).mirrored_glyph;
+            auto glyph = find_property_group(bidi_data, bidi_data_size, u).mirrored_glyph;
+            if(glyph == static_cast<char32_t>(-1)) return u;
+            else return glyph;
         }
         bool is_bidi_control(codepoint u) {
             return find_property_group(bidi_data, bidi_data_size, u).control;
@@ -122,14 +125,13 @@ namespace ogonek {
         decomposition_type get_decomposition_type(codepoint u) {
             return find_property_group(decomposition_data, decomposition_data_size, u).type;
         }
-        detail::array_slice<codepoint const> get_decomposition_mapping(codepoint u) {
-            auto mapping = find_property_group(decomposition_data, decomposition_data_size, u).mapping;
-            return { mapping, mapping + std::char_traits<codepoint>::length(mapping) };
+        std::vector<codepoint> get_decomposition_mapping(codepoint u) {
+            auto group = find_property_group(decomposition_data, decomposition_data_size, u);
+            auto mapping = group.mapping;
+            if(mapping) return std::vector<codepoint>(mapping, mapping + std::char_traits<codepoint>::length(mapping));
+            else return std::vector<codepoint>(1, u);
         }
-        bool get_composition_exclusion(codepoint u) {
-            return find_property_group(decomposition_data, decomposition_data_size, u).composition_exclusion;
-        }
-        bool get_full_composition_exclusion(codepoint u) {
+        bool is_excluded_from_composition(codepoint u) {
             return find_property_group(decomposition_data, decomposition_data_size, u).full_composition_exclusion;
         }
         boost::tribool is_nfc_quick_check(codepoint u) {
@@ -144,18 +146,23 @@ namespace ogonek {
         bool is_nfkd_quick_check(codepoint u) {
             return find_property_group(decomposition_data, decomposition_data_size, u).nfkd_quick_check;
         }
+        //[[deprecated("since 6.0")]]
         bool expands_on_nfc(codepoint u) {
             return find_property_group(decomposition_data, decomposition_data_size, u).expands_on_nfc;
         }
+        //[[deprecated("since 6.0")]]
         bool expands_on_nfd(codepoint u) {
             return find_property_group(decomposition_data, decomposition_data_size, u).expands_on_nfd;
         }
+        //[[deprecated("since 6.0")]]
         bool expands_on_nfkc(codepoint u) {
             return find_property_group(decomposition_data, decomposition_data_size, u).expands_on_nfkc;
         }
+        //[[deprecated("since 6.0")]]
         bool expands_on_nfkd(codepoint u) {
             return find_property_group(decomposition_data, decomposition_data_size, u).expands_on_nfkd;
         }
+        //[[deprecated("since 6.0")]]
         detail::array_slice<codepoint const> get_fc_nfkc_closure(codepoint u) {
             auto closure = find_property_group(decomposition_data, decomposition_data_size, u).fc_nfkc_closure;
             return { closure, closure + std::char_traits<codepoint>::length(closure) };
@@ -260,7 +267,7 @@ namespace ogonek {
         hangul_syllable_type get_hangul_syllable_type(codepoint u) {
             return find_property_group(hangul_data, hangul_data_size, u).syllable_type;
         }
-        // // text get_jamo_short_name(codepoint u) {
+        // text get_jamo_short_name(codepoint u) {
         indic_syllable_category get_indic_syllable_category(codepoint u) {
             return find_property_group(indic_data, indic_data_size, u).syllable_category;
         }

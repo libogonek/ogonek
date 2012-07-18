@@ -245,9 +245,8 @@ namespace ogonek {
         codepoint get_bidi_mirrored_glyph(codepoint u);
         bool is_bidi_control(codepoint u);
         decomposition_type get_decomposition_type(codepoint u);
-        detail::array_slice<codepoint const> get_decomposition_mapping(codepoint u);
-        bool get_composition_exclusion(codepoint u);
-        bool get_full_composition_exclusion(codepoint u);
+        std::vector<codepoint> get_decomposition_mapping(codepoint u);
+        bool is_excluded_from_composition(codepoint u);
         boost::tribool is_nfc_quick_check(codepoint u);
         bool is_nfd_quick_check(codepoint u);
         boost::tribool is_nfkc_quick_check(codepoint u);
