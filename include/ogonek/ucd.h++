@@ -15,6 +15,9 @@
 #define OGONEK_UCD_HPP
 
 #include "types.h++"
+#include "detail/array_slice.h++"
+
+#include <boost/logic/tribool.hpp>
 
 namespace ogonek {
     namespace ucd {
@@ -236,6 +239,100 @@ namespace ogonek {
         //std::get_vector<text> aliases(codepoint u);
         block get_block(codepoint u);
         category get_general_category(codepoint u);
+        int get_combining_class(codepoint u);
+        bidi_category get_bidi_category(codepoint u);
+        bool is_bidi_mirrored(codepoint u);
+        codepoint get_bidi_mirrored_glyph(codepoint u);
+        bool is_bidi_control(codepoint u);
+        decomposition_type get_decomposition_type(codepoint u);
+        detail::array_slice<codepoint const> get_decomposition_mapping(codepoint u);
+        bool get_composition_exclusion(codepoint u);
+        bool get_full_composition_exclusion(codepoint u);
+        boost::tribool is_nfc_quick_check(codepoint u);
+        bool is_nfd_quick_check(codepoint u);
+        boost::tribool is_nfkc_quick_check(codepoint u);
+        bool is_nfkd_quick_check(codepoint u);
+        bool expands_on_nfc(codepoint u);
+        bool expands_on_nfd(codepoint u);
+        bool expands_on_nfkc(codepoint u);
+        bool expands_on_nfkd(codepoint u);
+        detail::array_slice<codepoint const> get_fc_nfkc_closure(codepoint u);
+        numeric_type get_numeric_type(codepoint u);
+        double get_numeric_value(codepoint u);
+        joining_class get_joining_class(codepoint u);
+        joining_group get_joining_group(codepoint u);
+        bool is_join_control(codepoint u);
+        linebreak get_linebreak_type(codepoint u);
+        east_asian_width get_east_asian_width_type(codepoint u);
+        bool is_uppercase(codepoint u);
+        bool is_lowercase(codepoint u);
+        bool is_other_uppercase(codepoint u);
+        bool is_other_lowercase(codepoint u);
+        codepoint get_simple_uppercase(codepoint u);
+        codepoint get_simple_lowercase(codepoint u);
+        codepoint get_simple_titlecase(codepoint u);
+        detail::array_slice<codepoint const> get_uppercase(codepoint u);
+        detail::array_slice<codepoint const> get_lowercase(codepoint u);
+        detail::array_slice<codepoint const> get_titlecase(codepoint u);
+        codepoint get_simple_case_folding(codepoint u);
+        detail::array_slice<codepoint const> get_case_folding(codepoint u);
+        bool is_case_ignorable(codepoint u);
+        bool is_cased(codepoint u);
+        bool changes_when_casefolded(codepoint u);
+        bool changes_when_casemapped(codepoint u);
+        bool changes_when_lowercased(codepoint u);
+        bool changes_when_nfkc_casefolded(codepoint u);
+        bool changes_when_titlecased(codepoint u);
+        bool changes_when_uppercased(codepoint u);
+        detail::array_slice<codepoint const> get_nfkc_casefold(codepoint u);
+        script get_script(codepoint u);
+        detail::array_slice<script const> get_script_extension(codepoint u);
+        // text get_iso_comment(codepoint u);
+        hangul_syllable_type get_hangul_syllable_type(codepoint u);
+        // text get_jamo_short_name(codepoint u);
+        indic_syllable_category get_indic_syllable_category(codepoint u);
+        indic_matra_category get_indic_matra_category(codepoint u);
+        bool is_id_start(codepoint u);
+        bool is_other_id_start(codepoint u);
+        bool is_xid_start(codepoint u);
+        bool is_id_continue(codepoint u);
+        bool is_other_id_continue(codepoint u);
+        bool is_xid_continue(codepoint u);
+        bool is_pattern_syntax(codepoint u);
+        bool is_pattern_white_space(codepoint u);
+        bool is_dash(codepoint u);
+        bool is_hyphen(codepoint u);
+        bool is_quotation_mark(codepoint u);
+        bool is_terminal_punctuation(codepoint u);
+        bool is_sentence_terminal(codepoint u);
+        bool is_diacritic(codepoint u);
+        bool is_extender(codepoint u);
+        bool is_soft_dotted(codepoint u);
+        bool is_alphabetic(codepoint u);
+        bool is_other_alphabetic(codepoint u);
+        bool is_math(codepoint u);
+        bool is_other_math(codepoint u);
+        bool is_hex_digit(codepoint u);
+        bool is_ascii_hex_digit(codepoint u);
+        bool is_default_ignorable(codepoint u);
+        bool is_other_default_ignorable(codepoint u);
+        bool is_logical_order_exception(codepoint u);
+        bool is_white_space(codepoint u);
+        bool is_grapheme_base(codepoint u);
+        bool is_grapheme_extend(codepoint u);
+        bool is_other_grapheme_extend(codepoint u);
+        bool is_grapheme_link(codepoint u);
+        grapheme_cluster_break get_grapheme_cluster_break(codepoint u);
+        word_break get_word_break(codepoint u);
+        sentence_break get_sentence_break(codepoint u);
+        bool is_ideographic(codepoint u);
+        bool is_unified_ideograph(codepoint u);
+        bool is_ids_binary_operator(codepoint u);
+        bool is_ids_trinary_operator(codepoint u);
+        bool is_radical(codepoint u);
+        bool is_deprecated(codepoint u);
+        bool is_variant_selector(codepoint u);
+        bool is_noncharacter(codepoint u);
     } //namespace ucd
 } // namespace ogonek
 
