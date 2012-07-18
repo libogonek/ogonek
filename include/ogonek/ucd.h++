@@ -19,6 +19,8 @@
 
 #include <boost/logic/tribool.hpp>
 
+#include <vector>
+
 namespace ogonek {
     namespace ucd {
         enum class version {
