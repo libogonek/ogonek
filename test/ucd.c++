@@ -148,5 +148,62 @@ TEST_CASE("query", "UCD property queries") {
         CHECK(ucd::get_joining_group(U'\x064B') == ucd::joining_group::No_Joining_Group);
         CHECK(ucd::get_joining_group(U'\x066E') == ucd::joining_group::Beh);
     }
+    SECTION("join_control", "Querying join control") {
+        CHECK(ucd::is_join_control(U'\x0041') == false);
+        CHECK(ucd::is_join_control(U'\x200C') == true);
+        CHECK(ucd::is_join_control(U'\x200D') == true);
+        CHECK(ucd::is_join_control(U'\x1F4A9') == false);
+    }
+    SECTION("linebreak", "Querying linebreak") {
+        CHECK(ucd::get_linebreak_type(U'\x000A') == ucd::linebreak::LF);
+        CHECK(ucd::get_linebreak_type(U'\x000D') == ucd::linebreak::CR);
+        CHECK(ucd::get_linebreak_type(U'\x0041') == ucd::linebreak::AL);
+        CHECK(ucd::get_linebreak_type(U'\x2028') == ucd::linebreak::BK);
+    }
+    SECTION("east_asian_width", "Querying East Asian width") {
+        CHECK(ucd::get_linebreak_type(U'\x000A') == ucd::linebreak::LF);
+        CHECK(ucd::get_linebreak_type(U'\x000D') == ucd::linebreak::CR);
+        CHECK(ucd::get_linebreak_type(U'\x0041') == ucd::linebreak::AL);
+        CHECK(ucd::get_linebreak_type(U'\x2028') == ucd::linebreak::BK);
+    }
+    SECTION("is_uppercase", "Querying uppercase") {
+        CHECK(ucd::is_uppercase(U'\x0041') == true);
+        CHECK(ucd::is_uppercase(U'\x0061') == false);
+        CHECK(ucd::is_uppercase(U'\x1EA0') == true);
+        CHECK(ucd::is_uppercase(U'\x1F4A9') == false);
+    }
+    SECTION("is_lowercase", "Querying lowercase") {
+        CHECK(ucd::is_lowercase(U'\x0041') == false);
+        CHECK(ucd::is_lowercase(U'\x0061') == true);
+        CHECK(ucd::is_lowercase(U'\x1EA0') == false);
+        CHECK(ucd::is_lowercase(U'\x1F4A9') == false);
+    }
+    SECTION("simple_uppercase", "Querying simple uppercase") {
+        CHECK(ucd::get_simple_uppercase(U'\x0041') == U'\x0041');
+        CHECK(ucd::get_simple_uppercase(U'\x00C5') == U'\x00C5');
+        CHECK(ucd::get_simple_uppercase(U'\x1EA0') == U'\x1EA0');
+        CHECK(ucd::get_simple_uppercase(U'\x0061') == U'\x0041');
+        CHECK(ucd::get_simple_uppercase(U'\x00E5') == U'\x00C5');
+        CHECK(ucd::get_simple_uppercase(U'\x1EA1') == U'\x1EA0');
+        CHECK(ucd::get_simple_uppercase(U'\x1F4A9') == U'\x1F4A9');
+    }
+    SECTION("simple_lowercase", "Querying simple lowercase") {
+        CHECK(ucd::get_simple_lowercase(U'\x0061') == U'\x0061');
+        CHECK(ucd::get_simple_lowercase(U'\x00E5') == U'\x00E5');
+        CHECK(ucd::get_simple_lowercase(U'\x1EA1') == U'\x1EA1');
+        CHECK(ucd::get_simple_lowercase(U'\x0041') == U'\x0061');
+        CHECK(ucd::get_simple_lowercase(U'\x00C5') == U'\x00E5');
+        CHECK(ucd::get_simple_lowercase(U'\x1EA0') == U'\x1EA1');
+        CHECK(ucd::get_simple_lowercase(U'\x1F4A9') == U'\x1F4A9');
+    }
+    SECTION("simple_titlecase", "Querying simple titlecase") {
+        CHECK(ucd::get_simple_titlecase(U'\x0041') == U'\x0041');
+        CHECK(ucd::get_simple_titlecase(U'\x0061') == U'\x0041');
+        CHECK(ucd::get_simple_titlecase(U'\x00C5') == U'\x00C5');
+        CHECK(ucd::get_simple_titlecase(U'\x00E5') == U'\x00C5');
+        CHECK(ucd::get_simple_titlecase(U'\x1EA0') == U'\x1EA0');
+        CHECK(ucd::get_simple_titlecase(U'\x1EA1') == U'\x1EA0');
+        CHECK(ucd::get_simple_titlecase(U'\x1F4A9') == U'\x1F4A9');
+    }
 }
 

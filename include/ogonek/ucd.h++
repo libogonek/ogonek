@@ -267,8 +267,6 @@ namespace ogonek {
         east_asian_width get_east_asian_width_type(codepoint u);
         bool is_uppercase(codepoint u);
         bool is_lowercase(codepoint u);
-        bool is_other_uppercase(codepoint u);
-        bool is_other_lowercase(codepoint u);
         codepoint get_simple_uppercase(codepoint u);
         codepoint get_simple_lowercase(codepoint u);
         codepoint get_simple_titlecase(codepoint u);

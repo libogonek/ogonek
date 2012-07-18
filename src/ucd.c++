@@ -194,20 +194,20 @@ namespace ogonek {
         bool is_lowercase(codepoint u) {
             return find_property_group(case_data, case_data_size, u).is_lowercase;
         }
-        bool is_other_uppercase(codepoint u) {
-            return find_property_group(case_data, case_data_size, u).other_uppercase;
-        }
-        bool is_other_lowercase(codepoint u) {
-            return find_property_group(case_data, case_data_size, u).other_lowercase;
-        }
         codepoint get_simple_uppercase(codepoint u) {
-            return find_property_group(case_data, case_data_size, u).simple_uppercase;
+            auto result = find_property_group(case_data, case_data_size, u).simple_uppercase;
+            if(result == codepoint(-1)) return u;
+            return result;
         }
         codepoint get_simple_lowercase(codepoint u) {
-            return find_property_group(case_data, case_data_size, u).simple_lowercase;
+            auto result = find_property_group(case_data, case_data_size, u).simple_lowercase;
+            if(result == codepoint(-1)) return u;
+            return result;
         }
         codepoint get_simple_titlecase(codepoint u) {
-            return find_property_group(case_data, case_data_size, u).simple_titlecase;
+            auto result = find_property_group(case_data, case_data_size, u).simple_titlecase;
+            if(result == codepoint(-1)) return u;
+            return result;
         }
         detail::array_slice<codepoint const> get_uppercase(codepoint u) {
             auto result = find_property_group(case_data, case_data_size, u).uppercase;
