@@ -220,9 +220,19 @@ namespace ogonek {
             Invisible,
             NA,
         };
-        enum class grapheme_cluster_break {
-            CN, CR, EX, L, LF, LV, LVT, PP,
-            SM, T, V, XX,
+        enum class grapheme_cluster_break : unsigned {
+            CN  = 1 << 0,
+            CR  = 1 << 1,
+            EX  = 1 << 2,
+            L   = 1 << 3,
+            LF  = 1 << 4,
+            LV  = 1 << 5,
+            LVT = 1 << 6,
+            PP  = 1 << 7,
+            SM  = 1 << 8,
+            T   = 1 << 9,
+            V   = 1 << 10,
+            XX  = 1 << 11,
         };
         enum class word_break {
             CR, EX, Extend, FO, KA, LE,
@@ -270,11 +280,11 @@ namespace ogonek {
         codepoint get_simple_uppercase(codepoint u);
         codepoint get_simple_lowercase(codepoint u);
         codepoint get_simple_titlecase(codepoint u);
-        detail::array_slice<codepoint const> get_uppercase(codepoint u);
-        detail::array_slice<codepoint const> get_lowercase(codepoint u);
-        detail::array_slice<codepoint const> get_titlecase(codepoint u);
+        std::vector<codepoint> get_uppercase(codepoint u);
+        std::vector<codepoint> get_lowercase(codepoint u);
+        std::vector<codepoint> get_titlecase(codepoint u);
         codepoint get_simple_case_folding(codepoint u);
-        detail::array_slice<codepoint const> get_case_folding(codepoint u);
+        std::vector<codepoint> get_case_folding(codepoint u);
         bool is_case_ignorable(codepoint u);
         bool is_cased(codepoint u);
         bool changes_when_casefolded(codepoint u);
@@ -283,7 +293,7 @@ namespace ogonek {
         bool changes_when_nfkc_casefolded(codepoint u);
         bool changes_when_titlecased(codepoint u);
         bool changes_when_uppercased(codepoint u);
-        detail::array_slice<codepoint const> get_nfkc_casefold(codepoint u);
+        std::vector<codepoint> get_nfkc_casefold(codepoint u);
         script get_script(codepoint u);
         detail::array_slice<script const> get_script_extension(codepoint u);
         // text get_iso_comment(codepoint u);

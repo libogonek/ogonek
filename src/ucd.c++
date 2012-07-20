@@ -116,7 +116,7 @@ namespace ogonek {
         }
         codepoint get_bidi_mirrored_glyph(codepoint u) {
             auto glyph = find_property_group(bidi_data, bidi_data_size, u).mirrored_glyph;
-            if(glyph == static_cast<char32_t>(-1)) return u;
+            if(glyph == codepoint(-1)) return u;
             else return glyph;
         }
         bool is_bidi_control(codepoint u) {
@@ -126,8 +126,7 @@ namespace ogonek {
             return find_property_group(decomposition_data, decomposition_data_size, u).type;
         }
         std::vector<codepoint> get_decomposition_mapping(codepoint u) {
-            auto group = find_property_group(decomposition_data, decomposition_data_size, u);
-            auto mapping = group.mapping;
+            auto mapping = find_property_group(decomposition_data, decomposition_data_size, u).mapping;
             if(mapping) return std::vector<codepoint>(mapping, mapping + std::char_traits<codepoint>::length(mapping));
             else return std::vector<codepoint>(1, u);
         }
@@ -209,24 +208,30 @@ namespace ogonek {
             if(result == codepoint(-1)) return u;
             return result;
         }
-        detail::array_slice<codepoint const> get_uppercase(codepoint u) {
-            auto result = find_property_group(case_data, case_data_size, u).uppercase;
-            return { result, result + std::char_traits<codepoint>::length(result) };
+        std::vector<codepoint> get_uppercase(codepoint u) {
+            auto uc = find_property_group(case_data, case_data_size, u).uppercase;
+            if(uc) return std::vector<codepoint>(uc, uc + std::char_traits<codepoint>::length(uc));
+            else return std::vector<codepoint>(1, u);
         }
-        detail::array_slice<codepoint const> get_lowercase(codepoint u) {
-            auto result = find_property_group(case_data, case_data_size, u).lowercase;
-            return { result, result + std::char_traits<codepoint>::length(result) };
+        std::vector<codepoint> get_lowercase(codepoint u) {
+            auto lc = find_property_group(case_data, case_data_size, u).lowercase;
+            if(lc) return std::vector<codepoint>(lc, lc + std::char_traits<codepoint>::length(lc));
+            else return std::vector<codepoint>(1, u);
         }
-        detail::array_slice<codepoint const> get_titlecase(codepoint u) {
-            auto result = find_property_group(case_data, case_data_size, u).titlecase;
-            return { result, result + std::char_traits<codepoint>::length(result) };
+        std::vector<codepoint> get_titlecase(codepoint u) {
+            auto tc = find_property_group(case_data, case_data_size, u).titlecase;
+            if(tc) return std::vector<codepoint>(tc, tc + std::char_traits<codepoint>::length(tc));
+            else return std::vector<codepoint>(1, u);
         }
         codepoint get_simple_case_folding(codepoint u) {
-            return find_property_group(case_data, case_data_size, u).simple_case_folding;
+            auto result = find_property_group(case_data, case_data_size, u).simple_case_folding;
+            if(result == codepoint(-1)) return u;
+            return result;
         }
-        detail::array_slice<codepoint const> get_case_folding(codepoint u) {
-            auto result = find_property_group(case_data, case_data_size, u).case_folding;
-            return { result, result + std::char_traits<codepoint>::length(result) };
+        std::vector<codepoint> get_case_folding(codepoint u) {
+            auto cf = find_property_group(case_data, case_data_size, u).case_folding;
+            if(cf) return std::vector<codepoint>(cf, cf + std::char_traits<codepoint>::length(cf));
+            else return std::vector<codepoint>(1, u);
         }
         bool is_case_ignorable(codepoint u) {
             return find_property_group(case_data, case_data_size, u).case_ignorable;
@@ -252,9 +257,10 @@ namespace ogonek {
         bool changes_when_uppercased(codepoint u) {
             return find_property_group(case_data, case_data_size, u).changes_when_uppercased;
         }
-        detail::array_slice<codepoint const> get_nfkc_casefold(codepoint u) {
-            auto result = find_property_group(case_data, case_data_size, u).nfkc_casefold;
-            return { result, result + std::char_traits<codepoint>::length(result) };
+        std::vector<codepoint> get_nfkc_casefold(codepoint u) {
+            auto cf = find_property_group(case_data, case_data_size, u).nfkc_casefold;
+            if(cf) return std::vector<codepoint>(cf, cf + std::char_traits<codepoint>::length(cf));
+            else return std::vector<codepoint>(1, u);
         }
         script get_script(codepoint u) {
             return find_property_group(script_data, script_data_size, u).script;
