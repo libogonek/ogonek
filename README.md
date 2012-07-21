@@ -18,11 +18,11 @@ And a list of what's planned for the near future:
    units", as it's what a `string` class often turns out to be. These are not.
    These represent text, regardless of encoding and regardless of container type.
 
-   - a class template with template parameters for the underlying encoding and container;
+    * a class template with template parameters for the underlying encoding and container;
 
-   - an alias template of that class template with utf8 on Linux and utf16 on Windows.
+    * an alias template of that class template with utf8 on Linux and utf16 on Windows.
 
-   - a class similar to the above template, but with the encoding type erased;
+    * a class similar to the above template, but with the encoding type erased;
 
  - normalization algorithms (UAX #15);
 
