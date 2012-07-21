@@ -105,10 +105,10 @@ namespace ogonek {
                 before = after;
             } while(true);
             return boost::iterator_range<Iterator> { begin, it };
-        };
+        }
         void increment() {
             first = dereference().end();
-        };
+        }
         bool equal(grapheme_cluster_iterator const& that) const {
             return first == that.first;
         }
