@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// Unicode character database data structures
+// Unicode text segmentation algorithms (UAX #29)
 
 #ifndef OGONEK_SEGMENTATION_HPP
 #define OGONEK_SEGMENTATION_HPP
@@ -17,6 +17,12 @@
 #include "types.h++"
 #include "ucd.h++"
 
+#include <boost/iterator/iterator_facade.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/range/sub_range.hpp>
+
+#include <algorithm>
+#include <functional>
 #include <type_traits>
 
 namespace ogonek {
@@ -27,12 +33,9 @@ namespace ogonek {
             bool is_break;
             gcb after;
 
-            bool matches(gcb before, gcb after) {
-                const gcb none = static_cast<gcb>(0);
-                return ucd::get_grapheme_cluster_break(before) & this->before != none
-                    && ucd::get_grapheme_cluster_break(after) & this->after != none;
-            }
+            bool matches(codepoint before, codepoint after) const;
         };
+        constexpr gcb any = static_cast<gcb>(0xFFFFFFFFu);
         constexpr gcb operator|(gcb l, gcb r) {
             using underlying = std::underlying_type<gcb>::type;
             return static_cast<gcb>(static_cast<underlying>(l) | static_cast<underlying>(r));
@@ -41,84 +44,82 @@ namespace ogonek {
             using underlying = std::underlying_type<gcb>::type;
             return static_cast<gcb>(static_cast<underlying>(l) & static_cast<underlying>(r));
         }
-        constexpr gcb any = static_cast<gcb>(0xFFFFFFFFu);
         constexpr grapheme_cluster_rule operator*(gcb l, gcb r) { return { l, false, r }; }
         constexpr grapheme_cluster_rule operator/(gcb l, gcb r) { return { l, true, r }; }
 
-        grapheme_cluster_rule grapheme_cluster_rules[] = {
+        constexpr grapheme_cluster_rule grapheme_cluster_rules[] = {
             // Break at the start and end of text.
-            // GB1. sot ÷
-            // GB2.     ÷ eot
-            // These are handled specially
-
+            // * Handled specially
             // Do not break between a CR and LF. Otherwise, break before and after controls.
-            gcb::CR * gcb::LF,                   // GB3.	CR	×	LF
-            (gcb::CN | gcb::CR | gcb::LF) / any, // GB4.	( Control | CR | LF )	÷	 
-            any / (gcb::CN | gcb::CR | gcb::LF)  // GB5.		÷	( Control | CR | LF )
-
+            /* GB3. */                       gcb::CR * gcb::LF,
+            /* GB4. */ (gcb::CN | gcb::CR | gcb::LF) / any,
+            /* GB5. */                           any / (gcb::CN | gcb::CR | gcb::LF),
             // Do not break Hangul syllable sequences.
-            gcb::L * (gcb::L | gcb::V | gcb::LV | gcb::LVT), // GB6.	L	×	( L | V | LV | LVT )
-            (gcb::LV | gcb::V) * (gcb::V | gcb::T),          // GB7.	( LV | V )	×	( V | T )
-            (gcb::LVT | gcb::T) * gcb::T,                    // GB8.	( LVT | T)	×	T
-
+            /* GB6. */                        gcb::L * (gcb::L | gcb::V | gcb::LV | gcb::LVT),
+            /* GB7. */            (gcb::LV | gcb::V) * (gcb::V | gcb::T),
+            /* GB8. */           (gcb::LVT | gcb::T) * gcb::T,
             // Do not break before extending characters.
-            any * gcb::XX, // GB9.	 	×	Extend
-
+            /* GB9. */                           any * gcb::EX,
             // Do not break before SpacingMarks, or after Prepend characters.
-            any * gcb::SM, // GB9a.	 	×	SpacingMark
-            gcb::PP * any, // GB9b.	Prepend	×	 
-
+            /* GB9a. */                          any * gcb::SM,
+            /* GB9b. */                      gcb::PP * any,
             // Otherwise, break everywhere.
-            any / any, // GB10.	Any	÷ Any
+            /* GB10. */                          any / any,
         };
-        rule const& find_applicable_rule(codepoint before, codepoint after) {
-            for(auto& rule : detail::grapheme_cluster_rules) {
-                if(rule.matches(before, after)) {
-                    return rule;
-                }
-            }
+        inline grapheme_cluster_rule const& find_applicable_rule(codepoint before, codepoint after) {
+            using namespace std::placeholders;
+            return *std::find_if(std::begin(detail::grapheme_cluster_rules), std::end(detail::grapheme_cluster_rules),
+                                 std::bind(&grapheme_cluster_rule::matches, _1, before, after));
+        }
+
+        inline bool grapheme_cluster_rule::matches(codepoint before, codepoint after) const {
+            const gcb none = static_cast<gcb>(0);
+            return (ucd::get_grapheme_cluster_break(before) & this->before) != none
+                && (ucd::get_grapheme_cluster_break(after) & this->after) != none;
         }
     } // namespace detail
 
     template <typename Iterator>
-    struct grapheme_cluster_iterator {
-        std::vector<codepoint> operator*() const {
-            std::vector<codepoint> result;
-            auto it = first;
-            auto before = *it;
-            do {
-                ++it;
-                auto after = *it;
-                if(find_applicable_rule(before, after).is_break) {
-                    break;
-                } else {
-                    result.push_back(before);
-                }
-                before = after;
-            } while(true);
-            return result;
-        };
-        grapheme_cluster_iterator& operator++() const {
+    struct grapheme_cluster_iterator
+    : boost::iterator_facade<
+        grapheme_cluster_iterator<Iterator>,
+        boost::iterator_range<Iterator>,
+        std::forward_iterator_tag,
+        boost::iterator_range<Iterator>>
+    {
+    public:
+        grapheme_cluster_iterator(Iterator first, Iterator last)
+        : first(first), last(last) {}
+
+    private:
+        friend class boost::iterator_core_access;
+        boost::iterator_range<Iterator> dereference() const {
+            auto begin = first;
             auto it = first;
             auto before = *it++;
             do {
                 auto after = *it;
-                if(find_applicable_rule(before, after).is_break) {
-                    break;
-                }
+                if(detail::find_applicable_rule(before, after).is_break) break;
                 ++it;
+                if(it == last) break;
                 before = after;
             } while(true);
-            first = it;
-            return *this;
+            return boost::iterator_range<Iterator> { begin, it };
         };
+        void increment() {
+            first = dereference().end();
+        };
+        bool equal(grapheme_cluster_iterator const& that) const {
+            return first == that.first;
+        }
 
         Iterator first;
         Iterator last;
     };
     template <typename SinglePassRange>
-    boost::sub_range<SinglePassRange> grapheme_clusters(SinglePassRange const& range) {
-        return { range.begin(), range.end() };
+    boost::iterator_range<grapheme_cluster_iterator<typename boost::range_const_iterator<SinglePassRange>::type>> grapheme_clusters(SinglePassRange const& range) {
+        using iterator = grapheme_cluster_iterator<typename boost::range_const_iterator<SinglePassRange>::type>;
+        return { iterator { range.begin(), range.end() }, iterator { range.end(), range.end() } };
     }
 } // namespace ogonek
 

@@ -18,7 +18,7 @@
 #include "../types.h++"
 
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/range/iterator.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
