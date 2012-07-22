@@ -23,6 +23,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <iterator>
 #include <type_traits>
 
 namespace ogonek {
@@ -47,6 +48,7 @@ namespace ogonek {
         constexpr grapheme_cluster_rule operator*(gcb l, gcb r) { return { l, false, r }; }
         constexpr grapheme_cluster_rule operator/(gcb l, gcb r) { return { l, true, r }; }
 
+        // TODO: switch to a pair table instead
         constexpr grapheme_cluster_rule grapheme_cluster_rules[] = {
             // Break at the start and end of text.
             // * Handled specially
@@ -66,56 +68,62 @@ namespace ogonek {
             // Otherwise, break everywhere.
             /* GB10. */                          any / any,
         };
-        inline grapheme_cluster_rule const& find_applicable_rule(codepoint before, codepoint after) {
-            using namespace std::placeholders;
-            return *std::find_if(std::begin(detail::grapheme_cluster_rules), std::end(detail::grapheme_cluster_rules),
-                                 std::bind(&grapheme_cluster_rule::matches, _1, before, after));
-        }
-
         inline bool grapheme_cluster_rule::matches(codepoint before, codepoint after) const {
             const gcb none = static_cast<gcb>(0);
             return (ucd::get_grapheme_cluster_break(before) & this->before) != none
                 && (ucd::get_grapheme_cluster_break(after) & this->after) != none;
         }
+        struct grapheme_cluster_boundary {
+            bool operator()(codepoint before, codepoint after) const {
+                using namespace std::placeholders;
+                return std::find_if(std::begin(detail::grapheme_cluster_rules), std::end(detail::grapheme_cluster_rules),
+                                    std::bind(&grapheme_cluster_rule::matches, _1, before, after))
+                       ->is_break;
+            }
+        };
     } // namespace detail
 
-    template <typename Iterator>
-    struct grapheme_cluster_iterator
+    template <typename BoundaryCondition, typename CodepointIterator>
+    struct break_iterator
     : boost::iterator_facade<
-        grapheme_cluster_iterator<Iterator>,
-        boost::iterator_range<Iterator>,
-        std::forward_iterator_tag,
-        boost::iterator_range<Iterator>>
+        break_iterator<BoundaryCondition, CodepointIterator>,
+        boost::iterator_range<CodepointIterator>,
+        typename std::iterator_traits<CodepointIterator>::iterator_category,
+        boost::iterator_range<CodepointIterator>>
     {
     public:
-        grapheme_cluster_iterator(Iterator first, Iterator last)
+        break_iterator(CodepointIterator first, CodepointIterator last)
         : first(first), last(last) {}
 
     private:
         friend class boost::iterator_core_access;
-        boost::iterator_range<Iterator> dereference() const {
+
+        boost::iterator_range<CodepointIterator> dereference() const {
             auto begin = first;
             auto it = first;
             auto before = *it++;
             do {
                 auto after = *it;
-                if(detail::find_applicable_rule(before, after).is_break) break;
+                if(BoundaryCondition{}(before, after)) break;
                 ++it;
                 if(it == last) break;
                 before = after;
             } while(true);
-            return boost::iterator_range<Iterator> { begin, it };
+            return boost::iterator_range<CodepointIterator> { begin, it };
         }
         void increment() {
             first = dereference().end();
         }
-        bool equal(grapheme_cluster_iterator const& that) const {
+        bool equal(break_iterator const& that) const {
             return first == that.first;
         }
 
-        Iterator first;
-        Iterator last;
+        CodepointIterator first;
+        CodepointIterator last;
     };
+    template <typename CodepointIterator>
+    using grapheme_cluster_iterator = break_iterator<detail::grapheme_cluster_boundary, CodepointIterator>;
+
     template <typename SinglePassRange>
     boost::iterator_range<grapheme_cluster_iterator<typename boost::range_const_iterator<SinglePassRange>::type>> grapheme_clusters(SinglePassRange const& range) {
         using iterator = grapheme_cluster_iterator<typename boost::range_const_iterator<SinglePassRange>::type>;
