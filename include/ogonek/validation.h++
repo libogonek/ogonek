@@ -26,7 +26,7 @@ namespace ogonek {
         valid, unassigned, illegal, irregular,
     };
 
-    struct use_replacement_character_t {
+    struct {
         template <typename Range, typename OutputIterator>
         boost::sub_range<Range> operator()(validation_result reason, Range const& source, OutputIterator& out) const {
             return operator()(reason, { boost::begin(source), boost::end(source) }, out);
@@ -36,7 +36,7 @@ namespace ogonek {
             *out++ = U'\xFFFD';
             return { std::next(boost::begin(source)), boost::end(source) };
         }
-    } constexpr use_replacement_character;
+    } constexpr use_replacement_character = {};
 } // namespace ogonek
 
 #endif // OGONEK_VALIDATION_HPP
