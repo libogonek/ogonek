@@ -48,7 +48,8 @@ namespace ogonek {
         template <typename SinglePassRange, typename OutputIterator, typename ValidationCallback>
         static OutputIterator decode(SinglePassRange const& r, OutputIterator out, ValidationCallback&& callback) {
             for(auto c : r) {
-                auto range = { c };
+                auto list = { c };
+                boost::sub_range<decltype(list)> range(list);
                 auto result = validate_one(range);
                 if(result == validation_result::valid) {
                     *out++ = c;

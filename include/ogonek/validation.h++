@@ -28,15 +28,18 @@ namespace ogonek {
 
     struct {
         template <typename Range, typename OutputIterator>
-        boost::sub_range<Range> operator()(validation_result reason, Range const& source, OutputIterator& out) const {
-            return operator()(reason, boost::sub_range<Range>{ boost::begin(source), boost::end(source) }, out);
-        }
-        template <typename Range, typename OutputIterator>
         boost::sub_range<Range> operator()(validation_result, boost::sub_range<Range> const& source, OutputIterator& out) const {
             *out++ = U'\xFFFD';
             return { std::next(boost::begin(source)), boost::end(source) };
         }
     } constexpr use_replacement_character = {};
+
+    struct {
+        template <typename Range, typename OutputIterator>
+        boost::sub_range<Range> operator()(validation_result, boost::sub_range<Range> const& source, OutputIterator& out) const {
+            return { std::next(boost::begin(source)), boost::end(source) };
+        }
+    } constexpr ignore_errors = {};
 } // namespace ogonek
 
 #endif // OGONEK_VALIDATION_HPP
