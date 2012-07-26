@@ -114,10 +114,14 @@ of `E::code_unit`s, `ur` is a range of `codepoint`s, `co` is an
 |                           |                      | is stateless)           |
 +---------------------------+----------------------+-------------------------+
 | `E::validate_one(cr)`     | `validation_result`  | validates one codepoint |
+|                           |                      | (only available if `E`  |
+|                           |                      | is stateless)           |
 +---------------------------+----------------------+-------------------------+
 | `E::encode_one(u, co, s)` |                      | encodes one codepoint   |
 +---------------------------+----------------------+-------------------------+
 | `E::decode_one(cr, v, s)` | `Range`              | decodes one codepoint   |
++---------------------------+----------------------+-------------------------+
+| `E::validate_one(cr, s)`  | `validation_result`  | validates one codepoint |
 +---------------------------+----------------------+-------------------------+
 
 Table: Requirements for `EncodingForm`

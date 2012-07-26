@@ -65,8 +65,11 @@ namespace ogonek {
         }
 
         template <typename SinglePassRange>
+        static validation_result validate_one(SinglePassRange const& r, state&) {
+            return validate_one(r);
+        }
+        template <typename SinglePassRange>
         static validation_result validate_one(SinglePassRange const& r) {
-            (void)r;
             auto first = boost::begin(r);
             codepoint u0 = *first++;
             if(u0 < 0x80) return validation_result::valid; // early exit for ASCII

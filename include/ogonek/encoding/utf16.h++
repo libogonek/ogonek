@@ -15,11 +15,14 @@
 #define OGONEK_ENCODING_UTF16_HPP
 
 #include "../types.h++"
+#include "../validation.h++"
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 #include <boost/range/empty.hpp>
+
+#include <array>
 
 namespace ogonek {
     struct utf16 {
@@ -45,6 +48,46 @@ namespace ogonek {
             }
             return out;
         }
+
+        template <typename SinglePassRange, typename OutputIterator, typename ValidationCallback>
+        static OutputIterator decode(SinglePassRange const& r, OutputIterator out, ValidationCallback&& callback) {
+            for(boost::sub_range<SinglePassRange> slice { r }; !boost::empty(slice); ) {
+                codepoint c;
+                auto result = validate_one(slice);
+                if(result == validation_result::valid) {
+                    slice = decode_one(slice, c);
+                    *out++ = c;
+                } else {
+                    slice = callback(result, slice, out);
+                }
+            }
+            return out;
+        }
+
+        template <typename SinglePassRange>
+        static validation_result validate_one(SinglePassRange const& r, state&) {
+            return validate_one(r);
+        }
+        template <typename SinglePassRange>
+        static validation_result validate_one(SinglePassRange const& r) {
+            auto first = boost::begin(r);
+            codepoint u0 = *first++;
+
+            auto is_lead_surrogate = [](codepoint u) { return u >= 0xD800 && u <= 0xDBFF; };
+            auto is_trail_surrogate = [](codepoint u) { return u >= 0xDC00 && u <= 0xDFFF; };
+            auto is_surrogate = [&is_lead_surrogate, &is_trail_surrogate](codepoint u) {
+                return is_lead_surrogate(u) || is_trail_surrogate(u);
+            };
+
+            if(!is_surrogate(u0)) return validation_result::valid;
+            if(!is_lead_surrogate(u0)) return validation_result::illegal;
+
+            codepoint u1 = *first++;
+            if(!is_trail_surrogate(u1)) return validation_result::illegal;
+
+            return validation_result::valid;
+        }
+
 
         template <typename OutputIterator>
         static OutputIterator encode_one(codepoint u, OutputIterator out) {

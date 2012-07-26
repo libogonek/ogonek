@@ -26,7 +26,7 @@
 namespace ogonek {
     namespace utf7_detail {
         constexpr char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-        unsigned rev_base64(char c) {
+        inline unsigned rev_base64(char c) {
             return std::find(std::begin(base64), std::end(base64), c) - std::begin(base64);
         }
     } // namespace utf7_detail
