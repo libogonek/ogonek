@@ -36,7 +36,7 @@ namespace ogonek {
 
     struct {
         template <typename Range, typename OutputIterator>
-        boost::sub_range<Range> operator()(validation_result, boost::sub_range<Range> const& source, OutputIterator& out) const {
+        boost::sub_range<Range> operator()(validation_result, boost::sub_range<Range> const& source, OutputIterator&) const {
             return { std::next(boost::begin(source)), boost::end(source) };
         }
     } constexpr ignore_errors = {};
