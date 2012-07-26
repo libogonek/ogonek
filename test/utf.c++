@@ -49,6 +49,83 @@ TEST_CASE("utf8", "UTF-8 encoding form") {
         CHECK(decoded[2] == 0x1EA0_u);
         CHECK(decoded[3] == 0x1F4A9_u);
     }
+    SECTION("validation", "Decoding UTF-8 with validation") {
+        SECTION("valid", "Accepting valid bytes") {
+            std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC3_b, 0x85_b, 0xE1_b, 0xBA_b,
+                                                            0xA0_b, 0xF0_b, 0x9F_b, 0x92_b, 0xA9_b };
+            std::vector<ogonek::codepoint> decoded;
+            ogonek::utf8::decode(encoded, std::back_inserter(decoded), ogonek::use_replacement_character);
+            REQUIRE(decoded.size() == 4);
+            CHECK(decoded[0] == 0x0041_u);
+            CHECK(decoded[1] == 0x00C5_u);
+            CHECK(decoded[2] == 0x1EA0_u);
+            CHECK(decoded[3] == 0x1F4A9_u);
+        }
+        SECTION("invalid", "Rejecting invalid bytes") {
+            std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC0_b, 0xC3_b, 0x85_b, 0xC1_b, 0xF5_b };
+
+            std::vector<ogonek::codepoint> decoded;
+            ogonek::utf8::decode(encoded, std::back_inserter(decoded), ogonek::use_replacement_character);
+            REQUIRE(decoded.size() == 5);
+            CHECK(decoded[0] == 0x0041_u);
+            CHECK(decoded[1] == 0xFFFD_u);
+            CHECK(decoded[2] == 0x00C5_u);
+            CHECK(decoded[3] == 0xFFFD_u);
+            CHECK(decoded[4] == 0xFFFD_u);
+        }
+        SECTION("unexpected continuation", "Rejecting unexpected continuation bytes") {
+            std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC3_b, 0x85_b, 0x84_b, 0x42_b };
+
+            std::vector<ogonek::codepoint> decoded;
+            ogonek::utf8::decode(encoded, std::back_inserter(decoded), ogonek::use_replacement_character);
+            REQUIRE(decoded.size() == 4);
+            CHECK(decoded[0] == 0x0041_u);
+            CHECK(decoded[1] == 0x00C5_u);
+            CHECK(decoded[2] == 0xFFFD_u);
+            CHECK(decoded[3] == 0x0042_u);
+        }
+        SECTION("not enough continuation", "Rejecting start bytes not followed by enough continuation bytes") {
+            std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xF3_b, 0x85_b, 0xC3_b, 0x85_b, 0x42_b,  };
+
+            std::vector<ogonek::codepoint> decoded;
+            ogonek::utf8::decode(encoded, std::back_inserter(decoded), ogonek::use_replacement_character);
+            REQUIRE(decoded.size() == 5);
+            CHECK(decoded[0] == 0x0041_u);
+            CHECK(decoded[1] == 0xFFFD_u);
+            CHECK(decoded[2] == 0xFFFD_u);
+            CHECK(decoded[3] == 0x00C5_u);
+            CHECK(decoded[4] == 0x0042_u);
+        }
+        SECTION("overlong", "Rejecting overlong forms") {
+            std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC0_b, 0x80_b, 0xC3_b, 0x85_b, 0x42_b,  };
+
+            std::vector<ogonek::codepoint> decoded;
+            ogonek::utf8::decode(encoded, std::back_inserter(decoded), ogonek::use_replacement_character);
+            REQUIRE(decoded.size() == 5);
+            CHECK(decoded[0] == 0x0041_u);
+            CHECK(decoded[1] == 0xFFFD_u);
+            CHECK(decoded[2] == 0xFFFD_u);
+            CHECK(decoded[3] == 0x00C5_u);
+            CHECK(decoded[4] == 0x0042_u);
+        }
+        SECTION("invalid codepoint", "Rejecting sequences that decode to values above 0x10FFFF or surrogates") {
+            std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xF4_b, 0x90_b, 0x80_b, 0x80_b, 0x42_b,
+                                                            0xED_b, 0xA0_b, 0x80_b };
+
+            std::vector<ogonek::codepoint> decoded;
+            ogonek::utf8::decode(encoded, std::back_inserter(decoded), ogonek::use_replacement_character);
+            REQUIRE(decoded.size() == 9);
+            CHECK(decoded[0] == 0x0041_u);
+            CHECK(decoded[1] == 0xFFFD_u);
+            CHECK(decoded[2] == 0xFFFD_u);
+            CHECK(decoded[3] == 0xFFFD_u);
+            CHECK(decoded[4] == 0xFFFD_u);
+            CHECK(decoded[5] == 0x0042_u);
+            CHECK(decoded[6] == 0xFFFD_u);
+            CHECK(decoded[7] == 0xFFFD_u);
+            CHECK(decoded[8] == 0xFFFD_u);
+        }
+    }
 }
 
 TEST_CASE("utf16", "UTF-16 encoding form") {

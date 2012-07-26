@@ -56,6 +56,19 @@ codepoint (integers in the range [0, 10FFFF]). It is an alias of `char32_t`.
 
 An integral type capable of holding the values used by a particular encoding.
 
+## `ValidationCallback`
+
+A function object `f` for which the following expression is valid and returns a
+sub range of `source`:
+
+    f(reason, source, out)
+
+where:
+
+ - `reason` is a `validation_result`;
+ - `source` is a range of code units;
+ - `out` is an output iterator of codepoints;
+
 ## `EncodingForm`
 
 An encoder/decoder that converts between `codepoint`s and code units. At least
@@ -64,8 +77,8 @@ three models of `EncodingForm` are provided: `utf8`, `utf16`, and `utf32`.
 In the following table, `E` is a model of `EncodingForm`, `s` is an instance of
 `E::state`, `u` is a `codepoint`, `v` is a `codepoint` lvalue, `cr` is a range
 of `E::code_unit`s, `ur` is a range of `codepoint`s, `co` is an
-`OutputIterator` on `E::code_unit`s, and `uo` is an `OutputIterator` on
-`codepoints`.
+`OutputIterator` on `E::code_unit`s, `uo` is an `OutputIterator` on
+`codepoints`, and `rep` is a `ValidationCallback`.
 
 +---------------------------+----------------------+-------------------------+
 | Expression                | Return type          | Semantics               |
@@ -89,6 +102,9 @@ of `E::code_unit`s, `ur` is a range of `codepoint`s, `co` is an
 +---------------------------+----------------------+-------------------------+
 | `E::decode(cr, uo)`       | `Range`              | decodes codepoints      |
 +---------------------------+----------------------+-------------------------+
+| `E::decode(cr, uo, call)` | `Range`              | decodes codepoints with |
+|                           |                      | validation              |
++---------------------------+----------------------+-------------------------+
 | `E::encode_one(u, co)`    |                      | encodes one codepoint   |
 |                           |                      | (only available if `E`  |
 |                           |                      | is stateless)           |
@@ -96,6 +112,8 @@ of `E::code_unit`s, `ur` is a range of `codepoint`s, `co` is an
 | `E::decode_one(cr, v)`    | `Range`              | decodes one codepoint   |
 |                           |                      | (only available if `E`  |
 |                           |                      | is stateless)           |
++---------------------------+----------------------+-------------------------+
+| `E::validate_one(cr)`     | `validation_result`  | validates one codepoint |
 +---------------------------+----------------------+-------------------------+
 | `E::encode_one(u, co, s)` |                      | encodes one codepoint   |
 +---------------------------+----------------------+-------------------------+

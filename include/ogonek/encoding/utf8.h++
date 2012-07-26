@@ -15,11 +15,14 @@
 #define OGONEK_ENCODING_UTF8_HPP
 
 #include "../types.h++"
+#include "../validation.h++"
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 #include <boost/range/empty.hpp>
+
+#include <array>
 
 namespace ogonek {
     struct utf8 {
@@ -44,6 +47,71 @@ namespace ogonek {
                 *out++ = c;
             }
             return out;
+        }
+
+        template <typename SinglePassRange, typename OutputIterator, typename ValidationCallback>
+        static OutputIterator decode(SinglePassRange const& r, OutputIterator out, ValidationCallback&& callback) {
+            for(boost::sub_range<SinglePassRange> slice { r }; !boost::empty(slice); ) {
+                codepoint c;
+                auto result = validate_one(slice);
+                if(result == validation_result::valid) {
+                    slice = decode_one(slice, c);
+                    *out++ = c;
+                } else {
+                    slice = callback(result, slice, out);
+                }
+            }
+            return out;
+        }
+
+        template <typename SinglePassRange>
+        static validation_result validate_one(SinglePassRange const& r) {
+            (void)r;
+            auto first = boost::begin(r);
+            codepoint u0 = *first++;
+            if(u0 < 0x80) return validation_result::valid; // early exit for ASCII
+
+            auto is_invalid = [](codepoint u) { return u == 0xC0 || u == 0xC1 || u > 0xF4; };
+            auto is_continuation = [](codepoint u) { return (u & 0xC0) == 0x80; };
+
+            if(is_invalid(u0) || is_continuation(u0)) return validation_result::illegal;
+
+            int bytes = (u0 & 0xF0) == 0xC0? 2
+                        : (u0 & 0xF0) == 0xE0? 3
+                        : 4;
+            std::array<codepoint, 4> us = {{ u0, }};
+            for(int i = 1; i < bytes; ++i) {
+                us[i] = *first++;
+                if(!is_continuation(us[i])) return validation_result::illegal;
+            }
+
+            if(bytes == 2) {
+                u0 = ((us[0] & 0x1F) << 6) |
+                      (us[1] & 0x3F);
+            } else if(bytes == 3) {
+                u0 = ((us[0] & 0x0F) << 12) |
+                     ((us[1] & 0x3F) << 6) |
+                      (us[2] & 0x3F);
+            } else {
+                u0 = ((us[0] & 0x07) << 18) |
+                     ((us[1] & 0x3F) << 12) |
+                     ((us[2] & 0x3F) << 6) |
+                      (us[3] & 0x3F);
+            }
+
+            auto is_overlong = [](codepoint u, int b) {
+                return u <= 0x7F
+                   || (u <= 0x7FF && b > 2)
+                   || (u <= 0xFFFF && b > 3);
+            };
+            if(is_overlong(u0, bytes)) {
+                return validation_result::illegal;
+            }
+            auto is_surrogate = [](codepoint u) { return u >= 0xD800 && u <= 0xDFFF; };
+            if(is_surrogate(u0) || u0 > 0x10FFFF) {
+                return validation_result::irregular;
+            }
+            return validation_result::valid;
         }
 
         template <typename OutputIterator>
