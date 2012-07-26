@@ -29,7 +29,7 @@ namespace ogonek {
     struct {
         template <typename Range, typename OutputIterator>
         boost::sub_range<Range> operator()(validation_result reason, Range const& source, OutputIterator& out) const {
-            return operator()(reason, { boost::begin(source), boost::end(source) }, out);
+            return operator()(reason, boost::sub_range<Range>{ boost::begin(source), boost::end(source) }, out);
         }
         template <typename Range, typename OutputIterator>
         boost::sub_range<Range> operator()(validation_result, boost::sub_range<Range> const& source, OutputIterator& out) const {

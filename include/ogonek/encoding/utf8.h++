@@ -23,6 +23,7 @@
 #include <boost/range/empty.hpp>
 
 #include <array>
+#include <utility>
 
 namespace ogonek {
     struct utf8 {
@@ -58,7 +59,7 @@ namespace ogonek {
                     slice = decode_one(slice, c);
                     *out++ = c;
                 } else {
-                    slice = callback(result, slice, out);
+                    slice = std::forward<ValidationCallback>(callback)(result, slice, out);
                 }
             }
             return out;

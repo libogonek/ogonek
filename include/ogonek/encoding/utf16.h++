@@ -23,6 +23,7 @@
 #include <boost/range/empty.hpp>
 
 #include <array>
+#include <utility>
 
 namespace ogonek {
     struct utf16 {
@@ -58,7 +59,7 @@ namespace ogonek {
                     slice = decode_one(slice, c);
                     *out++ = c;
                 } else {
-                    slice = callback(result, slice, out);
+                    slice = std::forward<ValidationCallback>(callback)(result, slice, out);
                 }
             }
             return out;
@@ -87,7 +88,6 @@ namespace ogonek {
 
             return validation_result::valid;
         }
-
 
         template <typename OutputIterator>
         static OutputIterator encode_one(codepoint u, OutputIterator out) {

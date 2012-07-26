@@ -138,3 +138,28 @@ TEST_CASE("utf16-validation", "Validation of UTF-16") {
     }
 }
 
+TEST_CASE("utf32-validation", "Validation of UTF-32") {
+    using namespace ogonek::literal;
+
+    SECTION("valid", "Accepting valid sequences") {
+        std::initializer_list<char32_t> encoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9', };
+        std::vector<ogonek::codepoint> decoded;
+        ogonek::utf32::decode(encoded, std::back_inserter(decoded));
+        REQUIRE(decoded.size() == 4);
+        CHECK(decoded[0] == U'\x0041');
+        CHECK(decoded[1] == U'\x00C5');
+        CHECK(decoded[2] == U'\x1EA0');
+        CHECK(decoded[3] == U'\x1F4A9');
+    }
+    SECTION("invalid", "Rejecting codepoints above U+10FFFF") {
+        std::initializer_list<char32_t> encoded = { U'\x0041', U'\x00C5', U'\x21F4A9', };
+
+        std::vector<ogonek::codepoint> decoded;
+        ogonek::utf32::decode(encoded, std::back_inserter(decoded), ogonek::use_replacement_character);
+        REQUIRE(decoded.size() == 3);
+        CHECK(decoded[0] == U'\x0041');
+        CHECK(decoded[1] == U'\x00C5');
+        CHECK(decoded[2] == U'\xFFFD');
+    }
+}
+

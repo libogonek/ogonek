@@ -20,6 +20,8 @@
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 
+#include <utility>
+
 namespace ogonek {
     struct utf32 {
         using code_unit = char32_t;
@@ -41,6 +43,33 @@ namespace ogonek {
                 *out++ = c;
             }
             return out;
+        }
+
+        template <typename SinglePassRange, typename OutputIterator, typename ValidationCallback>
+        static OutputIterator decode(SinglePassRange const& r, OutputIterator out, ValidationCallback&& callback) {
+            for(auto c : r) {
+                auto range = { c };
+                auto result = validate_one(range);
+                if(result == validation_result::valid) {
+                    *out++ = c;
+                } else {
+                    std::forward<ValidationCallback>(callback)(result, range, out);
+                }
+            }
+            return out;
+        }
+
+        template <typename SinglePassRange>
+        static validation_result validate_one(SinglePassRange const& r, state&) {
+            return validate_one(r);
+        }
+        template <typename SinglePassRange>
+        static validation_result validate_one(SinglePassRange const& r) {
+            auto first = boost::begin(r);
+            codepoint u0 = *first++;
+            if(u0 > 0x10FFFF) return validation_result::irregular;
+
+            return validation_result::valid;
         }
 
         template <typename OutputIterator>
