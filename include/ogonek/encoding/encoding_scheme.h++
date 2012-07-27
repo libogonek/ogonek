@@ -90,8 +90,9 @@ namespace ogonek {
             }
             return out;
         }
-        template <typename SinglePassRange, typename OutputIterator>
-        static OutputIterator decode(SinglePassRange const& r, OutputIterator out) {
+        template <typename SinglePassRange, typename OutputIterator, typename ValidationCallback>
+        static OutputIterator decode(SinglePassRange const& r, OutputIterator out, ValidationCallback&&) {
+            // TODO validation here
             state s {};
             for(boost::sub_range<SinglePassRange> slice { r }; !boost::empty(slice); ) {
                 codepoint c;

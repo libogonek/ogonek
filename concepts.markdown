@@ -78,7 +78,7 @@ In the following table, `E` is a model of `EncodingForm`, `s` is an instance of
 `E::state`, `u` is a `codepoint`, `v` is a `codepoint` lvalue, `cr` is a range
 of `E::code_unit`s, `ur` is a range of `codepoint`s, `co` is an
 `OutputIterator` on `E::code_unit`s, `uo` is an `OutputIterator` on
-`codepoints`, and `rep` is a `ValidationCallback`.
+`codepoints`, and `call` is a `ValidationCallback`.
 
 +---------------------------+----------------------+-------------------------+
 | Expression                | Return type          | Semantics               |
@@ -137,7 +137,8 @@ a `ByteOrder`. Five models of `EncodingScheme` are provided: `utf8`, `utf16be`,
 In the following table, `E` is a model of `EncodingForm`, `s` is an instance of
 `E::state`, `u` is a `codepoint`, `v` is a `codepoint` lvalue, `br` is a range
 of bytes, `ur` is a range of `codepoint`s, `bo` is an `OutputIterator` of
-bytes, and `uo` is an `OutputIterator` of `codepoints`.
+bytes, `uo` is an `OutputIterator` of `codepoints`, and `call` is a
+`ValidationCallback`.
 
 +---------------------------+--------------------+-------------------------+
 | Expression                | Return type        | Semantics               |
@@ -150,9 +151,9 @@ bytes, and `uo` is an `OutputIterator` of `codepoints`.
 |                           |                    | empty type iff `E` is   |
 |                           |                    | stateless)              |
 +---------------------------+--------------------+-------------------------+
-| `E::encode(ur, ue, bo)`   |                    | encodes codepoints      |
+| `E::encode(ur, bo)`       |                    | encodes codepoints      |
 +---------------------------+--------------------+-------------------------+
-| `E::decode(br, be, uo)`   | `Range`            | decodes codepoints      |
+| `E::decode(br, uo, call)` | `Range`            | decodes codepoints      |
 +---------------------------+--------------------+-------------------------+
 | `E::encode_one(u, bo)`    |                    | encodes one codepoint   |
 |                           |                    | (only available if `E`  |

@@ -41,7 +41,7 @@ TEST_CASE("utf16le", "UTF-16LE codec") {
         auto encoded = { 0x41_b, 0x00_b, 0xC5_b, 0x00_b, 0xA0_b,
                          0x1E_b, 0x3D_b, 0xD8_b, 0xA9_b, 0xDC_b };
         std::vector<ogonek::codepoint> decoded;
-        ogonek::utf16le::decode(encoded, std::back_inserter(decoded));
+        ogonek::utf16le::decode(encoded, std::back_inserter(decoded), ogonek::ignore_errors);
         CHECK(decoded.size() == 4);
         CHECK(decoded[0] == 0x0041_u);
         CHECK(decoded[1] == 0x00C5_u);
@@ -73,7 +73,7 @@ TEST_CASE("utf16be", "UTF-16BE codec") {
         auto encoded = { 0x00_b, 0x41_b, 0x00_b, 0xC5_b, 0x1E_b,
                          0xA0_b, 0xD8_b, 0x3D_b, 0xDC_b, 0xA9_b };
         std::vector<ogonek::codepoint> decoded;
-        ogonek::utf16be::decode(encoded, std::back_inserter(decoded));
+        ogonek::utf16be::decode(encoded, std::back_inserter(decoded), ogonek::ignore_errors);
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == 0x0041_u);
         CHECK(decoded[1] == 0x00C5_u);
@@ -113,7 +113,7 @@ TEST_CASE("utf32le", "UTF-32LE codec") {
                          0xA0_b, 0x1E_b, 0x00_b, 0x00_b,
                          0xA9_b, 0xF4_b, 0x01_b, 0x00_b };
         std::vector<ogonek::codepoint> decoded;
-        ogonek::utf32le::decode(encoded, std::back_inserter(decoded));
+        ogonek::utf32le::decode(encoded, std::back_inserter(decoded), ogonek::ignore_errors);
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == 0x0041_u);
         CHECK(decoded[1] == 0x00C5_u);
@@ -154,7 +154,7 @@ TEST_CASE("utf32be", "UTF-32BE codec") {
                          0x00_b, 0x00_b, 0x1E_b, 0xA0_b,
                          0x00_b, 0x01_b, 0xF4_b, 0xA9_b };
         std::vector<ogonek::codepoint> decoded;
-        ogonek::utf32be::decode(encoded, std::back_inserter(decoded));
+        ogonek::utf32be::decode(encoded, std::back_inserter(decoded), ogonek::ignore_errors);
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == 0x0041_u);
         CHECK(decoded[1] == 0x00C5_u);
