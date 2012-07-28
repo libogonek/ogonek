@@ -26,6 +26,12 @@ namespace ogonek {
         valid, unassigned, illegal, irregular,
     };
 
+    struct validation_exception : std::exception {
+        char const* what() const throw() override {
+            return "Unicode validation failed";
+        }
+    };
+
     struct {
         template <typename Range, typename OutputIterator>
         boost::sub_range<Range> operator()(validation_result, boost::sub_range<Range> const& source, OutputIterator& out) const {

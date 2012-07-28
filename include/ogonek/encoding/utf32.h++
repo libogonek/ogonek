@@ -68,7 +68,10 @@ namespace ogonek {
         static validation_result validate_one(SinglePassRange const& r) {
             auto first = boost::begin(r);
             codepoint u0 = *first++;
-            if(u0 > 0x10FFFF) return validation_result::irregular;
+
+            auto is_surrogate = [](codepoint u) { return u >= 0xD800 && u <= 0xDFFF; };
+
+            if(u0 > 0x10FFFF || is_surrogate(u0)) return validation_result::irregular;
 
             return validation_result::valid;
         }

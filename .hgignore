@@ -9,3 +9,4 @@ dist/
 *.g.*
 *.session.vim
 
+deps/wheels/

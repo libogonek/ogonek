@@ -22,17 +22,17 @@ value, `u32` is a `uint32_t` value, `l16` is a `uint16_t` lvalue, `l32` is a
 | `Order::map(u16)`       | `std::array<byte, 2>` | *Returns*: an array with the  |
 |                         |                       | bytes of `u16` in order.      |
 +-------------------------+-----------------------+-------------------------------+
-| `Order::map(u16)`       | `std::array<byte, 4>` | *Returns*: an array with the  |
+| `Order::map(u32)`       | `std::array<byte, 4>` | *Returns*: an array with the  |
 |                         |                       | bytes of `u32` in order.      |
 +-------------------------+-----------------------+-------------------------------+
-| `Order::unmap(it, l16)` | `uint16_t`            | *Returns*: `it` advanced      |
+| `Order::unmap(it, l16)` | `InputIterator`       | *Returns*: `it` advanced      |
 |                         |                       | twice.                        |
 |                         |                       |                               |
 |                         |                       | *Effects*: the value of `l16` |
 |                         |                       | consists of two bytes read    |
 |                         |                       | from `it` in order.           |
 +-------------------------+-----------------------+-------------------------------+
-| `Order::unmap(it, l32)` | `uint32_t`            | *Returns*: a `uint32_t` with  |
+| `Order::unmap(it, l32)` | `InputIterator`       | *Returns*: a `uint32_t` with  |
 |                         |                       | four bytes read from `it`.    |
 |                         |                       |                               |
 |                         |                       | *Effects*: the value of `l32` |
@@ -173,6 +173,10 @@ Table: Requirements for `EncodingScheme`
 ## `Locale`
 
 Ouch.
+
+## `basic_text` and `text`
+
+
 
 # Unicode algorithms
 
