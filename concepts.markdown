@@ -73,9 +73,8 @@ A validation callback is invoked with three arguments:
  - a `validation_result` that explains the nature of the error;
  - a `boost::sub_range<Range>` where `Range` is a range of code units. This
    sub-range starts at the invalid element of the input;
- - an `OutputIterator` lvalue that the callback can use to replace part of the
-   invalid input. The callback cannot assume that more than one value can be
-   written to the iterator.
+ - a `codepoint` lvalue that the callback can use to replace part of the
+   invalid input.
 
 The callback shall return a `boost::sub_range<Range>` that starts at the first
 element of the input following the error.

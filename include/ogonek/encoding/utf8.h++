@@ -27,7 +27,7 @@
 
 namespace ogonek {
     struct utf8 {
-        using code_unit = byte;
+        using code_unit = char;
         static constexpr bool is_fixed_width = false;
         static constexpr std::size_t max_width = 4;
         static constexpr bool is_self_synchronizing = true;
@@ -36,7 +36,7 @@ namespace ogonek {
         template <typename SinglePassRange, typename OutputIterator>
         static OutputIterator encode(SinglePassRange const& r, OutputIterator out) {
             for(auto u : r) {
-                out = encode_one(u, out);
+               out = encode_one(u, out);
             }
             return out;
         }
@@ -65,112 +65,140 @@ namespace ogonek {
             return out;
         }
 
-        template <typename SinglePassRange>
-        static validation_result validate_one(SinglePassRange const& r, state&) {
-            return validate_one(r);
-        }
-        template <typename SinglePassRange>
-        static validation_result validate_one(SinglePassRange const& r) {
-            auto first = boost::begin(r);
-            codepoint u0 = *first++;
-            if(u0 < 0x80) return validation_result::valid; // early exit for ASCII
-
-            auto is_invalid = [](codepoint u) { return u == 0xC0 || u == 0xC1 || u > 0xF4; };
-            auto is_continuation = [](codepoint u) { return (u & 0xC0) == 0x80; };
-
-            if(is_invalid(u0) || is_continuation(u0)) return validation_result::illegal;
-
-            int bytes = (u0 & 0xF0) == 0xC0? 2
-                        : (u0 & 0xF0) == 0xE0? 3
-                        : 4;
-            std::array<codepoint, 4> us = {{ u0, }};
-            for(int i = 1; i < bytes; ++i) {
-                us[i] = *first++;
-                if(!is_continuation(us[i])) return validation_result::illegal;
+        template <typename T, std::size_t N>
+        struct partial_array {
+        public:
+            partial_array(std::initializer_list<T> list)
+            : count { list.size() } {
+                std::copy(list.begin(), list.end(), array.begin());
             }
 
-            if(bytes == 2) {
-                u0 = ((us[0] & 0x1F) << 6) |
-                      (us[1] & 0x3F);
-            } else if(bytes == 3) {
-                u0 = ((us[0] & 0x0F) << 12) |
-                     ((us[1] & 0x3F) << 6) |
-                      (us[2] & 0x3F);
-            } else {
-                u0 = ((us[0] & 0x07) << 18) |
-                     ((us[1] & 0x3F) << 12) |
-                     ((us[2] & 0x3F) << 6) |
-                      (us[3] & 0x3F);
-            }
+            using iterator = typename std::array<T, N>::iterator;
+            using const_iterator = typename std::array<T, N>::const_iterator;
 
-            auto is_overlong = [](codepoint u, int b) {
-                return u <= 0x7F
-                   || (u <= 0x7FF && b > 2)
-                   || (u <= 0xFFFF && b > 3);
-            };
-            if(is_overlong(u0, bytes)) {
-                return validation_result::illegal;
-            }
-            auto is_surrogate = [](codepoint u) { return u >= 0xD800 && u <= 0xDFFF; };
-            if(is_surrogate(u0) || u0 > 0x10FFFF) {
-                return validation_result::irregular;
-            }
-            return validation_result::valid;
-        }
+            iterator begin() { return array.begin(); }
+            iterator begin() const { return array.begin(); }
+            iterator end() { return array.begin() + count; }
+            iterator end() const { return array.begin() + count; }
+
+        private:
+            std::size_t count;
+            std::array<T, N> array;
+        };
 
         template <typename OutputIterator>
-        static OutputIterator encode_one(codepoint u, OutputIterator out) {
+        static partial_array<codepoint, 4> encode_one(codepoint u, state&) {
             if(u <= 0x7F) {
-                *out++ = u & 0x7F;
+                return { u & 0x7F };
             } else if(u <= 0x7FF) {
-                *out++ = 0xC0 | ((u & 0x3C0) >> 6);
-                *out++ = 0x80 | (u & 0x3F);
+                return {
+                    0xC0 | ((u & 0x3C0) >> 6),
+                    0x80 | (u & 0x3F),
+                }
             } else if(u <= 0xFFFF) {
-                *out++ = 0xE0 | ((u & 0xF000) >> 12);
-                *out++ = 0x80 | ((u & 0xFC0) >> 6);
-                *out++ = 0x80 | (u & 0x3F);
+                return {
+                    0xE0 | ((u & 0xF000) >> 12),
+                    0x80 | ((u & 0xFC0) >> 6),
+                    0x80 | (u & 0x3F),
+                }
             } else {
-                *out++ = 0xF0 | ((u & 0x1C0000) >> 18);
-                *out++ = 0x80 | ((u & 0x3F000) >> 12);
-                *out++ = 0x80 | ((u & 0xFC0) >> 6);
-                *out++ = 0x80 | (u & 0x3F);
+                return {
+                    0xF0 | ((u & 0x1C0000) >> 18),
+                    0x80 | ((u & 0x3F000) >> 12),
+                    0x80 | ((u & 0xFC0) >> 6),
+                    0x80 | (u & 0x3F),
+                }
             }
             return out;
         }
-        template <typename OutputIterator>
-        static OutputIterator encode_one(codepoint u, OutputIterator out, state&) { return encode_one(u, out); }
 
-        template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out) {
+        int sequence_length(byte b) {
+            return (b & 0x80) == 0? 1
+                 : (b & 0xE0) != 0xE0? 2
+                 : (b & 0xF0) != 0xF0? 3
+                 : 4;
+        }
+        bool is_continuation(byte b) {
+            return (b & 0xC0) == 0x80;
+        }
+
+        codepoint decode(byte b0, byte b1) {
+            return ((b0 & 0x1F) << 6) | (b1 & 0x3F);
+        }
+        codepoint decode(byte b0, byte b1, byte b2) {
+            return ((b0 & 0x0F) << 12) | ((b1 & 0x3F) << 6) | (b2 & 0x3F);
+        }
+        codepoint decode(byte b0, byte b1, byte b2, byte b3) {
+            return ((b0 & 0x07) << 18) | ((b1 & 0x3F) << 12) | ((b2 & 0x3F) << 6) | (b3 & 0x3F);
+        }
+        template <typename SinglePassRange, typename ValidationCallback>
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&) {
             auto first = boost::begin(r);
-            codepoint u0 = *first++;
-            if((u0 & 0x80) == 0) {
-                out = u0;
+            byte b0 = *first++;
+            auto length = sequence_length(b0);
+            if(length == 1) {
+                out = b0;
                 return { first, boost::end(r) };
             }
-            codepoint u1 = *first++;
-            if((u0 & 0xE0) != 0xE0) {
-                out = ((u0 & 0x1F) << 6) |
-                      (u1 & 0x3F);
+            byte b1 = *first++;
+            if(length == 2) {
+                out = decode(b0, b1);
                 return { first, boost::end(r) };
             }
-            codepoint u2 = *first++;
-            if((u0 & 0xF0) != 0xF0) {
-                out = ((u0 & 0x0F) << 12) |
-                      ((u1 & 0x3F) << 6) |
-                      (u2 & 0x3F);
+            byte b2 = *first++;
+            if(length == 3) {
+                out = decode(b0, b1, b2);
                 return { first, boost::end(r) };
             }
-            codepoint u3 = *first++;
-            out = ((u0 & 0x07) << 18) |
-                  ((u1 & 0x3F) << 12) |
-                  ((u2 & 0x3F) << 6) |
-                  (u3 & 0x3F);
+            byte b3 = *first++;
+            out = decode(b0, b1, b2, b3);
             return { first, boost::end(r) };
         }
-        template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&) {
-            return decode_one(r, out);
+        template <typename SinglePassRange, typename ValidationCallback>
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, ValidationCallback&& callback) {
+            auto first = boost::begin(r);
+            byte b0 = *first++;
+            auto length = sequence_length(b0);
+
+            if(length == 1) {
+                out = b0;
+                return { first, boost::end(r) };
+            }
+
+            auto is_invalid = [](byte b) { return b == 0xC0 || b == 0xC1 || b > 0xF4; };
+
+            if(is_invalid(b0) || is_continuation(b0)) {
+                return std::forward<ValidationCallback>(callback)(validation_result::illegal, r, out);
+            }
+
+            std::array<byte, 4> b = {{ b0, }};
+            for(int i = 1; i < length; ++i) {
+                b[i] = *first++;
+                if(!is_continuation(b[i])) {
+                    return std::forward<ValidationCallback>(callback)(validation_result::illegal, r, out);
+                }
+            }
+
+            codepoint u;
+            if(length == 2) {
+                u = decode(b[0], b[1]);
+            } else if(length == 3) {
+                u = decode(b[0], b[1], b[2]);
+            } else {
+                u = decode(b[0], b[1], b[2], b[3]);
+            }
+
+            auto is_overlong = [](codepoint u, int bytes) {
+                return u <= 0x7F || (u <= 0x7FF && bytes > 2) || (u <= 0xFFFF && bytes > 3);
+            };
+            if(is_overlong(u, length)) {
+                return std::forward<ValidationCallback>(callback)(validation_result::illegal, r, out);
+            }
+            auto is_surrogate = [](codepoint u) { return u >= 0xD800 && u <= 0xDFFF; };
+            if(is_surrogate(u) || u > 0x10FFFF) {
+                return std::forward<ValidationCallback>(callback)(validation_result::irregular, r, out);
+            }
+            return { first, boost::end(r) };
         }
     };
 } // namespace ogonek
