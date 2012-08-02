@@ -28,13 +28,13 @@
 #include <utility>
 
 namespace ogonek {
-    template <typename EncodingForm, typename Iterator, typename ValidationCallback = void>
+    template <typename EncodingForm, typename SinglePassRange, typename ValidationCallback = void>
     struct decoding_iterator
     : boost::iterator_facade<
         decoding_iterator<EncodingForm, SinglePassRange, ValidationCallback>,
         codepoint,
         std::input_iterator_tag, // TODO
-        codepoint,
+        codepoint
       > {
     public:
         using iterator = typename boost::range_iterator<SinglePassRange>::type;
@@ -45,7 +45,7 @@ namespace ogonek {
         codepoint dereference() const {
             codepoint u;
             auto s(state);
-            EncodingForm::decode_one(boost::make_iterator_range(first, last), u, s, callback);
+            EncodingForm::decode_one(boost::sub_range<SinglePassRange>(first, last), u, s, callback);
             return u;
         }
         bool equal(decoding_iterator const& that) const {
@@ -53,7 +53,7 @@ namespace ogonek {
         }
         void increment() {
             codepoint dummy;
-            first = EncodingForm::decode_one(boost::make_iterator_range(first, last), dummy, state, callback).begin();
+            first = EncodingForm::decode_one(boost::sub_range<SinglePassRange>(first, last), dummy, state, callback).begin();
         }
 
     private:
@@ -68,7 +68,7 @@ namespace ogonek {
         decoding_iterator<EncodingForm, SinglePassRange>,
         codepoint,
         std::input_iterator_tag, // TODO
-        codepoint,
+        codepoint
       > {
     public:
         using iterator = typename boost::range_iterator<SinglePassRange>::type;
@@ -79,7 +79,7 @@ namespace ogonek {
         codepoint dereference() const {
             codepoint u;
             auto s(state);
-            EncodingForm::decode_one(boost::make_iterator_range(first, last), u, s).begin();
+            EncodingForm::decode_one(boost::sub_range<SinglePassRange>(first, last), u, s);
             return u;
         }
         bool equal(decoding_iterator const& that) const {
@@ -87,7 +87,7 @@ namespace ogonek {
         }
         void increment() {
             codepoint dummy;
-            first = EncodingForm::decode_one(boost::make_iterator_range(first, last), dummy, state);
+            first = EncodingForm::decode_one(boost::sub_range<SinglePassRange>(first, last), dummy, state).begin();
         }
 
     private:
@@ -102,10 +102,12 @@ namespace ogonek {
         static constexpr bool is_self_synchronizing = true;
         struct state {};
 
+        /*
         template <typename SinglePassRange>
         static boost::iterator_range<encoding_iterator<SinglePassRange>> encode(SinglePassRange const& r) {
             // TODO
         }
+        */
         template <typename SinglePassRange>
         static boost::iterator_range<decoding_iterator<utf8, SinglePassRange>> decode(SinglePassRange const& r) {
             return boost::make_iterator_range(
@@ -114,11 +116,10 @@ namespace ogonek {
         }
 
         template <typename SinglePassRange, typename ValidationCallback>
-        static boost::iterator_range<decoding_iterator<utf8, SinglePassRange, ValidationCallback>> decode(SinglePassRange const& r, OutputIterator out, ValidationCallback&& callback) {
+        static boost::iterator_range<decoding_iterator<utf8, SinglePassRange, ValidationCallback>> decode(SinglePassRange const& r, ValidationCallback&& callback) {
             return boost::make_iterator_range(
-                    decoding_iterator<utf8, SinglePassRange, ValidationCallback> { boost::begin(r), boost::end(r) },
-                    decoding_iterator<utf8, SinglePassRange, ValidationCallback> { boost::end(r), boost::end(r) });
-            // TODO
+                    decoding_iterator<utf8, SinglePassRange, ValidationCallback> { boost::begin(r), boost::end(r), callback },
+                    decoding_iterator<utf8, SinglePassRange, ValidationCallback> { boost::end(r), boost::end(r), callback });
         }
 
         template <typename T, std::size_t N>
@@ -150,44 +151,42 @@ namespace ogonek {
                 return {
                     0xC0 | ((u & 0x3C0) >> 6),
                     0x80 | (u & 0x3F),
-                }
+                };
             } else if(u <= 0xFFFF) {
                 return {
                     0xE0 | ((u & 0xF000) >> 12),
                     0x80 | ((u & 0xFC0) >> 6),
                     0x80 | (u & 0x3F),
-                }
-            } else {
-                return {
-                    0xF0 | ((u & 0x1C0000) >> 18),
-                    0x80 | ((u & 0x3F000) >> 12),
-                    0x80 | ((u & 0xFC0) >> 6),
-                    0x80 | (u & 0x3F),
-                }
+                };
             }
-            return out;
+            return {
+                0xF0 | ((u & 0x1C0000) >> 18),
+                0x80 | ((u & 0x3F000) >> 12),
+                0x80 | ((u & 0xFC0) >> 6),
+                0x80 | (u & 0x3F),
+            };
         }
 
-        int sequence_length(byte b) {
+        static constexpr int sequence_length(byte b) {
             return (b & 0x80) == 0? 1
                  : (b & 0xE0) != 0xE0? 2
                  : (b & 0xF0) != 0xF0? 3
                  : 4;
         }
-        bool is_continuation(byte b) {
+        static constexpr bool is_continuation(byte b) {
             return (b & 0xC0) == 0x80;
         }
 
-        codepoint decode(byte b0, byte b1) {
+        static constexpr codepoint decode(byte b0, byte b1) {
             return ((b0 & 0x1F) << 6) | (b1 & 0x3F);
         }
-        codepoint decode(byte b0, byte b1, byte b2) {
+        static constexpr codepoint decode(byte b0, byte b1, byte b2) {
             return ((b0 & 0x0F) << 12) | ((b1 & 0x3F) << 6) | (b2 & 0x3F);
         }
-        codepoint decode(byte b0, byte b1, byte b2, byte b3) {
+        static constexpr codepoint decode(byte b0, byte b1, byte b2, byte b3) {
             return ((b0 & 0x07) << 18) | ((b1 & 0x3F) << 12) | ((b2 & 0x3F) << 6) | (b3 & 0x3F);
         }
-        template <typename SinglePassRange, typename ValidationCallback>
+        template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&) {
             auto first = boost::begin(r);
             byte b0 = *first++;
