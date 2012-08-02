@@ -17,6 +17,8 @@
 #include "../types.h++"
 #include "../validation.h++"
 
+#include <boost/iterator/iterator_facade.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
@@ -26,6 +28,73 @@
 #include <utility>
 
 namespace ogonek {
+    template <typename EncodingForm, typename Iterator, typename ValidationCallback = void>
+    struct decoding_iterator
+    : boost::iterator_facade<
+        decoding_iterator<EncodingForm, SinglePassRange, ValidationCallback>,
+        codepoint,
+        std::input_iterator_tag, // TODO
+        codepoint,
+      > {
+    public:
+        using iterator = typename boost::range_iterator<SinglePassRange>::type;
+
+        decoding_iterator(iterator first, iterator last, ValidationCallback callback)
+        : first(first), last(last), callback(std::forward<ValidationCallback>(callback)), state{} {}
+
+        codepoint dereference() const {
+            codepoint u;
+            auto s(state);
+            EncodingForm::decode_one(boost::make_iterator_range(first, last), u, s, callback);
+            return u;
+        }
+        bool equal(decoding_iterator const& that) const {
+            return first == that.first || (first == last && that.first == that.last);
+        }
+        void increment() {
+            codepoint dummy;
+            first = EncodingForm::decode_one(boost::make_iterator_range(first, last), dummy, state, callback).begin();
+        }
+
+    private:
+        iterator first, last;
+        typename std::decay<ValidationCallback>::type callback;
+        typename EncodingForm::state state;
+    };
+
+    template <typename EncodingForm, typename SinglePassRange>
+    struct decoding_iterator<EncodingForm, SinglePassRange, void>
+    : boost::iterator_facade<
+        decoding_iterator<EncodingForm, SinglePassRange>,
+        codepoint,
+        std::input_iterator_tag, // TODO
+        codepoint,
+      > {
+    public:
+        using iterator = typename boost::range_iterator<SinglePassRange>::type;
+
+        decoding_iterator(iterator first, iterator last)
+        : first(first), last(last), state{} {}
+
+        codepoint dereference() const {
+            codepoint u;
+            auto s(state);
+            EncodingForm::decode_one(boost::make_iterator_range(first, last), u, s).begin();
+            return u;
+        }
+        bool equal(decoding_iterator const& that) const {
+            return first == that.first || (first == last && that.first == that.last);
+        }
+        void increment() {
+            codepoint dummy;
+            first = EncodingForm::decode_one(boost::make_iterator_range(first, last), dummy, state);
+        }
+
+    private:
+        iterator first, last;
+        typename EncodingForm::state state;
+    };
+
     struct utf8 {
         using code_unit = char;
         static constexpr bool is_fixed_width = false;
@@ -33,36 +102,23 @@ namespace ogonek {
         static constexpr bool is_self_synchronizing = true;
         struct state {};
 
-        template <typename SinglePassRange, typename OutputIterator>
-        static OutputIterator encode(SinglePassRange const& r, OutputIterator out) {
-            for(auto u : r) {
-               out = encode_one(u, out);
-            }
-            return out;
+        template <typename SinglePassRange>
+        static boost::iterator_range<encoding_iterator<SinglePassRange>> encode(SinglePassRange const& r) {
+            // TODO
         }
-        template <typename SinglePassRange, typename OutputIterator>
-        static OutputIterator decode(SinglePassRange const& r, OutputIterator out) {
-            for(boost::sub_range<SinglePassRange> slice { r }; !boost::empty(slice); ) {
-                codepoint c;
-                slice = decode_one(slice, c);
-                *out++ = c;
-            }
-            return out;
+        template <typename SinglePassRange>
+        static boost::iterator_range<decoding_iterator<utf8, SinglePassRange>> decode(SinglePassRange const& r) {
+            return boost::make_iterator_range(
+                    decoding_iterator<utf8, SinglePassRange> { boost::begin(r), boost::end(r) },
+                    decoding_iterator<utf8, SinglePassRange> { boost::end(r), boost::end(r) });
         }
 
-        template <typename SinglePassRange, typename OutputIterator, typename ValidationCallback>
-        static OutputIterator decode(SinglePassRange const& r, OutputIterator out, ValidationCallback&& callback) {
-            for(boost::sub_range<SinglePassRange> slice { r }; !boost::empty(slice); ) {
-                codepoint c;
-                auto result = validate_one(slice);
-                if(result == validation_result::valid) {
-                    slice = decode_one(slice, c);
-                    *out++ = c;
-                } else {
-                    slice = std::forward<ValidationCallback>(callback)(result, slice, out);
-                }
-            }
-            return out;
+        template <typename SinglePassRange, typename ValidationCallback>
+        static boost::iterator_range<decoding_iterator<utf8, SinglePassRange, ValidationCallback>> decode(SinglePassRange const& r, OutputIterator out, ValidationCallback&& callback) {
+            return boost::make_iterator_range(
+                    decoding_iterator<utf8, SinglePassRange, ValidationCallback> { boost::begin(r), boost::end(r) },
+                    decoding_iterator<utf8, SinglePassRange, ValidationCallback> { boost::end(r), boost::end(r) });
+            // TODO
         }
 
         template <typename T, std::size_t N>
