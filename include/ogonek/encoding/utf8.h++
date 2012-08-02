@@ -234,23 +234,22 @@ namespace ogonek {
                 }
             }
 
-            codepoint u;
             if(length == 2) {
-                u = decode(b[0], b[1]);
+                out = decode(b[0], b[1]);
             } else if(length == 3) {
-                u = decode(b[0], b[1], b[2]);
+                out = decode(b[0], b[1], b[2]);
             } else {
-                u = decode(b[0], b[1], b[2], b[3]);
+                out = decode(b[0], b[1], b[2], b[3]);
             }
 
             auto is_overlong = [](codepoint u, int bytes) {
                 return u <= 0x7F || (u <= 0x7FF && bytes > 2) || (u <= 0xFFFF && bytes > 3);
             };
-            if(is_overlong(u, length)) {
+            if(is_overlong(out, length)) {
                 return std::forward<ValidationCallback>(callback)(validation_result::illegal, r, out);
             }
             auto is_surrogate = [](codepoint u) { return u >= 0xD800 && u <= 0xDFFF; };
-            if(is_surrogate(u) || u > 0x10FFFF) {
+            if(is_surrogate(out) || out > 0x10FFFF) {
                 return std::forward<ValidationCallback>(callback)(validation_result::irregular, r, out);
             }
             return { first, boost::end(r) };
