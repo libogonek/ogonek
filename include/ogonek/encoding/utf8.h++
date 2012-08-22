@@ -143,27 +143,26 @@ namespace ogonek {
             std::array<T, N> array;
         };
 
-        template <typename OutputIterator>
-        static partial_array<codepoint, 4> encode_one(codepoint u, state&) {
+        static partial_array<code_unit, 4> encode_one(codepoint u, state&) {
             if(u <= 0x7F) {
-                return { u & 0x7F };
+                return { static_cast<code_unit>(u & 0x7F) };
             } else if(u <= 0x7FF) {
                 return {
-                    0xC0 | ((u & 0x3C0) >> 6),
-                    0x80 | (u & 0x3F),
+                    static_cast<code_unit>(0xC0 | ((u & 0x3C0) >> 6)),
+                    static_cast<code_unit>(0x80 | (u & 0x3F)),
                 };
             } else if(u <= 0xFFFF) {
                 return {
-                    0xE0 | ((u & 0xF000) >> 12),
-                    0x80 | ((u & 0xFC0) >> 6),
-                    0x80 | (u & 0x3F),
+                    static_cast<code_unit>(0xE0 | ((u & 0xF000) >> 12)),
+                    static_cast<code_unit>(0x80 | ((u & 0xFC0) >> 6)),
+                    static_cast<code_unit>(0x80 | (u & 0x3F)),
                 };
             }
             return {
-                0xF0 | ((u & 0x1C0000) >> 18),
-                0x80 | ((u & 0x3F000) >> 12),
-                0x80 | ((u & 0xFC0) >> 6),
-                0x80 | (u & 0x3F),
+                static_cast<code_unit>(0xF0 | ((u & 0x1C0000) >> 18)),
+                static_cast<code_unit>(0x80 | ((u & 0x3F000) >> 12)),
+                static_cast<code_unit>(0x80 | ((u & 0xFC0) >> 6)),
+                static_cast<code_unit>(0x80 | (u & 0x3F)),
             };
         }
 

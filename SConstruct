@@ -10,7 +10,8 @@ Help(vars.GenerateHelpText(env))
 env.MergeFlags([ '-Wall' , '-Wextra', '-pedantic-errors', '-Werror'
                , '-Wno-mismatched-tags'
                , '-std=c++11'
-               , '-Iinclude', '-isystemdeps'
+               , '-Iinclude'
+               , '-isystemdeps/wheels/include', '-isystemdeps'
                ])
 
 if env['fatal']:
