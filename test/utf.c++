@@ -25,7 +25,6 @@
 TEST_CASE("utf8", "UTF-8 encoding form") {
     using namespace ogonek::literal;
 
-    /*
     SECTION("encode", "Encoding UTF-8") {
         auto decoded = { 0x0041_u, 0x00C5_u, 0x1EA0_u, 0x1F4A9_u };
         auto range = ogonek::utf8::encode(decoded);
@@ -42,7 +41,6 @@ TEST_CASE("utf8", "UTF-8 encoding form") {
         CHECK(encoded[8] == 0x92_b);
         CHECK(encoded[9] == 0xA9_b);
     }
-    */
     SECTION("decode", "Decoding UTF-8") {
         auto encoded = { 0x41_b, 0xC3_b, 0x85_b, 0xE1_b, 0xBA_b,
                          0xA0_b, 0xF0_b, 0x9F_b, 0x92_b, 0xA9_b };
