@@ -14,12 +14,12 @@
 #ifndef OGONEK_ENCODING_ITERATOR_HPP
 #define OGONEK_ENCODING_ITERATOR_HPP
 
+#include "../traits.h++"
+#include "../types.h++"
+
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <boost/range/sub_range.hpp>
-
-#include "../traits.h++"
-#include "../types.h++"
 
 #include <initializer_list>
 #include <array>
@@ -29,6 +29,8 @@ namespace ogonek {
     template <typename T, std::size_t N>
     struct partial_array {
     public:
+        partial_array(std::array<T, N> array, std::size_t count)
+        : count(count), array(array) {}
         partial_array(std::initializer_list<T> list)
         : count { list.size() } {
             std::copy(list.begin(), list.end(), array.begin());

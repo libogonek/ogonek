@@ -55,7 +55,7 @@ namespace ogonek {
                     decoding_iterator<utf8, SinglePassRange, ValidationCallback> { boost::end(r), boost::end(r), callback });
         }
 
-        static partial_array<code_unit, 4> encode_one(codepoint u, state&) {
+        static partial_array<code_unit, max_width> encode_one(codepoint u, state&) {
             if(u <= 0x7F) {
                 return { static_cast<code_unit>(u & 0x7F) };
             } else if(u <= 0x7FF) {

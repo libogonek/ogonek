@@ -30,69 +30,48 @@ namespace ogonek {
         static constexpr bool is_self_synchronizing = true;
         struct state {};
 
-        template <typename SinglePassRange, typename OutputIterator>
-        static OutputIterator encode(SinglePassRange const& r, OutputIterator out) {
-            for(auto u : r) {
-                *out++ = u;
-            }
-            return out;
-        }
-        template <typename SinglePassRange, typename OutputIterator>
-        static OutputIterator decode(SinglePassRange const& r, OutputIterator out) {
-            for(auto c : r) {
-                *out++ = c;
-            }
-            return out;
-        }
-
-        template <typename SinglePassRange, typename OutputIterator, typename ValidationCallback>
-        static OutputIterator decode(SinglePassRange const& r, OutputIterator out, ValidationCallback&& callback) {
-            for(auto c : r) {
-                auto list = { c };
-                boost::sub_range<decltype(list)> range(list);
-                auto result = validate_one(range);
-                if(result == validation_result::valid) {
-                    *out++ = c;
-                } else {
-                    std::forward<ValidationCallback>(callback)(result, range, out);
-                }
-            }
-            return out;
-        }
-
         template <typename SinglePassRange>
-        static validation_result validate_one(SinglePassRange const& r, state&) {
-            return validate_one(r);
+        static boost::iterator_range<encoding_iterator<utf32, SinglePassRange>> encode(SinglePassRange const& r) {
+            return boost::make_iterator_range(
+                    encoding_iterator<utf32, SinglePassRange> { boost::begin(r), boost::end(r) },
+                    encoding_iterator<utf32, SinglePassRange> { boost::end(r), boost::end(r) });
         }
         template <typename SinglePassRange>
-        static validation_result validate_one(SinglePassRange const& r) {
-            auto first = boost::begin(r);
-            codepoint u0 = *first++;
-
-            auto is_surrogate = [](codepoint u) { return u >= 0xD800 && u <= 0xDFFF; };
-
-            if(u0 > 0x10FFFF || is_surrogate(u0)) return validation_result::irregular;
-
-            return validation_result::valid;
+        static boost::iterator_range<decoding_iterator<utf32, SinglePassRange>> decode(SinglePassRange const& r) {
+            return boost::make_iterator_range(
+                    decoding_iterator<utf32, SinglePassRange> { boost::begin(r), boost::end(r) },
+                    decoding_iterator<utf32, SinglePassRange> { boost::end(r), boost::end(r) });
         }
 
-        template <typename OutputIterator>
-        static OutputIterator encode_one(codepoint u, OutputIterator out) {
-            *out++ = u;
-            return out;
+        template <typename SinglePassRange, typename ValidationCallback>
+        static boost::iterator_range<decoding_iterator<utf32, SinglePassRange, ValidationCallback>> decode(SinglePassRange const& r, ValidationCallback&& callback) {
+            return boost::make_iterator_range(
+                    decoding_iterator<utf32, SinglePassRange, ValidationCallback> { boost::begin(r), boost::end(r), callback },
+                    decoding_iterator<utf32, SinglePassRange, ValidationCallback> { boost::end(r), boost::end(r), callback });
         }
-        template <typename OutputIterator>
-        static OutputIterator encode_one(codepoint u, OutputIterator out, state&) { return encode_one(u, out); }
 
+        static partial_array<code_unit, max_width> encode_one(codepoint u, state&) {
+            return {{ u }};
+        }
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&) {
             auto first = boost::begin(r);
             out = *first++;
             return { first, boost::end(r) };
         }
-        template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&) {
-            return decode_one(r, out);
+        template <typename SinglePassRange, typename ValidationCallback>
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, ValidationCallback&& callback) {
+            auto first = boost::begin(r);
+            auto u = *first++;
+
+            auto is_surrogate = [](codepoint u) { return u >= 0xD800 && u <= 0xDFFF; };
+
+            if(u > 0x10FFFF || is_surrogate(u)) {
+                return std::forward<ValidationCallback>(callback)(validation_result::irregular, r, out);
+            }
+
+            out = u;
+            return { first, boost::begin(r) };
         }
     };
 } // namespace ogonek

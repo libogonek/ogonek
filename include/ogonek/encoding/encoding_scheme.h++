@@ -14,6 +14,7 @@
 #ifndef OGONEK_ENCODING_ENCODING_SCHEME_HPP
 #define OGONEK_ENCODING_ENCODING_SCHEME_HPP
 
+#include "iterator.h++"
 #include "../byte_order.h++"
 #include "../types.h++"
 
@@ -81,49 +82,38 @@ namespace ogonek {
         static constexpr bool is_fixed_width = EncodingForm::is_fixed_width;
         static constexpr std::size_t max_width = EncodingForm::max_width * sizeof(typename EncodingForm::code_unit);
         using state = typename EncodingForm::state;
-
-        template <typename SinglePassRange, typename OutputIterator>
-        static OutputIterator encode(SinglePassRange const& r, OutputIterator out) {
-            state s {};
-            for(auto u : r) {
-                out = encode_one(u, out, s);
-            }
-            return out;
-        }
-        template <typename SinglePassRange, typename OutputIterator, typename ValidationCallback>
-        static OutputIterator decode(SinglePassRange const& r, OutputIterator out, ValidationCallback&&) {
-            // TODO validation here
-            state s {};
-            for(boost::sub_range<SinglePassRange> slice { r }; !boost::empty(slice); ) {
-                codepoint c;
-                slice = decode_one(slice, c, s);
-                *out++ = c;
-            }
-            return out;
-        }
-
-        template <typename OutputIterator>
-        static OutputIterator encode_one(codepoint u, OutputIterator out) {
-            state s {};
-            return encode_one(u, out, s);
-        }
-        template <typename OutputIterator>
-        static OutputIterator encode_one(codepoint u, OutputIterator out, state& s) {
-            std::array<typename EncodingForm::code_unit, EncodingForm::max_width> units;
-            auto end = EncodingForm::encode_one(u, units.begin(), s);
-            for(auto it = units.begin(); it != end; ++it) {
-                auto bytes = ByteOrder::map(static_cast<encoding_scheme_detail::Uint<typename EncodingForm::code_unit>>(*it));
-                out = std::copy(bytes.begin(), bytes.end(), out);
-            }
-            return out;
-        }
+        using code_unit = ogonek::byte;
 
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out) {
-            state s {};
-            return decode_one(r, out, s);
+        static boost::iterator_range<encoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, SinglePassRange>> encode(SinglePassRange const& r) {
+            return boost::make_iterator_range(
+                    encoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, SinglePassRange> { boost::begin(r), boost::end(r) },
+                    encoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, SinglePassRange> { boost::end(r), boost::end(r) });
+        }
+        template <typename SinglePassRange>
+        static boost::iterator_range<decoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, SinglePassRange>> decode(SinglePassRange const& r) {
+            return boost::make_iterator_range(
+                    decoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, SinglePassRange> { boost::begin(r), boost::end(r) },
+                    decoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, SinglePassRange> { boost::end(r), boost::end(r) });
         }
 
+        template <typename SinglePassRange, typename ValidationCallback>
+        static boost::iterator_range<decoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, SinglePassRange, ValidationCallback>> decode(SinglePassRange const& r, ValidationCallback&& callback) {
+            return boost::make_iterator_range(
+                    decoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, SinglePassRange, ValidationCallback> { boost::begin(r), boost::end(r), callback },
+                    decoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, SinglePassRange, ValidationCallback> { boost::end(r), boost::end(r), callback });
+        }
+
+        static partial_array<byte, max_width> encode_one(codepoint u, state& s) {
+            std::array<byte, max_width> result;
+            auto encoded = EncodingForm::encode_one(u, s);
+            auto out = result.begin();
+            for(auto it = encoded.begin(); it != encoded.end(); ++it) {
+                auto bytes = ByteOrder::map(static_cast<encoding_scheme_detail::Uint<CodeUnit<EncodingForm>>>(*it));
+                out = std::copy(bytes.begin(), bytes.end(), out);
+            }
+            return { result, std::size_t(out - result.begin()) };
+        }
         template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s) {
             using code_unit_range = encoding_scheme_detail::byte_ordered_range<ByteOrder, typename EncodingForm::code_unit, SinglePassRange>;
@@ -132,6 +122,16 @@ namespace ogonek {
                 iterator { boost::begin(r) }, iterator { boost::end(r) }
             };
             auto remaining = EncodingForm::decode_one(range, out, s);
+            return { remaining.begin().it, r.end() };
+        }
+        template <typename SinglePassRange, typename ValidationCallback>
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s, ValidationCallback&& callback) {
+            using code_unit_range = encoding_scheme_detail::byte_ordered_range<ByteOrder, typename EncodingForm::code_unit, SinglePassRange>;
+            using iterator = typename boost::range_iterator<code_unit_range>::type;
+            code_unit_range range {
+                iterator { boost::begin(r) }, iterator { boost::end(r) }
+            };
+            auto remaining = EncodingForm::decode_one(range, out, s, std::forward<ValidationCallback>(callback));
             return { remaining.begin().it, r.end() };
         }
     };
