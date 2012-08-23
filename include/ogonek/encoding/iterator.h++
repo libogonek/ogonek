@@ -36,7 +36,7 @@ namespace ogonek {
             std::copy(list.begin(), list.end(), array.begin());
         }
 
-        using iterator = typename std::array<T, N>::iterator;
+        using iterator = typename std::array<T, N>::const_iterator;
         using const_iterator = typename std::array<T, N>::const_iterator;
 
         iterator begin() { return array.begin(); }
@@ -63,7 +63,7 @@ namespace ogonek {
         CodeUnit<EncodingForm>
       > {
     public:
-        using iterator = typename boost::range_iterator<SinglePassRange>::type;
+        using iterator = typename boost::range_const_iterator<SinglePassRange>::type;
 
         encoding_iterator(iterator first, iterator last)
         : first(first), last(last) {
@@ -110,7 +110,7 @@ namespace ogonek {
         codepoint
       > {
     public:
-        using iterator = typename boost::range_iterator<SinglePassRange>::type;
+        using iterator = typename boost::range_const_iterator<SinglePassRange>::type;
 
         decoding_iterator(iterator first, iterator last, ValidationCallback callback)
         : first(first), last(last), callback(std::forward<ValidationCallback>(callback)) {}
@@ -144,7 +144,7 @@ namespace ogonek {
         codepoint
       > {
     public:
-        using iterator = typename boost::range_iterator<SinglePassRange>::type;
+        using iterator = typename boost::range_const_iterator<SinglePassRange>::type;
 
         decoding_iterator(iterator first, iterator last)
         : first(first), last(last), state{} {}
