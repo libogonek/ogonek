@@ -11,6 +11,9 @@
 
 // Models of the ByteOrder concept
 
+#ifndef OGONEK_BYTE_ORDER_HPP
+#define OGONEK_BYTE_ORDER_HPP
+
 #include "types.h++"
 
 #include <cstdint>
@@ -130,4 +133,6 @@ namespace ogonek {
         }
     };
 }
+
+#endif // OGONEK_BYTE_ORDER_HPP
 
