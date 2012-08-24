@@ -54,18 +54,16 @@ namespace ogonek {
         std::array<T, N> array;
     };
 
-    template <typename EncodingForm, typename SinglePassRange>
+    template <typename EncodingForm, typename Iterator>
     struct encoding_iterator
     : boost::iterator_facade<
-        encoding_iterator<EncodingForm, SinglePassRange>,
+        encoding_iterator<EncodingForm, Iterator>,
         CodeUnit<EncodingForm>,
         std::input_iterator_tag, // TODO
         CodeUnit<EncodingForm>
       > {
     public:
-        using iterator = typename boost::range_const_iterator<SinglePassRange>::type;
-
-        encoding_iterator(iterator first, iterator last)
+        encoding_iterator(Iterator first, Iterator last)
         : first(first), last(last) {
             encode_next();
         }
@@ -95,30 +93,30 @@ namespace ogonek {
             }
         }
 
-        iterator first, last;
+        Iterator first, last;
         typename EncodingForm::state state {};
         partial_array<CodeUnit<EncodingForm>, EncodingForm::max_width> encoded {};
         int current;
     };
 
-    template <typename EncodingForm, typename SinglePassRange, typename ValidationCallback = void>
+    template <typename EncodingForm, typename Iterator, typename ValidationCallback = void>
     struct decoding_iterator
     : boost::iterator_facade<
-        decoding_iterator<EncodingForm, SinglePassRange, ValidationCallback>,
+        decoding_iterator<EncodingForm, Iterator, ValidationCallback>,
         codepoint,
         std::input_iterator_tag, // TODO
         codepoint
       > {
     public:
-        using iterator = typename boost::range_const_iterator<SinglePassRange>::type;
+        using range = boost::iterator_range<Iterator>;
 
-        decoding_iterator(iterator first, iterator last, ValidationCallback callback)
+        decoding_iterator(Iterator first, Iterator last, ValidationCallback callback)
         : first(first), last(last), callback(std::forward<ValidationCallback>(callback)) {}
 
         codepoint dereference() const {
             codepoint u;
-            auto s(state);
-            EncodingForm::decode_one(boost::sub_range<SinglePassRange>(first, last), u, s, callback);
+            auto s = state;
+            EncodingForm::decode_one(boost::sub_range<range>(first, last), u, s, callback);
             return u;
         }
         bool equal(decoding_iterator const& that) const {
@@ -126,33 +124,33 @@ namespace ogonek {
         }
         void increment() {
             codepoint dummy;
-            first = EncodingForm::decode_one(boost::sub_range<SinglePassRange>(first, last), dummy, state, callback).begin();
+            first = EncodingForm::decode_one(boost::sub_range<range>(first, last), dummy, state, callback).begin();
         }
 
     private:
-        iterator first, last;
+        Iterator first, last;
         typename std::decay<ValidationCallback>::type callback;
         typename EncodingForm::state state {};
     };
 
-    template <typename EncodingForm, typename SinglePassRange>
-    struct decoding_iterator<EncodingForm, SinglePassRange, void>
+    template <typename EncodingForm, typename Iterator>
+    struct decoding_iterator<EncodingForm, Iterator, void>
     : boost::iterator_facade<
-        decoding_iterator<EncodingForm, SinglePassRange>,
+        decoding_iterator<EncodingForm, Iterator>,
         codepoint,
         std::input_iterator_tag, // TODO
         codepoint
       > {
     public:
-        using iterator = typename boost::range_const_iterator<SinglePassRange>::type;
+        using range = boost::iterator_range<Iterator>;
 
-        decoding_iterator(iterator first, iterator last)
+        decoding_iterator(Iterator first, Iterator last)
         : first(first), last(last), state{} {}
 
         codepoint dereference() const {
             codepoint u;
-            auto s(state);
-            EncodingForm::decode_one(boost::sub_range<SinglePassRange>(first, last), u, s);
+            auto s = state;
+            EncodingForm::decode_one(boost::sub_range<range>(first, last), u, s);
             return u;
         }
         bool equal(decoding_iterator const& that) const {
@@ -160,11 +158,11 @@ namespace ogonek {
         }
         void increment() {
             codepoint dummy;
-            first = EncodingForm::decode_one(boost::sub_range<SinglePassRange>(first, last), dummy, state).begin();
+            first = EncodingForm::decode_one(boost::sub_range<range>(first, last), dummy, state).begin();
         }
 
     private:
-        iterator first, last;
+        Iterator first, last;
         typename EncodingForm::state state;
     };
 } // namespace ogonek

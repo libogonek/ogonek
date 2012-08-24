@@ -48,9 +48,6 @@ TEST_CASE("text", "text tests") {
         text16 h { text8 { U"blah\U0001F4A9" } };
         REQUIRE(h.storage() == u"blah\U0001F4A9");
 
-        text16 i { ogonek::utf8::decode(U"blah\U0001F4A9") };
-        REQUIRE(i.storage() == u"blah\U0001F4A9");
-
         //REQUIRE_THROWS_AS(text16 { U"blah\x200000" }, ogonek::validation_error);
     }
 }

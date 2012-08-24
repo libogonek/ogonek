@@ -112,8 +112,8 @@ namespace ogonek {
 
         //** Range **
 
-        using iterator = decoding_iterator<EncodingForm, Container>;
-        using const_iterator = decoding_iterator<EncodingForm, Container const>;
+        using iterator = decoding_iterator<EncodingForm, typename Container::iterator>;
+        using const_iterator = decoding_iterator<EncodingForm, typename Container::const_iterator>;
 
         iterator begin() { return iterator { storage_.begin(), storage_.end() }; }
         iterator end() { return iterator { storage_.end(), storage_.end() }; }
