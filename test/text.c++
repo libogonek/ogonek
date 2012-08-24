@@ -33,6 +33,12 @@ TEST_CASE("text", "text tests") {
         std::u32string x = U"blah\U0001F4A9";
         text16 d { x };
         REQUIRE(d.storage() == u"blah\U0001F4A9");
+        text16 e { d };
+        REQUIRE(e.storage() == u"blah\U0001F4A9");
+        text16 f { a };
+        REQUIRE(f.storage() == u"blah\U0001F4A9");
+        text16 g { c };
+        REQUIRE(g.storage() == u"blah\U0001F4A9");
     }
 }
 

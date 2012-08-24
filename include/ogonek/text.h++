@@ -113,12 +113,12 @@ namespace ogonek {
         //** Range **
 
         using iterator = decoding_iterator<EncodingForm, Container>;
-        using const_iterator = decoding_iterator<EncodingForm, Container>;
+        using const_iterator = decoding_iterator<EncodingForm, Container const>;
 
-        iterator begin();
-        iterator end();
-        const_iterator begin() const;
-        const_iterator end() const;
+        iterator begin() { return iterator { storage_.begin(), storage_.end() }; }
+        iterator end() { return iterator { storage_.end(), storage_.end() }; }
+        const_iterator begin() const { return const_iterator { storage_.begin(), storage_.end() }; }
+        const_iterator end() const { return const_iterator { storage_.end(), storage_.end() }; }
 
         //** Interoperation **
 
