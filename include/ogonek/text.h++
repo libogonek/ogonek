@@ -40,6 +40,7 @@ namespace ogonek {
             validated(Range const& range, ValidationCallback&& callback) {
                 for(auto&& _ : EncodingForm::decode(range, std::forward<ValidationCallback>(callback))) {
                     (void)_;
+                    // TODO this is *wrong*
                     // do nothing, just consume the input
                 }
             }
@@ -55,6 +56,9 @@ namespace ogonek {
         using IteratorValueType = typename std::iterator_traits<Iterator>::value_type;
         template <typename Range>
         using RangeValueType = typename boost::range_value<Range>::type;
+
+        template <typename Range, typename Value>
+        struct is_range_of : std::is_same<RangeValueType<Range>, Value> {};
     } // namespace detail
 
     template <typename EncodingForm, typename Container = std::basic_string<CodeUnit<EncodingForm>>>
@@ -68,6 +72,7 @@ namespace ogonek {
     public:
         //** Constructors **
 
+        // -- basic
         //! Empty string
         basic_text() = default;
 
@@ -77,6 +82,7 @@ namespace ogonek {
         basic_text& operator=(basic_text const&) = default;
         basic_text& operator=(basic_text&&) = default;
 
+        // -- codepoints
         //! Construct from a null-terminated codepoint string (intended for UTF-32 literals)
         basic_text(codepoint const* literal)
         : basic_text(literal, throw_validation_error) {}
@@ -100,14 +106,12 @@ namespace ogonek {
                           "Can only construct text from a range of codepoints");
         }
 
+        // -- code units
+
+        // -- storage
         //! Construct from an underlying container
         explicit basic_text(Container storage)
-        : basic_text(std::move(storage), throw_validation_error) {}
-
-        //! Construct from an underlying container, with validation callback
-        template <typename ValidationCallback>
-        basic_text(Container storage, ValidationCallback&& callback)
-        : detail::validated<EncodingForm>(storage, std::forward<ValidationCallback>(callback)),
+        : detail::validated<EncodingForm>(storage, throw_validation_error),
           storage_(std::move(storage)) {}
 
         //** Range **

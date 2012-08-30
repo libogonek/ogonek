@@ -26,7 +26,7 @@ namespace ogonek {
         valid, unassigned, illegal, irregular,
     };
 
-    struct validation_error : std::exception {
+    struct validation_error : std::exception { // TODO Boost.Exception
         char const* what() const throw() override {
             return "Unicode validation failed";
         }
