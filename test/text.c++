@@ -24,33 +24,42 @@ TEST_CASE("text", "text tests") {
         using text16 = ogonek::basic_text<ogonek::utf16>;
         using text32 = ogonek::basic_text<ogonek::utf32>;
 
+        // construct UTF-8 text from a UTF-32 string literal
         text8 a { U"blah\U0001F4A9" };
         REQUIRE(a.storage() == u8"blah\U0001F4A9");
 
+        // construct UTF-16 text from a UTF-32 string literal
         text16 b { U"blah\U0001F4A9" };
         REQUIRE(b.storage() == u"blah\U0001F4A9");
 
+        // construct UTF-32 text from a UTF-32 string literal
         text32 c { U"blah\U0001F4A9" };
         REQUIRE(c.storage() == U"blah\U0001F4A9");
 
+        // construct UTF-16 text from a range of codepoints
         text16 d { std::u32string { U"blah\U0001F4A9" } };
         REQUIRE(d.storage() == u"blah\U0001F4A9");
 
+        // copy construct UTF-16 text
         text16 e { d };
         REQUIRE(e.storage() == u"blah\U0001F4A9");
 
+        // construct UTF-16 text from UTF-8 text (i.e. UTF-8 -> UTF-16 conversion)
         text16 f { a };
         REQUIRE(f.storage() == u"blah\U0001F4A9");
 
-        text16 g { c };
+        text16 g { text8 { U"blah\U0001F4A9" } };
         REQUIRE(g.storage() == u"blah\U0001F4A9");
 
-        text16 h { text8 { U"blah\U0001F4A9" } };
+        // construct UTF-16 text from UTF-32 text (i.e. UTF-32 -> UTF-16 conversion)
+        text16 h { c };
         REQUIRE(h.storage() == u"blah\U0001F4A9");
 
+        // construct UTF-16 text from UTF-16 string
         text16 i { std::u16string { u"blah\U0001F4A9" } };
         REQUIRE(d.storage() == u"blah\U0001F4A9");
 
+        // (fail to) construct UTF-16 text from invalid data
         REQUIRE_THROWS_AS(text16 { U"blah\x200000" }, ogonek::validation_error);
     }
 }
