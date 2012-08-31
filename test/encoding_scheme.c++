@@ -15,6 +15,7 @@
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf32.h++>
 #include <ogonek/types.h++>
+#include <ogonek/validation.h++>
 
 #include <catch.h++>
 
@@ -23,7 +24,7 @@ TEST_CASE("utf16le", "UTF-16LE codec") {
 
     SECTION("encode", "Encoding UTF-16LE") {
         auto decoded = { 0x0041_u, 0x00C5_u, 0x1EA0_u, 0x1F4A9_u };
-        auto range = ogonek::utf16le::encode(decoded);
+        auto range = ogonek::utf16le::encode(decoded, ogonek::skip_validation);
         std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 10);
         CHECK(encoded[0] == 0x41_b);
@@ -40,7 +41,7 @@ TEST_CASE("utf16le", "UTF-16LE codec") {
     SECTION("decode", "Decoding UTF-16LE") {
         auto encoded = { 0x41_b, 0x00_b, 0xC5_b, 0x00_b, 0xA0_b,
                          0x1E_b, 0x3D_b, 0xD8_b, 0xA9_b, 0xDC_b };
-        auto range = ogonek::utf16le::decode(encoded);
+        auto range = ogonek::utf16le::decode(encoded, ogonek::skip_validation);
         std::vector<ogonek::codepoint> decoded(boost::begin(range), boost::end(range));
         CHECK(decoded.size() == 4);
         CHECK(decoded[0] == 0x0041_u);
@@ -55,7 +56,7 @@ TEST_CASE("utf16be", "UTF-16BE codec") {
 
     SECTION("encode", "Encoding UTF-16BE") {
         auto decoded = { 0x0041_u, 0x00C5_u, 0x1EA0_u, 0x1F4A9_u };
-        auto range = ogonek::utf16be::encode(decoded);
+        auto range = ogonek::utf16be::encode(decoded, ogonek::skip_validation);
         std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 10);
         CHECK(encoded[0] == 0x00_b);
@@ -72,7 +73,7 @@ TEST_CASE("utf16be", "UTF-16BE codec") {
     SECTION("decode", "Decoding UTF-16BE") {
         auto encoded = { 0x00_b, 0x41_b, 0x00_b, 0xC5_b, 0x1E_b,
                          0xA0_b, 0xD8_b, 0x3D_b, 0xDC_b, 0xA9_b };
-        auto range = ogonek::utf16be::decode(encoded);
+        auto range = ogonek::utf16be::decode(encoded, ogonek::skip_validation);
         std::vector<ogonek::codepoint> decoded(boost::begin(range), boost::end(range));
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == 0x0041_u);
@@ -87,7 +88,7 @@ TEST_CASE("utf32le", "UTF-32LE codec") {
 
     SECTION("encode", "Encoding UTF-32LE") {
         auto decoded = { 0x0041_u, 0x00C5_u, 0x1EA0_u, 0x1F4A9_u };
-        auto range = ogonek::utf32le::encode(decoded);
+        auto range = ogonek::utf32le::encode(decoded, ogonek::skip_validation);
         std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 16);
         CHECK(encoded[0] == 0x41_b);
@@ -112,7 +113,7 @@ TEST_CASE("utf32le", "UTF-32LE codec") {
                          0xC5_b, 0x00_b, 0x00_b, 0x00_b,
                          0xA0_b, 0x1E_b, 0x00_b, 0x00_b,
                          0xA9_b, 0xF4_b, 0x01_b, 0x00_b };
-        auto range = ogonek::utf32le::decode(encoded);
+        auto range = ogonek::utf32le::decode(encoded, ogonek::skip_validation);
         std::vector<ogonek::codepoint> decoded(boost::begin(range), boost::end(range));
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == 0x0041_u);
@@ -128,7 +129,7 @@ TEST_CASE("utf32be", "UTF-32BE codec") {
 
     SECTION("encode", "Encoding UTF-32BE") {
         auto decoded = { 0x0041_u, 0x00C5_u, 0x1EA0_u, 0x1F4A9_u };
-        auto range = ogonek::utf32be::encode(decoded);
+        auto range = ogonek::utf32be::encode(decoded, ogonek::skip_validation);
         std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 16);
         CHECK(encoded[0] == 0x00_b);
@@ -153,7 +154,7 @@ TEST_CASE("utf32be", "UTF-32BE codec") {
                          0x00_b, 0x00_b, 0x00_b, 0xC5_b,
                          0x00_b, 0x00_b, 0x1E_b, 0xA0_b,
                          0x00_b, 0x01_b, 0xF4_b, 0xA9_b };
-        auto range = ogonek::utf32be::decode(encoded);
+        auto range = ogonek::utf32be::decode(encoded, ogonek::skip_validation);
         std::vector<ogonek::codepoint> decoded(boost::begin(range), boost::end(range));
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == 0x0041_u);

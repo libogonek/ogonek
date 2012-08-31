@@ -100,13 +100,11 @@ namespace ogonek {
 
         //! Construct from a codepoint range, with validation callback
         template <typename CodepointRange, typename ValidationCallback>
-        basic_text(CodepointRange const& range, ValidationCallback&& /*callback*/)
-        : basic_text(direct{}, EncodingForm::encode(range)) { // TODO use callback!
+        basic_text(CodepointRange const& range, ValidationCallback&& callback)
+        : basic_text(direct{}, EncodingForm::encode(range, std::forward<ValidationCallback>(callback))) {
             static_assert(std::is_same<detail::RangeValueType<CodepointRange>, codepoint>::value,
                           "Can only construct text from a range of codepoints");
         }
-
-        // -- code units
 
         // -- storage
         //! Construct from an underlying container
@@ -116,13 +114,13 @@ namespace ogonek {
 
         //** Range **
 
-        using iterator = decoding_iterator<EncodingForm, typename Container::iterator>;
-        using const_iterator = decoding_iterator<EncodingForm, typename Container::const_iterator>;
+        using iterator = decoding_iterator<EncodingForm, typename Container::iterator, decltype(skip_validation)>;
+        using const_iterator = decoding_iterator<EncodingForm, typename Container::const_iterator, decltype(skip_validation)>;
 
-        iterator begin() { return iterator { storage_.begin(), storage_.end() }; }
-        iterator end() { return iterator { storage_.end(), storage_.end() }; }
-        const_iterator begin() const { return const_iterator { storage_.begin(), storage_.end() }; }
-        const_iterator end() const { return const_iterator { storage_.end(), storage_.end() }; }
+        iterator begin() { return iterator { storage_.begin(), storage_.end(), skip_validation }; }
+        iterator end() { return iterator { storage_.end(), storage_.end(), skip_validation }; }
+        const_iterator begin() const { return const_iterator { storage_.begin(), storage_.end(), skip_validation }; }
+        const_iterator end() const { return const_iterator { storage_.end(), storage_.end(), skip_validation }; }
 
         //** Interoperation **
 

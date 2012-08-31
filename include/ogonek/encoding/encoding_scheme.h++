@@ -84,21 +84,13 @@ namespace ogonek {
         using state = typename EncodingForm::state;
         using code_unit = ogonek::byte;
 
-        template <typename SinglePassRange,
+        template <typename SinglePassRange, typename ValidationCallback,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename EncodingIterator = encoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, Iterator>>
-        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r) {
+                  typename EncodingIterator = encoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, Iterator, ValidationCallback>>
+        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ValidationCallback&& callback) {
             return boost::make_iterator_range(
-                    EncodingIterator { boost::begin(r), boost::end(r) },
-                    EncodingIterator { boost::end(r), boost::end(r) });
-        }
-        template <typename SinglePassRange,
-                  typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename DecodingIterator = decoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, Iterator>>
-        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r) {
-            return boost::make_iterator_range(
-                    DecodingIterator { boost::begin(r), boost::end(r) },
-                    DecodingIterator { boost::end(r), boost::end(r) });
+                    EncodingIterator { boost::begin(r), boost::end(r), callback },
+                    EncodingIterator { boost::end(r), boost::end(r), callback });
         }
 
         template <typename SinglePassRange, typename ValidationCallback,
@@ -119,16 +111,6 @@ namespace ogonek {
                 out = std::copy(bytes.begin(), bytes.end(), out);
             }
             return { result, std::size_t(out - result.begin()) };
-        }
-        template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s) {
-            using code_unit_range = encoding_scheme_detail::byte_ordered_range<ByteOrder, typename EncodingForm::code_unit, SinglePassRange>;
-            using iterator = typename boost::range_iterator<code_unit_range>::type;
-            code_unit_range range {
-                iterator { boost::begin(r) }, iterator { boost::end(r) }
-            };
-            auto remaining = EncodingForm::decode_one(range, out, s);
-            return { remaining.begin().it, r.end() };
         }
         template <typename SinglePassRange, typename ValidationCallback>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s, ValidationCallback&& callback) {

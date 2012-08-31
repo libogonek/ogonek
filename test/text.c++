@@ -48,7 +48,10 @@ TEST_CASE("text", "text tests") {
         text16 h { text8 { U"blah\U0001F4A9" } };
         REQUIRE(h.storage() == u"blah\U0001F4A9");
 
-        //REQUIRE_THROWS_AS(text16 { U"blah\x200000" }, ogonek::validation_error);
+        text16 i { std::u16string { u"blah\U0001F4A9" } };
+        REQUIRE(d.storage() == u"blah\U0001F4A9");
+
+        REQUIRE_THROWS_AS(text16 { U"blah\x200000" }, ogonek::validation_error);
     }
 }
 

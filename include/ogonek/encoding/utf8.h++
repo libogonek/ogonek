@@ -35,23 +35,14 @@ namespace ogonek {
         static constexpr bool is_self_synchronizing = true;
         struct state {};
 
-        template <typename SinglePassRange,
+        template <typename SinglePassRange, typename ValidationCallback,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename EncodingIterator = encoding_iterator<utf8, Iterator>>
-        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r) {
+                  typename EncodingIterator = encoding_iterator<utf8, Iterator, ValidationCallback>>
+        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ValidationCallback&& callback) {
             return boost::make_iterator_range(
-                    EncodingIterator { boost::begin(r), boost::end(r) },
-                    EncodingIterator { boost::end(r), boost::end(r) });
+                    EncodingIterator { boost::begin(r), boost::end(r), callback },
+                    EncodingIterator { boost::end(r), boost::end(r), callback });
         }
-        template <typename SinglePassRange,
-                  typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename DecodingIterator = decoding_iterator<utf8, Iterator>>
-        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r) {
-            return boost::make_iterator_range(
-                    DecodingIterator { boost::begin(r), boost::end(r) },
-                    DecodingIterator { boost::end(r), boost::end(r) });
-        }
-
         template <typename SinglePassRange, typename ValidationCallback,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
                   typename DecodingIterator = decoding_iterator<utf8, Iterator, ValidationCallback>>
@@ -104,7 +95,7 @@ namespace ogonek {
             return ((b0 & 0x07) << 18) | ((b1 & 0x3F) << 12) | ((b2 & 0x3F) << 6) | (b3 & 0x3F);
         }
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, decltype(skip_validation)) {
             auto first = boost::begin(r);
             byte b0 = *first++;
             auto length = sequence_length(b0);

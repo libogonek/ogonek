@@ -16,6 +16,7 @@
 
 #include "../traits.h++"
 #include "../types.h++"
+#include "../validation.h++"
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>
@@ -54,17 +55,27 @@ namespace ogonek {
         std::array<T, N> array;
     };
 
-    template <typename EncodingForm, typename Iterator>
+    inline void validate(codepoint&, decltype(skip_validation)) {}
+    inline bool is_surrogate(codepoint u) { return u >= 0xD800 && u <= 0xDFFF; }
+    template <typename Callback>
+    void validate(codepoint& u, Callback&& callback) {
+        auto list = { u };
+        if(u > 0x10FFFF || is_surrogate(u)) {
+            callback(validation_result::illegal, boost::sub_range<decltype(list)>(list), u); // TODO: how to use the result?
+        }
+    }
+
+    template <typename EncodingForm, typename Iterator, typename ValidationCallback>
     struct encoding_iterator
     : boost::iterator_facade<
-        encoding_iterator<EncodingForm, Iterator>,
+        encoding_iterator<EncodingForm, Iterator, ValidationCallback>,
         CodeUnit<EncodingForm>,
         std::input_iterator_tag, // TODO
         CodeUnit<EncodingForm>
       > {
     public:
-        encoding_iterator(Iterator first, Iterator last)
-        : first(first), last(last) {
+        encoding_iterator(Iterator first, Iterator last, ValidationCallback callback)
+        : first(first), last(last), callback(std::forward<ValidationCallback>(callback)) {
             encode_next();
         }
 
@@ -86,7 +97,9 @@ namespace ogonek {
     private:
         void encode_next() {
             if(first != last) {
-                encoded = EncodingForm::encode_one(*first++, state);
+                auto u = *first++;
+                validate(u, callback);
+                encoded = EncodingForm::encode_one(u, state);
                 current = 0;
             } else {
                 current = -1;
@@ -94,12 +107,13 @@ namespace ogonek {
         }
 
         Iterator first, last;
+        typename std::decay<ValidationCallback>::type callback;
         typename EncodingForm::state state {};
         partial_array<CodeUnit<EncodingForm>, EncodingForm::max_width> encoded {};
         int current;
     };
 
-    template <typename EncodingForm, typename Iterator, typename ValidationCallback = void>
+    template <typename EncodingForm, typename Iterator, typename ValidationCallback>
     struct decoding_iterator
     : boost::iterator_facade<
         decoding_iterator<EncodingForm, Iterator, ValidationCallback>,
@@ -131,39 +145,6 @@ namespace ogonek {
         Iterator first, last;
         typename std::decay<ValidationCallback>::type callback;
         typename EncodingForm::state state {};
-    };
-
-    template <typename EncodingForm, typename Iterator>
-    struct decoding_iterator<EncodingForm, Iterator, void>
-    : boost::iterator_facade<
-        decoding_iterator<EncodingForm, Iterator>,
-        codepoint,
-        std::input_iterator_tag, // TODO
-        codepoint
-      > {
-    public:
-        using range = boost::iterator_range<Iterator>;
-
-        decoding_iterator(Iterator first, Iterator last)
-        : first(first), last(last), state{} {}
-
-        codepoint dereference() const {
-            codepoint u;
-            auto s = state;
-            EncodingForm::decode_one(boost::sub_range<range>(first, last), u, s);
-            return u;
-        }
-        bool equal(decoding_iterator const& that) const {
-            return first == that.first || (first == last && that.first == that.last);
-        }
-        void increment() {
-            codepoint dummy;
-            first = EncodingForm::decode_one(boost::sub_range<range>(first, last), dummy, state).begin();
-        }
-
-    private:
-        Iterator first, last;
-        typename EncodingForm::state state;
     };
 } // namespace ogonek
 

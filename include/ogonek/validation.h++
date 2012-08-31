@@ -32,27 +32,29 @@ namespace ogonek {
         }
     };
 
-    struct {
+    constexpr struct {
         template <typename Range>
         boost::sub_range<Range> operator()(validation_result, boost::sub_range<Range> const&, codepoint&) const {
             throw validation_error();
         }
-    } constexpr throw_validation_error = {};
+    } throw_validation_error = {};
 
-    struct {
+    constexpr struct {
         template <typename Range>
         boost::sub_range<Range> operator()(validation_result, boost::sub_range<Range> const& source, codepoint& out) const {
             out = U'\xFFFD';
             return { std::next(boost::begin(source)), boost::end(source) };
         }
-    } constexpr use_replacement_character = {};
+    } use_replacement_character = {};
 
-    struct {
+    constexpr struct {
         template <typename Range>
         boost::sub_range<Range> operator()(validation_result, boost::sub_range<Range> const& source, codepoint&) const {
             return { std::next(boost::begin(source)), boost::end(source) };
         }
-    } constexpr ignore_errors = {};
+    } ignore_errors = {};
+
+    constexpr struct skip_validation_t {} skip_validation = {};
 } // namespace ogonek
 
 #endif // OGONEK_VALIDATION_HPP
