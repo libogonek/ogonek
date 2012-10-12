@@ -240,20 +240,9 @@ namespace ogonek {
         template <typename Text>
         Text const& get() const { return *static_cast<Text const*>(handle->get()); }
 
-        /*
-        //! Move the underlying storage out
-        template <typename Container>
-        Container move_storage();
-        //! View the underlying storage
-        template <typename Container>
-        Container const& storage() const;
-        */
-
     private:
         handle_type handle;
     };
 } // namespace ogonek
 
 #endif // OGONEK_TEXT_HPP
-#if 0
-#endif
