@@ -14,6 +14,7 @@
 #ifndef OGONEK_ENCODING_UTF7_HPP
 #define OGONEK_ENCODING_UTF7_HPP
 
+#if 0
 #include "../types.h++"
 #include "utf16.h++"
 #include "encoding_scheme.h++"
@@ -187,4 +188,4 @@ namespace ogonek {
 
 #endif // OGONEK_ENCODING_UTF7_HPP
 
-
+#endif

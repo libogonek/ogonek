@@ -25,9 +25,12 @@
 #include <boost/range/value_type.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
+#include <boost/range/any_range.hpp>
 
 #include <type_traits>
 #include <string>
+#include <memory>
+#include <iterator>
 
 namespace ogonek {
     namespace detail {
@@ -140,7 +143,100 @@ namespace ogonek {
 
         Container storage_;
     };
+
+    class any_text {
+    public:
+        using iterator = boost::any_range<codepoint, boost::forward_traversal_tag, codepoint, std::ptrdiff_t>::iterator;
+        using const_iterator = iterator;
+
+    private:
+        class placeholder;
+        using handle_type = std::unique_ptr<placeholder>;
+
+        class placeholder {
+        public:
+            placeholder() = default;
+            placeholder(placeholder const&) = delete;
+            placeholder(placeholder&&) = delete;
+            virtual ~placeholder() = default;
+
+            virtual handle_type clone() = 0;
+
+            virtual iterator begin() = 0;
+            virtual const_iterator end() = 0;
+            virtual iterator begin() const = 0;
+            virtual const_iterator end() const = 0;
+        };
+
+        template <typename EncodingForm, typename Container>
+        class holder : public placeholder {
+        public:
+            using text_type = basic_text<EncodingForm, Container>;
+            holder(text_type const& text) : text(text) {}
+            holder(text_type&& text) : text(std::move(text)) {}
+
+            handle_type clone() {
+                return handle_type { new holder(*this) };
+            }
+
+            iterator begin() { return text.begin(); }
+            const_iterator end() { return text.end(); }
+            iterator begin() const { return text.begin(); }
+            const_iterator end() const { return text.end(); }
+
+        private:
+            text_type text;
+        };
+
+    public:
+        //** Constructors **
+        any_text() {}
+        any_text(any_text const& that)
+        : handle { that.handle->clone() } {}
+        any_text(any_text&& that) = default;
+        any_text& operator=(any_text const& that) {
+            handle = handle_type { that.handle->clone() };
+            return *this;
+        }
+        any_text& operator=(any_text&& that) = default;
+
+        template <typename EncodingForm, typename Container>
+        any_text(basic_text<EncodingForm, Container> const& text)
+        : handle { new holder<EncodingForm, Container>(text) } {}
+        template <typename EncodingForm, typename Container>
+        any_text(basic_text<EncodingForm, Container>&& text)
+        : handle { new holder<EncodingForm, Container>(std::move(text)) } {}
+
+        template <typename EncodingForm, typename Container>
+        any_text& operator=(basic_text<EncodingForm, Container> const& text) {
+            handle = handle_type { new holder<EncodingForm, Container>(text) };
+            return *this;
+        }
+        template <typename EncodingForm, typename Container>
+        any_text& operator=(basic_text<EncodingForm, Container>&& text) {
+            handle = handle_type { new holder<EncodingForm, Container>(std::move(text)) };
+            return *this;
+        }
+
+        iterator begin() { return handle->begin(); }
+        iterator end() { return handle->end(); }
+        const_iterator begin() const { return handle->begin(); }
+        const_iterator end() const { return handle->end(); }
+
+        /*
+        //! Move the underlying storage out
+        template <typename Container>
+        Container move_storage();
+        //! View the underlying storage
+        template <typename Container>
+        Container const& storage() const;
+        */
+
+    private:
+        handle_type handle;
+    };
 } // namespace ogonek
 
 #endif // OGONEK_TEXT_HPP
-
+#if 0
+#endif
