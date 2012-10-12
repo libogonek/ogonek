@@ -146,7 +146,7 @@ namespace ogonek {
 
     class any_text {
     public:
-        using iterator = boost::any_range<codepoint, boost::forward_traversal_tag, codepoint, std::ptrdiff_t>::iterator;
+        using iterator = boost::any_range<codepoint, boost::single_pass_traversal_tag, codepoint, std::ptrdiff_t>::iterator;
         using const_iterator = iterator;
 
     private:
@@ -156,8 +156,6 @@ namespace ogonek {
         class placeholder {
         public:
             placeholder() = default;
-            placeholder(placeholder const&) = delete;
-            placeholder(placeholder&&) = delete;
             virtual ~placeholder() = default;
 
             virtual handle_type clone() = 0;
@@ -166,12 +164,17 @@ namespace ogonek {
             virtual const_iterator end() = 0;
             virtual iterator begin() const = 0;
             virtual const_iterator end() const = 0;
+
+        protected:
+            placeholder(placeholder const&) = default;
+            placeholder(placeholder&&) = default;
         };
 
         template <typename EncodingForm, typename Container>
         class holder : public placeholder {
         public:
             using text_type = basic_text<EncodingForm, Container>;
+
             holder(text_type const& text) : text(text) {}
             holder(text_type&& text) : text(std::move(text)) {}
 
@@ -179,12 +182,15 @@ namespace ogonek {
                 return handle_type { new holder(*this) };
             }
 
-            iterator begin() { return text.begin(); }
-            const_iterator end() { return text.end(); }
-            iterator begin() const { return text.begin(); }
-            const_iterator end() const { return text.end(); }
+            iterator begin() { return iterator { text.begin() }; }
+            iterator end() { return iterator { text.end() }; }
+            const_iterator begin() const { return const_iterator { text.begin() }; }
+            const_iterator end() const { return const_iterator { text.end() }; }
 
         private:
+            holder(holder const&) = default;
+            holder(holder&&) = default;
+
             text_type text;
         };
 
@@ -193,12 +199,12 @@ namespace ogonek {
         any_text() {}
         any_text(any_text const& that)
         : handle { that.handle->clone() } {}
-        any_text(any_text&& that) = default;
+        any_text(any_text&&) = default;
         any_text& operator=(any_text const& that) {
             handle = handle_type { that.handle->clone() };
             return *this;
         }
-        any_text& operator=(any_text&& that) = default;
+        any_text& operator=(any_text&&) = default;
 
         template <typename EncodingForm, typename Container>
         any_text(basic_text<EncodingForm, Container> const& text)

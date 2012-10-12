@@ -19,11 +19,11 @@
 #include <catch.h++>
 
 TEST_CASE("text", "text tests") {
-    SECTION("general", "General test") {
-        using text8 = ogonek::basic_text<ogonek::utf8>;
-        using text16 = ogonek::basic_text<ogonek::utf16>;
-        using text32 = ogonek::basic_text<ogonek::utf32>;
+    using text8 = ogonek::basic_text<ogonek::utf8>;
+    using text16 = ogonek::basic_text<ogonek::utf16>;
+    using text32 = ogonek::basic_text<ogonek::utf32>;
 
+    SECTION("general", "General test") {
         // construct UTF-8 text from a UTF-32 string literal
         text8 a { U"blah\U0001F4A9" };
         REQUIRE(a.storage() == u8"blah\U0001F4A9");
@@ -61,6 +61,15 @@ TEST_CASE("text", "text tests") {
 
         // (fail to) construct UTF-16 text from invalid data
         REQUIRE_THROWS_AS(text16 { U"blah\x200000" }, ogonek::validation_error);
+    }
+    SECTION("any", "any_text tests") {
+        auto foo = text16 { U"foo" };
+        ogonek::any_text any = foo; 
+        REQUIRE(std::equal(any.begin(), any.end(), foo.begin()));
+
+        auto bar = text8 { U"bar" };
+        any = bar;
+        REQUIRE(std::equal(any.begin(), any.end(), bar.begin()));
     }
 }
 
