@@ -165,6 +165,9 @@ namespace ogonek {
             virtual iterator begin() const = 0;
             virtual const_iterator end() const = 0;
 
+            virtual void* get() = 0;
+            virtual void const* get() const = 0;
+
         protected:
             placeholder(placeholder const&) = default;
             placeholder(placeholder&&) = default;
@@ -178,14 +181,17 @@ namespace ogonek {
             holder(text_type const& text) : text(text) {}
             holder(text_type&& text) : text(std::move(text)) {}
 
-            handle_type clone() {
+            handle_type clone() override {
                 return handle_type { new holder(*this) };
             }
 
-            iterator begin() { return iterator { text.begin() }; }
-            iterator end() { return iterator { text.end() }; }
-            const_iterator begin() const { return const_iterator { text.begin() }; }
-            const_iterator end() const { return const_iterator { text.end() }; }
+            iterator begin() override { return iterator { text.begin() }; }
+            iterator end() override { return iterator { text.end() }; }
+            const_iterator begin() const override { return const_iterator { text.begin() }; }
+            const_iterator end() const override { return const_iterator { text.end() }; }
+
+            void* get() { return &text; }
+            void const* get() const { return &text; }
 
         private:
             holder(holder const&) = default;
@@ -228,6 +234,11 @@ namespace ogonek {
         iterator end() { return handle->end(); }
         const_iterator begin() const { return handle->begin(); }
         const_iterator end() const { return handle->end(); }
+
+        template <typename Text>
+        Text& get() { return *static_cast<Text*>(handle->get()); }
+        template <typename Text>
+        Text const& get() const { return *static_cast<Text const*>(handle->get()); }
 
         /*
         //! Move the underlying storage out

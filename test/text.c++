@@ -66,10 +66,12 @@ TEST_CASE("text", "text tests") {
         auto foo = text16 { U"foo" };
         ogonek::any_text any = foo; 
         REQUIRE(std::equal(any.begin(), any.end(), foo.begin()));
+        REQUIRE(any.get<text16>().storage() == u"foo");
 
         auto bar = text8 { U"bar" };
         any = bar;
         REQUIRE(std::equal(any.begin(), any.end(), bar.begin()));
+        REQUIRE(any.get<text8>().storage() == u8"bar");
     }
 }
 
