@@ -67,8 +67,10 @@ namespace ogonek {
     template <typename EncodingForm, typename Container = std::basic_string<CodeUnit<EncodingForm>>>
     struct basic_text : private detail::validated<EncodingForm> {
     private:
-        static_assert(std::is_same<CodeUnit<EncodingForm>, detail::ValueType<Container>>::value,
-                      "The container's value type should be the same as the encoding form code units");
+        static_assert(std::is_convertible<CodeUnit<EncodingForm>, detail::ValueType<Container>>::value,
+                      "The container's value type should be convertible to the encoding form code units");
+        static_assert(std::is_convertible<detail::ValueType<Container>, CodeUnit<EncodingForm>>::value,
+                      "The encoding form code units should be convertible to the container's value type");
 
         struct direct {};
 
@@ -143,6 +145,21 @@ namespace ogonek {
 
         Container storage_;
     };
+
+    class utf8;
+    class utf16;
+    using linux_text = basic_text<utf8, std::string>;
+    using windows_text = basic_text<utf16, std::wstring>;
+#ifdef OGONEK_WINDOWS
+    using native_text = windows_text;
+#else
+    using native_text = linux_text;
+#endif
+
+    class narrow;
+    class wide;
+    using narrow_text = basic_text<narrow, std::string>;
+    using wide_text = basic_text<wide, std::wstring>;
 
     class any_text {
     public:
