@@ -10,7 +10,10 @@ Here's a list of what's implemented so far:
    template parameters for the underlying encoding and container but the
    interface it offers is for a range of codepoints. This makes conversions at
    API boundaries simple and type-safe. See http://gist.io/3166256 for more
-   info.
+   info;
+
+ - `any_text`, a type erased variant of `basic_text` for use in compiled
+   boundaries, or whenever templates are not appropriate/desiredM
 
  - facilities for converting between ranges of codepoints to ranges of code
    units or bytes in UTF encodings, and vice-versa;
