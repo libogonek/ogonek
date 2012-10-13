@@ -30,6 +30,12 @@ namespace ogonek {
     template <typename T, std::size_t N>
     struct partial_array {
     public:
+        template <typename U>
+        partial_array(partial_array<U, N> const& that)
+        : count(that.count) {
+            std::copy(that.begin(), that.end(), array.begin());
+        }
+        : count(count), array(array) {}
         partial_array(std::array<T, N> array, std::size_t count)
         : count(count), array(array) {}
         partial_array(std::initializer_list<T> list)

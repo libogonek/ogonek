@@ -38,7 +38,7 @@ namespace ogonek {
 
         template <typename SinglePassRange, typename ValidationCallback,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename EncodingIterator = encoding_iterator<utf16, Iterator, ValidationCallback>>
+                  typename EncodingIterator = encoding_iterator<narrow, Iterator, ValidationCallback>>
         static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ValidationCallback&& callback) {
             return boost::make_iterator_range(
                     EncodingIterator { boost::begin(r), boost::end(r), callback },
@@ -47,7 +47,7 @@ namespace ogonek {
 
         template <typename SinglePassRange, typename ValidationCallback,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename DecodingIterator = decoding_iterator<utf16, Iterator, ValidationCallback>>
+                  typename DecodingIterator = decoding_iterator<narrow, Iterator, ValidationCallback>>
         static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, ValidationCallback&& callback) {
             return boost::make_iterator_range(
                     DecodingIterator { boost::begin(r), boost::end(r), callback },
