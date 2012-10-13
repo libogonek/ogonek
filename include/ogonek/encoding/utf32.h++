@@ -14,7 +14,9 @@
 #ifndef OGONEK_ENCODING_UTF32_HPP
 #define OGONEK_ENCODING_UTF32_HPP
 
+#include "iterator.h++"
 #include "../types.h++"
+#include "../validation.h++"
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>

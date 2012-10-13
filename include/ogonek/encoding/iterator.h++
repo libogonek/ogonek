@@ -35,7 +35,6 @@ namespace ogonek {
         : count(that.count) {
             std::copy(that.begin(), that.end(), array.begin());
         }
-        : count(count), array(array) {}
         partial_array(std::array<T, N> array, std::size_t count)
         : count(count), array(array) {}
         partial_array(std::initializer_list<T> list)
