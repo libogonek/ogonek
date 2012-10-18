@@ -41,7 +41,13 @@ namespace ogonek {
             void increment() {
                 ++position;
                 if(position == current.size()) {
-                    current = ucd::get_decomposition_mapping(*first++);
+                    auto u = *first++;
+                    auto type = ucd::get_decomposition_type(u);
+                    if(type == ucd::decomposition_type::can) {
+                        current = ucd::get_decomposition_mapping(u);
+                    } else {
+                        current = { u };
+                    }
                     position = 0;
                 }
             }
