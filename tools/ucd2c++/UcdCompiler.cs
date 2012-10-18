@@ -720,6 +720,7 @@ namespace Ogonek.UcdCompiler
             string destination = args[1];
 
             var data = Parse(XDocument.Load(source)).ToArray();
+            Decompose(data);
 
             WriteData(data, File.CreateText(Path.Combine(destination, "age.g.inl")), "version data",
                 x => x.Version,
@@ -862,6 +863,31 @@ namespace Ogonek.UcdCompiler
                                 Format(x.Deprecated), Format(x.VariationSelector), Format(x.Noncharacter)));
 
             return 0;
+        }
+
+        static IEnumerable<int> Decompose(int codepoint, CodepointSet[] sets) {
+            var set = sets.Single(s => s.From >= codepoint && s.To <= codepoint);
+            var map = set.DecompositionMapping;
+            if(map.Length == 1 && map[0] == -1) {
+                return new[] { codepoint };
+            }
+            
+            return map.SelectMany(c => Decompose(c, sets));
+        }
+        
+        static IEnumerable<int> Decompose(CodepointSet set, CodepointSet[] sets) {
+            var map = set.DecompositionMapping;
+            if(map.Length == 1 && map[0] == -1) {
+                return map;
+            } else {
+                return map.SelectMany(c => Decompose(c, sets));
+            }
+        }
+        
+        static void Decompose(CodepointSet[] sets) {
+            foreach(var set in sets) {
+                set.DecompositionMapping = Decompose(set, sets).ToArray();
+            }
         }
 
         static void WriteAliases(IEnumerable<CodepointSet> sets, TextWriter listOutput, TextWriter mapOutput)
