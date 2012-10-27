@@ -86,15 +86,15 @@ namespace ogonek {
     } // namespace detail
 
     template <typename BoundaryCondition, typename CodepointIterator>
-    struct break_iterator
+    struct segment_iterator
     : boost::iterator_facade<
-        break_iterator<BoundaryCondition, CodepointIterator>,
+        segment_iterator<BoundaryCondition, CodepointIterator>,
         boost::iterator_range<CodepointIterator>,
         std::input_iterator_tag, // TODO
         boost::iterator_range<CodepointIterator>>
     {
     public:
-        break_iterator(CodepointIterator first, CodepointIterator last)
+        segment_iterator(CodepointIterator first, CodepointIterator last)
         : first(first), last(last) {}
 
     private:
@@ -116,7 +116,7 @@ namespace ogonek {
         void increment() {
             first = dereference().end();
         }
-        bool equal(break_iterator const& that) const {
+        bool equal(segment_iterator const& that) const {
             return first == that.first;
         }
 
@@ -124,7 +124,7 @@ namespace ogonek {
         CodepointIterator last;
     };
     template <typename CodepointIterator>
-    using grapheme_cluster_iterator = break_iterator<detail::grapheme_cluster_boundary, CodepointIterator>;
+    using grapheme_cluster_iterator = segment_iterator<detail::grapheme_cluster_boundary, CodepointIterator>;
 
     template <typename SinglePassRange>
     boost::iterator_range<grapheme_cluster_iterator<typename boost::range_const_iterator<SinglePassRange>::type>> grapheme_clusters(SinglePassRange const& range) {
