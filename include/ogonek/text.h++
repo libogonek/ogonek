@@ -207,8 +207,8 @@ namespace ogonek {
             const_iterator begin() const override { return const_iterator { text.begin() }; }
             const_iterator end() const override { return const_iterator { text.end() }; }
 
-            void* get() { return &text; }
-            void const* get() const { return &text; }
+            void* get() override { return &text; }
+            void const* get() const override { return &text; }
 
         private:
             holder(holder const&) = default;
