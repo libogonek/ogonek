@@ -90,7 +90,7 @@ namespace ogonek {
     : boost::iterator_facade<
         break_iterator<BoundaryCondition, CodepointIterator>,
         boost::iterator_range<CodepointIterator>,
-        typename std::iterator_traits<CodepointIterator>::iterator_category,
+        std::input_iterator_tag, // TODO
         boost::iterator_range<CodepointIterator>>
     {
     public:

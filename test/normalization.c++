@@ -22,9 +22,6 @@ TEST_CASE("decompose", "Decomposition") {
     using test_text = ogonek::basic_text<ogonek::utf32>;
     test_text in { U"ABC\x00C5\x00F4\x1E69\x1E0B\x0323\x0071\x0307\x0323" };
     test_text out { ogonek::decompose(in) };
-    for(auto u : out) {
-        std::cout << std::hex << unsigned(u) << '\n';
-    }
     REQUIRE(out.storage() == U"ABC\x0041\x030A\x006F\x0302\x0073\x0323\x0307\x0064\x0307\x0323\x0071\x0307\x0323");
 }
 

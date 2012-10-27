@@ -29,7 +29,7 @@ namespace ogonek {
             v3_0, v3_1, v3_2,
             v4_0, v4_1,
             v5_0, v5_1, v5_2,
-            v6_0, v6_1,
+            v6_0, v6_1, v6_2,
             unassigned = 0xFF,
         };
         enum class alias_type {
@@ -144,6 +144,7 @@ namespace ogonek {
             WJ,
             XX,
             ZW,
+            RI,
         };
         enum class east_asian_width {
             A, F, H, N, Na, W,
@@ -238,6 +239,7 @@ namespace ogonek {
         enum class word_break {
             CR, EX, Extend, FO, KA, LE,
             LF, MB, ML, MN, NL, NU, XX,
+            RI,
         };
         enum class sentence_break {
             AT, CL, CR, EX, FO, LE, LF, LO,
