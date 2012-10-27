@@ -39,7 +39,7 @@ namespace Ogonek.UcdCompiler
         v3_0, v3_1, v3_2,
         v4_0, v4_1,
         v5_0, v5_1, v5_2,
-        v6_0, v6_1,
+        v6_0, v6_1, v6_2,
         Unassigned,
     }
 
@@ -47,6 +47,7 @@ namespace Ogonek.UcdCompiler
     {
         CR, EX, Extend, FO, KA, LE,
         LF, MB, ML, MN, NL, NU, XX,
+        RI,
     }
 
     static class XmlParsingExtensions
@@ -221,7 +222,7 @@ namespace Ogonek.UcdCompiler
             }
             yield return current;
         }
- 
+
     }
 
     enum Linebreak
@@ -243,6 +244,7 @@ namespace Ogonek.UcdCompiler
         WJ,
         XX,
         ZW,
+        RI,
     }
 
     enum JoiningGroup
@@ -323,7 +325,7 @@ namespace Ogonek.UcdCompiler
     enum GraphemeClusterBreak
     {
         CN, CR, EX, L, LF, LV, LVT, PP,
-        SM, T, V, XX,
+        SM, T, V, XX, RI,
     }
 
     enum GeneralCategory
@@ -711,7 +713,7 @@ namespace Ogonek.UcdCompiler
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-            if(args.Length != 2)
+            if (args.Length != 2)
             {
                 Console.WriteLine("Usage: ucd2c++ <XML source> <destination directory>");
                 return 1;
@@ -732,7 +734,7 @@ namespace Ogonek.UcdCompiler
                 x => x.Name,
                 x => string.Format("{{ {0}, false, \"{1}\" }}", FormatCodepoint(x.From), x.Name));
             WriteAliases(data, File.CreateText(Path.Combine(destination, "aliases.g.inl")), File.CreateText(Path.Combine(destination, "alias_map.g.inl")));
-            WriteData(data, File.CreateText(Path.Combine(destination, "block.g.inl")),  "block data",
+            WriteData(data, File.CreateText(Path.Combine(destination, "block.g.inl")), "block data",
                 x => x.Block,
                 x => string.Format("{{ {0}, block::{1} }}", FormatCodepoint(x.From), x.Block));
             WriteData(data, File.CreateText(Path.Combine(destination, "category.g.inl")), "general category data",
@@ -750,10 +752,18 @@ namespace Ogonek.UcdCompiler
             WriteData(data, File.CreateText(Path.Combine(destination, "decomposition.g.inl")), "decomposition data",
                 x => new
                 {
-                    x.DecompositionType, dm = FakeComparable(x.DecompositionMapping),
-                    x.CompositionExclusion, x.FullCompositionExclusion,
-                    x.NfcQuickCheck, x.NfdQuickCheck, x.NfkcQuickCheck, x.NfkdQuickCheck,
-                    x.ExpandsOnNfc, x.ExpandsOnNfd, x.ExpandsOnNfkc, x.ExpandsOnNfkd,
+                    x.DecompositionType,
+                    dm = FakeComparable(x.DecompositionMapping),
+                    x.CompositionExclusion,
+                    x.FullCompositionExclusion,
+                    x.NfcQuickCheck,
+                    x.NfdQuickCheck,
+                    x.NfkcQuickCheck,
+                    x.NfkdQuickCheck,
+                    x.ExpandsOnNfc,
+                    x.ExpandsOnNfd,
+                    x.ExpandsOnNfkc,
+                    x.ExpandsOnNfkd,
                     fcnfkc = FakeComparable(x.FcNfkcClosure),
                 },
                 x => string.Format("{{ {0}, decomposition_type::{1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}}}",
@@ -787,13 +797,26 @@ namespace Ogonek.UcdCompiler
             WriteData(data, File.CreateText(Path.Combine(destination, "case.g.inl")), "case data",
                     x => new
                     {
-                        x.IsUppercase, x.IsLowercase, x.IsOtherUppercase, x.IsOtherLowercase,
-                        x.SimpleUppercase, x.SimpleLowercase, x.SimpleTitlecase,
-                        a1 = FakeComparable(x.Uppercase), a2 = FakeComparable(x.Lowercase), a3 = FakeComparable(x.Titlecase),
-                        x.SimpleCaseFolding, a4 = FakeComparable(x.CaseFolding),
-                        x.CaseIgnorable, x.Cased,
-                        x.ChangesWhenCasefolded, x.ChangesWhenCasemapped, x.ChangesWhenLowercased,
-                        x.ChangesWhenNfkcCasefolded, x.ChangesWhenTitlecased, x.ChangesWhenUppercased,
+                        x.IsUppercase,
+                        x.IsLowercase,
+                        x.IsOtherUppercase,
+                        x.IsOtherLowercase,
+                        x.SimpleUppercase,
+                        x.SimpleLowercase,
+                        x.SimpleTitlecase,
+                        a1 = FakeComparable(x.Uppercase),
+                        a2 = FakeComparable(x.Lowercase),
+                        a3 = FakeComparable(x.Titlecase),
+                        x.SimpleCaseFolding,
+                        a4 = FakeComparable(x.CaseFolding),
+                        x.CaseIgnorable,
+                        x.Cased,
+                        x.ChangesWhenCasefolded,
+                        x.ChangesWhenCasemapped,
+                        x.ChangesWhenLowercased,
+                        x.ChangesWhenNfkcCasefolded,
+                        x.ChangesWhenTitlecased,
+                        x.ChangesWhenUppercased,
                         a5 = FakeComparable(x.NfkcCasefold)
                     },
                 x => string.Format("{{ {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21} }}",
@@ -828,9 +851,23 @@ namespace Ogonek.UcdCompiler
             WriteData(data, File.CreateText(Path.Combine(destination, "function.g.inl")), "function data",
                          x => new
                          {
-                             x.Dash, x.Hyphen, x.QuotationMark, x.TerminalPunctuation, x.STerm, x.Diacritic,
-                             x.Extender, x.SoftDotted, x.Alphabetic, x.OtherAlphabetic, x.Math, x.OtherMath,
-                             x.HexDigit, x.AsciiHexDigit, x.DefaultIgnorable, x.OtherDefaultIgnorable, x.LogicalOrderException,
+                             x.Dash,
+                             x.Hyphen,
+                             x.QuotationMark,
+                             x.TerminalPunctuation,
+                             x.STerm,
+                             x.Diacritic,
+                             x.Extender,
+                             x.SoftDotted,
+                             x.Alphabetic,
+                             x.OtherAlphabetic,
+                             x.Math,
+                             x.OtherMath,
+                             x.HexDigit,
+                             x.AsciiHexDigit,
+                             x.DefaultIgnorable,
+                             x.OtherDefaultIgnorable,
+                             x.LogicalOrderException,
                              x.WhiteSpace
                          },
                          x => string.Format("{{ {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18} }}",
@@ -842,8 +879,13 @@ namespace Ogonek.UcdCompiler
             WriteData(data, File.CreateText(Path.Combine(destination, "boundary.g.inl")), "boundary data",
                 x => new
                 {
-                    x.GraphemeBase, x.GraphemeExtend, x.OtherGraphemeExtend, x.GraphemeLink,
-                    x.GraphemeClusterBreak, x.WordBreak, x.SentenceBreak
+                    x.GraphemeBase,
+                    x.GraphemeExtend,
+                    x.OtherGraphemeExtend,
+                    x.GraphemeLink,
+                    x.GraphemeClusterBreak,
+                    x.WordBreak,
+                    x.SentenceBreak
                 },
                 x => string.Format("{{ {0}, {1}, {2}, {3}, {4}, grapheme_cluster_break::{5}, word_break::{6}, sentence_break::{7} }}",
                                 FormatCodepoint(x.From),
@@ -865,27 +907,35 @@ namespace Ogonek.UcdCompiler
             return 0;
         }
 
-        static IEnumerable<int> Decompose(int codepoint, CodepointSet[] sets) {
-            var set = sets.Single(s => s.From >= codepoint && s.To <= codepoint);
+        static IEnumerable<int> Decompose(int codepoint, CodepointSet[] sets)
+        {
+            var set = sets.Single(s => s.From <= codepoint && s.To >= codepoint);
             var map = set.DecompositionMapping;
-            if(map.Length == 1 && map[0] == -1) {
+            if (map.Length == 1 && map[0] == -1)
+            {
                 return new[] { codepoint };
             }
-            
+
             return map.SelectMany(c => Decompose(c, sets));
         }
-        
-        static IEnumerable<int> Decompose(CodepointSet set, CodepointSet[] sets) {
+
+        static IEnumerable<int> Decompose(CodepointSet set, CodepointSet[] sets)
+        {
             var map = set.DecompositionMapping;
-            if(map.Length == 1 && map[0] == -1) {
+            if (map.Length == 1 && map[0] == -1)
+            {
                 return map;
-            } else {
+            }
+            else
+            {
                 return map.SelectMany(c => Decompose(c, sets));
             }
         }
-        
-        static void Decompose(CodepointSet[] sets) {
-            foreach(var set in sets) {
+
+        static void Decompose(CodepointSet[] sets)
+        {
+            foreach (var set in sets)
+            {
                 set.DecompositionMapping = Decompose(set, sets).ToArray();
             }
         }
@@ -939,7 +989,7 @@ namespace Ogonek.UcdCompiler
                 }
             }
         }
-        
+
         static string FormatCodepoint(int? u)
         {
             return u == null ? "char32_t(-1)" : string.Format("0x{0:X}_u", u);
