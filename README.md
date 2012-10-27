@@ -20,6 +20,8 @@ Here's a list of what's implemented so far:
 
  - importing of data from the Unicode Character Database (UAX #44);
 
+ - canonical decomposition
+
  - some text segmentation algorithms (UAX #29);
 
 And a list of what's planned for the near future:
