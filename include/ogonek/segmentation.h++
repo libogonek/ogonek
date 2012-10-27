@@ -60,6 +60,8 @@ namespace ogonek {
             /* GB6. */                        gcb::L * (gcb::L | gcb::V | gcb::LV | gcb::LVT),
             /* GB7. */            (gcb::LV | gcb::V) * (gcb::V | gcb::T),
             /* GB8. */           (gcb::LVT | gcb::T) * gcb::T,
+            // Do not break between regional indicator symbols.
+            /* GB8a. */                      gcb::RI * gcb::RI,
             // Do not break before extending characters.
             /* GB9. */                           any * gcb::EX,
             // Do not break before SpacingMarks, or after Prepend characters.

@@ -233,6 +233,7 @@ namespace ogonek {
             T   = 1u << 9,
             V   = 1u << 10,
             XX  = 1u << 11,
+            RI  = 1u << 12,
         };
         enum class word_break {
             CR, EX, Extend, FO, KA, LE,
