@@ -27,16 +27,19 @@ namespace ogonek {
             codepoint
           > {
         public:
-            decomposing_iterator(Iterator first)
-            : first(std::move(first)) {
-                increment();
+            decomposing_iterator(Iterator first, Iterator last)
+            : first(std::move(first)), last(std::move(last)) {
+                if(this->first != this->last) {
+                    increment();
+                }
             }
 
             codepoint dereference() const {
                 return current[position];
             }
             bool equal(decomposing_iterator const& that) const {
-                return first == that.first && position == that.position;
+                return (first == that.first && position == that.position)
+                    || (first == last && that.first == that.last);
             }
             void increment() {
                 ++position;
@@ -53,8 +56,8 @@ namespace ogonek {
             }
 
         private:
-            Iterator first;
-            unsigned position = -1;
+            Iterator first, last;
+            unsigned position = -1u;
             std::vector<codepoint> current;
         };
 
@@ -67,8 +70,8 @@ namespace ogonek {
               typename DecomposingIterator = detail::decomposing_iterator<Iterator>>
     boost::iterator_range<DecomposingIterator> decompose(SinglePassRange const& r) {
         return boost::make_iterator_range(
-                DecomposingIterator { boost::begin(r) },
-                DecomposingIterator { boost::end(r) });
+                DecomposingIterator { boost::begin(r), boost::end(r) },
+                DecomposingIterator { boost::end(r), boost::end(r) });
     }
 
     class nfc {};
