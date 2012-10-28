@@ -45,12 +45,6 @@ Here's a list of what's implemented so far:
 
 And a list of what's planned for the near future:
 
- - an alias of `basic_text` with utf8 on Linux and utf16 on Windows, for native
-   interoperation;
-
- - a variant of `basic_text` that employs type erasure to hide encoding and
-   container;
-
  - the rest of the segmentation algorithms (UAX #29);
 
  - normalization algorithms (UAX #15);
