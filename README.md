@@ -39,15 +39,17 @@ Here's a list of what's implemented so far:
 
  - importing of data from the Unicode Character Database (UAX #44);
 
- - canonical decomposition
+ - canonical equivalence;
 
- - some text segmentation algorithms (UAX #29);
+ - normalization form D (UAX #15);
+
+ - extended grapheme cluster segmentation (UAX #29);
 
 And a list of what's planned for the near future:
 
  - the rest of the segmentation algorithms (UAX #29);
 
- - normalization algorithms (UAX #15);
+ - the rest of the normalization algorithms (UAX #15);
 
  - collation algorithm (UTS #10);
 
