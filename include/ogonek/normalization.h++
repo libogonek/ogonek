@@ -151,6 +151,41 @@ namespace ogonek {
 
     class nfc {};
     class nfd {};
+
+    namespace detail {
+        template <typename NormalizationForm, typename Iterator>
+        class normalizing_iterator_impl;
+
+        template <typename Iterator>
+        struct normalizing_iterator_impl<nfd, Iterator> {
+            using type = ordered_decomposing_iterator<Iterator>;
+        };
+
+        template <typename NormalizationForm, typename Iterator>
+        using normalizing_iterator = typename normalizing_iterator_impl<NormalizationForm, Iterator>::type;
+    } // namespace detail
+
+    template <typename NormalizationForm,
+              typename SinglePassRange,
+              typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
+              typename NormalizingIterator = detail::normalizing_iterator<NormalizationForm, Iterator>>
+    boost::iterator_range<NormalizingIterator> normalize(SinglePassRange const& r) {
+        return boost::make_iterator_range(
+                NormalizingIterator { boost::begin(r), boost::end(r) },
+                NormalizingIterator { boost::end(r), boost::end(r) });
+    }
+
+    struct canonical_equivalence {
+        template <typename SinglePassRange1, typename SinglePassRange2>
+        bool operator()(SinglePassRange1 const& r1, SinglePassRange2 const& r2) const {
+            return boost::equal(normalize<nfd>(r1), normalize<nfd>(r2));
+        }
+    };
+
+    template <typename SinglePassRange1, typename SinglePassRange2>
+    bool canonically_equivalent(SinglePassRange1 const& r1, SinglePassRange2 const& r2) {
+        return canonical_equivalence{}(r1, r2);
+    }
 } // namespace ogonek
 
 #endif // OGONEK_NORMALIZATION_HPP

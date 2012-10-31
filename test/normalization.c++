@@ -41,3 +41,40 @@ TEST_CASE("canonical ordering", "Decomposition + canonical ordering") {
     test_text out { ogonek::decompose_ordered(in) };
     REQUIRE(out.storage() == std::u32string { U"\x0073\x0323\x0307\x0064\x0323\x0307\x0071\x0323\x0307" });
 }
+
+TEST_CASE("nfd", "Normalization Form D") {
+    using test_text = ogonek::basic_text<ogonek::utf32>;
+    std::u32string input = U"\x1E69\x1E0B\x0323\x0071\x0307\x0323";
+    std::u32string normalized = U"\x0073\x0323\x0307\x0064\x0323\x0307\x0071\x0323\x0307";
+
+    test_text out { ogonek::normalize<ogonek::nfd>(input) };
+    REQUIRE(out.storage() == normalized);
+}
+
+TEST_CASE("canonical equivalence", "Canonical equivalence") {
+    std::u32string a = U"\x1E69\x1E0B\x0323\x0071\x0307\x0323";
+    std::u32string b = U"\x0073\x0323\x0307\x0064\x0323\x0307\x0071\x0323\x0307";
+    std::u32string c = U"\x0073\x0307\x0323\x0064\x0323\x0307\x0071\x0323\x0307";
+    std::u32string d = U"\x0074\x0307\x0323\x0064\x0323\x0307\x0071\x0323\x0307";
+
+    REQUIRE(ogonek::canonically_equivalent(a, a));
+    REQUIRE(ogonek::canonically_equivalent(a, b));
+    REQUIRE(ogonek::canonically_equivalent(a, c));
+    REQUIRE(!ogonek::canonically_equivalent(a, d));
+
+    REQUIRE(ogonek::canonically_equivalent(b, a));
+    REQUIRE(ogonek::canonically_equivalent(b, b));
+    REQUIRE(ogonek::canonically_equivalent(b, c));
+    REQUIRE(!ogonek::canonically_equivalent(b, d));
+
+    REQUIRE(ogonek::canonically_equivalent(c, a));
+    REQUIRE(ogonek::canonically_equivalent(c, b));
+    REQUIRE(ogonek::canonically_equivalent(c, c));
+    REQUIRE(!ogonek::canonically_equivalent(c, d));
+
+    REQUIRE(!ogonek::canonically_equivalent(d, a));
+    REQUIRE(!ogonek::canonically_equivalent(d, b));
+    REQUIRE(!ogonek::canonically_equivalent(d, c));
+    REQUIRE(ogonek::canonically_equivalent(d, d));
+}
+
