@@ -34,15 +34,10 @@ TEST_CASE("decompose", "Decomposition") {
     test_text out { ogonek::decompose(in) };
     REQUIRE(out.storage() == std::u32string { U"ABC\x0041\x030A\x006F\x0302\x0073\x0323\x0307\x0064\x0307\x0323\x0071\x0307\x0323" });
 }
-/*
 
 TEST_CASE("canonical ordering", "Decomposition + canonical ordering") {
     using test_text = ogonek::basic_text<ogonek::utf32>;
     test_text in { U"\x1E69\x1E0B\x0323\x0071\x0307\x0323" };
-    for(auto u : ogonek::decompose_ordered(in)) {
-        std::cout << std::hex << int(u) << '\n';
-    }
-    //test_text out { ogonek::decompose_ordered(in) };
-    //REQUIRE(out.storage() == std::u32string { U"\x0073\x0323\x0307\x0064\x0323\x0307\x0071\x0323\x0307" });
+    test_text out { ogonek::decompose_ordered(in) };
+    REQUIRE(out.storage() == std::u32string { U"\x0073\x0323\x0307\x0064\x0323\x0307\x0071\x0323\x0307" });
 }
-*/

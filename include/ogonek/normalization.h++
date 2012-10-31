@@ -46,7 +46,7 @@ namespace ogonek {
             }
             void increment() {
                 ++position;
-                if(unsigned(position) < current.size()) return;
+                if(static_cast<unsigned>(position) < current.size()) return;
 
                 if(first == last) {
                     current = {};
@@ -85,7 +85,11 @@ namespace ogonek {
           > {
         public:
             ordered_decomposing_iterator(Iterator first, Iterator last)
-            : it(std::move(first), std::move(last)) {}
+            : it(std::move(first), std::move(last)) {
+                if(!it.exhausted()) {
+                    increment();
+                }
+            }
 
             codepoint dereference() const {
                 return current[position];
@@ -95,9 +99,10 @@ namespace ogonek {
             }
             void increment() {
                 ++position;
-                if(position < current.size()) return;
+                if(static_cast<unsigned>(position) < current.size()) return;
                 if(it.exhausted()) {
-                    position = -1u;
+                    current = {};
+                    position = -1;
                     return;
                 }
 
@@ -118,7 +123,7 @@ namespace ogonek {
 
         private:
             decomposing_iterator<Iterator> it;
-            unsigned position = -1u;
+            int position = -1;
             std::vector<codepoint> current;
         };
 
