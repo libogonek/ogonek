@@ -722,6 +722,7 @@ namespace Ogonek.UcdCompiler
             string destination = args[1];
 
             var data = Parse(XDocument.Load(source)).ToArray();
+            var compositions = GetCompositions(data);
             Decompose(data);
 
             WriteData(data, File.CreateText(Path.Combine(destination, "age.g.inl")), "version data",
@@ -749,6 +750,8 @@ namespace Ogonek.UcdCompiler
                                 FormatCodepoint(x.From), x.BidiCategory, Format(x.BidiMirrored),
                                 FormatCodepoint(x.BidiMirroredGlyph),
                                 Format(x.BidiControl)));
+
+            WriteCompositions(compositions, File.CreateText(Path.Combine(destination, "composition.g.inl")), "composition data");
             WriteData(data, File.CreateText(Path.Combine(destination, "decomposition.g.inl")), "decomposition data",
                 x => new
                 {
@@ -907,6 +910,13 @@ namespace Ogonek.UcdCompiler
             return 0;
         }
 
+        static IDictionary<int, IEnumerable<Tuple<int, int>>> GetCompositions(CodepointSet[] sets)
+        {
+            return sets.Where(s => s.DecompositionType == DecompositionType.can && s.DecompositionMapping.Length > 1)
+                   .GroupBy(s => s.DecompositionMapping[0], s => Tuple.Create(s.DecompositionMapping[1], s.From))
+                   .ToDictionary(g => g.Key, g => (IEnumerable<Tuple<int,int>>) g.ToList());
+        }
+
         static IEnumerable<int> Decompose(int codepoint, CodepointSet[] sets)
         {
             var set = sets.Single(s => s.From <= codepoint && s.To >= codepoint);
@@ -1045,6 +1055,23 @@ namespace Ogonek.UcdCompiler
                 foreach (var item in items)
                 {
                     output.Write(format(item) + ",\n");
+                }
+            }
+        }
+
+        static string FormatCompositionEntry(Tuple<int, int> entry)
+        {
+            return string.Format("{{ {0}, {1} }}", FormatCodepoint(entry.Item1), FormatCodepoint(entry.Item2));
+        }
+        static void WriteCompositions(IDictionary<int, IEnumerable<Tuple<int, int>>> compositions, TextWriter output, string description)
+        {
+            using (output)
+            {
+                output.Write(CopyrightNotice, DateTime.Now.ToUniversalTime().ToString("O"), description);
+
+                foreach (var kvp in compositions)
+                {
+                    output.Write("{{ {0}, {{ {1} }} }},\n", FormatCodepoint(kvp.Key), string.Join(", ", kvp.Value.Select(FormatCompositionEntry)));
                 }
             }
         }

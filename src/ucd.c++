@@ -41,6 +41,8 @@ namespace ogonek {
         extern std::size_t combining_class_data_size;
         extern bidi_properties const* bidi_data;
         extern std::size_t bidi_data_size;
+        extern composition_properties const* composition_data;
+        extern std::size_t composition_data_size;
         extern decomposition_properties const* decomposition_data;
         extern std::size_t decomposition_data_size;
         extern numeric_properties const* numeric_data;
@@ -121,6 +123,37 @@ namespace ogonek {
         }
         bool is_bidi_control(codepoint u) {
             return find_property_group(bidi_data, bidi_data_size, u).control;
+        }
+        namespace {
+            composition_properties get_composition_properties(codepoint starter) {
+                auto it = std::lower_bound(composition_data, composition_data+composition_data_size, composition_properties { starter, {} },
+                           [](composition_properties const& a, composition_properties const& b){
+                               return a.starter < b.starter;
+                           });
+                if(it != composition_data+composition_data_size) {
+                    return *it;
+                } else {
+                    return { starter, {} };
+                }
+            }
+            composition_entry get_composition_entry(codepoint starter, codepoint other) {
+                auto compositions = get_composition_properties(starter).compositions;
+                auto it = std::lower_bound(compositions.begin(), compositions.end(), composition_entry { other, 0 },
+                           [](composition_entry const& a, composition_entry const& b){
+                               return a.other < b.other;
+                           });
+                if(it != compositions.end()) {
+                    return *it;
+                } else {
+                    return { other, static_cast<codepoint>(-1) };
+                }
+            }
+        } // namespace
+        bool can_compose(codepoint starter, codepoint other) {
+            return get_composition_entry(starter, other).precomposed != static_cast<codepoint>(-1);
+        }
+        codepoint compose(codepoint starter, codepoint other) {
+            return get_composition_entry(starter, other).precomposed;
         }
         decomposition_type get_decomposition_type(codepoint u) {
             return find_property_group(decomposition_data, decomposition_data_size, u).type;

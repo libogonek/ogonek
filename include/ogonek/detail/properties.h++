@@ -44,6 +44,14 @@ namespace ogonek {
             codepoint mirrored_glyph;
             bool control;
         };
+        struct composition_entry {
+            codepoint other;
+            codepoint precomposed;
+        };
+        struct composition_properties {
+            codepoint starter;
+            std::initializer_list<composition_entry> compositions;
+        };
         struct decomposition_properties {
             codepoint start;
             decomposition_type type;

@@ -76,6 +76,9 @@ namespace ogonek {
         };
 
         template <typename Iterator>
+        struct composing_iterator;
+
+        template <typename Iterator>
         struct ordered_decomposing_iterator
         : boost::iterator_facade<
             ordered_decomposing_iterator<Iterator>,
@@ -122,6 +125,12 @@ namespace ogonek {
             }
 
         private:
+            friend class composing_iterator<Iterator>;
+
+            bool exhausted() const {
+                return position == -1;
+            }
+
             decomposing_iterator<Iterator> it;
             int position = -1;
             std::vector<codepoint> current;
@@ -149,6 +158,50 @@ namespace ogonek {
                 OrderedDecomposingIterator { boost::end(r), boost::end(r) });
     }
 
+    namespace detail {
+        template <typename Iterator>
+        struct composing_iterator
+        : boost::iterator_facade<
+            composing_iterator<Iterator>,
+            codepoint,
+            std::input_iterator_tag, // TODO
+            codepoint
+          > {
+            composing_iterator(Iterator first, Iterator last)
+            : it(std::move(first), std::move(last)), exhausted(it.exhausted()) {
+                if(!exhausted) {
+                    increment();
+                }
+            }
+
+            codepoint dereference() const {
+                return current;
+            }
+            bool equal(composing_iterator const& that) const {
+                return it.equal(that.it) && exhausted == that.exhausted;
+            }
+            void increment() {
+                if(it.exhausted()) {
+                    exhausted = true;
+                    return;
+                }
+
+                current = *it++;
+                while(!ucd::is_excluded_from_composition(current)
+                      && !it.exhausted()
+                      && ucd::can_compose(current, *it)) {
+                    current = ucd::compose(current, *it++);
+                }
+                if(it.exhausted()) exhausted = true;
+            }
+
+        private:
+            ordered_decomposing_iterator<Iterator> it;
+            bool exhausted;
+            codepoint current;
+        };
+    } // namespace detail
+
     class nfc {};
     class nfd {};
 
@@ -159,6 +212,11 @@ namespace ogonek {
         template <typename Iterator>
         struct normalizing_iterator_impl<nfd, Iterator> {
             using type = ordered_decomposing_iterator<Iterator>;
+        };
+
+        template <typename Iterator>
+        struct normalizing_iterator_impl<nfc, Iterator> {
+            using type = composing_iterator<Iterator>;
         };
 
         template <typename NormalizationForm, typename Iterator>

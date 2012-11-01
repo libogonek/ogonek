@@ -49,6 +49,9 @@ namespace ogonek {
             bidi_properties const bidi_data_raw[] {
                 #include "ucd/bidi.g.inl"
             };
+            composition_properties const composition_data_raw[] {
+                #include "ucd/composition.g.inl"
+            };
             decomposition_properties const decomposition_data_raw[] {
                 #include "ucd/decomposition.g.inl"
             };
@@ -120,6 +123,8 @@ namespace ogonek {
         std::size_t combining_class_data_size = size(combining_class_data_raw);
         bidi_properties const* bidi_data = bidi_data_raw;
         std::size_t bidi_data_size = size(bidi_data_raw);
+        composition_properties const* composition_data = composition_data_raw;
+        std::size_t composition_data_size = size(composition_data_raw);
         decomposition_properties const* decomposition_data = decomposition_data_raw;
         std::size_t decomposition_data_size = size(decomposition_data_raw);
         numeric_properties const* numeric_data = numeric_data_raw;
