@@ -1,8 +1,8 @@
 import os
 
 vars = Variables()
-vars.Add(EnumVariable('toolchain', 'Select the toolchain', 'clang',
-                      allowed_values=('clang', 'gcc', 'mingw')))
+vars.Add(EnumVariable('toolchain', 'Select the toolchain', 'gcc',
+                      allowed_values=('clang', 'gcc')))
 vars.Add(BoolVariable('fatal', 'Stop on first error', True))
 
 env = Environment(options = vars, ENV = os.environ)
@@ -26,8 +26,6 @@ if env['toolchain'] == 'clang':
 if env['toolchain'] == 'clang':
     env.Replace(CXX = 'clang++')
 if env['toolchain'] == 'gcc':
-    env.Replace(CXX = 'g++')
-if env['toolchain'] == 'mingw':
     env.Replace(CXX = 'g++')
 
 lib_flags = [ '-DVISIBILITY_LIBRARY', '-DVISIBILITY_SHARED' ]
