@@ -63,18 +63,20 @@ TEST_CASE("nfc", "Normalization Form C") {
 
     SECTION("madness", "") {
         std::u32string input = U"2";
-        input.reserve(10003);
+        input.reserve(10004);
         for(int i = 0; i < 10000; ++i) {
             input += U"\x0308";
         }
         input += U"\x0323";
+        input += U"3";
 
         std::u32string normalized = U"2";
-        normalized.reserve(10003);
+        normalized.reserve(10004);
         normalized += U"\x0323";
         for(int i = 0; i < 10000; ++i) {
             normalized += U"\x0308";
         }
+        normalized += U"3";
 
         test_text out { ogonek::normalize<ogonek::nfc>(input) };
         REQUIRE(out.storage() == normalized);
