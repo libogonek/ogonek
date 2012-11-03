@@ -41,7 +41,7 @@ Here's a list of what's implemented so far:
 
  - canonical equivalence;
 
- - normalization form D (UAX #15);
+ - canonical normalization forms (UAX #15);
 
  - extended grapheme cluster segmentation (UAX #29);
 
@@ -49,10 +49,9 @@ And a list of what's planned for the near future:
 
  - the rest of the segmentation algorithms (UAX #29);
 
- - the rest of the normalization algorithms (UAX #15);
-
  - collation algorithm (UTS #10);
 
   [text motivation]: http://gist.io/3166256
   [wiki]: http://bitbucket.org/martinhofernandes/ogonek/wiki/Home
   [downloads]: http://bitbucket.org/martinhofernandes/ogonek/downloads
+
