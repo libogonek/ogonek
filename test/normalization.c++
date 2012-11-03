@@ -53,11 +53,32 @@ TEST_CASE("nfd", "Normalization Form D") {
 
 TEST_CASE("nfc", "Normalization Form C") {
     using test_text = ogonek::basic_text<ogonek::utf32>;
-    std::u32string input = U"\x1E69\x1E0B\x0323\x0071\x0307\x0323";
-    std::u32string normalized = U"\x1E69\x1E0D\x0307\x0071\x0307\x0323";
+    SECTION("test1", "") {
+        std::u32string input = U"\x1E69\x1E0B\x0323\x0071\x0307\x0323";
+        std::u32string normalized = U"\x1E69\x1E0D\x0307\x0071\x0323\x0307";
 
-    test_text out { ogonek::normalize<ogonek::nfc>(input) };
-    REQUIRE(out.storage() == normalized);
+        test_text out { ogonek::normalize<ogonek::nfc>(input) };
+        REQUIRE(out.storage() == normalized);
+    }
+
+    SECTION("madness", "") {
+        std::u32string input = U"2";
+        input.reserve(10003);
+        for(int i = 0; i < 10000; ++i) {
+            input += U"\x0308";
+        }
+        input += U"\x0323";
+
+        std::u32string normalized = U"2";
+        normalized.reserve(10003);
+        normalized += U"\x0323";
+        for(int i = 0; i < 10000; ++i) {
+            normalized += U"\x0308";
+        }
+
+        test_text out { ogonek::normalize<ogonek::nfc>(input) };
+        REQUIRE(out.storage() == normalized);
+    }
 }
 
 TEST_CASE("canonical equivalence", "Canonical equivalence") {
