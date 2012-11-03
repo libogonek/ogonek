@@ -130,7 +130,7 @@ namespace ogonek {
                            [](composition_properties const& a, composition_properties const& b){
                                return a.starter < b.starter;
                            });
-                if(it != composition_data+composition_data_size) {
+                if(it != composition_data+composition_data_size && it->starter == starter) {
                     return *it;
                 } else {
                     return { starter, {} };
@@ -142,13 +142,16 @@ namespace ogonek {
                            [](composition_entry const& a, composition_entry const& b){
                                return a.other < b.other;
                            });
-                if(it != compositions.end()) {
+                if(it != compositions.end() && it->other == other) {
                     return *it;
                 } else {
                     return { other, static_cast<codepoint>(-1) };
                 }
             }
         } // namespace
+        bool can_compose(codepoint starter) {
+            return get_composition_properties(starter).compositions.size() > 0;
+        }
         bool can_compose(codepoint starter, codepoint other) {
             return get_composition_entry(starter, other).precomposed != static_cast<codepoint>(-1);
         }

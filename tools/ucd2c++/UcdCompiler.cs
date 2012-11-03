@@ -1069,9 +1069,9 @@ namespace Ogonek.UcdCompiler
             {
                 output.Write(CopyrightNotice, DateTime.Now.ToUniversalTime().ToString("O"), description);
 
-                foreach (var kvp in compositions)
+                foreach (var kvp in compositions.OrderBy(kvp => kvp.Key))
                 {
-                    output.Write("{{ {0}, {{ {1} }} }},\n", FormatCodepoint(kvp.Key), string.Join(", ", kvp.Value.Select(FormatCompositionEntry)));
+                    output.Write("{{ {0}, {{ {1} }} }},\n", FormatCodepoint(kvp.Key), string.Join(", ", kvp.Value.OrderBy(e => e.Item1).Select(FormatCompositionEntry)));
                 }
             }
         }

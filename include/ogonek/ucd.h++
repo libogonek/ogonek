@@ -262,6 +262,7 @@ namespace ogonek {
         decomposition_type get_decomposition_type(codepoint u);
         std::vector<codepoint> get_decomposition_mapping(codepoint u);
         bool is_excluded_from_composition(codepoint u);
+        bool can_compose(codepoint starter);
         bool can_compose(codepoint starter, codepoint other);
         codepoint compose(codepoint starter, codepoint other);
         boost::tribool is_nfc_quick_check(codepoint u);

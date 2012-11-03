@@ -189,10 +189,10 @@ namespace ogonek {
                 current = *it++;
                 while(!ucd::is_excluded_from_composition(current)
                       && !it.exhausted()
+                      && ucd::can_compose(current)
                       && ucd::can_compose(current, *it)) {
                     current = ucd::compose(current, *it++);
                 }
-                if(it.exhausted()) exhausted = true;
             }
 
         private:
