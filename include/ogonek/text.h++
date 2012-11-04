@@ -19,8 +19,6 @@
 #include "types.h++"
 #include "validation.h++"
 
-#include <wheels/meta.h++>
-
 #include <boost/range/sub_range.hpp>
 #include <boost/range/value_type.hpp>
 #include <boost/range/begin.hpp>
