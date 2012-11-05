@@ -28,8 +28,8 @@ Here's a list of what's implemented so far:
    This is not that.  This represents text, regardless of encoding. It's a
    class template with template parameters for the underlying encoding and
    container but the interface it offers is for a range of codepoints. This
-   makes conversions at API boundaries simple and type-safe. See this document
-   for more info on the [motivation][text motivation] behind this class;
+   makes conversions at API boundaries simple and type-safe. See these documents
+   for more info on the ideas behind this class: [motivation] and [design].
 
  - `any_text`, a type erased variant of `basic_text` for use in compiled
    boundaries, or whenever templates are not appropriate/desired;
@@ -51,7 +51,8 @@ And a list of what's planned for the near future:
 
  - collation algorithm (UTS #10);
 
-  [text motivation]: http://gist.io/3166256
+  [design]: http://gist.io/3166256
   [wiki]: http://bitbucket.org/martinhofernandes/ogonek/wiki/Home
   [downloads]: http://bitbucket.org/martinhofernandes/ogonek/downloads
+  [motivation]: http://gist.io/3965622
 

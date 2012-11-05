@@ -146,12 +146,12 @@ namespace ogonek {
 
     class utf8;
     class utf16;
-    using linux_text = basic_text<utf8, std::string>;
+    using posix_text = basic_text<utf8, std::string>;
     using windows_text = basic_text<utf16, std::wstring>;
 #ifdef OGONEK_WINDOWS
     using native_text = windows_text;
 #else
-    using native_text = linux_text;
+    using native_text = posix_text;
 #endif
 
     class narrow;
