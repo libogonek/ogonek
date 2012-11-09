@@ -257,8 +257,7 @@ namespace ogonek {
         version get_age(codepoint u);
         text get_name(codepoint u);
         text get_unicode1_name(codepoint u);
-        text get_alias(alias_type a, codepoint u);
-        std::vector<text> get_aliases(codepoint u);
+        std::vector<alias> get_aliases(codepoint u);
         block get_block(codepoint u);
         category get_general_category(codepoint u);
         int get_combining_class(codepoint u);

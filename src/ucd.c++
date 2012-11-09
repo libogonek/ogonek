@@ -127,7 +127,7 @@ namespace ogonek {
                     name.replace(name.find('#'), 1, to_hex(u));
                     return text { std::move(name) };
                 } else {
-                    return text { std::string { p.name } };
+                    return text {{ p.name }};
                 }
             }
         } // namespace
@@ -137,8 +137,7 @@ namespace ogonek {
         text get_unicode1_name(codepoint u) {
             return get_name(v1name_data, v1name_data_size, u);
         }
-        text get_alias(alias_type a, codepoint u);
-        std::vector<text> get_aliases(codepoint u);
+        std::vector<alias> get_aliases(codepoint u);
 
         block get_block(codepoint u) {
             return find_property_group(block_data, block_data_size, u).data;
@@ -344,11 +343,15 @@ namespace ogonek {
             auto& prop = find_property_group(script_data, script_data_size, u);
             return { prop.first_script_extension, prop.first_script_extension + prop.script_extension_count };
         }
-        // text get_iso_comment(codepoint u) {
+        text get_iso_comment(codepoint u) {
+            return text { find_property_group(iso_comment_data, iso_comment_data_size, u).data };
+        }
         hangul_syllable_type get_hangul_syllable_type(codepoint u) {
             return find_property_group(hangul_data, hangul_data_size, u).syllable_type;
         }
-        // text get_jamo_short_name(codepoint u) {
+        text get_jamo_short_name(codepoint u) {
+            return text {{ find_property_group(hangul_data, hangul_data_size, u).jamo_short_name }};
+        }
         indic_syllable_category get_indic_syllable_category(codepoint u) {
             return find_property_group(indic_data, indic_data_size, u).syllable_category;
         }
