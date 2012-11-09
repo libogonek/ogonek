@@ -26,7 +26,7 @@ namespace ogonek {
         using version_properties = simple_properties<version>;
         struct name_properties {
             codepoint start;
-            bool variable;
+            bool variable; // whether # needs to be replaced
             char const* name;
         };
         struct alias_properties {

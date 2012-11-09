@@ -15,6 +15,8 @@
 #include <ogonek/ucd.h++>
 #include <ogonek/detail/properties.h++>
 #include <ogonek/types.h++>
+#include <ogonek/text.h++>
+#include <ogonek/encoding/utf8.h++>
 
 #include <cstddef>
 #include <algorithm>
@@ -22,6 +24,7 @@
 #include <limits>
 #include <string>
 #include <vector>
+#include <sstream>
 
 namespace ogonek {
     namespace ucd {
@@ -101,6 +104,42 @@ namespace ogonek {
         version get_age(codepoint u) {
             return find_property_group(version_data, version_data_size, u).data;
         }
+
+        namespace  {
+            std::string to_hex(codepoint u) {
+                char const hex[] = "0123456789ABCDEF";
+                std::string result;
+                int factor;
+                if(u > 0xFFFFF) factor = 0x100000;
+                else if(u > 0xFFFF) factor = 0x10000;
+                else factor = 0x1000;
+                for(; factor > 0; u %= factor, factor /= 0x10) {
+                    result.push_back(hex[u / factor]);
+                }
+                return result;
+            }
+
+            text get_name(name_properties const* data, std::size_t data_size, codepoint u) {
+                name_properties const& p = find_property_group(data, data_size, u);
+                if(p.variable) {
+                    std::string name { p.name };
+                    name.reserve(name.size() + 5);
+                    name.replace(name.find('#'), 1, to_hex(u));
+                    return text { std::move(name) };
+                } else {
+                    return text { std::string { p.name } };
+                }
+            }
+        } // namespace
+        text get_name(codepoint u) {
+            return get_name(name_data, name_data_size, u);
+        }
+        text get_unicode1_name(codepoint u) {
+            return get_name(v1name_data, v1name_data_size, u);
+        }
+        text get_alias(alias_type a, codepoint u);
+        std::vector<text> get_aliases(codepoint u);
+
         block get_block(codepoint u) {
             return find_property_group(block_data, block_data_size, u).data;
         }

@@ -13,6 +13,8 @@
 
 #include <ogonek/ucd.h++>
 #include <ogonek/types.h++>
+#include <ogonek/text.h++>
+#include <ogonek/encoding/utf8.h++>
 
 #include <catch.h++>
 
@@ -30,14 +32,14 @@ TEST_CASE("query", "UCD property queries") {
         CHECK(ucd::get_age(0x1EA0_u) == ucd::version::v1_1);
         CHECK(ucd::get_age(0x1F4A9_u) == ucd::version::v6_0);
     }
-    /*
     SECTION("name", "Querying name") {
-        REQUIRE(ucd::get_name(0x0041_u) == U"LATIN CAPITAL LETTER A");
-        REQUIRE(ucd::get_name(0x00C5_u) == U"LATIN CAPITAL LETTER A WITH RING ABOVE");
-        REQUIRE(ucd::get_name(0x1EA0_u) == U"LATIN CAPITAL LETTER A WITH DOT BELOW");
-        REQUIRE(ucd::get_name(0x1F4A9_u) == U"PILE OF POO");
+        REQUIRE(ucd::get_name(0x0041_u).storage() == u8"LATIN CAPITAL LETTER A");
+        REQUIRE(ucd::get_name(0x00C5_u).storage() == u8"LATIN CAPITAL LETTER A WITH RING ABOVE");
+        REQUIRE(ucd::get_name(0x1EA0_u).storage() == u8"LATIN CAPITAL LETTER A WITH DOT BELOW");
+        REQUIRE(ucd::get_name(0x1F4A9_u).storage() == u8"PILE OF POO");
+        REQUIRE(ucd::get_name(0x3442_u).storage() == u8"CJK UNIFIED IDEOGRAPH-3442");
+        REQUIRE(ucd::get_name(0x2F823_u).storage() == u8"CJK COMPATIBILITY IDEOGRAPH-2F823");
     }
-    */
     SECTION("block", "Querying block") {
         CHECK(ucd::get_block(0x0041_u) == ucd::block::ASCII);
         CHECK(ucd::get_block(0x00C5_u) == ucd::block::Latin_1_Sup);

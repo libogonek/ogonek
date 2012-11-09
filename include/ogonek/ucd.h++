@@ -20,8 +20,14 @@
 #include <boost/logic/tribool.hpp>
 
 #include <vector>
+#include <string>
 
 namespace ogonek {
+    // Forward declare for text properties
+    template <typename Encoding, typename Container>
+    class basic_text;
+    class utf8;
+
     namespace ucd {
         enum class version {
             v1_1,
@@ -246,12 +252,13 @@ namespace ogonek {
             NU, SC, SE, SP, ST, UP, XX,
         };
 
+        using text = basic_text<utf8, std::string>;
+
         version get_age(codepoint u);
-        // TODO: implement when text is working
-        //text get_name(codepoint u);
-        //text get_unicode1_name(codepoint u);
-        //text get_alias(alias_type a, codepoint u);
-        //std::get_vector<text> aliases(codepoint u);
+        text get_name(codepoint u);
+        text get_unicode1_name(codepoint u);
+        text get_alias(alias_type a, codepoint u);
+        std::vector<text> get_aliases(codepoint u);
         block get_block(codepoint u);
         category get_general_category(codepoint u);
         int get_combining_class(codepoint u);
@@ -302,9 +309,9 @@ namespace ogonek {
         std::vector<codepoint> get_nfkc_casefold(codepoint u);
         script get_script(codepoint u);
         detail::array_slice<script const> get_script_extension(codepoint u);
-        // text get_iso_comment(codepoint u);
+        text get_iso_comment(codepoint u);
         hangul_syllable_type get_hangul_syllable_type(codepoint u);
-        // text get_jamo_short_name(codepoint u);
+        text get_jamo_short_name(codepoint u);
         indic_syllable_category get_indic_syllable_category(codepoint u);
         indic_matra_category get_indic_matra_category(codepoint u);
         bool is_id_start(codepoint u);
