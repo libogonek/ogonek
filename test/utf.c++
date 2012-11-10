@@ -14,7 +14,6 @@
 #include <ogonek/encoding/utf8.h++>
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf32.h++>
-#include <ogonek/encoding/utf7.h++>
 #include <ogonek/types.h++>
 
 #include <boost/range/begin.hpp>
