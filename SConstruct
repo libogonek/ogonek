@@ -19,6 +19,11 @@ if env['fatal']:
 
 env.Append(LIBS = [])
 
+if env['PLATFORM'] == 'win32':
+    env.MergeFlags(['-DOGONEK_WINDOWS'])
+else:
+    env.MergeFlags(['-DOGONEK_POSIX'])
+
 if env['toolchain'] == 'clang':
     env.Append(LIBS = [ 'c++', 'supc++' ])
     env.MergeFlags(['-stdlib=libc++'])
