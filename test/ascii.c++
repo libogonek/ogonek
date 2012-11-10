@@ -39,6 +39,13 @@ TEST_CASE("ascii", "ASCII encoding form") {
         CHECK(decoded[1] == U'\x0032');
     }
     SECTION("validation", "Validating ASCII") {
+        auto encoded = { 0x41_b, 0x32_b };
+        auto range = ogonek::ascii::decode(encoded, ogonek::skip_validation);
+        std::vector<ogonek::codepoint> decoded(boost::begin(range), boost::end(range));
+        REQUIRE(decoded.size() == 3);
+        CHECK(decoded[0] == U'\x0041');
+        CHECK(decoded[1] == U'\x0032');
+        CHECK(decoded[2] == U'\xFFFD');
     }
 }
 
