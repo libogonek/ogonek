@@ -56,7 +56,7 @@ namespace ogonek {
             if(u <= 0x7F) {
                 return { static_cast<code_unit>(u & 0x7F) };
             } else {
-                return {};
+                return { '?' };
             }
         }
 

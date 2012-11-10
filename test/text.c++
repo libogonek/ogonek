@@ -15,6 +15,7 @@
 #include <ogonek/encoding/utf8.h++>
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf32.h++>
+#include <ogonek/encoding/ascii.h++>
 
 #include <catch.h++>
 
@@ -22,6 +23,7 @@ TEST_CASE("text", "text tests") {
     using text8 = ogonek::basic_text<ogonek::utf8>;
     using text16 = ogonek::basic_text<ogonek::utf16>;
     using text32 = ogonek::basic_text<ogonek::utf32>;
+    using text_ascii = ogonek::basic_text<ogonek::ascii>;
 
     SECTION("general", "General test") {
         // construct UTF-8 text from a UTF-32 string literal
@@ -61,6 +63,13 @@ TEST_CASE("text", "text tests") {
 
         // (fail to) construct UTF-16 text from invalid data
         REQUIRE_THROWS_AS(text16 { U"blah\x200000" }, ogonek::validation_error);
+
+        // construct ASCII text from a range of codepoints
+        text_ascii j { std::u32string { U"blah\U00000032" } };
+        REQUIRE(j.storage() == "blah2"); // don't test this on EBCDIC
+
+        // (fail to) construct ASCII text from data not ASCII compatible
+        REQUIRE_THROWS_AS(text_ascii { U"blahß" }, ogonek::validation_error);
     }
     SECTION("any", "any_text tests") {
         auto foo = text16 { U"foo" };
