@@ -39,13 +39,22 @@ TEST_CASE("ascii", "ASCII encoding form") {
         CHECK(decoded[1] == U'\x0032');
     }
     SECTION("validation", "Validating ASCII") {
-        auto encoded = { 0x41_b, 0x32_b };
-        auto range = ogonek::ascii::decode(encoded, ogonek::skip_validation);
+        auto encoded = { 0x41_b, 0x32_b, 0x80_b };
+        auto range = ogonek::ascii::decode(encoded, ogonek::use_replacement_character);
         std::vector<ogonek::codepoint> decoded(boost::begin(range), boost::end(range));
         REQUIRE(decoded.size() == 3);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x0032');
         CHECK(decoded[2] == U'\xFFFD');
+    }
+    SECTION("replacement", "ASCII's custom replacement character (?)") {
+        auto decoded = { 0x41_u, 0x32_u, 0x80_u };
+        auto range = ogonek::ascii::encode(decoded, ogonek::use_replacement_character);
+        std::vector<ogonek::ascii::code_unit> encoded(boost::begin(range), boost::end(range));
+        REQUIRE(encoded.size() == 3);
+        CHECK(encoded[0] == 0x41_b);
+        CHECK(encoded[1] == 0x32_b);
+        CHECK(encoded[2] == '?');
     }
 }
 

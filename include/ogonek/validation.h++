@@ -49,9 +49,9 @@ namespace ogonek {
         struct sfinae_true : std::true_type {};
         struct has_custom_replacement_character_impl {
             template <typename EncodingForm>
-            sfinae_true<decltype(EncodingForm::replacement_character)> test(int);
+            sfinae_true<decltype(EncodingForm::replacement_character)> static test(int);
             template <typename>
-            std::false_type test(...);
+            std::false_type static test(...);
         };
         template <typename EncodingForm>
         using has_custom_replacement_character = decltype(has_custom_replacement_character_impl::test<EncodingForm>(0));
@@ -73,7 +73,7 @@ namespace ogonek {
             return { std::next(boost::begin(source)), boost::end(source) };
         }
         template <typename EncodingForm>
-        static detail::coded_character<EncodingForm> apply_encode(codepoint u, typename EncodingForm::state& s) {
+        static detail::coded_character<EncodingForm> apply_encode(codepoint, typename EncodingForm::state& s) {
             return EncodingForm::encode_one(detail::replacement_character<EncodingForm>::value, s, skip_validation);
         }
     } constexpr use_replacement_character = {};

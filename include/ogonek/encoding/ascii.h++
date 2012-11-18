@@ -34,6 +34,7 @@ namespace ogonek {
         static constexpr bool is_fixed_width = true;
         static constexpr std::size_t max_width = 1;
         static constexpr bool is_self_synchronizing = true;
+        static constexpr codepoint replacement_character = U'?';
         struct state {};
 
         template <typename SinglePassRange, typename ValidationPolicy,
@@ -57,7 +58,7 @@ namespace ogonek {
             if(u <= 0x7F) {
                 return { static_cast<code_unit>(u & 0x7F) };
             } else {
-                return { '?' };
+                return {};
             }
         }
 
@@ -77,11 +78,11 @@ namespace ogonek {
             return { first, boost::end(r) };
         }
         template <typename SinglePassRange, typename ValidationPolicy>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, ValidationPolicy) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s, ValidationPolicy) {
             auto first = boost::begin(r);
             byte b = *first++;
             if(b > 0x7F) {
-                return  ValidationPolicy::template apply_encode<ascii>(r, out);
+                return  ValidationPolicy::template apply_decode<ascii>(r, s, out);
             }
             out = b;
             return { first, boost::end(r) };
