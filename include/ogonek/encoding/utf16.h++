@@ -17,6 +17,7 @@
 #include "iterator.h++"
 #include "../types.h++"
 #include "../validation.h++"
+#include "../detail/partial_array.h++"
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>
@@ -34,25 +35,26 @@ namespace ogonek {
         static constexpr bool is_self_synchronizing = true;
         struct state {};
 
-        template <typename SinglePassRange, typename ValidationCallback,
+        template <typename SinglePassRange, typename ValidationPolicy,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename EncodingIterator = encoding_iterator<utf16, Iterator, ValidationCallback>>
-        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ValidationCallback&& callback) {
+                  typename EncodingIterator = encoding_iterator<utf16, Iterator, ValidationPolicy>>
+        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ValidationPolicy) {
             return boost::make_iterator_range(
-                    EncodingIterator { boost::begin(r), boost::end(r), callback },
-                    EncodingIterator { boost::end(r), boost::end(r), callback });
+                    EncodingIterator { boost::begin(r), boost::end(r) },
+                    EncodingIterator { boost::end(r), boost::end(r) });
         }
 
-        template <typename SinglePassRange, typename ValidationCallback,
+        template <typename SinglePassRange, typename ValidationPolicy,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename DecodingIterator = decoding_iterator<utf16, Iterator, ValidationCallback>>
-        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, ValidationCallback&& callback) {
+                  typename DecodingIterator = decoding_iterator<utf16, Iterator, ValidationPolicy>>
+        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, ValidationPolicy) {
             return boost::make_iterator_range(
-                    DecodingIterator { boost::begin(r), boost::end(r), callback },
-                    DecodingIterator { boost::end(r), boost::end(r), callback });
+                    DecodingIterator { boost::begin(r), boost::end(r) },
+                    DecodingIterator { boost::end(r), boost::end(r) });
         }
 
-        static partial_array<code_unit, max_width> encode_one(codepoint u, state&) {
+        template <typename ValidationPolicy>
+        static detail::coded_character<utf16> encode_one(codepoint u, state&, ValidationPolicy) {
             if(u <= 0xFFFF) {
                 return { static_cast<code_unit>(u) };
             } else {
@@ -71,7 +73,7 @@ namespace ogonek {
         static bool is_surrogate(codepoint u) { return u >= 0xD800 && u <= 0xDFFF; };
 
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, decltype(skip_validation)) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, skip_validation_t) {
             auto first = boost::begin(r);
             auto lead = *first++;
             if(!is_surrogate(lead)) {
@@ -84,8 +86,8 @@ namespace ogonek {
             }
             return { first, boost::end(r) };
         }
-        template <typename SinglePassRange, typename ValidationCallback>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, ValidationCallback&& callback) {
+        template <typename SinglePassRange, typename ValidationPolicy>
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s, ValidationPolicy) {
             auto first = boost::begin(r);
             auto lead = *first++;
 
@@ -94,12 +96,12 @@ namespace ogonek {
                 return { first, boost::end(r) };
             }
             if(!is_lead_surrogate(lead)) {
-                return std::forward<ValidationCallback>(callback)(validation_result::illegal, r, out);
+                return ValidationPolicy::template apply_decode<utf16>(r, s, out);
             }
 
             auto trail = *first++;
             if(!is_trail_surrogate(trail)) {
-                return std::forward<ValidationCallback>(callback)(validation_result::illegal, r, out);
+                return ValidationPolicy::template apply_decode<utf16>(r, s, out);
             }
 
             auto hi = lead - 0xD800;

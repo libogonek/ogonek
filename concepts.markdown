@@ -57,9 +57,9 @@ semantics. In the table `Order` is a model of `ByteOrder`, `u16` is a
 
 Table: Requirements for `ByteOrder`
 
-## `ValidationCallback`
+## `ValidationPolicy`
 
-A callable object used to handle validation errors. Three instances of models
+A policy used to handle validation errors. Three instances of models
 of this concept are provided:
 
  - `ignore_errors`: any invalid code units or bytes are ignored;
@@ -67,17 +67,6 @@ of this concept are provided:
    U+FFFD;
  - `throw_validation_exception`: any invalid code units or bytes results in a
    `validation_exception` begin thrown.
-
-A validation callback is invoked with three arguments:
-
- - a `validation_result` that explains the nature of the error;
- - a `boost::sub_range<Range>` where `Range` is a range of code units. This
-   sub-range starts at the invalid element of the input;
- - a `codepoint` lvalue that the callback can use to replace part of the
-   invalid input.
-
-The callback shall return a `boost::sub_range<Range>` that starts at the first
-element of the input following the error.
 
 ## `EncodingForm`
 
@@ -89,7 +78,7 @@ semantics. In the table, `E` is a model of `EncodingForm`, `s` is an instance
 of `E::state`, `u` is a `codepoint`, `v` is a `codepoint` lvalue, `cr` is a
 range of `E::code_unit`s, `ur` is a range of `codepoint`s, `co` is an
 `OutputIterator` on `E::code_unit`s, `uo` is an `OutputIterator` on
-`codepoints`, and `val` is a `ValidationCallback`. All returned ranges are
+`codepoints`, and `val` is a `ValidationPolicy`. All returned ranges are
 lazily evaluated.
 
 +--------------------------------+-----------------------+-------------------------+
@@ -144,7 +133,7 @@ semantics. In the table, `E` is a model of `EncodingForm`, `s` is an instance
 of `E::state`, `u` is a `codepoint`, `v` is a `codepoint` lvalue, `br` is a
 range of bytes, `ur` is a range of `codepoint`s, `bo` is an `OutputIterator` of
 bytes, `uo` is an `OutputIterator` of `codepoints`, and `val` is a
-`ValidationCallback`. All returned ranges are lazily evaluated.
+`ValidationPolicy`. All returned ranges are lazily evaluated.
 
 +--------------------------------+-----------------------+-------------------------+
 | Expression                     | Return type           | Semantics               |

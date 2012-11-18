@@ -31,31 +31,31 @@ namespace ogonek {
         static constexpr bool is_self_synchronizing = encoding::is_self_synchronizing;
         using state = encoding::state;
 
-        template <typename SinglePassRange, typename ValidationCallback,
+        template <typename SinglePassRange, typename ValidationPolicy,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename EncodingIterator = encoding_iterator<wide, Iterator, ValidationCallback>>
-        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ValidationCallback&& callback) {
+                  typename EncodingIterator = encoding_iterator<wide, Iterator, ValidationPolicy>>
+        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ValidationPolicy) {
             return boost::make_iterator_range(
-                    EncodingIterator { boost::begin(r), boost::end(r), callback },
-                    EncodingIterator { boost::end(r), boost::end(r), callback });
+                    EncodingIterator { boost::begin(r), boost::end(r) },
+                    EncodingIterator { boost::end(r), boost::end(r) });
         }
 
-        template <typename SinglePassRange, typename ValidationCallback,
+        template <typename SinglePassRange, typename ValidationPolicy,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename DecodingIterator = decoding_iterator<wide, Iterator, ValidationCallback>>
-        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, ValidationCallback&& callback) {
+                  typename DecodingIterator = decoding_iterator<wide, Iterator, ValidationPolicy>>
+        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, ValidationPolicy) {
             return boost::make_iterator_range(
-                    DecodingIterator { boost::begin(r), boost::end(r), callback },
-                    DecodingIterator { boost::end(r), boost::end(r), callback });
+                    DecodingIterator { boost::begin(r), boost::end(r) },
+                    DecodingIterator { boost::end(r), boost::end(r) });
         }
 
         static partial_array<code_unit, max_width> encode_one(codepoint u, state& s) {
             return encoding::encode_one(u, s);
         }
 
-        template <typename SinglePassRange, typename ValidationCallback>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, ValidationCallback&& callback) {
-            return encoding::decode_one(r, out, s, std::forward<ValidationCallback>(callback));
+        template <typename SinglePassRange, typename ValidationPolicy>
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, ValidationPolicy) {
+            return encoding::decode_one(r, out, s, ValidationPolicy{});
         }
     };
 } // namespace ogonek

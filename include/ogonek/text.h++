@@ -37,9 +37,9 @@ namespace ogonek {
             validated() = default;
             template <typename Range>
             validated(Range const& range) : validated(range, throw_validation_error) {}
-            template <typename Range, typename ValidationCallback>
-            validated(Range const& range, ValidationCallback&& callback) {
-                for(auto&& _ : EncodingForm::decode(range, std::forward<ValidationCallback>(callback))) {
+            template <typename Range, typename ValidationPolicy>
+            validated(Range const& range, ValidationPolicy) {
+                for(auto&& _ : EncodingForm::decode(range, ValidationPolicy{})) {
                     (void)_;
                     // TODO this is *wrong*
                     // do nothing, just consume the input
@@ -91,39 +91,39 @@ namespace ogonek {
         : basic_text(literal, throw_validation_error) {}
 
         //! Construct from a null-terminated codepoint string, with validation callback
-        template <typename ValidationCallback>
-        basic_text(codepoint const* literal, ValidationCallback&& callback)
+        template <typename ValidationPolicy>
+        basic_text(codepoint const* literal, ValidationPolicy)
         : basic_text(boost::make_iterator_range(literal, literal + std::char_traits<codepoint>::length(literal)),
-                     std::forward<ValidationCallback>(callback)) {}
+                     ValidationPolicy{}) {}
 
         //! Construct from a codepoint range
         template <typename CodepointRange>
         explicit basic_text(CodepointRange const& range)
         : basic_text(range, throw_validation_error) {}
 
-        //! Construct from a codepoint range, with validation callback
-        template <typename CodepointRange, typename ValidationCallback>
-        basic_text(CodepointRange const& range, ValidationCallback&& callback)
-        : basic_text(direct{}, EncodingForm::encode(range, std::forward<ValidationCallback>(callback))) {
+        //! Construct from a codepoint range, with validation policy
+        template <typename CodepointRange, typename ValidationPolicy>
+        basic_text(CodepointRange const& range, ValidationPolicy)
+        : basic_text(direct{}, EncodingForm::encode(range, ValidationPolicy{})) {
             static_assert(std::is_same<detail::RangeValueType<CodepointRange>, codepoint>::value,
                           "Can only construct text from a range of codepoints");
         }
 
         // -- storage
         //! Construct from an underlying container
-        explicit basic_text(Container storage)
+        explicit basic_text(Container storage) // TODO: strong guarantee!
         : detail::validated<EncodingForm>(storage, throw_validation_error),
           storage_(std::move(storage)) {}
 
         //** Range **
 
-        using iterator = decoding_iterator<EncodingForm, typename Container::iterator, decltype(skip_validation)>;
-        using const_iterator = decoding_iterator<EncodingForm, typename Container::const_iterator, decltype(skip_validation)>;
+        using iterator = decoding_iterator<EncodingForm, typename Container::iterator, skip_validation_t>;
+        using const_iterator = decoding_iterator<EncodingForm, typename Container::const_iterator, skip_validation_t>;
 
-        iterator begin() { return iterator { storage_.begin(), storage_.end(), skip_validation }; }
-        iterator end() { return iterator { storage_.end(), storage_.end(), skip_validation }; }
-        const_iterator begin() const { return const_iterator { storage_.begin(), storage_.end(), skip_validation }; }
-        const_iterator end() const { return const_iterator { storage_.end(), storage_.end(), skip_validation }; }
+        iterator begin() { return iterator { storage_.begin(), storage_.end() }; }
+        iterator end() { return iterator { storage_.end(), storage_.end() }; }
+        const_iterator begin() const { return const_iterator { storage_.begin(), storage_.end() }; }
+        const_iterator end() const { return const_iterator { storage_.end(), storage_.end() }; }
 
         //** Interoperation **
 
