@@ -53,7 +53,7 @@ namespace ogonek {
                     DecodingIterator { boost::end(r), boost::end(r) });
         }
 
-        static detail::coded_character<ascii> encode_one(codepoint u, state&, decltype(skip_validation)) {
+        static detail::coded_character<ascii> encode_one(codepoint u, state&, skip_validation_t) {
             if(u <= 0x7F) {
                 return { static_cast<code_unit>(u & 0x7F) };
             } else {
@@ -71,7 +71,7 @@ namespace ogonek {
         }
 
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, decltype(skip_validation)) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, skip_validation_t) {
             auto first = boost::begin(r);
             out = *first++;
             return { first, boost::end(r) };

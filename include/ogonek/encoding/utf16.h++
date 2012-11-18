@@ -73,7 +73,7 @@ namespace ogonek {
         static bool is_surrogate(codepoint u) { return u >= 0xD800 && u <= 0xDFFF; };
 
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, decltype(skip_validation)) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, skip_validation_t) {
             auto first = boost::begin(r);
             auto lead = *first++;
             if(!is_surrogate(lead)) {

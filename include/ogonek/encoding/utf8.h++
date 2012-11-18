@@ -97,7 +97,7 @@ namespace ogonek {
             return ((b0 & 0x07) << 18) | ((b1 & 0x3F) << 12) | ((b2 & 0x3F) << 6) | (b3 & 0x3F);
         }
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, decltype(skip_validation)) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, skip_validation_t) {
             auto first = boost::begin(r);
             byte b0 = *first++;
             auto length = sequence_length(b0);

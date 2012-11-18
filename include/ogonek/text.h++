@@ -37,9 +37,9 @@ namespace ogonek {
             validated() = default;
             template <typename Range>
             validated(Range const& range) : validated(range, throw_validation_error) {}
-            template <typename Range, typename ValidationCallback>
-            validated(Range const& range, ValidationCallback&& callback) {
-                for(auto&& _ : EncodingForm::decode(range, std::forward<ValidationCallback>(callback))) {
+            template <typename Range, typename ValidationPolicy>
+            validated(Range const& range, ValidationPolicy) {
+                for(auto&& _ : EncodingForm::decode(range, ValidationPolicy{})) {
                     (void)_;
                     // TODO this is *wrong*
                     // do nothing, just consume the input
@@ -111,7 +111,7 @@ namespace ogonek {
 
         // -- storage
         //! Construct from an underlying container
-        explicit basic_text(Container storage)
+        explicit basic_text(Container storage) // TODO: strong guarantee!
         : detail::validated<EncodingForm>(storage, throw_validation_error),
           storage_(std::move(storage)) {}
 

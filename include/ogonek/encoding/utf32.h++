@@ -56,7 +56,7 @@ namespace ogonek {
             return { u };
         }
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, decltype(skip_validation)) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, skip_validation_t) {
             auto first = boost::begin(r);
             out = *first++;
             return { first, boost::end(r) };
