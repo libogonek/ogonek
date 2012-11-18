@@ -33,7 +33,7 @@ namespace ogonek {
 
     struct skip_validation_t {} constexpr skip_validation = {};
 
-    struct {
+    struct throw_validation_error_t {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const&, typename EncodingForm::state&, codepoint&) {
             throw validation_error();
@@ -66,7 +66,7 @@ namespace ogonek {
         };
     } // namespace detail
 
-    struct {
+    struct use_replacement_character_t {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, typename EncodingForm::state&, codepoint& out) {
             out = U'\xFFFD';
@@ -78,7 +78,7 @@ namespace ogonek {
         }
     } constexpr use_replacement_character = {};
 
-    struct {
+    struct ignore_errors_t {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, typename EncodingForm::state&, codepoint&) {
             return { std::next(boost::begin(source)), boost::end(source) };

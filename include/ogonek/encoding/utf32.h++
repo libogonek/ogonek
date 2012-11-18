@@ -69,7 +69,7 @@ namespace ogonek {
             auto is_surrogate = [](codepoint u) { return u >= 0xD800 && u <= 0xDFFF; };
 
             if(u > 0x10FFFF || is_surrogate(u)) {
-                return ValidationPolicy::template apply_encode(r, s, out);
+                return ValidationPolicy::template apply_decode<utf32>(r, s, out);
             }
 
             out = u;
