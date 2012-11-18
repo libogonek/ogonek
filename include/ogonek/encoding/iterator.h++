@@ -71,12 +71,12 @@ namespace ogonek {
             }
         }
 
-        void encoded_validated(codepoint u, skip_validation_t) {
+        void encode_validated(codepoint u, skip_validation_t const&) {
             encoded = EncodingForm::encode_one(u, state, skip_validation);
         }
 
         template <typename ValidationPolicy1>
-        void encode_validated(codepoint u, ValidationPolicy1) {
+        void encode_validated(codepoint u, ValidationPolicy1 const&) {
             if(u > detail::last_codepoint || detail::is_surrogate(u)) {
                 encoded = ValidationPolicy1::template apply_encode<EncodingForm>(u, state);
             } else {

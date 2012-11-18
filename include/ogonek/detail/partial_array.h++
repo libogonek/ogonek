@@ -32,7 +32,7 @@ namespace ogonek {
                 std::copy(that.begin(), that.end(), array.begin());
             }
             partial_array(std::array<T, N> const& array, std::size_t count)
-            : count{ count }, array{ array } {}
+            : count{ count }, array(array) {}
             partial_array(std::initializer_list<T> list)
             : count{ list.size() } {
                 std::copy(list.begin(), list.end(), array.begin());

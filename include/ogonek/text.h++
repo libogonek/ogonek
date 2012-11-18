@@ -117,13 +117,13 @@ namespace ogonek {
 
         //** Range **
 
-        using iterator = decoding_iterator<EncodingForm, typename Container::iterator, decltype(skip_validation)>;
-        using const_iterator = decoding_iterator<EncodingForm, typename Container::const_iterator, decltype(skip_validation)>;
+        using iterator = decoding_iterator<EncodingForm, typename Container::iterator, skip_validation_t>;
+        using const_iterator = decoding_iterator<EncodingForm, typename Container::const_iterator, skip_validation_t>;
 
-        iterator begin() { return iterator { storage_.begin(), storage_.end(), skip_validation }; }
-        iterator end() { return iterator { storage_.end(), storage_.end(), skip_validation }; }
-        const_iterator begin() const { return const_iterator { storage_.begin(), storage_.end(), skip_validation }; }
-        const_iterator end() const { return const_iterator { storage_.end(), storage_.end(), skip_validation }; }
+        iterator begin() { return iterator { storage_.begin(), storage_.end() }; }
+        iterator end() { return iterator { storage_.end(), storage_.end() }; }
+        const_iterator begin() const { return const_iterator { storage_.begin(), storage_.end() }; }
+        const_iterator end() const { return const_iterator { storage_.end(), storage_.end() }; }
 
         //** Interoperation **
 
