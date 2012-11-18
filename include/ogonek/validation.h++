@@ -14,47 +14,80 @@
 #ifndef OGONEK_VALIDATION_HPP
 #define OGONEK_VALIDATION_HPP
 
+#include "detail/partial_array.h++"
+
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 
 #include <cstdint>
 #include <iterator>
+#include <type_traits>
 
 namespace ogonek {
-    enum class validation_result {
-        valid, unassigned, illegal, irregular,
-    };
-
     struct validation_error : std::exception { // TODO Boost.Exception
         char const* what() const throw() override {
             return "Unicode validation failed";
         }
     };
 
-    constexpr struct {
-        template <typename Range>
-        boost::sub_range<Range> operator()(validation_result, boost::sub_range<Range> const&, codepoint&) const {
+    struct skip_validation_t {} constexpr skip_validation = {};
+
+    struct {
+        template <typename EncodingForm, typename Range>
+        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const&, typename EncodingForm::state&, codepoint&) {
             throw validation_error();
         }
-    } throw_validation_error = {};
+        template <typename EncodingForm>
+        static detail::coded_character<EncodingForm> apply_encode(codepoint, typename EncodingForm::state&) {
+            throw validation_error();
+        }
+    } constexpr throw_validation_error = {};
 
-    constexpr struct {
-        template <typename Range>
-        boost::sub_range<Range> operator()(validation_result, boost::sub_range<Range> const& source, codepoint& out) const {
+    namespace detail {
+        template <typename T>
+        struct sfinae_true : std::true_type {};
+        struct has_custom_replacement_character_impl {
+            template <typename EncodingForm>
+            sfinae_true<decltype(EncodingForm::replacement_character)> test(int);
+            template <typename>
+            std::false_type test(...);
+        };
+        template <typename EncodingForm>
+        using has_custom_replacement_character = decltype(has_custom_replacement_character_impl::test<EncodingForm>(0));
+
+        template <typename EncodingForm, bool Custom = has_custom_replacement_character<EncodingForm>::value>
+        struct replacement_character {
+            static constexpr codepoint value = U'\xFFFD';
+        };
+        template <typename EncodingForm>
+        struct replacement_character<EncodingForm, true> {
+            static constexpr codepoint value = EncodingForm::replacement_character;
+        };
+    } // namespace detail
+
+    struct {
+        template <typename EncodingForm, typename Range>
+        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, typename EncodingForm::state&, codepoint& out) {
             out = U'\xFFFD';
             return { std::next(boost::begin(source)), boost::end(source) };
         }
-    } use_replacement_character = {};
+        template <typename EncodingForm>
+        static detail::coded_character<EncodingForm> apply_encode(codepoint u, typename EncodingForm::state& s) {
+            return EncodingForm::encode_one(detail::replacement_character<EncodingForm>::value, s, skip_validation);
+        }
+    } constexpr use_replacement_character = {};
 
-    constexpr struct {
-        template <typename Range>
-        boost::sub_range<Range> operator()(validation_result, boost::sub_range<Range> const& source, codepoint&) const {
+    struct {
+        template <typename EncodingForm, typename Range>
+        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, typename EncodingForm::state&, codepoint&) {
             return { std::next(boost::begin(source)), boost::end(source) };
         }
-    } ignore_errors = {};
-
-    constexpr struct skip_validation_t {} skip_validation = {};
+        template <typename EncodingForm>
+        static detail::coded_character<EncodingForm> apply_encode(codepoint, typename EncodingForm::state&) {
+            return {};
+        }
+    } constexpr ignore_errors = {};
 } // namespace ogonek
 
 #endif // OGONEK_VALIDATION_HPP

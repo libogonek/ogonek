@@ -17,6 +17,8 @@
 #include "../traits.h++"
 #include "../types.h++"
 #include "../validation.h++"
+#include "../detail/constants.h++"
+#include "../detail/partial_array.h++"
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>
@@ -27,62 +29,21 @@
 #include <algorithm>
 
 namespace ogonek {
-    template <typename T, std::size_t N>
-    struct partial_array {
-    public:
-        template <typename U>
-        partial_array(partial_array<U, N> const& that)
-        : count(that.count) {
-            std::copy(that.begin(), that.end(), array.begin());
-        }
-        partial_array(std::array<T, N> array, std::size_t count)
-        : count(count), array(array) {}
-        partial_array(std::initializer_list<T> list)
-        : count { list.size() } {
-            std::copy(list.begin(), list.end(), array.begin());
-        }
+    namespace detail {
+        inline bool is_surrogate(codepoint u) { return u >= first_surrogate && u <= last_surrogate; } // TODO pull out
+    } // namespace detail
 
-        using iterator = typename std::array<T, N>::const_iterator;
-        using const_iterator = typename std::array<T, N>::const_iterator;
-
-        iterator begin() { return array.begin(); }
-        iterator begin() const { return array.begin(); }
-        iterator end() { return array.begin() + count; }
-        iterator end() const { return array.begin() + count; }
-
-        std::size_t size() const { return count; }
-
-        T& operator[](std::ptrdiff_t index) { return array[index]; }
-        T const& operator[](std::ptrdiff_t index) const { return array[index]; }
-
-    private:
-        std::size_t count;
-        std::array<T, N> array;
-    };
-
-    inline void validate(codepoint&, decltype(skip_validation)) {}
-    inline bool is_surrogate(codepoint u) { return u >= 0xD800 && u <= 0xDFFF; }
-    template <typename Callback>
-    void validate(codepoint& u, Callback&& callback) {
-        auto list = { u };
-        if(u > 0x10FFFF || is_surrogate(u)) {
-            callback(validation_result::illegal, boost::sub_range<decltype(list)>(list), u); // TODO: how to use the result?
-        }
-    }
-
-    template <typename EncodingForm, typename Iterator, typename ValidationCallback>
+    template <typename EncodingForm, typename Iterator, typename ValidationPolicy>
     struct encoding_iterator
     : boost::iterator_facade<
-        encoding_iterator<EncodingForm, Iterator, ValidationCallback>,
+        encoding_iterator<EncodingForm, Iterator, ValidationPolicy>,
         CodeUnit<EncodingForm>,
         std::input_iterator_tag, // TODO
         CodeUnit<EncodingForm>
       > {
     public:
-        encoding_iterator(Iterator first, Iterator last, ValidationCallback callback)
-        : first(first), last(last), callback(std::forward<ValidationCallback>(callback)) {
-            encode_next();
-        }
+        encoding_iterator(Iterator first, Iterator last)
+        : first(first), last(last) { encode_next(); }
 
         CodeUnit<EncodingForm> dereference() const {
             return encoded[current];
@@ -103,25 +64,36 @@ namespace ogonek {
         void encode_next() {
             if(first != last) {
                 auto u = *first++;
-                validate(u, callback);
-                encoded = EncodingForm::encode_one(u, state);
+                encode_validated(u, ValidationPolicy{});
                 current = 0;
             } else {
                 current = -1;
             }
         }
 
+        void encoded_validated(codepoint u, skip_validation_t) {
+            encoded = EncodingForm::encode_one(u, state, skip_validation);
+        }
+
+        template <typename ValidationPolicy1>
+        void encode_validated(codepoint u, ValidationPolicy1) {
+            if(u > detail::last_codepoint || detail::is_surrogate(u)) {
+                encoded = ValidationPolicy1::template apply_encode<EncodingForm>(u, state);
+            } else {
+                encoded = EncodingForm::encode_one(u, state, ValidationPolicy1{});
+            }
+        }
+
         Iterator first, last;
-        typename std::decay<ValidationCallback>::type callback;
         typename EncodingForm::state state {};
-        partial_array<CodeUnit<EncodingForm>, EncodingForm::max_width> encoded {};
+        detail::coded_character<EncodingForm> encoded {};
         int current;
     };
 
-    template <typename EncodingForm, typename Iterator, typename ValidationCallback>
+    template <typename EncodingForm, typename Iterator, typename ValidationPolicy>
     struct decoding_iterator
     : boost::iterator_facade<
-        decoding_iterator<EncodingForm, Iterator, ValidationCallback>,
+        decoding_iterator<EncodingForm, Iterator, ValidationPolicy>,
         codepoint,
         std::input_iterator_tag, // TODO
         codepoint
@@ -129,13 +101,13 @@ namespace ogonek {
     public:
         using range = boost::iterator_range<Iterator>;
 
-        decoding_iterator(Iterator first, Iterator last, ValidationCallback callback)
-        : first(first), last(last), callback(std::forward<ValidationCallback>(callback)) {}
+        decoding_iterator(Iterator first, Iterator last)
+        : first(first), last(last) {}
 
         codepoint dereference() const {
             codepoint u;
             auto s = state;
-            EncodingForm::decode_one(boost::sub_range<range>(first, last), u, s, callback);
+            EncodingForm::decode_one(boost::sub_range<range>(first, last), u, s, ValidationPolicy{});
             return u;
         }
         bool equal(decoding_iterator const& that) const {
@@ -143,12 +115,11 @@ namespace ogonek {
         }
         void increment() {
             codepoint dummy;
-            first = EncodingForm::decode_one(boost::sub_range<range>(first, last), dummy, state, callback).begin();
+            first = EncodingForm::decode_one(boost::sub_range<range>(first, last), dummy, state, ValidationPolicy{}).begin();
         }
 
     private:
         Iterator first, last;
-        typename std::decay<ValidationCallback>::type callback;
         typename EncodingForm::state state {};
     };
 } // namespace ogonek

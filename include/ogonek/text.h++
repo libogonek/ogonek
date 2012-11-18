@@ -91,20 +91,20 @@ namespace ogonek {
         : basic_text(literal, throw_validation_error) {}
 
         //! Construct from a null-terminated codepoint string, with validation callback
-        template <typename ValidationCallback>
-        basic_text(codepoint const* literal, ValidationCallback&& callback)
+        template <typename ValidationPolicy>
+        basic_text(codepoint const* literal, ValidationPolicy)
         : basic_text(boost::make_iterator_range(literal, literal + std::char_traits<codepoint>::length(literal)),
-                     std::forward<ValidationCallback>(callback)) {}
+                     ValidationPolicy{}) {}
 
         //! Construct from a codepoint range
         template <typename CodepointRange>
         explicit basic_text(CodepointRange const& range)
         : basic_text(range, throw_validation_error) {}
 
-        //! Construct from a codepoint range, with validation callback
-        template <typename CodepointRange, typename ValidationCallback>
-        basic_text(CodepointRange const& range, ValidationCallback&& callback)
-        : basic_text(direct{}, EncodingForm::encode(range, std::forward<ValidationCallback>(callback))) {
+        //! Construct from a codepoint range, with validation policy
+        template <typename CodepointRange, typename ValidationPolicy>
+        basic_text(CodepointRange const& range, ValidationPolicy)
+        : basic_text(direct{}, EncodingForm::encode(range, ValidationPolicy{})) {
             static_assert(std::is_same<detail::RangeValueType<CodepointRange>, codepoint>::value,
                           "Can only construct text from a range of codepoints");
         }
