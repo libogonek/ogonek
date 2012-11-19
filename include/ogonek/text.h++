@@ -66,9 +66,9 @@ namespace ogonek {
     struct basic_text : private detail::validated<EncodingForm> {
     private:
         static_assert(std::is_convertible<CodeUnit<EncodingForm>, detail::ValueType<Container>>::value,
-                      "The container's value type should be convertible to the encoding form code units");
-        static_assert(std::is_convertible<detail::ValueType<Container>, CodeUnit<EncodingForm>>::value,
                       "The encoding form code units should be convertible to the container's value type");
+        static_assert(std::is_convertible<detail::ValueType<Container>, CodeUnit<EncodingForm>>::value,
+                      "The container's value type should be convertible to the encoding form code units");
 
         struct direct {};
 
