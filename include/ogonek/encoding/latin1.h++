@@ -9,10 +9,10 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// ASCII encoding form
+// ISO-8859-1 encoding form
 
-#ifndef OGONEK_ENCODING_ASCII_HPP
-#define OGONEK_ENCODING_ASCII_HPP
+#ifndef OGONEK_ENCODING_LATIN1_HPP
+#define OGONEK_ENCODING_LATIN1_HPP
 
 #include "iterator.h++"
 #include "../types.h++"
@@ -29,7 +29,7 @@
 #include <utility>
 
 namespace ogonek {
-    struct ascii {
+    struct latin1 {
         using code_unit = char;
         static constexpr bool is_fixed_width = true;
         static constexpr std::size_t max_width = 1;
@@ -39,7 +39,7 @@ namespace ogonek {
 
         template <typename SinglePassRange, typename ValidationPolicy,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename EncodingIterator = encoding_iterator<ascii, Iterator, ValidationPolicy>>
+                  typename EncodingIterator = encoding_iterator<latin1, Iterator, ValidationPolicy>>
         static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ValidationPolicy) {
             return boost::make_iterator_range(
                     EncodingIterator { boost::begin(r), boost::end(r) },
@@ -47,27 +47,27 @@ namespace ogonek {
         }
         template <typename SinglePassRange, typename ValidationPolicy,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename DecodingIterator = decoding_iterator<ascii, Iterator, ValidationPolicy>>
+                  typename DecodingIterator = decoding_iterator<latin1, Iterator, ValidationPolicy>>
         static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, ValidationPolicy) {
             return boost::make_iterator_range(
                     DecodingIterator { boost::begin(r), boost::end(r) },
                     DecodingIterator { boost::end(r), boost::end(r) });
         }
 
-        static detail::coded_character<ascii> encode_one(codepoint u, state&, skip_validation_t) {
-            if(u <= 0x7F) {
-                return { static_cast<code_unit>(u & 0x7F) };
+        static detail::coded_character<latin1> encode_one(codepoint u, state&, skip_validation_t) {
+            if(u < 0xFF) {
+                return { static_cast<code_unit>(u & 0xFF) };
             } else {
                 return {};
             }
         }
 
 	template <typename ValidationPolicy>
-        static detail::coded_character<ascii> encode_one(codepoint u, state& s, ValidationPolicy) {
-            if(u <= 0x7F) {
-                return { static_cast<code_unit>(u & 0x7F) };
+        static detail::coded_character<latin1> encode_one(codepoint u, state& s, ValidationPolicy) {
+            if(u <= 0xFF) {
+                return { static_cast<code_unit>(u & 0xFF) };
             } else {
-                return ValidationPolicy::template apply_encode<ascii>(u, s);
+                return ValidationPolicy::template apply_encode<latin1>(u, s);
             }
         }
 
@@ -78,18 +78,13 @@ namespace ogonek {
             return { first, boost::end(r) };
         }
         template <typename SinglePassRange, typename ValidationPolicy>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s, ValidationPolicy) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, ValidationPolicy) {
             auto first = boost::begin(r);
-            byte b = *first++;
-            if(b > 0x7F) {
-                return  ValidationPolicy::template apply_decode<ascii>(r, s, out);
-            }
-            out = b;
+            out = *first++;
             return { first, boost::end(r) };
         }
     };
 } // namespace ogonek
 
-#endif // OGONEK_ENCODING_ASCII_HPP
-
+#endif // OGONEK_ENCODING_LATIN1_HPP
 
