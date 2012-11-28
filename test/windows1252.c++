@@ -1,0 +1,63 @@
+// Ogonek
+//
+// Written in 2012 by Martinho Fernandes <martinho.fernandes@gmail.com>
+//
+// To the extent possible under law, the author(s) have dedicated all copyright and related
+// and neighboring rights to this software to the public domain worldwide. This software is
+// distributed without any warranty.
+//
+// You should have received a copy of the CC0 Public Domain Dedication along with this software.
+// If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
+
+// Tests for <ogonek/encoding/windows1252.h++>
+
+#include <ogonek/encoding/windows1252.h++>
+#include <ogonek/types.h++>
+
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+
+#include <catch.h++>
+
+TEST_CASE("windows1252", "Windows-1252 encoding form") {
+    using namespace ogonek::literal;
+
+    SECTION("encode", "Encoding Windows-1252") {
+        auto decoded = { 0x0041_u, 0x20AC_u };
+        auto range = ogonek::windows1252::encode(decoded, ogonek::skip_validation);
+        std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
+        REQUIRE(encoded.size() == 2);
+        CHECK(int(encoded[0]) == int(0x41_b));
+        CHECK(int(encoded[1]) == int(0x80_b));
+    }
+    SECTION("decode", "Decoding Windows-1252") {
+        auto encoded = { 0x41_b, 0x80_b };
+        auto range = ogonek::windows1252::decode(encoded, ogonek::skip_validation);
+        std::vector<ogonek::codepoint> decoded(boost::begin(range), boost::end(range));
+        REQUIRE(decoded.size() == 2);
+        CHECK(decoded[0] == U'\x0041');
+        CHECK(decoded[1] == U'\x20AC');
+    }
+    SECTION("validation", "Validating Windows-1252") {
+        auto encoded = { 0x41_b, 0x80_b, 0x81_b };
+        auto range = ogonek::windows1252::decode(encoded, ogonek::use_replacement_character);
+        std::vector<ogonek::codepoint> decoded(boost::begin(range), boost::end(range));
+        REQUIRE(decoded.size() == 3);
+        CHECK(decoded[0] == U'\x0041');
+        CHECK(decoded[1] == U'\x20AC');
+        CHECK(decoded[2] == U'\xFFFD');
+    }
+    SECTION("replacement", "Windows-1252's custom replacement character (?)") {
+        auto decoded = { 0x41_u, 0x20AC_u, 0x1F4A9_u };
+        auto range = ogonek::windows1252::encode(decoded, ogonek::use_replacement_character);
+        std::vector<ogonek::windows1252::code_unit> encoded(boost::begin(range), boost::end(range));
+        REQUIRE(encoded.size() == 3);
+        CHECK(encoded[0] == 0x41_b);
+        CHECK(ogonek::byte(encoded[1]) == 0x80_b);
+        CHECK(encoded[2] == '?');
+    }
+}
+
+
+
+
