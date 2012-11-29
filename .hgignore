@@ -8,5 +8,4 @@ test-results.xml
 dist/
 *.g.*
 *.session.vim
-
-deps/wheels/
+ogonek/
