@@ -29,9 +29,6 @@ if env['PLATFORM'] == 'win32':
 else:
     env.MergeFlags(['-DOGONEK_POSIX'])
 
-# Define visibility flags for shared libs
-lib_flags = [] #[ '-DVISIBILITY_LIBRARY', '-DVISIBILITY_SHARED' ]
-
 # Utils
 def stringify(list):
     return map(str, list)
@@ -42,10 +39,16 @@ def prefix(p, list):
 sources = stringify(Glob('src/*.c++'))
 test_sources = sources + stringify(Glob('test/*.c++'))
 
+# Define visibility flags for shared libs
+if env['lib'] == 'static':
+    lib_flags = ['-DOGONEK_BUILD']
+if env['lib'] == 'shared':
+    lib_flags = ['-DOGONEK_BUILD', '-DOGONEK_SHARED']
+
 # Setup the debug target
 debug_builddir = 'obj/debug/'
 debug_target = 'bin/debug/ogonek'
-debug_flags = lib_flags + [ '-g', '-D_GLIBCXX_DEBUG' ]
+debug_flags = lib_flags + ['-g', '-D_GLIBCXX_DEBUG']
 debug_libs = []
 
 debug = env.Clone()
@@ -61,7 +64,7 @@ debug.Alias('debug', debug_lib)
 # Setup the release target
 release_builddir = 'obj/release/'
 release_target = 'bin/release/ogonek'
-release_flags = lib_flags + [ '-flto' , '-O3', '-DNDEBUG' ]
+release_flags = lib_flags + ['-flto' , '-O3', '-DNDEBUG']
 release_libs = []
 
 release = env.Clone()
@@ -81,7 +84,7 @@ if env['PLATFORM'] == 'win32':
     test_target = 'bin\\test\\runtest' # FFS
 else:
     test_target = 'bin/test/runtest'
-test_flags = [ '-Itest' ]
+test_flags = ['-Itest']
 test_libs = []
 
 test = debug.Clone()
