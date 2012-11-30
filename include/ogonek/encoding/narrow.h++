@@ -27,9 +27,15 @@
 #include <cuchar>
 #include <array>
 #include <utility>
+#include <cstddef>
 
 namespace ogonek {
     struct narrow {
+    private:
+        static constexpr std::size_t error = -1;
+        static constexpr std::size_t incomplete = -2;
+
+    public:
         using code_unit = char;
         static constexpr bool is_fixed_width = false;
         static constexpr std::size_t max_width = 4;
@@ -57,7 +63,7 @@ namespace ogonek {
         static partial_array<code_unit, max_width> encode_one(codepoint u, state& s) {
             std::array<code_unit, max_width> units;
             auto r = std::c32rtomb(units.data(), u, &s);
-            if(r != -1) {
+            if(r != error) {
                 return { units, r };
             } else {
                 throw validation_error();
@@ -71,7 +77,7 @@ namespace ogonek {
             std::array<code_unit, max_width> units = { *it++, };
             int n = 1;
             int r;
-            while((r = mbrtoc32(&out, units.data(), n, &s)) == -2) {
+            while((r = mbrtoc32(&out, units.data(), n, &s)) == incomplete) {
                 units[n++] = *it++;
             }
             return { it, boost::end(r) };
@@ -82,10 +88,10 @@ namespace ogonek {
             std::array<code_unit, max_width> units = { *it++, };
             int n = 1;
             int r;
-            while((r = mbrtoc32(&out, units.data(), n, &s)) == -2) {
+            while((r = mbrtoc32(&out, units.data(), n, &s)) == incomplete) {
                 units[n++] = *it++;
             }
-            if(r == -1) {
+            if(r == error) {
                 return ValidationPolicy::template apply_decode<narrow>(r, s, out);
             }
             return { it, boost::end(r) };

@@ -18,6 +18,7 @@
 #include <ogonek/types.h++>
 #include <ogonek/validation.h++>
 #include <ogonek/detail/partial_array.h++>
+#include <ogonek/detail/constants.h++>
 
 #include <boost/range/iterator_range.hpp>
 #include <boost/range/sub_range.hpp>
@@ -30,6 +31,36 @@
 
 namespace ogonek {
     struct utf8 {
+    private:
+        static constexpr auto last_1byte_value = 0x7Fu;
+        static constexpr auto last_2byte_value = 0x7FFu;
+        static constexpr auto last_3byte_value = 0xFFFFu;
+
+        static constexpr auto start_2byte_mask = 0x80u;
+        static constexpr auto start_3byte_mask = 0xE0u;
+        static constexpr auto start_4byte_mask = 0xF0u;
+
+        static constexpr auto continuation_mask = 0xC0u;
+        static constexpr auto continuation_signature = 0x80u;
+
+        static constexpr int sequence_length(byte b) {
+            return (b & start_2byte_mask) == 0? 1
+                 : (b & start_3byte_mask) != start_3byte_mask? 2
+                 : (b & start_4byte_mask) != start_4byte_mask? 3
+                 : 4;
+        }
+
+        static constexpr codepoint decode(byte b0, byte b1) {
+            return ((b0 & 0x1F) << 6) | (b1 & 0x3F);
+        }
+        static constexpr codepoint decode(byte b0, byte b1, byte b2) {
+            return ((b0 & 0x0F) << 12) | ((b1 & 0x3F) << 6) | (b2 & 0x3F);
+        }
+        static constexpr codepoint decode(byte b0, byte b1, byte b2, byte b3) {
+            return ((b0 & 0x07) << 18) | ((b1 & 0x3F) << 12) | ((b2 & 0x3F) << 6) | (b3 & 0x3F);
+        }
+
+    public:
         using code_unit = char;
         static constexpr bool is_fixed_width = false;
         static constexpr std::size_t max_width = 4;
@@ -53,16 +84,16 @@ namespace ogonek {
                     DecodingIterator { boost::end(r), boost::end(r) });
         }
 
-	template <typename ValidationPolicy>
+        template <typename ValidationPolicy>
         static detail::coded_character<utf8> encode_one(codepoint u, state&, ValidationPolicy) {
-            if(u <= 0x7F) {
-                return { static_cast<code_unit>(u & 0x7F) };
-            } else if(u <= 0x7FF) {
+            if(u <= last_1byte_value) {
+                return { static_cast<code_unit>(u) };
+            } else if(u <= last_2byte_value) {
                 return {
                     static_cast<code_unit>(0xC0 | ((u & 0x3C0) >> 6)),
                     static_cast<code_unit>(0x80 | (u & 0x3F)),
                 };
-            } else if(u <= 0xFFFF) {
+            } else if(u <= last_3byte_value) {
                 return {
                     static_cast<code_unit>(0xE0 | ((u & 0xF000) >> 12)),
                     static_cast<code_unit>(0x80 | ((u & 0xFC0) >> 6)),
@@ -75,26 +106,6 @@ namespace ogonek {
                 static_cast<code_unit>(0x80 | ((u & 0xFC0) >> 6)),
                 static_cast<code_unit>(0x80 | (u & 0x3F)),
             };
-        }
-
-        static constexpr int sequence_length(byte b) {
-            return (b & 0x80) == 0? 1
-                 : (b & 0xE0) != 0xE0? 2
-                 : (b & 0xF0) != 0xF0? 3
-                 : 4;
-        }
-        static constexpr bool is_continuation(byte b) {
-            return (b & 0xC0) == 0x80;
-        }
-
-        static constexpr codepoint decode(byte b0, byte b1) {
-            return ((b0 & 0x1F) << 6) | (b1 & 0x3F);
-        }
-        static constexpr codepoint decode(byte b0, byte b1, byte b2) {
-            return ((b0 & 0x0F) << 12) | ((b1 & 0x3F) << 6) | (b2 & 0x3F);
-        }
-        static constexpr codepoint decode(byte b0, byte b1, byte b2, byte b3) {
-            return ((b0 & 0x07) << 18) | ((b1 & 0x3F) << 12) | ((b2 & 0x3F) << 6) | (b3 & 0x3F);
         }
         template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, skip_validation_t) {
@@ -131,6 +142,9 @@ namespace ogonek {
             }
 
             auto is_invalid = [](byte b) { return b == 0xC0 || b == 0xC1 || b > 0xF4; };
+            auto is_continuation = [](byte b) {
+                return (b & continuation_mask) == continuation_signature;
+            };
 
             if(is_invalid(b0) || is_continuation(b0)) {
                 return ValidationPolicy::template apply_decode<utf8>(r, s, out);
@@ -153,13 +167,14 @@ namespace ogonek {
             }
 
             auto is_overlong = [](codepoint u, int bytes) {
-                return u <= 0x7F || (u <= 0x7FF && bytes > 2) || (u <= 0xFFFF && bytes > 3);
+                return u <= last_1byte_value
+                    || (u <= last_2byte_value && bytes > 2)
+                    || (u <= last_3byte_value && bytes > 3);
             };
             if(is_overlong(out, length)) {
                 return ValidationPolicy::template apply_decode<utf8>(r, s, out);
             }
-            auto is_surrogate = [](codepoint u) { return u >= 0xD800 && u <= 0xDFFF; };
-            if(is_surrogate(out) || out > 0x10FFFF) {
+            if(detail::is_surrogate(out) || out > detail::last_codepoint) {
                 return ValidationPolicy::template apply_decode<utf8>(r, s, out);
             }
             return { first, boost::end(r) };

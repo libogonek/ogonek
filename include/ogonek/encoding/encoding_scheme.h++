@@ -31,7 +31,7 @@
 #include <type_traits>
 
 namespace ogonek {
-    namespace encoding_scheme_detail {
+    namespace detail {
         template <typename T, std::size_t N = sizeof(T)>
         struct uint;
         template <typename T>
@@ -76,7 +76,7 @@ namespace ogonek {
                                            ByteOrder,
                                            Integer,
                                            typename boost::range_iterator<SinglePassRange>::type>>;
-    } // namespace encoding_scheme_detail
+    } // namespace detail
 
     template <typename EncodingForm, typename ByteOrder>
     struct encoding_scheme {
@@ -109,14 +109,14 @@ namespace ogonek {
             auto encoded = EncodingForm::encode_one(u, s, ValidationPolicy{});
             auto out = result.begin();
             for(auto it = encoded.begin(); it != encoded.end(); ++it) {
-                auto bytes = ByteOrder::map(static_cast<encoding_scheme_detail::Uint<CodeUnit<EncodingForm>>>(*it));
+                auto bytes = ByteOrder::map(static_cast<detail::Uint<CodeUnit<EncodingForm>>>(*it));
                 out = std::copy(bytes.begin(), bytes.end(), out);
             }
             return { result, std::size_t(out - result.begin()) };
         }
         template <typename SinglePassRange, typename ValidationPolicy>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s, ValidationPolicy) {
-            using code_unit_range = encoding_scheme_detail::byte_ordered_range<ByteOrder, typename EncodingForm::code_unit, SinglePassRange>;
+            using code_unit_range = detail::byte_ordered_range<ByteOrder, typename EncodingForm::code_unit, SinglePassRange>;
             using iterator = typename boost::range_iterator<code_unit_range>::type;
             code_unit_range range {
                 iterator { boost::begin(r) }, iterator { boost::end(r) }

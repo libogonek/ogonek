@@ -50,7 +50,7 @@ namespace ogonek {
 
                 if(first == last) {
                     current = {};
-                    position = -1;
+                    position = depleted;
                     return;
                 }
                 auto u = *first++;
@@ -66,12 +66,14 @@ namespace ogonek {
         private:
             friend class ordered_decomposing_iterator<Iterator>;
 
+            static constexpr int depleted = -1;
+
             bool exhausted() const {
-                return position == -1;
+                return position == depleted;
             }
 
             Iterator first, last;
-            int position = -1;
+            int position = depleted;
             std::vector<codepoint> current;
         };
 
@@ -105,7 +107,7 @@ namespace ogonek {
                 if(static_cast<unsigned>(position) < current.size()) return;
                 if(it.exhausted()) {
                     current = {};
-                    position = -1;
+                    position = depleted;
                     return;
                 }
 
@@ -127,12 +129,14 @@ namespace ogonek {
         private:
             friend class composing_iterator<Iterator>;
 
+            static constexpr int depleted = -1;
+
             bool exhausted() const {
-                return position == -1;
+                return position == depleted;
             }
 
             decomposing_iterator<Iterator> it;
-            int position = -1;
+            int position = depleted;
             std::vector<codepoint> current;
         };
 

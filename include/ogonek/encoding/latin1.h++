@@ -30,6 +30,10 @@
 
 namespace ogonek {
     struct latin1 {
+    private:
+        static constexpr auto last_latin1_value = 0xFFu;
+
+    public:
         using code_unit = char;
         static constexpr bool is_fixed_width = true;
         static constexpr std::size_t max_width = 1;
@@ -55,8 +59,8 @@ namespace ogonek {
         }
 
         static detail::coded_character<latin1> encode_one(codepoint u, state&, skip_validation_t) {
-            if(u < 0xFF) {
-                return { static_cast<code_unit>(u & 0xFF) };
+            if(u < last_latin1_value) {
+                return { static_cast<code_unit>(u) };
             } else {
                 return {};
             }
@@ -64,8 +68,8 @@ namespace ogonek {
 
 	template <typename ValidationPolicy>
         static detail::coded_character<latin1> encode_one(codepoint u, state& s, ValidationPolicy) {
-            if(u <= 0xFF) {
-                return { static_cast<code_unit>(u & 0xFF) };
+            if(u <= last_latin1_value) {
+                return { static_cast<code_unit>(u) };
             } else {
                 return ValidationPolicy::template apply_encode<latin1>(u, s);
             }

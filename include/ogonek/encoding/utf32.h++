@@ -18,6 +18,7 @@
 #include <ogonek/types.h++>
 #include <ogonek/validation.h++>
 #include <ogonek/detail/partial_array.h++>
+#include <ogonek/detail/constants.h++>
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>
@@ -66,9 +67,7 @@ namespace ogonek {
             auto first = boost::begin(r);
             auto u = *first++;
 
-            auto is_surrogate = [](codepoint u) { return u >= 0xD800 && u <= 0xDFFF; };
-
-            if(u > 0x10FFFF || is_surrogate(u)) {
+            if(u > detail::last_codepoint || detail::is_surrogate(u)) {
                 return ValidationPolicy::template apply_decode<utf32>(r, s, out);
             }
 

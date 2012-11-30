@@ -26,6 +26,16 @@ namespace ogonek {
 
         constexpr codepoint first_surrogate = first_lead_surrogate;
         constexpr codepoint last_surrogate = last_trail_surrogate;
+
+        constexpr bool is_lead_surrogate(codepoint u) {
+            return u >= first_lead_surrogate && u <= last_lead_surrogate;
+        }
+        constexpr bool is_trail_surrogate(codepoint u) {
+            return u >= first_trail_surrogate && u <= last_trail_surrogate;
+        }
+        constexpr bool is_surrogate(codepoint u) {
+            return u >= first_surrogate && u <= last_surrogate;
+        }
     } // namespace detail
 } // namespace ogonek
 

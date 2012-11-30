@@ -18,6 +18,7 @@
 #include <ogonek/types.h++>
 #include <ogonek/validation.h++>
 #include <ogonek/detail/partial_array.h++>
+#include <ogonek/detail/constants.h++>
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>
@@ -29,6 +30,14 @@
 
 namespace ogonek {
     struct utf16 {
+    private:
+        static constexpr codepoint last_bmp_value = 0xFFFF;
+        static constexpr codepoint normalizing_value = 0x10000;
+        static constexpr auto lead_surrogate_bitmask = 0xFFC00;
+        static constexpr auto trail_surrogate_bitmask = 0x3FF;
+        static constexpr auto lead_shifted_bits = 10;
+
+    public:
         using code_unit = char16_t;
         static constexpr bool is_fixed_width = false;
         static constexpr std::size_t max_width = 2;
@@ -55,12 +64,12 @@ namespace ogonek {
 
         template <typename ValidationPolicy>
         static detail::coded_character<utf16> encode_one(codepoint u, state&, ValidationPolicy) {
-            if(u <= 0xFFFF) {
+            if(u <= last_bmp_value) {
                 return { static_cast<code_unit>(u) };
             } else {
-                auto normal = u - 0x10000;
-                auto lead = 0xD800 + ((normal & 0xFFC00) >> 10);
-                auto trail = 0xDC00 + (normal & 0x3FF);
+                auto normal = u - normalizing_value;
+                auto lead = detail::first_lead_surrogate + ((normal & lead_surrogate_bitmask) >> lead_shifted_bits);
+                auto trail = detail::first_trail_surrogate + (normal & trail_surrogate_bitmask);
                 return {
                     static_cast<code_unit>(lead),
                     static_cast<code_unit>(trail)
@@ -68,21 +77,21 @@ namespace ogonek {
             }
         }
 
-        static bool is_lead_surrogate(codepoint u) { return u >= 0xD800 && u <= 0xDBFF; };
-        static bool is_trail_surrogate(codepoint u) { return u >= 0xDC00 && u <= 0xDFFF; };
-        static bool is_surrogate(codepoint u) { return u >= 0xD800 && u <= 0xDFFF; };
+        static codepoint combine_surrogates(char16_t lead, char16_t trail) {
+            auto hi = lead - detail::first_lead_surrogate;
+            auto lo = trail - detail::first_trail_surrogate;
+            return normalizing_value + ((hi << lead_shifted_bits) | lo);
+        }
 
         template <typename SinglePassRange>
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, skip_validation_t) {
             auto first = boost::begin(r);
             auto lead = *first++;
-            if(!is_surrogate(lead)) {
+            if(!detail::is_surrogate(lead)) {
                 out = lead;
             } else {
                 auto trail = *first++;
-                auto hi = lead - 0xD800;
-                auto lo = trail - 0xDC00;
-                out = 0x10000 + ((hi << 10) | lo);
+                out = combine_surrogates(lead, trail);
             }
             return { first, boost::end(r) };
         }
@@ -91,22 +100,20 @@ namespace ogonek {
             auto first = boost::begin(r);
             auto lead = *first++;
 
-            if(!is_surrogate(lead)) {
+            if(!detail::is_surrogate(lead)) {
                 out = lead;
                 return { first, boost::end(r) };
             }
-            if(!is_lead_surrogate(lead)) {
+            if(!detail::is_lead_surrogate(lead)) {
                 return ValidationPolicy::template apply_decode<utf16>(r, s, out);
             }
 
             auto trail = *first++;
-            if(!is_trail_surrogate(trail)) {
+            if(!detail::is_trail_surrogate(trail)) {
                 return ValidationPolicy::template apply_decode<utf16>(r, s, out);
             }
 
-            auto hi = lead - 0xD800;
-            auto lo = trail - 0xDC00;
-            out = 0x10000 + ((hi << 10) | lo);
+            out = combine_surrogates(lead, trail);
             return { first, boost::end(r) };
         }
     };

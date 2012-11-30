@@ -30,6 +30,10 @@
 
 namespace ogonek {
     struct ascii {
+    private:
+        static constexpr auto last_ascii_value = 0x7Fu;
+
+    public:
         using code_unit = char;
         static constexpr bool is_fixed_width = true;
         static constexpr std::size_t max_width = 1;
@@ -55,8 +59,8 @@ namespace ogonek {
         }
 
         static detail::coded_character<ascii> encode_one(codepoint u, state&, skip_validation_t) {
-            if(u <= 0x7F) {
-                return { static_cast<code_unit>(u & 0x7F) };
+            if(u <= last_ascii_value) {
+                return { static_cast<code_unit>(u) };
             } else {
                 return {};
             }
@@ -64,8 +68,8 @@ namespace ogonek {
 
 	template <typename ValidationPolicy>
         static detail::coded_character<ascii> encode_one(codepoint u, state& s, ValidationPolicy) {
-            if(u <= 0x7F) {
-                return { static_cast<code_unit>(u & 0x7F) };
+            if(u <= last_ascii_value) {
+                return { static_cast<code_unit>(u) };
             } else {
                 return ValidationPolicy::template apply_encode<ascii>(u, s);
             }
@@ -81,7 +85,7 @@ namespace ogonek {
         static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s, ValidationPolicy) {
             auto first = boost::begin(r);
             byte b = *first++;
-            if(b > 0x7F) {
+            if(b > last_ascii_value) {
                 return  ValidationPolicy::template apply_decode<ascii>(r, s, out);
             }
             out = b;
