@@ -14,8 +14,8 @@
 #ifndef OGONEK_SEGMENTATION_HPP
 #define OGONEK_SEGMENTATION_HPP
 
-#include "types.h++"
-#include "ucd.h++"
+#include <ogonek/types.h++>
+#include <ogonek/ucd.h++>
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>

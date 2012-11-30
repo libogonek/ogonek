@@ -14,10 +14,10 @@
 #ifndef OGONEK_ENCODING_ENCODING_SCHEME_HPP
 #define OGONEK_ENCODING_ENCODING_SCHEME_HPP
 
-#include "iterator.h++"
-#include "../byte_order.h++"
-#include "../types.h++"
-#include "../detail/partial_array.h++"
+#include <ogonek/encoding/iterator.h++>
+#include <ogonek/byte_order.h++>
+#include <ogonek/types.h++>
+#include <ogonek/detail/partial_array.h++>
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>

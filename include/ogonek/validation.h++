@@ -14,7 +14,7 @@
 #ifndef OGONEK_VALIDATION_HPP
 #define OGONEK_VALIDATION_HPP
 
-#include "detail/partial_array.h++"
+#include <ogonek/detail/partial_array.h++>
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>

@@ -14,7 +14,7 @@
 #ifndef OGONEK_BYTE_ORDER_HPP
 #define OGONEK_BYTE_ORDER_HPP
 
-#include "types.h++"
+#include <ogonek/types.h++>
 
 #include <cstdint>
 #include <array>

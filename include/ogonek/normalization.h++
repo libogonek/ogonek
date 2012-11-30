@@ -14,7 +14,7 @@
 #ifndef OGONEK_NORMALIZATION_HPP
 #define OGONEK_NORMALIZATION_HPP
 
-#include "ucd.h++"
+#include <ogonek/ucd.h++>
 
 namespace ogonek {
     namespace detail {

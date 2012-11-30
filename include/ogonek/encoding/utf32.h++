@@ -14,10 +14,10 @@
 #ifndef OGONEK_ENCODING_UTF32_HPP
 #define OGONEK_ENCODING_UTF32_HPP
 
-#include "iterator.h++"
-#include "../types.h++"
-#include "../validation.h++"
-#include "../detail/partial_array.h++"
+#include <ogonek/encoding/iterator.h++>
+#include <ogonek/types.h++>
+#include <ogonek/validation.h++>
+#include <ogonek/detail/partial_array.h++>
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>

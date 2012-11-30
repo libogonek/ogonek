@@ -14,10 +14,10 @@
 #ifndef OGONEK_TEXT_HPP
 #define OGONEK_TEXT_HPP
 
-#include "encoding/iterator.h++"
-#include "traits.h++"
-#include "types.h++"
-#include "validation.h++"
+#include <ogonek/encoding/iterator.h++>
+#include <ogonek/traits.h++>
+#include <ogonek/types.h++>
+#include <ogonek/validation.h++>
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/value_type.hpp>

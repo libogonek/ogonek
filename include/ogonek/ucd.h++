@@ -14,11 +14,11 @@
 #ifndef OGONEK_UCD_HPP
 #define OGONEK_UCD_HPP
 
-#include "types.h++"
-#include "text.h++"
-#include "encoding/utf8.h++"
-#include "detail/array_slice.h++"
-#include "visibility.h++"
+#include <ogonek/types.h++>
+#include <ogonek/text.h++>
+#include <ogonek/encoding/utf8.h++>
+#include <ogonek/detail/array_slice.h++>
+#include <ogonek/visibility.h++>
 
 #include <boost/logic/tribool.hpp>
 

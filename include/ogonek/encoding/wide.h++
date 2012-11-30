@@ -14,8 +14,8 @@
 #ifndef OGONEK_ENCODING_WIDE_HPP
 #define OGONEK_ENCODING_WIDE_HPP
 
-#include "utf16.h++"
-#include "utf32.h++"
+#include <ogonek/encoding/utf16.h++>
+#include <ogonek/encoding/utf32.h++>
 
 #include <type_traits>
 

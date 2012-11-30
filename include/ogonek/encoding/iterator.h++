@@ -14,11 +14,11 @@
 #ifndef OGONEK_ENCODING_ITERATOR_HPP
 #define OGONEK_ENCODING_ITERATOR_HPP
 
-#include "../traits.h++"
-#include "../types.h++"
-#include "../validation.h++"
-#include "../detail/constants.h++"
-#include "../detail/partial_array.h++"
+#include <ogonek/traits.h++>
+#include <ogonek/types.h++>
+#include <ogonek/validation.h++>
+#include <ogonek/detail/constants.h++>
+#include <ogonek/detail/partial_array.h++>
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>
