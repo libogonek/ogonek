@@ -12,7 +12,6 @@
 // Unicode character database - raw data
 
 #include <ogonek/ucd.h++>
-#include <ogonek/detail/properties.h++>
 #include <ogonek/types.h++>
 
 #include <cstddef>
