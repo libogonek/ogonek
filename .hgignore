@@ -8,5 +8,7 @@ test-results.xml
 dist/
 *.g.*
 *.session.vim
+scons-local-*/
+
 syntax: regexp
 ^ogonek/
