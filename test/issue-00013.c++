@@ -16,24 +16,35 @@
 #include <ogonek/text.h++>
 #include <ogonek/encoding/utf8.h++>
 #include <ogonek/segmentation.h++>
+#include <ogonek/validation.h++>
 
-TEST_CASE("issue13", "Test for issue #13") {
+TEST_CASE("issue13", "Tests for issue #13") {
     using text8 = ogonek::basic_text<ogonek::utf8>;
 
-    std::string s = u8"\u043f\u0440\u0438\u0432\u0435\u0442";
-    text8 t { s };
+    SECTION("original", "Original test, shortened") {
+        std::string s = u8"\u043f\u0440\u0438\u0432\u0435\u0442";
+        text8 t { s };
 
-    std::vector<text8> result;
-    for(auto character : ogonek::grapheme_clusters(t)) {
-        result.emplace_back(character);
+        std::vector<text8> result;
+        for(auto character : ogonek::grapheme_clusters(t)) {
+            result.emplace_back(character);
+            std::cout << character << "\n";
+        }
+
+        REQUIRE(result.size() == 6);
+        CHECK(result[0].storage() == u8"\u043f");
+        CHECK(result[1].storage() == u8"\u0440");
+        CHECK(result[2].storage() == u8"\u0438");
+        CHECK(result[3].storage() == u8"\u0432");
+        CHECK(result[4].storage() == u8"\u0435");
+        CHECK(result[5].storage() == u8"\u0442");
     }
-
-    REQUIRE(result.size() == 6);
-    CHECK(result[0].storage() == u8"\u043f");
-    CHECK(result[1].storage() == u8"\u0440");
-    CHECK(result[2].storage() == u8"\u0438");
-    CHECK(result[3].storage() == u8"\u0432");
-    CHECK(result[4].storage() == u8"\u0435");
-    CHECK(result[5].storage() == u8"\u0442");
+    SECTION("zeroed in", "found out the issue is with UTF-8 encoding") {
+        auto decoded = { U'\x043f' };
+        auto encoded = ogonek::utf8::encode(decoded, ogonek::throw_validation_error);
+        std::vector<ogonek::utf8::code_unit> result(encoded.begin(), encoded.end());
+        REQUIRE(int(result[0]) == int(char(0xD1)));
+        REQUIRE(int(result[1]) == int(char(0x00)));
+    }
 }
 
