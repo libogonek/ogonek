@@ -90,7 +90,7 @@ namespace ogonek {
                 return { static_cast<code_unit>(u) };
             } else if(u <= last_2byte_value) {
                 return {
-                    static_cast<code_unit>(0xC0 | ((u & 0x3C0) >> 6)),
+                    static_cast<code_unit>(0xC0 | ((u & 0x7C0) >> 6)),
                     static_cast<code_unit>(0x80 | (u & 0x3F)),
                 };
             } else if(u <= last_3byte_value) {
