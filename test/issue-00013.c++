@@ -40,11 +40,11 @@ TEST_CASE("issue13", "Tests for issue #13") {
         CHECK(result[5].storage() == u8"\u0442");
     }
     SECTION("zeroed in", "found out the issue is with UTF-8 encoding") {
-        auto decoded = { U'\x043f' };
+        auto decoded = { U'\x0440' };
         auto encoded = ogonek::utf8::encode(decoded, ogonek::throw_validation_error);
         std::vector<ogonek::utf8::code_unit> result(encoded.begin(), encoded.end());
         REQUIRE(int(result[0]) == int(char(0xD1)));
-        REQUIRE(int(result[1]) == int(char(0x00)));
+        REQUIRE(int(result[1]) == int(char(0x80)));
     }
 }
 
