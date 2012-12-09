@@ -85,7 +85,6 @@ namespace ogonek {
                 if(is_small) return &*storage.small.end();
                 else return &*storage.large.end();
             }
-
             const_iterator begin() const {
                 if(is_small) return &*storage.small.begin();
                 else return &*storage.large.begin();
@@ -93,6 +92,15 @@ namespace ogonek {
             const_iterator end() const {
                 if(is_small) return &*storage.small.end();
                 else return &*storage.large.end();
+            }
+
+            reference operator[](std::size_t i) {
+                if(is_small) return storage.small[i];
+                else return storage.large[i];
+            }
+            const_reference operator[](std::size_t i) const {
+                if(is_small) return storage.small[i];
+                else return storage.large[i];
             }
 
         private:
