@@ -1,12 +1,17 @@
 import os
 
-# set up command line variables
+# Set up command line variables
 vars = Variables()
 vars.Add(EnumVariable('lib', 'Select the kind of library to build', 'static', allowed_values=('static', 'shared')))
 vars.Add(BoolVariable('fatal', 'Stop on first error', True))
 
 # Create a base environment; no MSVC
-env = Environment(options = vars, ENV = os.environ, tools = ['mingw', 'gcc'])
+env = Environment(options = vars, ENV = os.environ)
+if env['PLATFORM'] == 'win32':
+    env.Tool('mingw')
+else:
+    env.Tool('gcc')
+
 Help(vars.GenerateHelpText(env))
 
 # Default flags
@@ -47,7 +52,7 @@ if env['lib'] == 'shared':
 
 # Setup the debug target
 debug_builddir = 'obj/debug/'
-debug_target = 'bin/debug/ogonek'
+debug_target = 'bin/debug/ogonek_ucd'
 debug_flags = lib_flags + ['-g', '-D_GLIBCXX_DEBUG']
 debug_libs = []
 
@@ -63,7 +68,7 @@ debug.Alias('debug', debug_lib)
 
 # Setup the release target
 release_builddir = 'obj/release/'
-release_target = 'bin/release/ogonek'
+release_target = 'bin/release/ogonek_ucd'
 release_flags = lib_flags + ['-flto' , '-O3', '-DNDEBUG']
 release_libs = []
 
@@ -91,7 +96,7 @@ test = debug.Clone()
 test.MergeFlags(test_flags)
 test.Append(LIBS = test_libs)
 test.VariantDir(test_builddir, '.', duplicate=0)
-test_program = test.Program(test_target, prefix(test_builddir, test_sources), LIBS='ogonek', LIBPATH='bin/debug')
+test_program = test.Program(test_target, prefix(test_builddir, test_sources), LIBS='ogonek_ucd', LIBPATH='bin/debug')
 test_alias = test.Alias('test', [test_program], test_target)
 test.AlwaysBuild(test_alias)
 
