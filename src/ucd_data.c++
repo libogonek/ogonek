@@ -30,7 +30,7 @@ namespace ogonek {
             name_properties const v1name_data_raw[] {
                 #include "ucd/v1name.g.inl"
             };
-            alias const aliases[] {
+            alias_raw const aliases[] {
                 #include "ucd/aliases.g.inl"
             };
             alias_properties const aliases_data_raw[] {

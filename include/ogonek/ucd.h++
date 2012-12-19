@@ -44,7 +44,7 @@ namespace ogonek {
         enum class alias_type {
             abbreviation, alternate, control, correction, figment,
         };
-        struct alias {
+        struct alias_raw {
             alias_type type;
             char const* name;
         };
@@ -268,7 +268,7 @@ namespace ogonek {
         };
         struct alias_properties {
             codepoint start;
-            alias const* first;
+            alias_raw const* first;
             int count;
         };
         using block_properties = simple_properties<block>;
@@ -500,7 +500,15 @@ namespace ogonek {
         inline text get_unicode1_name(codepoint u) {
             return detail::get_name(v1name_data, v1name_data_size, u);
         }
-        inline std::vector<alias> get_aliases(codepoint u);
+        struct alias {
+            alias(alias_raw const& raw) : type{raw.type}, name{{raw.name}} {}
+            alias_type type;
+            text name;
+        };
+        inline std::vector<alias> get_aliases(codepoint u) {
+            auto group = detail::find_property_group(aliases_data, aliases_data_size, u);
+            return { group.first, group.first + group.count };
+        }
 
         inline block get_block(codepoint u) {
             return detail::find_property_group(block_data, block_data_size, u).data;
