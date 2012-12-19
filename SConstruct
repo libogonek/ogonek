@@ -1,16 +1,16 @@
 import os
+import sys
 
 # Set up command line variables
 vars = Variables()
 vars.Add(EnumVariable('lib', 'Select the kind of library to build', 'static', allowed_values=('static', 'shared')))
 vars.Add(BoolVariable('fatal', 'Stop on first error', True))
 
-# Create a base environment; no MSVC
-env = Environment(options = vars, ENV = os.environ)
-if env['PLATFORM'] == 'win32':
-    env.Tool('mingw')
+# Create a base environment
+if sys.platform == 'win32':
+    env = Environment(options = vars, ENV = os.environ, tools = ['mingw'])
 else:
-    env.Tool('gcc')
+    env = Environment(options = vars, ENV = os.environ)
 
 Help(vars.GenerateHelpText(env))
 
