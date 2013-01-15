@@ -1,6 +1,6 @@
 // Ogonek
 //
-// Written in 2012 by Martinho Fernandes <martinho.fernandes@gmail.com>
+// Written in 2012=2013 by Martinho Fernandes <martinho.fernandes@gmail.com>
 //
 // To the extent possible under law, the author(s) have dedicated all copyright and related
 //
@@ -37,6 +37,8 @@ namespace ogonek {
             : count{ list.size() } {
                 std::copy(list.begin(), list.end(), array.begin());
             }
+
+            void push_back(T const& item) { array[count++] = item; }
 
             using iterator = typename std::array<T, N>::const_iterator;
             using const_iterator = typename std::array<T, N>::const_iterator;
