@@ -15,9 +15,13 @@
 #define OGONEK_NORMALIZATION_HPP
 
 #include <ogonek/ucd.h++>
+#include <ogonek/detail/small_vector.h++>
 
 namespace ogonek {
     namespace detail {
+    template <typename T, std::size_t N>
+    using vector_type = detail::small_vector<T, N>; 
+
         template <typename Iterator>
         struct ordered_decomposing_iterator;
 
@@ -74,7 +78,7 @@ namespace ogonek {
 
             Iterator first, last;
             int position = depleted;
-            std::vector<codepoint> current;
+            vector_type<codepoint, 4> current;
         };
 
         template <typename Iterator>
@@ -137,7 +141,7 @@ namespace ogonek {
 
             decomposing_iterator<Iterator> it;
             int position = depleted;
-            std::vector<codepoint> current;
+            vector_type<codepoint, 4> current;
         };
 
         template <typename Iterator>

@@ -19,7 +19,7 @@
 
 TEST_CASE("small_vector", "small_vector tests") {
     // cursory tests only for now
-    ogonek::detail::small_vector<int> v { 0, 1, 2 };
+    ogonek::detail::small_vector<int, 4> v { 0, 1, 2 };
 
     CHECK(v.size() == 3);
     CHECK(v[0] == 0);
@@ -43,4 +43,10 @@ TEST_CASE("small_vector", "small_vector tests") {
     CHECK(v[3] == 3);
     CHECK(v[4] == 4);
     CHECK(&v[0] != origin);
+
+    int i = 0;
+    for(auto e : v) {
+        CHECK(e == i);
+        ++i;
+    }
 }

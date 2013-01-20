@@ -24,6 +24,7 @@ namespace ogonek {
     namespace detail {
         template <typename T, std::size_t N>
         struct partial_array {
+            static_assert(std::is_pod<T>::value, "T must be POD");
         public:
             partial_array() = default;
             template <typename U>
@@ -37,16 +38,22 @@ namespace ogonek {
             : count{ list.size() } {
                 std::copy(list.begin(), list.end(), array.begin());
             }
+            template <typename Iterator>
+            partial_array(Iterator first, Iterator last)
+            : count(last - first) {
+                std::copy(first, last, array.begin());
+            }
 
             void push_back(T const& item) { array[count++] = item; }
+            void clear() { count = 0; }
 
-            using iterator = typename std::array<T, N>::const_iterator;
+            using iterator = typename std::array<T, N>::iterator;
             using const_iterator = typename std::array<T, N>::const_iterator;
 
             iterator begin() { return array.begin(); }
-            iterator begin() const { return array.begin(); }
+            const_iterator begin() const { return array.begin(); }
             iterator end() { return array.begin() + count; }
-            iterator end() const { return array.begin() + count; }
+            const_iterator end() const { return array.begin() + count; }
 
             std::size_t size() const { return count; }
 

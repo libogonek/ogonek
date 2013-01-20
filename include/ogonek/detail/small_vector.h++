@@ -27,7 +27,7 @@
 
 namespace ogonek {
     namespace detail {
-        template <typename T>
+        template <typename T, std::size_t N>
         struct small_vector {
             static_assert(std::is_pod<T>::value, "small_vector only works with PODs");
         public:
@@ -59,8 +59,14 @@ namespace ogonek {
                 else destroy_large();
             }
 
+            template <typename RAIterator>
+            small_vector(RAIterator first, RAIterator last)
+            : is_small(last - first <= int(N)) {
+                if(is_small) place_small(first, last);
+                else place_large(first, last);
+            }
             small_vector(std::initializer_list<T> list)
-            : is_small(list.size() <= small_size) {
+            : is_small(list.size() <= N) {
                 if(is_small) place_small(list);
                 else place_large(list);
             }
@@ -74,7 +80,7 @@ namespace ogonek {
                 }
             }
             void push_back(T const& item) {
-                if(is_small && as_small().size() == small_size) grow();
+                if(is_small && as_small().size() == N) grow();
 
                 if(is_small) as_small().push_back(item);
                 else as_large().push_back(item);
@@ -111,16 +117,14 @@ namespace ogonek {
                 else return &*as_large().begin();
             }
             iterator end() {
-                if(is_small) return &*as_small().end();
-                else return &*as_large().end();
+                return begin() + size();
             }
             const_iterator begin() const {
                 if(is_small) return &*as_small().begin();
                 else return &*as_large().begin();
             }
             const_iterator end() const {
-                if(is_small) return &*as_small().end();
-                else return &*as_large().end();
+                return begin() + size();
             }
 
             reference operator[](std::size_t i) {
@@ -133,8 +137,7 @@ namespace ogonek {
             }
 
         private:
-            static constexpr std::size_t small_size = 4;
-            using small_storage = partial_array<T, small_size>;
+            using small_storage = partial_array<T, N>;
             using large_storage = std::vector<T>;
             using storage_type = wheels::StorageFor<small_storage, large_storage>;
 
@@ -176,7 +179,7 @@ namespace ogonek {
             }
 
             void shrink() {
-                assert(!is_small && as_large().size() <= small_size);
+                assert(!is_small && as_large().size() <= N);
                 small_storage copy(as_large().begin(), as_large().end());
                 destroy_large();
                 place_small(copy);

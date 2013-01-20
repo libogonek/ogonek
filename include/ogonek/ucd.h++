@@ -18,6 +18,7 @@
 #include <ogonek/text.h++>
 #include <ogonek/encoding/utf8.h++>
 #include <ogonek/detail/array_slice.h++>
+#include <ogonek/detail/small_vector.h++>
 #include <ogonek/visibility.h++>
 
 #include <boost/logic/tribool.hpp>
@@ -30,6 +31,9 @@ namespace ogonek {
     template <typename Encoding, typename Container>
     class basic_text;
     class utf8;
+
+    template <typename T, std::size_t N>
+    using vector_type = detail::small_vector<T, N>; 
 
     namespace ucd {
         enum class version {
@@ -562,10 +566,10 @@ namespace ogonek {
         inline decomposition_type get_decomposition_type(codepoint u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).type;
         }
-        inline std::vector<codepoint> get_decomposition_mapping(codepoint u) {
+        inline vector_type<codepoint, 4> get_decomposition_mapping(codepoint u) {
             auto mapping = detail::find_property_group(decomposition_data, decomposition_data_size, u).mapping;
-            if(mapping) return std::vector<codepoint>(mapping, mapping + std::char_traits<codepoint>::length(mapping));
-            else return std::vector<codepoint>(1, u);
+            if(mapping) return vector_type<codepoint, 4>(mapping, mapping + std::char_traits<codepoint>::length(mapping));
+            else return vector_type<codepoint, 4>({u});
         }
         inline bool is_excluded_from_composition(codepoint u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).full_composition_exclusion;
@@ -645,30 +649,30 @@ namespace ogonek {
             if(result == codepoint(-1)) return u;
             return result;
         }
-        inline std::vector<codepoint> get_uppercase(codepoint u) {
+        inline vector_type<codepoint, 4> get_uppercase(codepoint u) {
             auto uc = detail::find_property_group(case_data, case_data_size, u).uppercase;
-            if(uc) return std::vector<codepoint>(uc, uc + std::char_traits<codepoint>::length(uc));
-            else return std::vector<codepoint>(1, u);
+            if(uc) return vector_type<codepoint, 4>(uc, uc + std::char_traits<codepoint>::length(uc));
+            else return vector_type<codepoint, 4>({u});
         }
-        inline std::vector<codepoint> get_lowercase(codepoint u) {
+        inline vector_type<codepoint, 4> get_lowercase(codepoint u) {
             auto lc = detail::find_property_group(case_data, case_data_size, u).lowercase;
-            if(lc) return std::vector<codepoint>(lc, lc + std::char_traits<codepoint>::length(lc));
-            else return std::vector<codepoint>(1, u);
+            if(lc) return vector_type<codepoint, 4>(lc, lc + std::char_traits<codepoint>::length(lc));
+            else return vector_type<codepoint, 4>({u});
         }
-        inline std::vector<codepoint> get_titlecase(codepoint u) {
+        inline vector_type<codepoint, 4> get_titlecase(codepoint u) {
             auto tc = detail::find_property_group(case_data, case_data_size, u).titlecase;
-            if(tc) return std::vector<codepoint>(tc, tc + std::char_traits<codepoint>::length(tc));
-            else return std::vector<codepoint>(1, u);
+            if(tc) return vector_type<codepoint, 4>(tc, tc + std::char_traits<codepoint>::length(tc));
+            else return vector_type<codepoint, 4>({u});
         }
         inline codepoint get_simple_case_folding(codepoint u) {
             auto result = detail::find_property_group(case_data, case_data_size, u).simple_case_folding;
             if(result == codepoint(-1)) return u;
             return result;
         }
-        inline std::vector<codepoint> get_case_folding(codepoint u) {
+        inline vector_type<codepoint, 4> get_case_folding(codepoint u) {
             auto cf = detail::find_property_group(case_data, case_data_size, u).case_folding;
-            if(cf) return std::vector<codepoint>(cf, cf + std::char_traits<codepoint>::length(cf));
-            else return std::vector<codepoint>(1, u);
+            if(cf) return vector_type<codepoint, 4>(cf, cf + std::char_traits<codepoint>::length(cf));
+            else return vector_type<codepoint, 4>({u});
         }
         inline bool is_case_ignorable(codepoint u) {
             return detail::find_property_group(case_data, case_data_size, u).case_ignorable;
@@ -694,10 +698,10 @@ namespace ogonek {
         inline bool changes_when_uppercased(codepoint u) {
             return detail::find_property_group(case_data, case_data_size, u).changes_when_uppercased;
         }
-        inline std::vector<codepoint> get_nfkc_casefold(codepoint u) {
+        inline vector_type<codepoint, 4> get_nfkc_casefold(codepoint u) {
             auto cf = detail::find_property_group(case_data, case_data_size, u).nfkc_casefold;
-            if(cf) return std::vector<codepoint>(cf, cf + std::char_traits<codepoint>::length(cf));
-            else return std::vector<codepoint>(1, u);
+            if(cf) return vector_type<codepoint, 4>(cf, cf + std::char_traits<codepoint>::length(cf));
+            else return vector_type<codepoint, 4>({u});
         }
         inline script get_script(codepoint u) {
             return detail::find_property_group(script_data, script_data_size, u).script;
