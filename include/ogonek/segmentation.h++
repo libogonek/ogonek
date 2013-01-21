@@ -79,26 +79,24 @@ namespace ogonek {
             return (ucd::get_grapheme_cluster_break(before) & this->before) != none
                 && (ucd::get_grapheme_cluster_break(after) & this->after) != none;
         }
-        struct grapheme_cluster_boundary {
-            bool operator()(codepoint before, codepoint after) const {
-                using namespace std::placeholders;
-                return std::find_if(std::begin(detail::grapheme_cluster_rules), std::end(detail::grapheme_cluster_rules),
-                                    std::bind(&grapheme_cluster_rule::matches, _1, before, after))
-                       ->is_break;
-            }
-        };
+        inline bool is_grapheme_cluster_boundary(codepoint before, codepoint after) {
+            using namespace std::placeholders;
+            return std::find_if(std::begin(detail::grapheme_cluster_rules), std::end(detail::grapheme_cluster_rules),
+                                std::bind(&grapheme_cluster_rule::matches, _1, before, after))
+                   ->is_break;
+        }
     } // namespace detail
 
-    template <typename BoundaryCondition, typename CodepointIterator>
-    struct segment_iterator
+    template <typename CodepointIterator>
+    struct grapheme_cluster_iterator
     : boost::iterator_facade<
-        segment_iterator<BoundaryCondition, CodepointIterator>,
+        grapheme_cluster_iterator<CodepointIterator>,
         boost::iterator_range<CodepointIterator>,
         std::input_iterator_tag, // TODO
         boost::iterator_range<CodepointIterator>>
     {
     public:
-        segment_iterator(CodepointIterator first, CodepointIterator last)
+        grapheme_cluster_iterator(CodepointIterator first, CodepointIterator last)
         : first(first), last(last) {}
 
     private:
@@ -110,7 +108,7 @@ namespace ogonek {
             auto before = *it++;
             do {
                 auto after = *it;
-                if(BoundaryCondition{}(before, after)) break;
+                if(detail::is_grapheme_cluster_boundary(before, after)) break;
                 ++it;
                 if(it == last) break;
                 before = after;
@@ -120,15 +118,13 @@ namespace ogonek {
         void increment() {
             first = dereference().end();
         }
-        bool equal(segment_iterator const& that) const {
+        bool equal(grapheme_cluster_iterator const& that) const {
             return first == that.first;
         }
 
         CodepointIterator first;
         CodepointIterator last;
     };
-    template <typename CodepointIterator>
-    using grapheme_cluster_iterator = segment_iterator<detail::grapheme_cluster_boundary, CodepointIterator>;
 
     template <typename SinglePassRange>
     boost::iterator_range<grapheme_cluster_iterator<typename boost::range_const_iterator<SinglePassRange>::type>> grapheme_clusters(SinglePassRange const& range) {
