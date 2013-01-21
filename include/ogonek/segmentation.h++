@@ -17,6 +17,8 @@
 #include <ogonek/types.h++>
 #include <ogonek/ucd.h++>
 
+#include <wheels/enums.h++>
+
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <boost/range/sub_range.hpp>
@@ -36,15 +38,17 @@ namespace ogonek {
 
             bool matches(codepoint before, codepoint after) const;
         };
+    } // namespace detail
+} // namespace ogonek
+
+namespace wheels {
+    template <>
+    struct is_flags<ogonek::detail::gcb> : std::true_type {};
+} // namespace wheels
+
+namespace ogonek {
+    namespace detail {
         constexpr gcb any = static_cast<gcb>(0xFFFFFFFFu);
-        constexpr gcb operator|(gcb l, gcb r) {
-            using underlying = std::underlying_type<gcb>::type;
-            return static_cast<gcb>(static_cast<underlying>(l) | static_cast<underlying>(r));
-        }
-        constexpr gcb operator&(gcb l, gcb r) {
-            using underlying = std::underlying_type<gcb>::type;
-            return static_cast<gcb>(static_cast<underlying>(l) & static_cast<underlying>(r));
-        }
         constexpr grapheme_cluster_rule operator*(gcb l, gcb r) { return { l, false, r }; }
         constexpr grapheme_cluster_rule operator/(gcb l, gcb r) { return { l, true, r }; }
 
@@ -134,4 +138,3 @@ namespace ogonek {
 } // namespace ogonek
 
 #endif // OGONEK_SEGMENTATION_HPP
-
