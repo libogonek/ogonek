@@ -18,4 +18,3 @@ namespace ogonek {
 } // namespace ogonek
 
 #endif // OGONEK_TRAITS_HPP
-

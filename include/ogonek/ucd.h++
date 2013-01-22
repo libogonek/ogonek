@@ -249,10 +249,21 @@ namespace ogonek {
             XX  = 1u << 11,
             RI  = 1u << 12,
         };
-        enum class word_break {
-            CR, EX, Extend, FO, KA, LE,
-            LF, MB, ML, MN, NL, NU, XX,
-            RI,
+        enum class word_break : unsigned {
+            CR     = 1u << 0,
+            EX     = 1u << 1,
+            Extend = 1u << 2,
+            FO     = 1u << 3,
+            KA     = 1u << 4,
+            LE     = 1u << 5,
+            LF     = 1u << 6,
+            MB     = 1u << 7,
+            ML     = 1u << 8,
+            MN     = 1u << 9,
+            NL     = 1u << 10,
+            NU     = 1u << 11,
+            XX     = 1u << 12,
+            RI     = 1u << 13,
         };
         enum class sentence_break {
             AT, CL, CR, EX, FO, LE, LF, LO,
