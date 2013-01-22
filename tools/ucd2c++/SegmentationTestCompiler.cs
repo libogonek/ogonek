@@ -64,7 +64,7 @@ namespace Ogonek.SegmentationTestCompiler
 
         static string GetString(string line) {
             return "U\"" + string.Concat(
-                line.Split(new[]{ '×', '÷' })
+                line.Split(new[]{ 'Ã—', 'Ã·' })
                     .Select(s => s.Trim())
                     .Where(s => !string.IsNullOrWhiteSpace(s))
                     .Select(s => s.Trim())
@@ -73,9 +73,9 @@ namespace Ogonek.SegmentationTestCompiler
         }
 
         static IEnumerable<int> GetBreaks(string text) { 
-            return text.Where(c => c == '×' ||  c == '÷')
+            return text.Where(c => c == 'Ã—' ||  c == 'Ã·')
                        .Select((c,i) => new{ c, i })
-                       .Where(x => x.c == '÷')
+                       .Where(x => x.c == 'Ã·')
                        .Skip(1)
                        .Select(x => x.i);
         }

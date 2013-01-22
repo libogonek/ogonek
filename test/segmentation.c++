@@ -20,12 +20,12 @@
 #include <string>
 #include <vector>
 
-struct grapheme_cluster_test {
+struct break_test {
     std::u32string input;
     std::vector<int> breaks;
 };
 
-grapheme_cluster_test grapheme_cluster_test_data[] = {
+break_test grapheme_cluster_test_data[] = {
     #include "grapheme_cluster_test.g.inl"
 };
 
@@ -44,17 +44,25 @@ TEST_CASE("grapheme_clusters", "Extended grapheme cluster ranges") {
     }
 }
 
+break_test word_test_data[] = {
+    #include "word_test.g.inl"
+};
+
 TEST_CASE("words", "Word ranges") {
-    std::u32string simple_test = U"Foo f\x300\x600red\x5fred bar.qux.";
-    auto words = ogonek::words(simple_test);
-    auto i = 0;
-    std::u32string expected[] = {
-        U"Foo", U" ", U"f\x300\x600red\x5fred", U" ", U"bar.qux", U".",
-    };
-    for(auto word : words) {
-        std::u32string w(word.begin(), word.end());
-        REQUIRE(w == expected[i]);
-        ++i;
+    int currentTest = 0;
+    for(auto&& test : word_test_data) {
+        auto words = ogonek::words(test.input);
+        auto it = words.begin();
+        auto last_break = 0;
+        for(auto&& this_break : test.breaks) {
+            INFO(currentTest);
+            CHECK(it->begin() == test.input.begin() + last_break);
+            CHECK(it->end()   == test.input.begin() + this_break);
+            last_break = this_break;
+            ++it;
+        }
+        CHECK(it == words.end());
+        ++currentTest;
     }
 }
 

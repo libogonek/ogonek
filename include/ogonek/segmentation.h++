@@ -172,8 +172,8 @@ namespace ogonek {
             /* WB3. */                                wb::CR * wb::LF,
             /* WB3a. */           (wb::NL | wb::CR | wb::LF) / wb_any,
             /* WB3b. */                               wb_any / (wb::NL | wb::CR | wb::LF),
-            // Do not break Hangul syllable sequences.
-            // * Handled specially
+            // Ignore Format and Extend characters, except when they appear at the beginning of a region of text.
+            /* WB4. */           ~(wb::NL | wb::CR | wb::LF) * (wb::Extend | wb::FO),
             // Do not break between most letters.
             /* WB5. */                                wb::LE * wb::LE,
             // Do not break letters across certain punctuation.
@@ -210,10 +210,8 @@ namespace ogonek {
                                 })
                    ->is_break;
         }
-        inline bool is_skipped_in_words(codepoint u) {
-            const wb none = static_cast<wb>(0);
-            auto result = (ucd::get_word_break(u) & (wb::Extend | wb::FO)) != none;
-            return result;
+        inline bool should_skip_in_word(codepoint before, codepoint after) {
+            return word_rules[3].matches(-1, before, after, -1);
         }
     } // namespace detail
     template <typename CodepointIterator>
@@ -236,7 +234,6 @@ namespace ogonek {
             auto it = first;
             codepoint before1 = -1u;
             auto before0 = *it++;
-            while(it != last && detail::is_skipped_in_words(*it)) ++it;
             if(it == last) return boost::iterator_range<CodepointIterator> { begin, last };
 
             CodepointIterator boundary = it;
@@ -246,17 +243,18 @@ namespace ogonek {
             do {
                 if(after1 == -1u) break;
 
-                while(it != last && detail::is_skipped_in_words(*it)) ++it;
                 auto old_it = it;
-                if(it == last) after1 = -1u;
+                if(it == last) after1 = -1;
                 else after1 = *it++;
 
                 if(detail::is_word_boundary(before1, before0, after0, after1)) break;
 
                 boundary = old_it;
 
-                before1 = before0;
-                before0 = after0;
+                if(!detail::should_skip_in_word(before0, after0)) {
+                    before1 = before0;
+                    before0 = after0;
+                }
                 after0 = after1;
             } while(true);
             return boost::iterator_range<CodepointIterator> { begin, boundary };
