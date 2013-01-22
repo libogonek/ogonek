@@ -210,7 +210,7 @@ namespace ogonek {
                                 })
                    ->is_break;
         }
-        inline bool word_skip(codepoint u) {
+        inline bool is_skipped_in_words(codepoint u) {
             const wb none = static_cast<wb>(0);
             auto result = (ucd::get_word_break(u) & (wb::Extend | wb::FO)) != none;
             return result;
@@ -236,7 +236,7 @@ namespace ogonek {
             auto it = first;
             codepoint before1 = -1u;
             auto before0 = *it++;
-            // TODO skippage
+            while(it != last && detail::is_skipped_in_words(*it)) ++it;
             if(it == last) return boost::iterator_range<CodepointIterator> { begin, last };
 
             CodepointIterator boundary = it;
@@ -246,6 +246,7 @@ namespace ogonek {
             do {
                 if(after1 == -1u) break;
 
+                while(it != last && detail::is_skipped_in_words(*it)) ++it;
                 auto old_it = it;
                 if(it == last) after1 = -1u;
                 else after1 = *it++;

@@ -45,11 +45,11 @@ TEST_CASE("grapheme_clusters", "Extended grapheme cluster ranges") {
 }
 
 TEST_CASE("words", "Word ranges") {
-    std::u32string simple_test = U"Foo fred\x5fred bar.qux.";
+    std::u32string simple_test = U"Foo f\x300\x600red\x5fred bar.qux.";
     auto words = ogonek::words(simple_test);
     auto i = 0;
     std::u32string expected[] = {
-        U"Foo", U" ", U"fred\x5fred", U" ", U"bar.qux", U".",
+        U"Foo", U" ", U"f\x300\x600red\x5fred", U" ", U"bar.qux", U".",
     };
     for(auto word : words) {
         std::u32string w(word.begin(), word.end());
