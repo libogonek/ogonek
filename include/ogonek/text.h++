@@ -19,6 +19,8 @@
 #include <ogonek/types.h++>
 #include <ogonek/validation.h++>
 
+#include <wheels/smart_ptr/unique_ptr.h++>
+
 #include <boost/range/sub_range.hpp>
 #include <boost/range/value_type.hpp>
 #include <boost/range/begin.hpp>
@@ -197,7 +199,7 @@ namespace ogonek {
             holder(text_type&& text) : text(std::move(text)) {}
 
             handle_type clone() override {
-                return handle_type { new holder(*this) };
+                return handle_type { new holder(*this) }; // :( private ctor
             }
 
             iterator begin() override { return iterator { text.begin() }; }
@@ -229,19 +231,19 @@ namespace ogonek {
 
         template <typename EncodingForm, typename Container>
         any_text(basic_text<EncodingForm, Container> const& text)
-        : handle { new holder<EncodingForm, Container>(text) } {}
+        : handle { wheels::make_unique<holder<EncodingForm, Container>>(text) } {}
         template <typename EncodingForm, typename Container>
         any_text(basic_text<EncodingForm, Container>&& text)
-        : handle { new holder<EncodingForm, Container>(std::move(text)) } {}
+        : handle { wheels::make_unique<holder<EncodingForm, Container>>(std::move(text)) } {}
 
         template <typename EncodingForm, typename Container>
         any_text& operator=(basic_text<EncodingForm, Container> const& text) {
-            handle = handle_type { new holder<EncodingForm, Container>(text) };
+            handle = wheels::make_unique<holder<EncodingForm, Container>>(text);
             return *this;
         }
         template <typename EncodingForm, typename Container>
         any_text& operator=(basic_text<EncodingForm, Container>&& text) {
-            handle = handle_type { new holder<EncodingForm, Container>(std::move(text)) };
+            handle = wheels::make_unique<holder<EncodingForm, Container>>(std::move(text));
             return *this;
         }
 
