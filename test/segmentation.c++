@@ -73,15 +73,12 @@ struct {
 } break_words;
 
 TEST_CASE("words 25", "Test 25") {
-    return;
     test_segmentation(word_test_data[25], break_words);
 }
 TEST_CASE("words 28", "Test 28") {
-    return;
     test_segmentation(word_test_data[28], break_words);
 }
 TEST_CASE("words 258", "Test 258") {
-    return;
     test_segmentation(word_test_data[258], break_words);
 }
 TEST_CASE("words 718", "Test 718") {
@@ -89,11 +86,7 @@ TEST_CASE("words 718", "Test 718") {
 }
 
 TEST_CASE("words", "Word ranges") {
-    return;
-    int currentTest = 0;
     for(auto&& test : word_test_data) {
-        INFO(currentTest);
         test_segmentation(test, break_words);
-        ++currentTest;
     }
 }

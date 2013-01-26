@@ -237,13 +237,13 @@ namespace ogonek {
 
             do {
                 while(detail::should_skip_in_word(window[-1], window[0])) {
-                    window.advance(0);
+                    window.skip(0);
                 }
                 while(detail::should_skip_in_word(window[0], window[1])) {
-                    window.advance(1);
+                    window.skip(1);
                 }
                 while(detail::should_skip_in_word(window[1], window[2])) {
-                    window.advance(2);
+                    window.skip(2);
                 }
                 if(detail::is_word_boundary(window[-2], window[-1], window[0], window[1])) break;
                 window.advance();
