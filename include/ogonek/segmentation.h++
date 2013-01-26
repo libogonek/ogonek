@@ -1,6 +1,6 @@
 // Ogonek
 //
-// Written in 2012 by Martinho Fernandes <martinho.fernandes@gmail.com>
+// Written in 2012-2013 by Martinho Fernandes <martinho.fernandes@gmail.com>
 //
 // To the extent possible under law, the author(s) have dedicated all copyright and related
 // and neighboring rights to this software to the public domain worldwide. This software is
@@ -16,6 +16,7 @@
 
 #include <ogonek/types.h++>
 #include <ogonek/ucd.h++>
+#include <ogonek/detail/lookahead_window.h++>
 
 #include <wheels/enums.h++>
 
@@ -211,7 +212,9 @@ namespace ogonek {
                    ->is_break;
         }
         inline bool should_skip_in_word(codepoint before, codepoint after) {
-            return word_rules[3].matches(-1, before, after, -1);
+            return before != -1u && after != -1u &&
+                word_rules[3].matches(-1, before, after, -1);
+                //|| word_rules[3].matches(-1, after, before, -1));
         }
     } // namespace detail
     template <typename CodepointIterator>
@@ -230,34 +233,22 @@ namespace ogonek {
         friend class boost::iterator_core_access;
 
         boost::iterator_range<CodepointIterator> dereference() const {
-            auto begin = first;
-            auto it = first;
-            codepoint before1 = -1u;
-            auto before0 = *it++;
-            if(it == last) return boost::iterator_range<CodepointIterator> { begin, last };
+            detail::lookahead_window<CodepointIterator, 2, 2> window(first, last);
 
-            CodepointIterator boundary = it;
-            codepoint after0 = *it++;
-
-            codepoint after1 = 0;
             do {
-                if(after1 == -1u) break;
-
-                auto old_it = it;
-                if(it == last) after1 = -1;
-                else after1 = *it++;
-
-                if(detail::is_word_boundary(before1, before0, after0, after1)) break;
-
-                boundary = old_it;
-
-                if(!detail::should_skip_in_word(before0, after0)) {
-                    before1 = before0;
-                    before0 = after0;
+                while(detail::should_skip_in_word(window[-1], window[0])) {
+                    window.advance(0);
                 }
-                after0 = after1;
+                while(detail::should_skip_in_word(window[0], window[1])) {
+                    window.advance(1);
+                }
+                while(detail::should_skip_in_word(window[1], window[2])) {
+                    window.advance(2);
+                }
+                if(detail::is_word_boundary(window[-2], window[-1], window[0], window[1])) break;
+                window.advance();
             } while(true);
-            return boost::iterator_range<CodepointIterator> { begin, boundary };
+            return boost::iterator_range<CodepointIterator> { first, window.position() };
         }
         void increment() {
             first = dereference().end();
