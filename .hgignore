@@ -1,14 +1,14 @@
-syntax: glob
-*.swp
-bin/
-obj/
-.scons*
-test-results.xml
-*~
-dist/
-*.g.*
-*.session.vim
-scons-local-*/
-
 syntax: regexp
 ^ogonek/
+
+syntax: glob
+bin/
+obj/
+dist/
+*.g.*
+scons-local-*/
+.scons*
+*~
+*.session.vim
+*.swp
+.vimrc
