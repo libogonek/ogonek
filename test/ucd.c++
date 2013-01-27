@@ -1,6 +1,6 @@
 // Ogonek
 //
-// Written in 2012 by Martinho Fernandes <martinho.fernandes@gmail.com>
+// Written in 2012-2013 by Martinho Fernandes <martinho.fernandes@gmail.com>
 //
 // To the extent possible under law, the author(s) have dedicated all copyright and related
 // and neighboring rights to this software to the public domain worldwide. This software is
@@ -27,54 +27,54 @@ TEST_CASE("query", "UCD property queries") {
     using namespace ogonek::literal;
     namespace ucd = ogonek::ucd;
     SECTION("age", "Querying age") {
-        CHECK(ucd::get_age(0x0041_u) == ucd::version::v1_1);
-        CHECK(ucd::get_age(0x00C5_u) == ucd::version::v1_1);
-        CHECK(ucd::get_age(0x1EA0_u) == ucd::version::v1_1);
-        CHECK(ucd::get_age(0x1F4A9_u) == ucd::version::v6_0);
+        CHECK(ucd::get_age(U'\x0041') == ucd::version::v1_1);
+        CHECK(ucd::get_age(U'\x00C5') == ucd::version::v1_1);
+        CHECK(ucd::get_age(U'\x1EA0') == ucd::version::v1_1);
+        CHECK(ucd::get_age(U'\x1F4A9') == ucd::version::v6_0);
     }
     SECTION("name", "Querying name") {
-        REQUIRE(ucd::get_name(0x0041_u).storage() == u8"LATIN CAPITAL LETTER A");
-        REQUIRE(ucd::get_name(0x00C5_u).storage() == u8"LATIN CAPITAL LETTER A WITH RING ABOVE");
-        REQUIRE(ucd::get_name(0x1EA0_u).storage() == u8"LATIN CAPITAL LETTER A WITH DOT BELOW");
-        REQUIRE(ucd::get_name(0x1F4A9_u).storage() == u8"PILE OF POO");
-        REQUIRE(ucd::get_name(0x3442_u).storage() == u8"CJK UNIFIED IDEOGRAPH-3442");
-        REQUIRE(ucd::get_name(0x2F823_u).storage() == u8"CJK COMPATIBILITY IDEOGRAPH-2F823");
+        REQUIRE(ucd::get_name(U'\x0041').storage() == u8"LATIN CAPITAL LETTER A");
+        REQUIRE(ucd::get_name(U'\x00C5').storage() == u8"LATIN CAPITAL LETTER A WITH RING ABOVE");
+        REQUIRE(ucd::get_name(U'\x1EA0').storage() == u8"LATIN CAPITAL LETTER A WITH DOT BELOW");
+        REQUIRE(ucd::get_name(U'\x1F4A9').storage() == u8"PILE OF POO");
+        REQUIRE(ucd::get_name(U'\x3442').storage() == u8"CJK UNIFIED IDEOGRAPH-3442");
+        REQUIRE(ucd::get_name(U'\x2F823').storage() == u8"CJK COMPATIBILITY IDEOGRAPH-2F823");
     }
     SECTION("block", "Querying block") {
-        CHECK(ucd::get_block(0x0041_u) == ucd::block::ASCII);
-        CHECK(ucd::get_block(0x00C5_u) == ucd::block::Latin_1_Sup);
-        CHECK(ucd::get_block(0x1EA0_u) == ucd::block::Latin_Ext_Additional);
-        CHECK(ucd::get_block(0x1F4A9_u) == ucd::block::Misc_Pictographs);
+        CHECK(ucd::get_block(U'\x0041') == ucd::block::ASCII);
+        CHECK(ucd::get_block(U'\x00C5') == ucd::block::Latin_1_Sup);
+        CHECK(ucd::get_block(U'\x1EA0') == ucd::block::Latin_Ext_Additional);
+        CHECK(ucd::get_block(U'\x1F4A9') == ucd::block::Misc_Pictographs);
     }
     SECTION("category", "Querying general category") {
-        CHECK(ucd::get_general_category(0x0041_u) == ucd::category::Lu);
-        CHECK(ucd::get_general_category(0x00C5_u) == ucd::category::Lu);
-        CHECK(ucd::get_general_category(0x1EA0_u) == ucd::category::Lu);
-        CHECK(ucd::get_general_category(0x1F4A9_u) == ucd::category::So);
+        CHECK(ucd::get_general_category(U'\x0041') == ucd::category::Lu);
+        CHECK(ucd::get_general_category(U'\x00C5') == ucd::category::Lu);
+        CHECK(ucd::get_general_category(U'\x1EA0') == ucd::category::Lu);
+        CHECK(ucd::get_general_category(U'\x1F4A9') == ucd::category::So);
     }
     SECTION("combining class", "Querying combining class") {
-        CHECK(ucd::get_combining_class(0x0041_u) == 0);
-        CHECK(ucd::get_combining_class(0x0300_u) == 230);
-        CHECK(ucd::get_combining_class(0x0334_u) == 1);
-        CHECK(ucd::get_combining_class(0x0618_u) == 30);
+        CHECK(ucd::get_combining_class(U'\x0041') == 0);
+        CHECK(ucd::get_combining_class(U'\x0300') == 230);
+        CHECK(ucd::get_combining_class(U'\x0334') == 1);
+        CHECK(ucd::get_combining_class(U'\x0618') == 30);
     }
     SECTION("bidi_category", "Querying bidirectional category") {
-        CHECK(ucd::get_bidi_category(0x0041_u) == ucd::bidi_category::L);
-        CHECK(ucd::get_bidi_category(0x0600_u) == ucd::bidi_category::AN);
-        CHECK(ucd::get_bidi_category(0x0610_u) == ucd::bidi_category::NSM);
-        CHECK(ucd::get_bidi_category(0x1F4A9_u) == ucd::bidi_category::ON);
+        CHECK(ucd::get_bidi_category(U'\x0041') == ucd::bidi_category::L);
+        CHECK(ucd::get_bidi_category(U'\x0600') == ucd::bidi_category::AN);
+        CHECK(ucd::get_bidi_category(U'\x0610') == ucd::bidi_category::NSM);
+        CHECK(ucd::get_bidi_category(U'\x1F4A9') == ucd::bidi_category::ON);
     }
     SECTION("bidi_mirrored", "Querying bidirectional mirrored") {
-        CHECK(ucd::is_bidi_mirrored(0x0041_u) == false);
-        CHECK(ucd::is_bidi_mirrored(0x0F3A_u) == true);
-        CHECK(ucd::is_bidi_mirrored(0x222B_u) == true);
-        CHECK(ucd::is_bidi_mirrored(0x1F4A9_u) == false);
+        CHECK(ucd::is_bidi_mirrored(U'\x0041') == false);
+        CHECK(ucd::is_bidi_mirrored(U'\x0F3A') == true);
+        CHECK(ucd::is_bidi_mirrored(U'\x222B') == true);
+        CHECK(ucd::is_bidi_mirrored(U'\x1F4A9') == false);
     }
     SECTION("bidi_mirrored_glyph", "Querying bidirectional mirrored glyph") {
-        CHECK(ucd::get_bidi_mirrored_glyph(0x0041_u) == 0x0041_u);
-        CHECK(ucd::get_bidi_mirrored_glyph(0x222B_u) == 0x222B_u);
-        CHECK(ucd::get_bidi_mirrored_glyph(0x223C_u) == 0x223D_u);
-        CHECK(ucd::get_bidi_mirrored_glyph(0xFF63_u) == 0xFF62_u);
+        CHECK(ucd::get_bidi_mirrored_glyph(U'\x0041') == U'\x0041');
+        CHECK(ucd::get_bidi_mirrored_glyph(U'\x222B') == U'\x222B');
+        CHECK(ucd::get_bidi_mirrored_glyph(U'\x223C') == U'\x223D');
+        CHECK(ucd::get_bidi_mirrored_glyph(U'\xFF63') == U'\xFF62');
     }
     SECTION("bidi_control", "Querying bidirectional control") {
         CHECK(ucd::is_bidi_control(U'\x0041') == false);

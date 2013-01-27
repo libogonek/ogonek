@@ -1,6 +1,6 @@
 // Ogonek
 //
-// Written in 2012=2013 by Martinho Fernandes <martinho.fernandes@gmail.com>
+// Written in 2012-2013 by Martinho Fernandes <martinho.fernandes@gmail.com>
 //
 // To the extent possible under law, the author(s) have dedicated all copyright and related
 //

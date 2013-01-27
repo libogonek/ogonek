@@ -1002,7 +1002,7 @@ namespace Ogonek.UcdCompiler
 
         static string FormatCodepoint(int? u)
         {
-            return u == null ? "char32_t(-1)" : string.Format("0x{0:X}_u", u);
+            return u == null ? "char32_t(-1)" : string.Format(@"U'\x{0:X}'", u);
         }
 
         static string Format(double d)
@@ -1201,7 +1201,7 @@ namespace Ogonek.UcdCompiler
 
         const string CopyrightNotice = @"// Ogonek
 //
-// Written in 2012-2013 by Martinho Fernandes <martinho.fernandes@gmail.com>
+// Written in 2013 by Martinho Fernandes <martinho.fernandes@gmail.com>
 //
 // To the extent possible under law, the author(s) have dedicated all copyright and related
 // and neighboring rights to this software to the public domain worldwide. This software is

@@ -1,6 +1,6 @@
 // Ogonek
 //
-// Written in 2012 by Martinho Fernandes <martinho.fernandes@gmail.com>
+// Written in 2012-2013 by Martinho Fernandes <martinho.fernandes@gmail.com>
 //
 // To the extent possible under law, the author(s) have dedicated all copyright and related
 // and neighboring rights to this software to the public domain worldwide. This software is
@@ -25,7 +25,7 @@ TEST_CASE("utf8", "UTF-8 encoding form") {
     using namespace ogonek::literal;
 
     SECTION("encode", "Encoding UTF-8") {
-        auto decoded = { 0x0041_u, 0x00C5_u, 0x1EA0_u, 0x1F4A9_u };
+        auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
         auto range = ogonek::utf8::encode(decoded, ogonek::skip_validation);
         std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 10);
@@ -57,7 +57,7 @@ TEST_CASE("utf16", "UTF-16 encoding form") {
     using namespace ogonek::literal;
 
     SECTION("encode", "Encoding UTF-16") {
-        auto decoded = { 0x0041_u, 0x00C5_u, 0x1EA0_u, 0x1F4A9_u };
+        auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
         auto range = ogonek::utf16::encode(decoded, ogonek::skip_validation);
         std::vector<char16_t> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 5);
@@ -83,7 +83,7 @@ TEST_CASE("utf32", "UTF-32 encoding form") {
     using namespace ogonek::literal;
 
     SECTION("encode", "Encoding UTF-32") {
-        auto decoded = { 0x0041_u, 0x00C5_u, 0x1EA0_u, 0x1F4A9_u };
+        auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
         auto range = ogonek::utf32::encode(decoded, ogonek::skip_validation);
         std::vector<char32_t> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 4);
@@ -97,10 +97,10 @@ TEST_CASE("utf32", "UTF-32 encoding form") {
         auto range = ogonek::utf32::decode(encoded, ogonek::skip_validation);
         std::vector<ogonek::codepoint> decoded(boost::begin(range), boost::end(range));
         REQUIRE(decoded.size() == 4);
-        CHECK(decoded[0] == 0x0041_u);
-        CHECK(decoded[1] == 0x00C5_u);
-        CHECK(decoded[2] == 0x1EA0_u);
-        CHECK(decoded[3] == 0x1F4A9_u);
+        CHECK(decoded[0] == U'\x0041');
+        CHECK(decoded[1] == U'\x00C5');
+        CHECK(decoded[2] == U'\x1EA0');
+        CHECK(decoded[3] == U'\x1F4A9');
     }
 }
 

@@ -1,6 +1,6 @@
 // Ogonek
 //
-// Written in 2012 by Martinho Fernandes <martinho.fernandes@gmail.com>
+// Written in 2012-2013 by Martinho Fernandes <martinho.fernandes@gmail.com>
 //
 // To the extent possible under law, the author(s) have dedicated all copyright and related
 // and neighboring rights to this software to the public domain worldwide. This software is
@@ -23,7 +23,7 @@ TEST_CASE("windows1252", "Windows-1252 encoding form") {
     using namespace ogonek::literal;
 
     SECTION("encode", "Encoding Windows-1252") {
-        auto decoded = { 0x0041_u, 0x20AC_u };
+        auto decoded = { U'\x0041', U'\x20AC' };
         auto range = ogonek::windows1252::encode(decoded, ogonek::skip_validation);
         std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 2);
@@ -48,7 +48,7 @@ TEST_CASE("windows1252", "Windows-1252 encoding form") {
         CHECK(decoded[2] == U'\xFFFD');
     }
     SECTION("replacement", "Windows-1252's custom replacement character (?)") {
-        auto decoded = { 0x41_u, 0x20AC_u, 0x1F4A9_u };
+        auto decoded = { U'\x0041', U'\x20AC', U'\x1F4A9' };
         auto range = ogonek::windows1252::encode(decoded, ogonek::use_replacement_character);
         std::vector<ogonek::windows1252::code_unit> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 3);
@@ -57,7 +57,3 @@ TEST_CASE("windows1252", "Windows-1252 encoding form") {
         CHECK(encoded[2] == '?');
     }
 }
-
-
-
-

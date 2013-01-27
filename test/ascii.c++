@@ -1,6 +1,6 @@
 // Ogonek
 //
-// Written in 2012 by Martinho Fernandes <martinho.fernandes@gmail.com>
+// Written in 2012-2013 by Martinho Fernandes <martinho.fernandes@gmail.com>
 //
 // To the extent possible under law, the author(s) have dedicated all copyright and related
 // and neighboring rights to this software to the public domain worldwide. This software is
@@ -23,7 +23,7 @@ TEST_CASE("ascii", "ASCII encoding form") {
     using namespace ogonek::literal;
 
     SECTION("encode", "Encoding ASCII") {
-        auto decoded = { 0x0041_u, 0x0032_u };
+        auto decoded = { U'\x0041', U'\x0032' };
         auto range = ogonek::ascii::encode(decoded, ogonek::skip_validation);
         std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 2);
@@ -48,7 +48,7 @@ TEST_CASE("ascii", "ASCII encoding form") {
         CHECK(decoded[2] == U'\xFFFD');
     }
     SECTION("replacement", "ASCII's custom replacement character (?)") {
-        auto decoded = { 0x41_u, 0x32_u, 0x80_u };
+        auto decoded = { U'\x41', U'\x32', U'\x80' };
         auto range = ogonek::ascii::encode(decoded, ogonek::use_replacement_character);
         std::vector<ogonek::ascii::code_unit> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 3);
@@ -57,5 +57,3 @@ TEST_CASE("ascii", "ASCII encoding form") {
         CHECK(encoded[2] == '?');
     }
 }
-
-
