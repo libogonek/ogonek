@@ -17,22 +17,25 @@
 #include <catch.h++>
 
 TEST_CASE("so14624377", "Stack Overflow question 14624377") {
+    std::u32string input { U"\u1109\u1165\uc6b8\ud2b9\ubcc4\uc2dc"};
+    std::u32string expected[] = { U"\u1109\u1165", U"\uc6b8", U"\ud2b9", U"\ubcc4", U"\uc2dc" };
+
     SECTION("grapheme clusters", "with segmentation algorithm") {
-        std::u32string s { U"\u1109\u1165\uc6b8\ud2b9\ubcc4\uc2dc"};
-        for(auto cluster : ogonek::grapheme_clusters(s)) {
-            for(auto c : cluster) {
-                std::cout << std::hex << int(c) << ' ';
-            }
-            std::cout << '\n';
+        int i = 0;
+        for(auto cluster : ogonek::grapheme_clusters(input)) {
+            std::u32string syllable { cluster.begin(), cluster.end() };
+            REQUIRE(syllable == expected[i]);
+            ++i;
         }
     }
     SECTION("nfc", "with normalisation") {
-        std::u32string s { U"\u1109\u1165\uc6b8\ud2b9\ubcc4\uc2dc"};
-        auto norm = ogonek::normalize<ogonek::nfc>(s);
+        auto norm = ogonek::normalize<ogonek::nfc>(input);
         std::u32string result(norm.begin(), norm.end());
-        for(auto c : result) {
-            std::cout << std::hex << int(c) << ' ';
+        int i = 0;
+        for(auto character : result) {
+            std::u32string syllable(1, character);
+            REQUIRE(ogonek::canonically_equivalent(syllable, expected[i]));
+            ++i;
         }
-        std::cout << '\n';
     }
 }
