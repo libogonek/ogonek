@@ -65,7 +65,7 @@ namespace ogonek {
     } // namespace detail
 
     template <typename EncodingForm, typename Container = std::basic_string<CodeUnit<EncodingForm>>>
-    struct basic_text : private detail::validated<EncodingForm> {
+    struct text : private detail::validated<EncodingForm> {
     private:
         static_assert(std::is_convertible<CodeUnit<EncodingForm>, detail::ValueType<Container>>::value,
                       "The encoding form code units should be convertible to the container's value type");
@@ -79,41 +79,41 @@ namespace ogonek {
 
         // -- basic
         //! Empty string
-        basic_text() = default;
+        text() = default;
 
         // Copies and moves (explicit to prevent the range construction templates from being used)
-        basic_text(basic_text const&) = default;
-        basic_text(basic_text&&) = default;
-        basic_text& operator=(basic_text const&) = default;
-        basic_text& operator=(basic_text&&) = default;
+        text(text const&) = default;
+        text(text&&) = default;
+        text& operator=(text const&) = default;
+        text& operator=(text&&) = default;
 
         // -- codepoints
         //! Construct from a null-terminated codepoint string (intended for UTF-32 literals)
-        basic_text(codepoint const* literal)
-        : basic_text(literal, throw_validation_error) {}
+        text(codepoint const* literal)
+        : text(literal, throw_validation_error) {}
 
         //! Construct from a null-terminated codepoint string, with validation callback
         template <typename ValidationPolicy>
-        basic_text(codepoint const* literal, ValidationPolicy)
-        : basic_text(boost::make_iterator_range(literal, literal + std::char_traits<codepoint>::length(literal)),
+        text(codepoint const* literal, ValidationPolicy)
+        : text(boost::make_iterator_range(literal, literal + std::char_traits<codepoint>::length(literal)),
                      ValidationPolicy{}) {}
 
         //! Construct from a codepoint range
         template <typename CodepointRange>
-        explicit basic_text(CodepointRange const& range)
-        : basic_text(range, throw_validation_error) {}
+        explicit text(CodepointRange const& range)
+        : text(range, throw_validation_error) {}
 
         //! Construct from a codepoint range, with validation policy
         template <typename CodepointRange, typename ValidationPolicy>
-        basic_text(CodepointRange const& range, ValidationPolicy)
-        : basic_text(direct{}, EncodingForm::encode(range, ValidationPolicy{})) {
+        text(CodepointRange const& range, ValidationPolicy)
+        : text(direct{}, EncodingForm::encode(range, ValidationPolicy{})) {
             static_assert(std::is_same<detail::RangeValueType<CodepointRange>, codepoint>::value,
                           "Can only construct text from a range of codepoints");
         }
 
         // -- storage
         //! Construct from an underlying container
-        explicit basic_text(Container storage) // TODO: strong guarantee!
+        explicit text(Container storage) // TODO: strong guarantee!
         : detail::validated<EncodingForm>(storage, throw_validation_error),
           storage_(std::move(storage)) {}
 
@@ -140,7 +140,7 @@ namespace ogonek {
 
     private:
         template <typename Range>
-        basic_text(direct, Range&& range)
+        text(direct, Range&& range)
         : storage_(boost::begin(range), boost::end(range)) {}
 
         Container storage_;
@@ -148,8 +148,8 @@ namespace ogonek {
 
     class utf8;
     class utf16;
-    using posix_text = basic_text<utf8, std::string>;
-    using windows_text = basic_text<utf16, std::wstring>;
+    using posix_text = text<utf8, std::string>;
+    using windows_text = text<utf16, std::wstring>;
 #ifdef OGONEK_WINDOWS
     using native_text = windows_text;
 #else
@@ -158,8 +158,8 @@ namespace ogonek {
 
     class narrow;
     class wide;
-    using narrow_text = basic_text<narrow, std::string>;
-    using wide_text = basic_text<wide, std::wstring>;
+    using narrow_text = text<narrow, std::string>;
+    using wide_text = text<wide, std::wstring>;
 
     class any_text {
     public:
@@ -193,7 +193,7 @@ namespace ogonek {
         template <typename EncodingForm, typename Container>
         class holder : public placeholder {
         public:
-            using text_type = basic_text<EncodingForm, Container>;
+            using text_type = text<EncodingForm, Container>;
 
             holder(text_type const& text) : text(text) {}
             holder(text_type&& text) : text(std::move(text)) {}
@@ -230,19 +230,19 @@ namespace ogonek {
         any_text& operator=(any_text&&) = default;
 
         template <typename EncodingForm, typename Container>
-        any_text(basic_text<EncodingForm, Container> const& text)
+        any_text(text<EncodingForm, Container> const& text)
         : handle { wheels::make_unique<holder<EncodingForm, Container>>(text) } {}
         template <typename EncodingForm, typename Container>
-        any_text(basic_text<EncodingForm, Container>&& text)
+        any_text(text<EncodingForm, Container>&& text)
         : handle { wheels::make_unique<holder<EncodingForm, Container>>(std::move(text)) } {}
 
         template <typename EncodingForm, typename Container>
-        any_text& operator=(basic_text<EncodingForm, Container> const& text) {
+        any_text& operator=(text<EncodingForm, Container> const& text) {
             handle = wheels::make_unique<holder<EncodingForm, Container>>(text);
             return *this;
         }
         template <typename EncodingForm, typename Container>
-        any_text& operator=(basic_text<EncodingForm, Container>&& text) {
+        any_text& operator=(text<EncodingForm, Container>&& text) {
             handle = wheels::make_unique<holder<EncodingForm, Container>>(std::move(text));
             return *this;
         }

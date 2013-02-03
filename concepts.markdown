@@ -165,7 +165,7 @@ Table: Requirements for `EncodingScheme`
 
 Ouch.
 
-## `basic_text` and `text`
+## `text` and `any_text`
 
 See http://gist.io/3166256.
 

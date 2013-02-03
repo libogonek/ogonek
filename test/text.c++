@@ -20,10 +20,10 @@
 #include <catch.h++>
 
 TEST_CASE("text", "text tests") {
-    using text8 = ogonek::basic_text<ogonek::utf8>;
-    using text16 = ogonek::basic_text<ogonek::utf16>;
-    using text32 = ogonek::basic_text<ogonek::utf32>;
-    using text_ascii = ogonek::basic_text<ogonek::ascii>;
+    using text8 = ogonek::text<ogonek::utf8>;
+    using text16 = ogonek::text<ogonek::utf16>;
+    using text32 = ogonek::text<ogonek::utf32>;
+    using text_ascii = ogonek::text<ogonek::ascii>;
 
     SECTION("general", "General test") {
         // construct UTF-8 text from a UTF-32 string literal

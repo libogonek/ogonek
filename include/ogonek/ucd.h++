@@ -29,7 +29,7 @@
 namespace ogonek {
     // Forward declare for text properties
     template <typename Encoding, typename Container>
-    class basic_text;
+    class text;
     class utf8;
 
     template <typename T, std::size_t N>
@@ -455,7 +455,7 @@ namespace ogonek {
         extern OGONEK_PUBLIC miscellaneous_properties const* miscellaneous_data;
         extern OGONEK_PUBLIC std::size_t miscellaneous_data_size;
 
-        using text = basic_text<utf8, std::string>;
+        using text_type = text<utf8, std::string>;
 
         namespace detail {
             struct property_group_locator {
@@ -497,28 +497,28 @@ namespace ogonek {
                 return result;
             }
 
-            inline text get_name(name_properties const* data, std::size_t data_size, codepoint u) {
+            inline text_type get_name(name_properties const* data, std::size_t data_size, codepoint u) {
                 name_properties const& p = detail::find_property_group(data, data_size, u);
                 if(p.variable) {
                     std::string name { p.name };
                     name.reserve(name.size() + 5);
                     name.replace(name.find('#'), 1, to_hex(u));
-                    return text { std::move(name) };
+                    return text_type { std::move(name) };
                 } else {
-                    return text {{ p.name }};
+                    return text_type {{ p.name }};
                 }
             }
         } // namespace detail
-        inline text get_name(codepoint u) {
+        inline text_type get_name(codepoint u) {
             return detail::get_name(name_data, name_data_size, u);
         }
-        inline text get_unicode1_name(codepoint u) {
+        inline text_type get_unicode1_name(codepoint u) {
             return detail::get_name(v1name_data, v1name_data_size, u);
         }
         struct alias {
             alias(alias_raw const& raw) : type{raw.type}, name{{raw.name}} {}
             alias_type type;
-            text name;
+            text_type name;
         };
         inline std::vector<alias> get_aliases(codepoint u) {
             auto group = detail::find_property_group(aliases_data, aliases_data_size, u);
@@ -729,14 +729,14 @@ namespace ogonek {
             auto& prop = detail::find_property_group(script_data, script_data_size, u);
             return { prop.first_script_extension, prop.first_script_extension + prop.script_extension_count };
         }
-        inline text get_iso_comment(codepoint u) {
-            return text { detail::find_property_group(iso_comment_data, iso_comment_data_size, u).data };
+        inline text_type get_iso_comment(codepoint u) {
+            return text_type { detail::find_property_group(iso_comment_data, iso_comment_data_size, u).data };
         }
         inline hangul_syllable_type get_hangul_syllable_type(codepoint u) {
             return detail::find_property_group(hangul_data, hangul_data_size, u).syllable_type;
         }
-        inline text get_jamo_short_name(codepoint u) {
-            return text {{ detail::find_property_group(hangul_data, hangul_data_size, u).jamo_short_name }};
+        inline text_type get_jamo_short_name(codepoint u) {
+            return text_type {{ detail::find_property_group(hangul_data, hangul_data_size, u).jamo_short_name }};
         }
         inline indic_syllable_category get_indic_syllable_category(codepoint u) {
             return detail::find_property_group(indic_data, indic_data_size, u).syllable_category;

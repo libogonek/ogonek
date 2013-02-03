@@ -21,7 +21,7 @@ running `python scons.py dist` from the command line (requires Python to be inst
 
 Here's a list of what's implemented so far:
 
- - `basic_text`, a text class template, sometimes known as string. I'm leaving
+ - `text`, a text class template, sometimes known as string. I'm leaving
    "string" to mean "array of code units", as it's what a `string` class often
    turns out to be (and also what strings in other languages turn out to be).
    This is not that.  This represents text, regardless of encoding. It's a
@@ -30,7 +30,7 @@ Here's a list of what's implemented so far:
    makes conversions at API boundaries simple and type-safe. See these documents
    for more info on the ideas behind this class: [motivation] and [design].
 
- - `any_text`, a type erased variant of `basic_text` for use in compiled
+ - `any_text`, a type erased variant of `text` for use in compiled
    boundaries, or whenever templates are not appropriate/desired;
 
  - facilities for converting between ranges of codepoints to ranges of code

@@ -19,7 +19,7 @@
 #include <ogonek/validation.h++>
 
 TEST_CASE("issue13", "Tests for issue #13") {
-    using text8 = ogonek::basic_text<ogonek::utf8>;
+    using text8 = ogonek::text<ogonek::utf8>;
 
     SECTION("original", "Original test, shortened") {
         std::string s = u8"\u043f\u0440\u0438\u0432\u0435\u0442";
