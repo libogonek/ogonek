@@ -195,26 +195,26 @@ namespace ogonek {
         public:
             using text_type = text<EncodingForm, Container>;
 
-            holder(text_type const& text) : text(text) {}
-            holder(text_type&& text) : text(std::move(text)) {}
+            holder(text_type const& t) : t(t) {}
+            holder(text_type&& t) : t(std::move(t)) {}
 
             handle_type clone() override {
                 return handle_type { new holder(*this) }; // :( private ctor
             }
 
-            iterator begin() override { return iterator { text.begin() }; }
-            iterator end() override { return iterator { text.end() }; }
-            const_iterator begin() const override { return const_iterator { text.begin() }; }
-            const_iterator end() const override { return const_iterator { text.end() }; }
+            iterator begin() override { return iterator { t.begin() }; }
+            iterator end() override { return iterator { t.end() }; }
+            const_iterator begin() const override { return const_iterator { t.begin() }; }
+            const_iterator end() const override { return const_iterator { t.end() }; }
 
-            void* get() override { return &text; }
-            void const* get() const override { return &text; }
+            void* get() override { return &t; }
+            void const* get() const override { return &t; }
 
         private:
             holder(holder const&) = default;
             holder(holder&&) = default;
 
-            text_type text;
+            text_type t;
         };
 
     public:
