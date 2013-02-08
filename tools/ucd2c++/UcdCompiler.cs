@@ -921,12 +921,12 @@ namespace Ogonek.UcdCompiler
         {
             var set = sets.Single(s => s.From <= codepoint && s.To >= codepoint);
             var map = set.DecompositionMapping;
-            if (map.Length == 1 && map[0] == -1)
+            if (map.Length == 1 && map[0] == -1 || set.DecompositionType != DecompositionType.can)
             {
                 return new[] { codepoint };
             }
 
-            return map.SelectMany(c => Decompose(c, sets)); // BUG: don't decompose non-canonicals!
+            return map.SelectMany(c => Decompose(c, sets));
         }
 
         static IEnumerable<int> Decompose(CodepointSet set, CodepointSet[] sets)
