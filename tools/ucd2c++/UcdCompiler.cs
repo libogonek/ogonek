@@ -926,7 +926,7 @@ namespace Ogonek.UcdCompiler
                 return new[] { codepoint };
             }
 
-            return map.SelectMany(c => Decompose(c, sets));
+            return map.SelectMany(c => Decompose(c, sets)); // BUG: don't decompose non-canonicals!
         }
 
         static IEnumerable<int> Decompose(CodepointSet set, CodepointSet[] sets)

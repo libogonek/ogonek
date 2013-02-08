@@ -28,6 +28,33 @@ std::ostream& operator<<(std::ostream& os, std::u32string const& u32) {
 }
 }
 
+namespace {
+    struct normalization_test {
+        char32_t const* input;
+        char32_t const* nfc;
+        char32_t const* nfd;
+    };
+    
+    normalization_test normalization_test_data[] = {
+        #include "normalization_test.g.inl"
+    };
+}
+
+TEST_CASE("official", "official") {
+    using test_text = ogonek::text<ogonek::utf32>;
+    for(auto&& test : normalization_test_data) {
+        std::u32string input { test.input };
+        std::u32string nfc_expected { test.nfc };
+        std::u32string nfd_expected { test.nfd };
+        
+        test_text nfc { ogonek::normalize<ogonek::nfc>(input) };
+        CHECK(nfc.storage() == nfc_expected);
+        
+        test_text nfd { ogonek::normalize<ogonek::nfd>(input) };
+        CHECK(nfd.storage() == nfd_expected);
+    }
+}
+
 TEST_CASE("decompose", "Decomposition") {
     using test_text = ogonek::text<ogonek::utf32>;
     test_text in { U"ABC\x00C5\x00F4\x1E69\x1E0B\x0323\x0071\x0307\x0323" };

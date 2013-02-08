@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// Unicode segmentation tests compiler
+// Unicode normalization tests compiler
 
 using System;
 using System.Collections.Generic;
@@ -21,10 +21,10 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Xml.Linq;
 
-[assembly: AssemblyTitle("Ogonek.SegmentationTestCompiler")]
-[assembly: AssemblyDescription("Unicode segmentation test-to-C++ compiler")]
-[assembly: AssemblyProduct("Ogonek.SegmentationTestCompiler")]
-[assembly: AssemblyCopyright("Written in 2012-2013 by Martinho Fernandes")]
+[assembly: AssemblyTitle("Ogonek.NormalizationTestCompiler")]
+[assembly: AssemblyDescription("Unicode normalization test-to-C++ compiler")]
+[assembly: AssemblyProduct("Ogonek.NormalizationTestCompiler")]
+[assembly: AssemblyCopyright("Written in 2013 by Martinho Fernandes")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: AssemblyVersion("0.1.0.0")]
@@ -38,48 +38,41 @@ namespace Ogonek.SegmentationTestCompiler
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-            if(args.Length != 3)
+            if(args.Length != 2)
             {
-                Console.WriteLine("Usage: segtest2c++ <test source> <output file> <description>");
+                Console.WriteLine("Usage: normtest2c++ <test source> <output file>");
                 return 1;
             }
             string source = args[0];
             string destination = args[1];
-            string kind = args[2];
 
             var tests = GetTests(File.ReadLines(source))
                             .ToList();
-            var strings = tests.Select(GetString);
-            var breaks = tests.Select(GetBreaks);
-            File.WriteAllLines(destination, new []{ string.Format(CopyrightNotice, DateTime.Now.ToUniversalTime().ToString("O"), kind) });
-            File.AppendAllLines(destination, strings.Zip(breaks, (s,b) => "{ " + s + ", { " + string.Join(", ", b) + " } },"));
+            var forms = GetForms(tests);
+            File.WriteAllLines(destination, new []{ string.Format(CopyrightNotice, DateTime.Now.ToUniversalTime().ToString("O")) });
+            File.AppendAllLines(destination, forms.Select(f => "{ " + f[0] + ", " + f[1] + ", " + f[2] + " },"));
 
             return 0;
         }
 
         static IEnumerable<string> GetTests(IEnumerable<string> lines) {
-            return lines.Where(l => !l.StartsWith("#"))
-                        .Select(l => l.Split('#')[0]);
+            return lines.Where(l => !l.StartsWith("#") && !l.StartsWith("@"))
+                        .Select(l => l.Split('#')[0])
+                        .Where(l => !string.IsNullOrWhiteSpace(l));
         }
 
-        static string GetString(string line) {
-            return "U\"" + string.Concat(
-                line.Split(new[]{ '×', '÷' })
-                    .Select(s => s.Trim())
-                    .Where(s => !string.IsNullOrWhiteSpace(s))
-                    .Select(s => s.Trim())
-                    .Select(s => @"\x" + s))
-                + "\"";
+        static IEnumerable<string[]> GetForms(IEnumerable<string> lines) {
+            return lines.Select(l => l.Split(';')
+                                        .Select(u => "U\"" + GetForm(u) + "\"")
+                                        .ToArray());
         }
 
-        static IEnumerable<int> GetBreaks(string text) { 
-            return text.Where(c => c == '×' ||  c == '÷')
-                       .Select((c,i) => new{ c, i })
-                       .Where(x => x.c == '÷')
-                       .Skip(1)
-                       .Select(x => x.i);
+        static string GetForm(string item) {
+            return string.Join("",
+                    item.Trim().Split(new[]{' '}, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(u => @"\x" + u.Trim()));
         }
-
+            
         const string CopyrightNotice = @"// Ogonek
 //
 // Written in 2013 by Martinho Fernandes <martinho.fernandes@gmail.com>
@@ -93,7 +86,7 @@ namespace Ogonek.SegmentationTestCompiler
 
 // This file was automatically generated on {0}
 
-// Unicode segmentation test data - {1}
+// Unicode normalization test data
 ";
     }
 }
