@@ -35,7 +35,7 @@ code unit.
 
 *Example*:
 {% highlight cpp %}
-using utf8_deque = ogonek::text<ogonek::utf8, std::deque<ogonek::utf8::code_unit>;
+using utf8_deque = ogonek::text<ogonek::utf8, std::deque<ogonek::utf8::code_unit>>;
 using latin1_vector = ogonek::text<ogonek::latin1, std::vector<char>>;
 {% endhighlight %}
 
