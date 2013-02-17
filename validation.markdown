@@ -57,7 +57,7 @@ an encoding specific character (given by the encoding
 *Example*:
 {% highlight cpp %}
 std::string s = "foo\x80";
-ogonek::text<ogonek::utf8> t { s, ogonek::discard_errors };
+ogonek::text<ogonek::utf8> t { s, ogonek::use_replacement_character };
 // the unfinished multi-byte sequence is replaced with U+FFFD
 // t ends up with u8"foo\uFFFD"
 {% endhighlight %}
