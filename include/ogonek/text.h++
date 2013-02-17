@@ -150,9 +150,9 @@ namespace ogonek {
     class utf16;
     using posix_text = text<utf8, std::string>;
     using windows_text = text<utf16, std::wstring>;
-#ifdef OGONEK_WINDOWS
+#if defined(OGONEK_WINDOWS)
     using native_text = windows_text;
-#else
+#elif defined(OGONEK_POSIX)
     using native_text = posix_text;
 #endif
 

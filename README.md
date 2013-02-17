@@ -15,7 +15,11 @@ your own version of the database, you can find a translator from the XML UCD in
 the `tools` folder.
 
 Once you have source code for the UCD, you can compile the whole shebang by
-running `python scons.py dist` from the command line (requires Python to be installed, for obvious reasons). This will create a zip file in the dist/ directory with both the headers and the library files necessary to use ogonek. By default, a static library is built. To build a shared library (DLL), add `lib=shared` to the command-line when building.
+running `python scons.py dist` from the command line (requires Python to be
+installed, for obvious reasons). This will create a zip file in the dist/
+directory with both the headers and the library files necessary to use ogonek.
+By default, a static library is built. To build a shared library (DLL), add
+`lib=shared` to the command-line when building.
 
 # Status
 
@@ -44,14 +48,18 @@ Here's a list of what's implemented so far:
 
  - extended grapheme cluster segmentation (UAX #29);
 
+ - word segmentation (UAX #29);
+
 And a list of what's planned for the near future:
 
- - the rest of the segmentation algorithms (UAX #29);
+ - sentence segmentation (UAX #29);
+
+ - line break opportunities (UAX #14);
 
  - collation algorithm (UTS #10);
 
   [design]: http://gist.io/3166256
   [wiki]: http://bitbucket.org/martinhofernandes/ogonek/wiki/Home
   [downloads]: http://bitbucket.org/martinhofernandes/ogonek/downloads
-  [motivation]: http://rmartinho.github.com/unicode/2012/10/27/utf8-only-somewhere.html
+  [motivation]: http://flamingdangerzone.com/unicode/2012/10/27/utf8-only-somewhere.html
 
