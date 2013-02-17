@@ -15,11 +15,11 @@ your own version of the database, you can find a translator from the XML UCD in
 the `tools` folder.
 
 Once you have source code for the UCD, you can compile the whole shebang by
-running `python scons.py dist` from the command line (requires Python to be
-installed, for obvious reasons). This will create a zip file in the dist/
-directory with both the headers and the library files necessary to use ogonek.
-By default, a static library is built. To build a shared library (DLL), add
-`lib=shared` to the command-line when building.
+running `scons dist` from the command line (requires SCons to be installed, for
+obvious reasons). This will create a zip file in the dist/ directory with both
+the headers and the library files necessary to use ogonek. By default, a static
+library is built. To build a shared library (DLL), add `lib=shared` to the
+command-line when building.
 
 # Status
 
