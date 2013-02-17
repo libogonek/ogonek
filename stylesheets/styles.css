@@ -46,7 +46,7 @@ a small {
 }
 
 .wrapper {
-  width:860px;
+  width:auto;
   margin:0 auto;
 }
 
@@ -101,7 +101,7 @@ header {
   position:fixed;
 }
 
-header ul {
+header ul.button {
   list-style:none;
   height:40px;
   
@@ -121,14 +121,14 @@ header ul {
   width:270px;
 }
 
-header li {
+header ul.button li {
   width:89px;
   float:left;
   border-right:1px solid #d2d2d2;
   height:40px;
 }
 
-header ul a {
+header ul.button a {
   line-height:1;
   font-size:11px;
   color:#999;
@@ -143,26 +143,33 @@ strong {
   font-weight:700;
 }
 
-header ul li + li {
+header ul.button li + li {
   width:88px;
   border-left:1px solid #fff;
 }
 
-header ul li + li + li {
+header ul.button li + li + li {
   border-right:none;
   width:89px;
 }
 
-header ul a strong {
+header ul.button a strong {
+  font-size:14px;
+  display:block;
+  color:#222;
+}
+
+header ul {
+  list-style:none;
   font-size:14px;
   display:block;
   color:#222;
 }
 
 section {
-  width:500px;
-  float:right;
+  width:auto;
   padding-bottom:50px;
+  margin-left:300px;
 }
 
 small {
@@ -211,10 +218,15 @@ footer {
     display:inline;
   }
   
-  header ul {
+  header ul.button {
     position:absolute;
     right:50px;
     top:52px;
+  }
+  header ul {
+    float:left;
+    padding-right:30px;
+    margin-top:10px;
   }
 }
 

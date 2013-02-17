@@ -1,3 +1,4 @@
 safe: true
 lsi: false
 pygments: true
+doc_version: 0.5.0
