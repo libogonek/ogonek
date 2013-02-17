@@ -21,7 +21,7 @@ found.
 
 *Example*:
 {% highlight cpp %}
-std::string s = "foo\x80";
+std::string s = u8"bana\x80na";
 ogonek::text<ogonek::utf8> t { s, ogonek::throw_validation_error };
 // throws since s is not a valid UTF-8 sequence
 // (it has an unfinished multi-byte sequence)
@@ -36,10 +36,10 @@ the stream.
 
 *Example*:
 {% highlight cpp %}
-std::string s = "foo\x80";
+std::string s = u8"bana\x80na";
 ogonek::text<ogonek::utf8> t { s, ogonek::discard_errors };
 // the unfinished multi-byte sequence is discarded
-// t ends up with u8"foo"
+// t ends up with u8"banana"
 {% endhighlight %}
 
 ---
@@ -56,10 +56,10 @@ an encoding specific character (given by the encoding
 
 *Example*:
 {% highlight cpp %}
-std::string s = "foo\x80";
+std::string s = u8"bana\x80na";
 ogonek::text<ogonek::utf8> t { s, ogonek::use_replacement_character };
 // the unfinished multi-byte sequence is replaced with U+FFFD
-// t ends up with u8"foo\uFFFD"
+// t ends up with u8"bana\uFFFDna"
 {% endhighlight %}
 
 ---
@@ -73,7 +73,7 @@ on a stream with invalid data, the behaviour is undefined.
 
 *Bad Example*:
 {% highlight cpp %}
-std::string s = "foo\x80";
+std::string s = u8"bana\x80na";
 ogonek::text<ogonek::utf8> t { s, ogonek::skip_validation };
 // the unfinished multi-byte sequence is ignored
 // this results in undefined behaviour
@@ -81,7 +81,7 @@ ogonek::text<ogonek::utf8> t { s, ogonek::skip_validation };
 
 *Good Example*:
 {% highlight cpp %}
-std::string s = "foo"; // we know for sure that s is valid
+std::string s = u8"banana"; // we know for sure that s is valid
 ogonek::text<ogonek::utf8> t { s, ogonek::skip_validation };
 {% endhighlight %}
 
