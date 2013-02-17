@@ -135,11 +135,25 @@ namespace ogonek {
                 if(is_small) return as_small()[i];
                 else return as_large()[i];
             }
+            
+            iterator erase(iterator it) {
+                if(is_small) return get_pointer(as_small(), as_small().erase(get_iterator(as_small(), it)));
+                else return get_pointer(as_large(), as_large().erase(get_iterator(as_large(), it)));
+            }
 
         private:
             using small_storage = partial_array<T, N>;
             using large_storage = std::vector<T>;
             using storage_type = wheels::StorageFor<small_storage, large_storage>;
+            
+            template <typename Container>
+            static auto get_iterator(Container& container, iterator it) -> decltype(container.begin()) {
+                return container.begin() + std::distance(container.data(), it);
+            }
+            template <typename Container>
+            static auto get_pointer(Container& container, typename Container::iterator it) -> decltype(container.data()) {
+                return container.data() + std::distance(container.begin(), it);
+            }
 
             template <typename... Args>
             void place_small(Args&&... args) {

@@ -55,10 +55,20 @@ namespace ogonek {
             iterator end() { return array.begin() + count; }
             const_iterator end() const { return array.begin() + count; }
 
+            T* data() { return array.data(); }
+            T const* data() const { return array.data(); }
+            
             std::size_t size() const { return count; }
 
             T& operator[](std::ptrdiff_t index) { return array[index]; }
             T const& operator[](std::ptrdiff_t index) const { return array[index]; }
+            
+            iterator erase(iterator first) {
+                auto next = std::next(first);
+                std::move(next, end(), first);
+                --count;
+                return first;
+            }
 
         private:
             std::size_t count = 0;

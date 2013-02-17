@@ -19,8 +19,8 @@
 
 namespace ogonek {
     namespace detail {
-    template <typename T, std::size_t N>
-    using vector_type = detail::small_vector<T, N>; 
+        template <typename T, std::size_t N>
+        using vector_type = detail::small_vector<T, N>; 
 
         template <typename Iterator>
         struct ordered_decomposing_iterator;
@@ -115,18 +115,18 @@ namespace ogonek {
                     return;
                 }
 
+                current.clear();
                 if(ucd::get_combining_class(*it) == 0) {
-                    current = { *it++ };
-                } else {
-                    current.clear();
-                    while(!it.exhausted() && ucd::get_combining_class(*it) != 0) {
-                        current.push_back(*it++);
-                    }
-                    std::sort(current.begin(), current.end(),
-                              [](codepoint a, codepoint b) {
-                                  return ucd::get_combining_class(a) < ucd::get_combining_class(b);
-                              });
+                    current = it.current;
+                    std::advance(it, current.size());
                 }
+                while(!it.exhausted() && ucd::get_combining_class(*it) != 0) {
+                    current.push_back(*it++);
+                }
+                std::sort(current.begin(), current.end(),
+                          [](codepoint a, codepoint b) {
+                              return ucd::get_combining_class(a) < ucd::get_combining_class(b);
+                          });
                 position = 0;
             }
 
@@ -194,16 +194,32 @@ namespace ogonek {
                     return;
                 }
 
-                current = *it++;
-                while(!ucd::is_excluded_from_composition(current)
-                      && !it.exhausted()
-                      && ucd::can_compose(current)
-                      && ucd::can_compose(current, *it)) {
-                    current = ucd::compose(current, *it++);
+                if(it.position == 0) {
+                    compose(it.current);
                 }
+                current = *it++;
             }
 
         private:
+            static void compose(vector_type<codepoint, 4>& sequence) {
+                auto is_blocked = [](codepoint u, int last_ccc) {
+                    return last_ccc != -1 && (last_ccc == 0 || last_ccc >= ucd::get_combining_class(u));
+                };
+                for(auto l = sequence.begin(); l != sequence.end(); ++l) {
+                    if(ucd::is_excluded_from_composition(*l) || !ucd::can_compose(*l)) continue;
+                    auto last_ccc = -1;
+                    for(auto r = std::next(l); r != sequence.end();) {
+                        if(!is_blocked(*r, last_ccc) && ucd::can_compose(*l, *r)) {
+                            *l = ucd::compose(*l, *r);
+                            r = sequence.erase(r);
+                        } else {
+                            last_ccc = ucd::get_combining_class(*r);
+                            ++r;
+                        }
+                    }
+                }
+            }
+            
             ordered_decomposing_iterator<Iterator> it;
             bool exhausted;
             codepoint current;

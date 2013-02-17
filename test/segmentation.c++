@@ -55,8 +55,10 @@ namespace {
 } // namespace
 
 TEST_CASE("grapheme_clusters", "Extended grapheme cluster ranges") {
-    for(auto&& test : grapheme_cluster_test_data) {
-        test_segmentation(test, break_grapheme_clusters);
+    SECTION("official", "Official grapheme cluster tests") {
+        for(auto&& test : grapheme_cluster_test_data) {
+            test_segmentation(test, break_grapheme_clusters);
+        }
     }
 }
 
@@ -74,8 +76,10 @@ namespace {
 } // namespace
 
 TEST_CASE("words", "Word ranges") {
-    for(auto&& test : word_test_data) {
-        test_segmentation(test, break_words);
+    SECTION("official", "Official word tests") {
+        for(auto&& test : word_test_data) {
+            test_segmentation(test, break_words);
+        }
     }
 }
 
