@@ -1,5 +1,5 @@
 ---
-layout: doc-ogonek
+layout: default
 title: Fundamental types and concepts
 ---
 

@@ -1,5 +1,5 @@
 ---
-layout: doc-ogonek
+layout: default
 title: Segmentation
 ---
 
