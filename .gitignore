@@ -6,3 +6,4 @@ dist/
 *.session.vim
 *.swp
 .vimrc
+_site/
