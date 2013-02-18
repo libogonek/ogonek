@@ -10,6 +10,11 @@ always useful since they don't allow the use of other encodings for storing the
 data. Ogonek provides a generic class template named `text` to create ranges of
 codepoints with various underlying encodings.
 
+### Invariants
+
+All `text` classes maintain the invariant of holding a stream that is valid
+according to the respective encoding.
+
 ### Custom encoding
 
 The interface of `text` exposes iteration over code points for use in the
@@ -62,10 +67,37 @@ instead.
 
 Blah blah incomplete.
 
-### `iterator`
-### `const_iterator`
-### `begin`
-### `end`
-### `move_storage`
-### `storage`
+### Iteration
+
+`text` provides basic iteration support as a sequence of code points. As do the
+standard containers, it provides `iterator` and `const_iterator` nested types,
+as well as `begin()` and `end()` members. This is useful if you need to
+implement any algorithms that don't depend on the encoding.
+
+Such a range interface allows for creating `text` instances from `text` with
+different encodings, since any range of code points can be used for construction.
+
+### Storage access
+
+The underlying code unit storage of a `text` instance can be accessed for
+interoperation purposes.
+
+The `storage()` member function returns a read-only view of the underlying
+storage (as `const&`).
+
+The `move_storage()` member function can be used to mutate the underlying
+storage directly without violating the validity invariant. The function moves
+the underlying storage and returns it by value. After a call to this function
+the instance of `text` is now empty, and the returned value can be mutated at
+will. To apply the changes afterwards, the mutated storage can simply be
+moved back into the `text` instance, and it will re-validated.
+
+### Equality
+
+`text::operator==` and `text::operator!=` test whether two instances of `text`
+are canonically equivalent or not. The Unicode standard requires that a
+conformant process treat any two canonically equivalent strings the same way.
+
+Instances of text with different template arguments can be compared with these
+operators.
 

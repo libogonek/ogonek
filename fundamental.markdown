@@ -7,7 +7,7 @@ Some types and concepts are used pervasively throughout the ogonek library. In
 the description of the various parts it is assumed that the reader is familiar
 with these.
 
-### code\_point
+### `code_point`
 
 {% highlight cpp %}
 using code_point = char32_t;
@@ -18,7 +18,7 @@ themselves can have any type, but their elements must be code points.
 `code_point` is the type used to represent code points. It is an alias for the
 C++ `char32_t` type.
 
-### byte
+### `byte`
 
 {% highlight cpp %}
 using byte = std::uint8_t;
@@ -33,8 +33,8 @@ is `byte`, which is an alias for the C++ `std::uint8_t` type.
 A large portion of ogonek works with sequences of values, notably code points,
 code units and bytes. Throughout the library, the Boost range concepts are used
 to specify the requirements of input sequences and capabilities of returned
-sequences. \[Note: this is under consideration and may change in the future to
-overcome limitations of the Boost concepts.]
+sequences. *\[Note: this is under consideration and may change in the future to
+overcome limitations of the Boost concepts.]*
 
 Unless stated otherwise ranges returned from ogonek algorithms have
 deferred-evaluation. This means that nothing happens until the value of the

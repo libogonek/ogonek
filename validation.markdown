@@ -5,7 +5,7 @@ title: Validation
 
 When errors are found encoding or decoding streams, there are various ways of
 dealing with the errors. Ogonek provides four different error-handling
-strategies. Functions that take a validation strategy argument can also be
+strategies. Functions that take a validation strategy argument can often be
 called without the strategy argument; when that happens
 `ogonek::throw_validation_error` is the default used.
 
@@ -51,8 +51,9 @@ encoding of the output stream supports it, the Unicode replacement character
 U+FFFD
 &#640;&#7431;&#7448;&#671;&#7424;&#7428;&#7431;&#7437;&#7431;&#628;&#7451;
 &#7428;&#668;&#7424;&#640;&#7424;&#7428;&#7451;&#7431;&#640;. is used. Otherwise
-an encoding specific character (given by the encoding
-`replacement_character` member, often `?`) is used.
+an encoding specific character (given by the encoding `replacement_character`
+member, often `?` U+003F &#491;&#7452;&#7431;s&#7451;&#618;&#7439;&#628;
+&#7437;&#7424;&#640;&#7435;) is used.
 
 *Example*:
 {% highlight cpp %}

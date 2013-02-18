@@ -18,6 +18,10 @@ Ogonek includes the following encoding forms:
 - [Latin-1] as `latin1` in `<ogonek/encoding/latin1.h++>`;
 - [Windows-1252] as `windows1252` in `<ogonek/encoding/windows1252.h++>`;
 
+Most users don't need to deal directly with an encoding form's class members and
+can treat them as opaque tag types. The higher-level parts of ogonek, like
+[`text`][text], are preferred for most purposes.
+
 Each encoding form shall provide the following members.
 
 #### `code_unit`
@@ -184,7 +188,7 @@ Ogonek includes the following encoding schemes.
 - [UTF-32LE] as `utf32le` in `<ogonek/encoding/utf32le.h++>`.
 
 In addition, any encoding form with a byte-sized code unit can work as an
-encoding scheme.
+encoding scheme (this includes `ogonek::utf8`).
 
 #### `encoding_scheme`
 
@@ -202,8 +206,10 @@ using utf16be = ogonek::encoding_scheme<ogonek::utf16, ogonek::big_endian>;
 
 ### See Also
 
+- [Text][text]
 - [Validation][validation]
 
+ [text]: text.html
  [validation]: validation.html
  [UTF-8]: http://en.wikipedia.org/wiki/UTF-8
  [UTF-16]: http://en.wikipedia.org/wiki/UTF-16
