@@ -4,11 +4,15 @@ title: Text
 ---
 
 Several algorithms on ogonek take ranges of code points as input. Some classes
-in the standard libary can be used as ranges of code points: containers like
+in the standard library can be used as ranges of code points: containers like
 `std::vector<ogonek::code_point>` or `std::u32string`. However those aren't
 always useful since they don't allow the use of other encodings for storing the
 data. Ogonek provides a generic class template named `text` to create ranges of
 codepoints with various underlying encodings.
+
+`text` classes are basically wrappers that tag a container with an encoding.
+This allows the compiler to prevent certain mistakes like passing data in a
+certain encoding to functions expecting another.
 
 ### Invariants
 
@@ -36,7 +40,8 @@ using utf16_text = ogonek::text<ogonek::utf16>;
 The class also allows customization of the underlying storage, by means of the
 second template parameter. Any container can be used to store the data. The
 default storage used is a `std::basic_string` instantiated with the encoding's
-code unit.
+code unit. This means that by default `text` instances use null-terminated
+storage.
 
 *Example*:
 {% highlight cpp %}
@@ -53,19 +58,32 @@ The former uses UTF-8 and `std::string`, while the latter uses UTF-16 and
 *Example*:
 {% highlight cpp %}
 ogonek::windows_text message { u"Hello World!" };
-ogonek::windows_text caption { u"Ogonek" };
-::MessageBox(hwnd, message.storage().data(), caption.storage().data(), MB_OK);
+ogonek::windows_text title { u"Ogonek" };
+::MessageBox(hwnd, message.storage().data(), title.storage().data(), MB_OK);
 {% endhighlight %}
 
 There is also a `native_text` alias that is equal to `windows_text` if
 `OGONEK_WINDOWS` is defined, or to `posix_text` if `OGONEK_POSIX` is defined
 instead.
 
-### Constructors
+### Construction and assignment
 
-`text` instances can be constructed from a variety of sources.
+#### `text();`
 
-Blah blah incomplete.
+A default-constructed instance of `text` holds an empty string, by means of a
+default-constructed container.
+
+#### `text(text const&);`  
+`text(text&& that);`  
+`text& operator=(text const& that);`  
+`text& operator=(text&& that);`  
+
+Provided the underlying container is copyable or movable, instances of `text`
+can be copied or moved as well.
+
+Instances of `text` can be constructed from a pointer to a `char32_t`
+null-terminated string, from a range of codepoints, or from an instance of the
+underlying container.
 
 ### Iteration
 
