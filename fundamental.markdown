@@ -33,8 +33,8 @@ is `byte`, which is an alias for the C++ `std::uint8_t` type.
 A large portion of ogonek works with sequences of values, notably code points,
 code units and bytes. Throughout the library, the Boost range concepts are used
 to specify the requirements of input sequences and capabilities of returned
-sequences. *\[Note: this is under consideration and may change in the future to
-overcome limitations of the Boost concepts.]*
+sequences. \[*Note*: this is under consideration and may change in the future to
+overcome limitations of the Boost concepts. &mdash; *end note*]
 
 Unless stated otherwise ranges returned from ogonek algorithms have
 deferred-evaluation. This means that nothing happens until the value of the
