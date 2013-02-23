@@ -81,6 +81,18 @@ TEST_CASE("words", "Word ranges") {
             test_segmentation(test, break_words);
         }
     }
+    SECTION("issue-0019", "test for issue #19") {
+        using text = ogonek::text<ogonek::utf8>;
+        std::vector<text> words;
+        for(auto word : ogonek::words(std::u32string(U"ABC DEF GREG"))) {
+            words.emplace_back(word);
+        }
+        REQUIRE(words[0].storage() == u8"ABC");
+        REQUIRE(words[1].storage() == u8" ");
+        REQUIRE(words[2].storage() == u8"DEF");
+        REQUIRE(words[3].storage() == u8" ");
+        REQUIRE(words[4].storage() == u8"GREG");
+    }
 }
 
 namespace {
