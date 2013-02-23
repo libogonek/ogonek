@@ -7,3 +7,4 @@ dist/
 *.swp
 .vimrc
 _site/
+*scons*
