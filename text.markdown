@@ -86,6 +86,8 @@ Instances of `text` can be constructed from a pointer to a `char32_t`
 null-terminated string, from a range of codepoints, or from an instance of the
 underlying container.
 
+---
+
 {% highlight cpp %}
 text();
 {% endhighlight %}
@@ -167,8 +169,8 @@ like (1-2) but assign to the current instance's storage instead.
 ---
 
 {% highlight cpp %}
-text(Container const& container); // 1
-text(Container&& container); // 1
+explicit text(Container const& container); // 1
+explicit text(Container&& container); // 2
 {% endhighlight %}
 
 ### Iteration
