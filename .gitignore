@@ -1,5 +1,10 @@
+bin/
+obj/
+dist/
+*.g.*
 *~
 *.session.vim
 *.swp
 .vimrc
 _site/
+*scons*
