@@ -1,5 +1,5 @@
-Ogonek is mostly the result of me playing around with Unicode. It is turning
-into something real.
+Ogonek ([&#596;&#712;&#609;&#596;n&#603;k]) is mostly the result of me playing
+around with Unicode. It is turning into something real.
 
 Check out the [wiki] for more detailed information.
 
