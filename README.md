@@ -1,7 +1,6 @@
-Ogonek ([&#596;&#712;&#609;&#596;n&#603;k]) is mostly the result of me playing
-around with Unicode. It is turning into something real.
+Ogonek is mostly the result of me playing around with Unicode.
 
-Check out the [wiki] for more detailed information.
+Check out the [documentation] for more detailed information.
 
 # Setup
 
@@ -21,45 +20,6 @@ the headers and the library files necessary to use ogonek. By default, a static
 library is built. To build a shared library (DLL), add `lib=shared` to the
 command-line when building.
 
-# Status
-
-Here's a list of what's implemented so far:
-
- - `text`, a text class template, sometimes known as string. I'm leaving
-   "string" to mean "array of code units", as it's what a `string` class often
-   turns out to be (and also what strings in other languages turn out to be).
-   This is not that.  This represents text, regardless of encoding. It's a
-   class template with template parameters for the underlying encoding and
-   container but the interface it offers is for a range of codepoints. This
-   makes conversions at API boundaries simple and type-safe. See these documents
-   for more info on the ideas behind this class: [motivation] and [design].
-
- - `any_text`, a type erased variant of `text` for use in compiled
-   boundaries, or whenever templates are not appropriate/desired;
-
- - facilities for converting between ranges of codepoints to ranges of code
-   units or bytes in UTF encodings, and vice-versa;
-
- - importing of data from the Unicode Character Database (UAX #44);
-
- - canonical equivalence;
-
- - canonical normalization forms (UAX #15);
-
- - extended grapheme cluster segmentation (UAX #29);
-
- - word segmentation (UAX #29);
-
-And a list of what's planned for the near future:
-
- - sentence segmentation (UAX #29);
-
- - line break opportunities (UAX #14);
-
- - collation algorithm (UTS #10);
-
-  [design]: http://gist.io/3166256
-  [wiki]: http://bitbucket.org/martinhofernandes/ogonek/wiki/Home
+  [documentation]: http://flamingdangerzone.com/ogonek
   [downloads]: http://bitbucket.org/martinhofernandes/ogonek/downloads
-  [motivation]: http://flamingdangerzone.com/unicode/2012/10/27/utf8-only-somewhere.html
 
