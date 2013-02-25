@@ -16,28 +16,28 @@
 #include <ogonek/encoding/utf32.h++>
 #include <ogonek/text.h++>
 
+#include "utils.h++"
 #include <catch.h++>
 
 namespace {
     struct normalization_test {
-        char32_t const* input;
-        char32_t const* nfc;
-        char32_t const* nfd;
+        ogonek::code_point const* input;
+        ogonek::code_point const* nfc;
+        ogonek::code_point const* nfd;
     };
     
     normalization_test normalization_test_data[] = {
         #include "normalization_test.g.inl"
     };
     void test_norm(normalization_test const& test) {
-        using test_text = ogonek::text<ogonek::utf32>;
-        std::u32string input { test.input };
-        std::u32string nfc_expected { test.nfc };
-        std::u32string nfd_expected { test.nfd };
+        test::ustring input { test.input };
+        test::ustring nfc_expected { test.nfc };
+        test::ustring nfd_expected { test.nfd };
         
-        test_text nfc { ogonek::normalize<ogonek::nfc>(input) };
+        test::utext nfc { ogonek::normalize<ogonek::nfc>(input) };
         CHECK(nfc.storage() == nfc_expected);
         
-        test_text nfd { ogonek::normalize<ogonek::nfd>(input) };
+        test::utext nfd { ogonek::normalize<ogonek::nfd>(input) };
         CHECK(nfd.storage() == nfd_expected);
     }
 }
@@ -50,7 +50,7 @@ TEST_CASE("normalization", "Normalization tests") {
     }
     SECTION("madness", "crazy test with ten thousand umlauts") {
         using test_text = ogonek::text<ogonek::utf32>;
-        std::u32string input = U"2";
+        test::ustring input = U"2";
         input.reserve(10004);
         for(int i = 0; i < 10000; ++i) {
             input += U"\x0308";
@@ -58,7 +58,7 @@ TEST_CASE("normalization", "Normalization tests") {
         input += U"\x0323";
         input += U"3";
 
-        std::u32string normalized = U"2";
+        test::ustring normalized = U"2";
         normalized.reserve(10004);
         normalized += U"\x0323";
         for(int i = 0; i < 10000; ++i) {
@@ -66,16 +66,16 @@ TEST_CASE("normalization", "Normalization tests") {
         }
         normalized += U"3";
 
-        test_text out { ogonek::normalize<ogonek::nfc>(input) };
+        test::utext out { ogonek::normalize<ogonek::nfc>(input) };
         REQUIRE(out.storage() == normalized);
     }
 }
 
 TEST_CASE("canonical equivalence", "Canonical equivalence") {
-    std::u32string a = U"\x1E69\x1E0B\x0323\x0071\x0307\x0323";
-    std::u32string b = U"\x0073\x0323\x0307\x0064\x0323\x0307\x0071\x0323\x0307";
-    std::u32string c = U"\x0073\x0307\x0323\x0064\x0323\x0307\x0071\x0323\x0307";
-    std::u32string d = U"\x0074\x0307\x0323\x0064\x0323\x0307\x0071\x0323\x0307";
+    test::ustring a = U"\x1E69\x1E0B\x0323\x0071\x0307\x0323";
+    test::ustring b = U"\x0073\x0323\x0307\x0064\x0323\x0307\x0071\x0323\x0307";
+    test::ustring c = U"\x0073\x0307\x0323\x0064\x0323\x0307\x0071\x0323\x0307";
+    test::ustring d = U"\x0074\x0307\x0323\x0064\x0323\x0307\x0071\x0323\x0307";
 
     REQUIRE(ogonek::canonically_equivalent(a, a));
     REQUIRE(ogonek::canonically_equivalent(a, b));

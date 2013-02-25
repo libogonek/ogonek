@@ -17,6 +17,7 @@
 namespace ogonek {
     using byte = unsigned char;
     using codepoint = char32_t;
+    using code_point = char32_t;
 
     namespace literal {
         constexpr byte operator"" _b(unsigned long long n) { return static_cast<byte>(n); }

@@ -14,6 +14,7 @@
 #include <ogonek/segmentation.h++>
 #include <ogonek/types.h++>
 
+#include "utils.h++"
 #include <catch.h++>
 
 #include <iterator>
@@ -22,7 +23,7 @@
 
 namespace {
     struct break_test {
-        std::u32string input;
+        test::ustring input;
         std::vector<int> breaks;
     };
 
@@ -84,7 +85,7 @@ TEST_CASE("words", "Word ranges") {
     SECTION("issue-0019", "test for issue #19") {
         using text = ogonek::text<ogonek::utf8>;
         std::vector<text> words;
-        for(auto word : ogonek::words(std::u32string(U"ABC DEF GREG"))) {
+        for(auto word : ogonek::words(test::ustring(U"ABC DEF GREG"))) {
             words.emplace_back(word);
         }
         REQUIRE(words[0].storage() == u8"ABC");
