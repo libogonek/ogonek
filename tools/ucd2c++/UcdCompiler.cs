@@ -912,7 +912,7 @@ namespace Ogonek.UcdCompiler
 
         static IDictionary<int, IEnumerable<Tuple<int, int>>> GetCompositions(CodepointSet[] sets)
         {
-            return sets.Where(s => s.DecompositionType == DecompositionType.can && s.DecompositionMapping.Length > 1 && !s.FullCompositionExclusion)
+            return sets.Where(s => !s.FullCompositionExclusion && s.DecompositionType == DecompositionType.can && s.DecompositionMapping.Length > 1 && !s.FullCompositionExclusion)
                    .GroupBy(s => s.DecompositionMapping[0], s => Tuple.Create(s.DecompositionMapping[1], s.From))
                    .ToDictionary(g => g.Key, g => (IEnumerable<Tuple<int,int>>) g.ToList());
         }
