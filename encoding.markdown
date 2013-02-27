@@ -167,7 +167,7 @@ value shall be an adequate replacement character for the encoding form.
 
 *Example*:
 {% highlight cpp %}
-static_assert(ogonek::ascii::replacement_character == '?',
+static_assert(ogonek::ascii::replacement_character == '\x1A',
               "ASCII uses a custom replacement character");
 {% endhighlight %}
 

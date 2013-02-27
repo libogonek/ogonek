@@ -52,8 +52,7 @@ U+FFFD
 &#640;&#7431;&#7448;&#671;&#7424;&#7428;&#7431;&#7437;&#7431;&#628;&#7451;
 &#7428;&#668;&#7424;&#640;&#7424;&#7428;&#7451;&#7431;&#640;. is used. Otherwise
 an encoding specific character (given by the encoding `replacement_character`
-member, often `?` U+003F &#491;&#7452;&#7431;s&#7451;&#618;&#7439;&#628;
-&#7437;&#7424;&#640;&#7435;) is used.
+member) is used.
 
 *Example*:
 {% highlight cpp %}
