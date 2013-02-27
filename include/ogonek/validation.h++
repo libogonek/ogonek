@@ -25,14 +25,17 @@
 #include <type_traits>
 
 namespace ogonek {
+    //! Exception that is thrown when validation fails
     struct validation_error : std::exception { // TODO Boost.Exception
         char const* what() const throw() override {
             return "Unicode validation failed";
         }
     };
 
+    //! Policy for skipping validation
     struct skip_validation_t {} constexpr skip_validation = {};
 
+    //! Policy for throwing upon discovering invalid data
     struct throw_validation_error_t {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const&, typename EncodingForm::state&, code_point&) {
@@ -66,6 +69,7 @@ namespace ogonek {
         };
     } // namespace detail
 
+    //! Policy for replacing invalid data with a replacement character
     struct use_replacement_character_t {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, typename EncodingForm::state&, code_point& out) {
@@ -78,7 +82,8 @@ namespace ogonek {
         }
     } constexpr use_replacement_character = {};
 
-    struct ignore_errors_t {
+    // Policy for discarding erroneous data
+    struct discard_errors_t {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, typename EncodingForm::state&, code_point&) {
             return { std::next(boost::begin(source)), boost::end(source) };
@@ -87,7 +92,7 @@ namespace ogonek {
         static detail::coded_character<EncodingForm> apply_encode(code_point, typename EncodingForm::state&) {
             return {};
         }
-    } constexpr ignore_errors = {};
+    } constexpr discard_errors = {};
 } // namespace ogonek
 
 #endif // OGONEK_VALIDATION_HPP
