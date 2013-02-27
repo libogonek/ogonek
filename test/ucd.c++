@@ -88,12 +88,12 @@ TEST_CASE("query", "UCD property queries") {
         CHECK(ucd::get_decomposition_type(U'\x1EA0') == ucd::decomposition_type::can);
         CHECK(ucd::get_decomposition_type(U'\x3000') == ucd::decomposition_type::wide);
     }
-    using codepoint_list = std::initializer_list<ogonek::codepoint>;
+    using code_point_list = std::initializer_list<ogonek::code_point>;
     SECTION("decomposition_mapping", "Querying decomposition mapping") {
-        CHECK(boost::equal(ucd::get_decomposition_mapping(U'\x0041'), codepoint_list{ U'\x0041' }));
-        CHECK(boost::equal(ucd::get_decomposition_mapping(U'\x00C5'), codepoint_list{ U'\x0041', U'\x030A' }));
-        CHECK(boost::equal(ucd::get_decomposition_mapping(U'\x1EA0'), codepoint_list{ U'\x0041', U'\x0323' }));
-        CHECK(boost::equal(ucd::get_decomposition_mapping(U'\x3000'), codepoint_list{ U'\x0020' }));
+        CHECK(boost::equal(ucd::get_decomposition_mapping(U'\x0041'), code_point_list{ U'\x0041' }));
+        CHECK(boost::equal(ucd::get_decomposition_mapping(U'\x00C5'), code_point_list{ U'\x0041', U'\x030A' }));
+        CHECK(boost::equal(ucd::get_decomposition_mapping(U'\x1EA0'), code_point_list{ U'\x0041', U'\x0323' }));
+        CHECK(boost::equal(ucd::get_decomposition_mapping(U'\x3000'), code_point_list{ U'\x0020' }));
     }
     SECTION("full_composition_exclusion", "Querying composition exclusion") {
         CHECK(ucd::is_excluded_from_composition(U'\x0041') == false);
@@ -208,25 +208,25 @@ TEST_CASE("query", "UCD property queries") {
         CHECK(ucd::get_simple_titlecase(U'\x1F4A9') == U'\x1F4A9');
     }
     SECTION("uppercase", "Querying uppercase") {
-        CHECK(boost::equal(ucd::get_uppercase(U'\x0041'), codepoint_list{ U'\x0041' }));
-        CHECK(boost::equal(ucd::get_uppercase(U'\x0061'), codepoint_list{ U'\x0041' }));
-        CHECK(boost::equal(ucd::get_uppercase(U'\x00DF'), codepoint_list{ U'\x0053', U'\x0053' }));
-        CHECK(boost::equal(ucd::get_uppercase(U'\x1E96'), codepoint_list{ U'\x0048', U'\x0331' }));
-        CHECK(boost::equal(ucd::get_uppercase(U'\x1F4A9'), codepoint_list{ U'\x1F4A9' }));
+        CHECK(boost::equal(ucd::get_uppercase(U'\x0041'), code_point_list{ U'\x0041' }));
+        CHECK(boost::equal(ucd::get_uppercase(U'\x0061'), code_point_list{ U'\x0041' }));
+        CHECK(boost::equal(ucd::get_uppercase(U'\x00DF'), code_point_list{ U'\x0053', U'\x0053' }));
+        CHECK(boost::equal(ucd::get_uppercase(U'\x1E96'), code_point_list{ U'\x0048', U'\x0331' }));
+        CHECK(boost::equal(ucd::get_uppercase(U'\x1F4A9'), code_point_list{ U'\x1F4A9' }));
     }
     SECTION("lowercase", "Querying lowercase") {
-        CHECK(boost::equal(ucd::get_lowercase(U'\x0041'), codepoint_list{ U'\x0061' }));
-        CHECK(boost::equal(ucd::get_lowercase(U'\x0061'), codepoint_list{ U'\x0061' }));
-        CHECK(boost::equal(ucd::get_lowercase(U'\x0130'), codepoint_list{ U'\x0069', U'\x0307' }));
-        CHECK(boost::equal(ucd::get_lowercase(U'\x1E96'), codepoint_list{ U'\x1E96' }));
-        CHECK(boost::equal(ucd::get_lowercase(U'\x1F4A9'), codepoint_list{ U'\x1F4A9' }));
+        CHECK(boost::equal(ucd::get_lowercase(U'\x0041'), code_point_list{ U'\x0061' }));
+        CHECK(boost::equal(ucd::get_lowercase(U'\x0061'), code_point_list{ U'\x0061' }));
+        CHECK(boost::equal(ucd::get_lowercase(U'\x0130'), code_point_list{ U'\x0069', U'\x0307' }));
+        CHECK(boost::equal(ucd::get_lowercase(U'\x1E96'), code_point_list{ U'\x1E96' }));
+        CHECK(boost::equal(ucd::get_lowercase(U'\x1F4A9'), code_point_list{ U'\x1F4A9' }));
     }
     SECTION("titlecase", "Querying titlecase") {
-        CHECK(boost::equal(ucd::get_titlecase(U'\x0041'), codepoint_list{ U'\x0041' }));
-        CHECK(boost::equal(ucd::get_titlecase(U'\x0061'), codepoint_list{ U'\x0041' }));
-        CHECK(boost::equal(ucd::get_titlecase(U'\x00DF'), codepoint_list{ U'\x0053', U'\x0073' }));
-        CHECK(boost::equal(ucd::get_titlecase(U'\x1E96'), codepoint_list{ U'\x0048', U'\x0331' }));
-        CHECK(boost::equal(ucd::get_titlecase(U'\x1F4A9'), codepoint_list{ U'\x1F4A9' }));
+        CHECK(boost::equal(ucd::get_titlecase(U'\x0041'), code_point_list{ U'\x0041' }));
+        CHECK(boost::equal(ucd::get_titlecase(U'\x0061'), code_point_list{ U'\x0041' }));
+        CHECK(boost::equal(ucd::get_titlecase(U'\x00DF'), code_point_list{ U'\x0053', U'\x0073' }));
+        CHECK(boost::equal(ucd::get_titlecase(U'\x1E96'), code_point_list{ U'\x0048', U'\x0331' }));
+        CHECK(boost::equal(ucd::get_titlecase(U'\x1F4A9'), code_point_list{ U'\x1F4A9' }));
     }
     SECTION("simple_case_folding", "Querying simple case folding") {
         CHECK(ucd::get_simple_case_folding(U'\x0041') == U'\x0061');
@@ -237,11 +237,11 @@ TEST_CASE("query", "UCD property queries") {
         CHECK(ucd::get_simple_case_folding(U'\x1F4A9') == U'\x1F4A9');
     }
     SECTION("case_folding", "Querying case folding") {
-        CHECK(boost::equal(ucd::get_case_folding(U'\x0041'), codepoint_list{ U'\x0061' }));
-        CHECK(boost::equal(ucd::get_case_folding(U'\x0061'), codepoint_list{ U'\x0061' }));
-        CHECK(boost::equal(ucd::get_case_folding(U'\x00DF'), codepoint_list{ U'\x0073', U'\x0073' }));
-        CHECK(boost::equal(ucd::get_case_folding(U'\x1E96'), codepoint_list{ U'\x0068', U'\x0331' }));
-        CHECK(boost::equal(ucd::get_case_folding(U'\x1F4A9'), codepoint_list{ U'\x1F4A9' }));
+        CHECK(boost::equal(ucd::get_case_folding(U'\x0041'), code_point_list{ U'\x0061' }));
+        CHECK(boost::equal(ucd::get_case_folding(U'\x0061'), code_point_list{ U'\x0061' }));
+        CHECK(boost::equal(ucd::get_case_folding(U'\x00DF'), code_point_list{ U'\x0073', U'\x0073' }));
+        CHECK(boost::equal(ucd::get_case_folding(U'\x1E96'), code_point_list{ U'\x0068', U'\x0331' }));
+        CHECK(boost::equal(ucd::get_case_folding(U'\x1F4A9'), code_point_list{ U'\x1F4A9' }));
     }
     SECTION("is_case_ignorable", "Querying case ignorable") {
         CHECK(ucd::is_case_ignorable(U'\x0041') == false);

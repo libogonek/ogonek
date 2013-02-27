@@ -50,13 +50,13 @@ namespace ogonek {
                  : 4;
         }
 
-        static constexpr codepoint decode(byte b0, byte b1) {
+        static constexpr code_point decode(byte b0, byte b1) {
             return ((b0 & 0x1F) << 6) | (b1 & 0x3F);
         }
-        static constexpr codepoint decode(byte b0, byte b1, byte b2) {
+        static constexpr code_point decode(byte b0, byte b1, byte b2) {
             return ((b0 & 0x0F) << 12) | ((b1 & 0x3F) << 6) | (b2 & 0x3F);
         }
-        static constexpr codepoint decode(byte b0, byte b1, byte b2, byte b3) {
+        static constexpr code_point decode(byte b0, byte b1, byte b2, byte b3) {
             return ((b0 & 0x07) << 18) | ((b1 & 0x3F) << 12) | ((b2 & 0x3F) << 6) | (b3 & 0x3F);
         }
 
@@ -85,7 +85,7 @@ namespace ogonek {
         }
 
         template <typename ValidationPolicy>
-        static detail::coded_character<utf8> encode_one(codepoint u, state&, ValidationPolicy) {
+        static detail::coded_character<utf8> encode_one(code_point u, state&, ValidationPolicy) {
             if(u <= last_1byte_value) {
                 return { static_cast<code_unit>(u) };
             } else if(u <= last_2byte_value) {
@@ -108,7 +108,7 @@ namespace ogonek {
             };
         }
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, skip_validation_t) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state&, skip_validation_t) {
             auto first = boost::begin(r);
             byte b0 = *first++;
             auto length = sequence_length(b0);
@@ -131,7 +131,7 @@ namespace ogonek {
             return { first, boost::end(r) };
         }
         template <typename SinglePassRange, typename ValidationPolicy>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s, ValidationPolicy) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, ValidationPolicy) {
             auto first = boost::begin(r);
             byte b0 = *first++;
             auto length = sequence_length(b0);
@@ -166,7 +166,7 @@ namespace ogonek {
                 out = decode(b[0], b[1], b[2], b[3]);
             }
 
-            auto is_overlong = [](codepoint u, int bytes) {
+            auto is_overlong = [](code_point u, int bytes) {
                 return u <= last_1byte_value
                     || (u <= last_2byte_value && bytes > 2)
                     || (u <= last_3byte_value && bytes > 3);
@@ -174,7 +174,7 @@ namespace ogonek {
             if(is_overlong(out, length)) {
                 return ValidationPolicy::template apply_decode<utf8>(r, s, out);
             }
-            if(detail::is_surrogate(out) || out > detail::last_codepoint) {
+            if(detail::is_surrogate(out) || out > detail::last_code_point) {
                 return ValidationPolicy::template apply_decode<utf8>(r, s, out);
             }
             return { first, boost::end(r) };

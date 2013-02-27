@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-02-27T01:59:00.8763580Z
+// This file was automatically generated on 2013-02-27T10:33:04.0110300Z
 
 // ISO-8859-11 encoding form
 
@@ -242,10 +242,10 @@ namespace ogonek {
             0xE38,
             0xE39,
             0xE3A,
-            -1,
-            -1,
-            -1,
-            -1,
+            0xFFFFFFFF,
+            0xFFFFFFFF,
+            0xFFFFFFFF,
+            0xFFFFFFFF,
             0xE3F,
             0xE40,
             0xE41,
@@ -275,10 +275,10 @@ namespace ogonek {
             0xE59,
             0xE5A,
             0xE5B,
-            -1,
-            -1,
-            -1,
-            -1,
+            0xFFFFFFFF,
+            0xFFFFFFFF,
+            0xFFFFFFFF,
+            0xFFFFFFFF,
 
         };
         static constexpr codepage_entry from_unicode[] = {

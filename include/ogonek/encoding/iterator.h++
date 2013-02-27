@@ -69,13 +69,13 @@ namespace ogonek {
             }
         }
 
-        detail::coded_character<EncodingForm> encode_validated(codepoint u, skip_validation_t) {
+        detail::coded_character<EncodingForm> encode_validated(code_point u, skip_validation_t) {
             return EncodingForm::encode_one(u, state, skip_validation);
         }
 
         template <typename ValidationPolicy1>
-        detail::coded_character<EncodingForm> encode_validated(codepoint u, ValidationPolicy1) {
-            if(u > detail::last_codepoint || detail::is_surrogate(u)) {
+        detail::coded_character<EncodingForm> encode_validated(code_point u, ValidationPolicy1) {
+            if(u > detail::last_code_point || detail::is_surrogate(u)) {
                 return ValidationPolicy1::template apply_encode<EncodingForm>(u, state);
             } else {
                 return EncodingForm::encode_one(u, state, ValidationPolicy1{});
@@ -92,16 +92,16 @@ namespace ogonek {
     struct decoding_iterator
     : boost::iterator_facade<
         decoding_iterator<EncodingForm, Iterator, ValidationPolicy>,
-        codepoint,
+        code_point,
         std::input_iterator_tag, // TODO
-        codepoint
+        code_point
       > {
     public:
         decoding_iterator(Iterator first, Iterator last)
         : first(std::move(first)), last(std::move(last)) {}
 
-        codepoint dereference() const {
-            codepoint u;
+        code_point dereference() const {
+            code_point u;
             auto s = state;
             EncodingForm::decode_one(boost::sub_range<range>(first, last), u, s, ValidationPolicy{});
             return u;
@@ -110,7 +110,7 @@ namespace ogonek {
             return first == that.first || (first == last && that.first == that.last);
         }
         void increment() {
-            codepoint dummy;
+            code_point dummy;
             first = EncodingForm::decode_one(boost::sub_range<range>(first, last), dummy, state, ValidationPolicy{}).begin();
         }
 

@@ -25,7 +25,7 @@ TEST_CASE("utf8-validation", "Validation of UTF-8") {
         std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC3_b, 0x85_b, 0xE1_b, 0xBA_b,
                                                         0xA0_b, 0xF0_b, 0x9F_b, 0x92_b, 0xA9_b };
         auto range = ogonek::utf8::decode(encoded, ogonek::use_replacement_character);
-        std::vector<ogonek::codepoint> decoded(range.begin(), range.end());
+        std::vector<ogonek::code_point> decoded(range.begin(), range.end());
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x00C5');
@@ -36,7 +36,7 @@ TEST_CASE("utf8-validation", "Validation of UTF-8") {
         std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC0_b, 0xC3_b, 0x85_b, 0xC1_b, 0xF5_b };
 
         auto range = ogonek::utf8::decode(encoded, ogonek::use_replacement_character);
-        std::vector<ogonek::codepoint> decoded(range.begin(), range.end());
+        std::vector<ogonek::code_point> decoded(range.begin(), range.end());
         REQUIRE(decoded.size() == 5);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\xFFFD');
@@ -48,7 +48,7 @@ TEST_CASE("utf8-validation", "Validation of UTF-8") {
         std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC3_b, 0x85_b, 0x84_b, 0x42_b };
 
         auto range = ogonek::utf8::decode(encoded, ogonek::use_replacement_character);
-        std::vector<ogonek::codepoint> decoded(range.begin(), range.end());
+        std::vector<ogonek::code_point> decoded(range.begin(), range.end());
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x00C5');
@@ -59,7 +59,7 @@ TEST_CASE("utf8-validation", "Validation of UTF-8") {
         std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xF3_b, 0x85_b, 0xC3_b, 0x85_b, 0x42_b,  };
 
         auto range = ogonek::utf8::decode(encoded, ogonek::use_replacement_character);
-        std::vector<ogonek::codepoint> decoded(range.begin(), range.end());
+        std::vector<ogonek::code_point> decoded(range.begin(), range.end());
         REQUIRE(decoded.size() == 5);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\xFFFD');
@@ -71,7 +71,7 @@ TEST_CASE("utf8-validation", "Validation of UTF-8") {
         std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC0_b, 0x80_b, 0xC3_b, 0x85_b, 0x42_b,  };
 
         auto range = ogonek::utf8::decode(encoded, ogonek::use_replacement_character);
-        std::vector<ogonek::codepoint> decoded(range.begin(), range.end());
+        std::vector<ogonek::code_point> decoded(range.begin(), range.end());
         REQUIRE(decoded.size() == 5);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\xFFFD');
@@ -79,12 +79,12 @@ TEST_CASE("utf8-validation", "Validation of UTF-8") {
         CHECK(decoded[3] == U'\x00C5');
         CHECK(decoded[4] == U'\x0042');
     }
-    SECTION("invalid codepoint", "Rejecting sequences that decode to values above 0x10FFFF or surrogates") {
+    SECTION("invalid code_point", "Rejecting sequences that decode to values above 0x10FFFF or surrogates") {
         std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xF4_b, 0x90_b, 0x80_b, 0x80_b, 0x42_b,
                                                         0xED_b, 0xA0_b, 0x80_b };
 
         auto range = ogonek::utf8::decode(encoded, ogonek::use_replacement_character);
-        std::vector<ogonek::codepoint> decoded(range.begin(), range.end());
+        std::vector<ogonek::code_point> decoded(range.begin(), range.end());
         REQUIRE(decoded.size() == 9);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\xFFFD');
@@ -105,7 +105,7 @@ TEST_CASE("utf16-validation", "Validation of UTF-16") {
         std::initializer_list<char16_t> encoded = { 0x0041, 0x00C5, 0x1EA0, 0xD83D, 0xDCA9 };
 
         auto range = ogonek::utf16::decode(encoded, ogonek::use_replacement_character);
-        std::vector<ogonek::codepoint> decoded(range.begin(), range.end());
+        std::vector<ogonek::code_point> decoded(range.begin(), range.end());
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x00C5');
@@ -116,7 +116,7 @@ TEST_CASE("utf16-validation", "Validation of UTF-16") {
         std::initializer_list<char16_t> encoded = { u'\x0041', u'\xD83D', u'\x00C5', u'\xDCA9', u'\x1EA0', };
 
         auto range = ogonek::utf16::decode(encoded, ogonek::use_replacement_character);
-        std::vector<ogonek::codepoint> decoded(range.begin(), range.end());
+        std::vector<ogonek::code_point> decoded(range.begin(), range.end());
         REQUIRE(decoded.size() == 5);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\xFFFD');
@@ -128,7 +128,7 @@ TEST_CASE("utf16-validation", "Validation of UTF-16") {
         std::initializer_list<char16_t> encoded = { u'\x0041', u'\x00C5', u'\xDCA9', u'\xD83D', u'\x1EA0', };
 
         auto range = ogonek::utf16::decode(encoded, ogonek::use_replacement_character);
-        std::vector<ogonek::codepoint> decoded(range.begin(), range.end());
+        std::vector<ogonek::code_point> decoded(range.begin(), range.end());
         REQUIRE(decoded.size() == 5);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x00C5');
@@ -145,18 +145,18 @@ TEST_CASE("utf32-validation", "Validation of UTF-32") {
         std::initializer_list<char32_t> encoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9', };
 
         auto range = ogonek::utf32::decode(encoded, ogonek::use_replacement_character);
-        std::vector<ogonek::codepoint> decoded(range.begin(), range.end());
+        std::vector<ogonek::code_point> decoded(range.begin(), range.end());
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x00C5');
         CHECK(decoded[2] == U'\x1EA0');
         CHECK(decoded[3] == U'\x1F4A9');
     }
-    SECTION("invalid", "Rejecting codepoints above U+10FFFF") {
+    SECTION("invalid", "Rejecting code_points above U+10FFFF") {
         std::initializer_list<char32_t> encoded = { U'\x0041', U'\x00C5', U'\x21F4A9', };
 
         auto range = ogonek::utf32::decode(encoded, ogonek::use_replacement_character);
-        std::vector<ogonek::codepoint> decoded(range.begin(), range.end());
+        std::vector<ogonek::code_point> decoded(range.begin(), range.end());
         REQUIRE(decoded.size() == 3);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x00C5');
@@ -166,7 +166,7 @@ TEST_CASE("utf32-validation", "Validation of UTF-32") {
         std::initializer_list<char32_t> encoded = { U'\x0041', U'\x00C5', U'\xD932', U'\xDC43', };
 
         auto range = ogonek::utf32::decode(encoded, ogonek::use_replacement_character);
-        std::vector<ogonek::codepoint> decoded(range.begin(), range.end());
+        std::vector<ogonek::code_point> decoded(range.begin(), range.end());
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x00C5');

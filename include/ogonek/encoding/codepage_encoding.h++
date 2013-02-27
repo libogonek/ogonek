@@ -48,7 +48,7 @@ namespace ogonek {
         static constexpr bool is_fixed_width = true;
         static constexpr std::size_t max_width = 1;
         static constexpr bool is_self_synchronizing = true;
-        static constexpr codepoint replacement_character = U'?';
+        static constexpr code_point replacement_character = U'?';
         struct state {};
         
         template <typename SinglePassRange, typename ValidationPolicy,
@@ -68,12 +68,12 @@ namespace ogonek {
                     DecodingIterator { boost::end(r), boost::end(r) });
         }
 
-        static detail::coded_character<codepage_encoding<Codepage>> encode_one(codepoint u, state&, skip_validation_t) {
+        static detail::coded_character<codepage_encoding<Codepage>> encode_one(code_point u, state&, skip_validation_t) {
             return { find_codepage_entry(u)->encoded };
         }
 
         template <typename ValidationPolicy>
-        static detail::coded_character<codepage_encoding<Codepage>> encode_one(codepoint u, state& s, ValidationPolicy) {
+        static detail::coded_character<codepage_encoding<Codepage>> encode_one(code_point u, state& s, ValidationPolicy) {
             auto it = find_codepage_entry(u);
             if(it == std::end(Codepage::from_unicode) || it->decoded != u) {
                 return ValidationPolicy::template apply_encode<codepage_encoding<Codepage>>(u, s);
@@ -83,14 +83,14 @@ namespace ogonek {
         }
 
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, skip_validation_t) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state&, skip_validation_t) {
             auto first = boost::begin(r);
             out = Codepage::to_unicode[*first++];
             return { first, boost::end(r) };
         }
         
         template <typename SinglePassRange, typename ValidationPolicy>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s, ValidationPolicy) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, ValidationPolicy) {
             auto first = boost::begin(r);
             auto decoded = Codepage::to_unicode[*first++];
             if(decoded == code_point(-1)) {

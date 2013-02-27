@@ -272,17 +272,17 @@ namespace ogonek {
 
         template <typename T>
         struct simple_properties {
-            codepoint start;
+            code_point start;
             T data;
         };
         using version_properties = simple_properties<version>;
         struct name_properties {
-            codepoint start;
+            code_point start;
             bool variable; // whether # needs to be replaced
             char const* name;
         };
         struct alias_properties {
-            codepoint start;
+            code_point start;
             alias_raw const* first;
             int count;
         };
@@ -290,24 +290,24 @@ namespace ogonek {
         using category_properties = simple_properties<category>;
         using combining_class_properties = simple_properties<int>;
         struct bidi_properties {
-            codepoint start;
+            code_point start;
             bidi_category category;
             bool mirrored;
-            codepoint mirrored_glyph;
+            code_point mirrored_glyph;
             bool control;
         };
         struct composition_entry {
-            codepoint other;
-            codepoint precomposed;
+            code_point other;
+            code_point precomposed;
         };
         struct composition_properties {
-            codepoint starter;
+            code_point starter;
             std::initializer_list<composition_entry> compositions;
         };
         struct decomposition_properties {
-            codepoint start;
+            code_point start;
             decomposition_type type;
-            codepoint const* mapping;
+            code_point const* mapping;
             bool composition_exclusion;
             bool full_composition_exclusion;
             yes_no_maybe nfc_quick_check;
@@ -318,15 +318,15 @@ namespace ogonek {
             bool expands_on_nfd;
             bool expands_on_nfkc;
             bool expands_on_nfkd;
-            codepoint const* fc_nfkc_closure;
+            code_point const* fc_nfkc_closure;
         };
         struct numeric_properties {
-            codepoint start;
+            code_point start;
             numeric_type type;
             double value;
         };
         struct joining_properties {
-            codepoint start;
+            code_point start;
             joining_class class_;
             joining_group group;
             bool control;
@@ -334,63 +334,63 @@ namespace ogonek {
         using linebreak_properties = simple_properties<linebreak>;
         using east_asian_properties = simple_properties<east_asian_width>;
         struct case_properties {
-            codepoint start;
+            code_point start;
             bool is_uppercase, is_lowercase, other_uppercase, other_lowercase;
-            codepoint simple_uppercase, simple_lowercase, simple_titlecase;
-            codepoint const* uppercase;
-            codepoint const* lowercase;
-            codepoint const* titlecase;
-            codepoint simple_case_folding;
-            codepoint const* case_folding;
+            code_point simple_uppercase, simple_lowercase, simple_titlecase;
+            code_point const* uppercase;
+            code_point const* lowercase;
+            code_point const* titlecase;
+            code_point simple_case_folding;
+            code_point const* case_folding;
             bool case_ignorable;
             bool cased;
             bool changes_when_casefolded, changes_when_casemapped, changes_when_lowercased,
                  changes_when_nfkc_casefolded, changes_when_titlecased, changes_when_uppercased;
-            codepoint const* nfkc_casefold;
+            code_point const* nfkc_casefold;
         };
         struct script_properties {
-            codepoint start;
+            code_point start;
             ucd::script script;
             ucd::script const* first_script_extension;
             int script_extension_count;
         };
-        using iso_comment_properties = simple_properties<codepoint const*>;
+        using iso_comment_properties = simple_properties<code_point const*>;
         struct hangul_properties {
-            codepoint start;
+            code_point start;
             hangul_syllable_type syllable_type;
             char const jamo_short_name[4];
         };
         struct indic_properties {
-            codepoint start;
+            code_point start;
             indic_syllable_category syllable_category;
             indic_matra_category matra_category;
         };
         struct identifier_properties {
-            codepoint start;
+            code_point start;
             bool id_start, other_id_start, xid_start;
             bool id_continue, other_id_continue, xid_continue;
         };
         struct pattern_properties {
-            codepoint start;
+            code_point start;
             bool syntax;
             bool white_space;
         };
         struct function_properties {
-            codepoint start;
+            code_point start;
             bool dash, hyphen, quotation_mark, terminal_punctuation, sterm, diacritic,
                  extender, soft_dotted, alphabetic, other_alphabetic, math, other_math,
                  hex_digit, ascii_hex_digit, default_ignorable, other_default_ignorable,
                  logical_order_exception, white_space;
         };
         struct boundary_properties {
-            codepoint start;
+            code_point start;
             bool grapheme_base, grapheme_extend, other_grapheme_extend, grapheme_link;
             ucd::grapheme_cluster_break grapheme_cluster_break;
             ucd::word_break word_break;
             ucd::sentence_break sentence_break;
         };
         struct ideograph_properties {
-            codepoint start;
+            code_point start;
             bool ideographic;
             bool unified_ideograph;
             bool ids_binary_operator;
@@ -398,7 +398,7 @@ namespace ogonek {
             bool radical;
         };
         struct miscellaneous_properties {
-            codepoint start;
+            code_point start;
             bool deprecated;
             bool variant_selector;
             bool noncharacter;
@@ -460,7 +460,7 @@ namespace ogonek {
         namespace detail {
             struct property_group_locator {
                 template <typename T>
-                bool operator()(codepoint u, T const& g) const {
+                bool operator()(code_point u, T const& g) const {
                     return u >= g.start;
                 }
             };
@@ -469,7 +469,7 @@ namespace ogonek {
                 return std::reverse_iterator<It> { it };
             }
             template <typename T>
-            T const& find_property_group(T const* first, std::size_t size, codepoint target) {
+            T const& find_property_group(T const* first, std::size_t size, code_point target) {
                 return *std::upper_bound(make_reverse(first+size), make_reverse(first), target, property_group_locator{});
             }
             inline boost::tribool to_tribool(yes_no_maybe ynm) {
@@ -479,12 +479,12 @@ namespace ogonek {
             }
         } // namespace detail
 
-        inline version get_age(codepoint u) {
+        inline version get_age(code_point u) {
             return detail::find_property_group(version_data, version_data_size, u).data;
         }
 
         namespace detail {
-            inline std::string to_hex(codepoint u) {
+            inline std::string to_hex(code_point u) {
                 char const hex[] = "0123456789ABCDEF";
                 std::string result;
                 int factor;
@@ -497,7 +497,7 @@ namespace ogonek {
                 return result;
             }
 
-            inline text_type get_name(name_properties const* data, std::size_t data_size, codepoint u) {
+            inline text_type get_name(name_properties const* data, std::size_t data_size, code_point u) {
                 name_properties const& p = detail::find_property_group(data, data_size, u);
                 if(p.variable) {
                     std::string name { p.name };
@@ -509,10 +509,10 @@ namespace ogonek {
                 }
             }
         } // namespace detail
-        inline text_type get_name(codepoint u) {
+        inline text_type get_name(code_point u) {
             return detail::get_name(name_data, name_data_size, u);
         }
-        inline text_type get_unicode1_name(codepoint u) {
+        inline text_type get_unicode1_name(code_point u) {
             return detail::get_name(v1name_data, v1name_data_size, u);
         }
         struct alias {
@@ -520,36 +520,36 @@ namespace ogonek {
             alias_type type;
             text_type name;
         };
-        inline std::vector<alias> get_aliases(codepoint u) {
+        inline std::vector<alias> get_aliases(code_point u) {
             auto group = detail::find_property_group(aliases_data, aliases_data_size, u);
             return { group.first, group.first + group.count };
         }
 
-        inline block get_block(codepoint u) {
+        inline block get_block(code_point u) {
             return detail::find_property_group(block_data, block_data_size, u).data;
         }
-        inline category get_general_category(codepoint u) {
+        inline category get_general_category(code_point u) {
             return detail::find_property_group(category_data, category_data_size, u).data;
         }
-        inline int get_combining_class(codepoint u) {
+        inline int get_combining_class(code_point u) {
             return detail::find_property_group(combining_class_data, combining_class_data_size, u).data;
         }
-        inline bidi_category get_bidi_category(codepoint u) {
+        inline bidi_category get_bidi_category(code_point u) {
             return detail::find_property_group(bidi_data, bidi_data_size, u).category;
         }
-        inline bool is_bidi_mirrored(codepoint u) {
+        inline bool is_bidi_mirrored(code_point u) {
             return detail::find_property_group(bidi_data, bidi_data_size, u).mirrored;
         }
-        inline codepoint get_bidi_mirrored_glyph(codepoint u) {
+        inline code_point get_bidi_mirrored_glyph(code_point u) {
             auto glyph = detail::find_property_group(bidi_data, bidi_data_size, u).mirrored_glyph;
-            if(glyph == codepoint(-1)) return u;
+            if(glyph == code_point(-1)) return u;
             else return glyph;
         }
-        inline bool is_bidi_control(codepoint u) {
+        inline bool is_bidi_control(code_point u) {
             return detail::find_property_group(bidi_data, bidi_data_size, u).control;
         }
         namespace detail {
-            inline composition_properties get_composition_properties(codepoint starter) {
+            inline composition_properties get_composition_properties(code_point starter) {
                 auto it = std::lower_bound(composition_data, composition_data+composition_data_size, composition_properties { starter, {} },
                            [](composition_properties const& a, composition_properties const& b){
                                return a.starter < b.starter;
@@ -560,7 +560,7 @@ namespace ogonek {
                     return { starter, {} };
                 }
             }
-            inline composition_entry get_composition_entry(codepoint starter, codepoint other) {
+            inline composition_entry get_composition_entry(code_point starter, code_point other) {
                 auto compositions = get_composition_properties(starter).compositions;
                 auto it = std::lower_bound(compositions.begin(), compositions.end(), composition_entry { other, 0 },
                            [](composition_entry const& a, composition_entry const& b){
@@ -569,303 +569,303 @@ namespace ogonek {
                 if(it != compositions.end() && it->other == other) {
                     return *it;
                 } else {
-                    return { other, static_cast<codepoint>(-1) };
+                    return { other, static_cast<code_point>(-1) };
                 }
             }
         } // namespace detail
-        inline bool can_compose(codepoint starter) {
+        inline bool can_compose(code_point starter) {
             return detail::get_composition_properties(starter).compositions.size() > 0;
         }
-        inline bool can_compose(codepoint starter, codepoint other) {
-            return detail::get_composition_entry(starter, other).precomposed != static_cast<codepoint>(-1);
+        inline bool can_compose(code_point starter, code_point other) {
+            return detail::get_composition_entry(starter, other).precomposed != static_cast<code_point>(-1);
         }
-        inline codepoint compose(codepoint starter, codepoint other) {
+        inline code_point compose(code_point starter, code_point other) {
             return detail::get_composition_entry(starter, other).precomposed;
         }
-        inline decomposition_type get_decomposition_type(codepoint u) {
+        inline decomposition_type get_decomposition_type(code_point u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).type;
         }
-        inline vector_type<codepoint, 4> get_decomposition_mapping(codepoint u) {
+        inline vector_type<code_point, 4> get_decomposition_mapping(code_point u) {
             auto mapping = detail::find_property_group(decomposition_data, decomposition_data_size, u).mapping;
-            if(mapping) return vector_type<codepoint, 4>(mapping, mapping + std::char_traits<codepoint>::length(mapping));
-            else return vector_type<codepoint, 4>({u});
+            if(mapping) return vector_type<code_point, 4>(mapping, mapping + std::char_traits<code_point>::length(mapping));
+            else return vector_type<code_point, 4>({u});
         }
-        inline bool is_excluded_from_composition(codepoint u) {
+        inline bool is_excluded_from_composition(code_point u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).full_composition_exclusion;
         }
-        inline boost::tribool is_nfc_quick_check(codepoint u) {
+        inline boost::tribool is_nfc_quick_check(code_point u) {
             return detail::to_tribool(detail::find_property_group(decomposition_data, decomposition_data_size, u).nfc_quick_check);
         }
-        inline bool is_nfd_quick_check(codepoint u) {
+        inline bool is_nfd_quick_check(code_point u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).nfd_quick_check;
         }
-        inline boost::tribool is_nfkc_quick_check(codepoint u) {
+        inline boost::tribool is_nfkc_quick_check(code_point u) {
             return detail::to_tribool(detail::find_property_group(decomposition_data, decomposition_data_size, u).nfkc_quick_check);
         }
-        inline bool is_nfkd_quick_check(codepoint u) {
+        inline bool is_nfkd_quick_check(code_point u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).nfkd_quick_check;
         }
         //[[deprecated("since 6.0")]]
-        inline bool expands_on_nfc(codepoint u) {
+        inline bool expands_on_nfc(code_point u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).expands_on_nfc;
         }
         //[[deprecated("since 6.0")]]
-        inline bool expands_on_nfd(codepoint u) {
+        inline bool expands_on_nfd(code_point u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).expands_on_nfd;
         }
         //[[deprecated("since 6.0")]]
-        inline bool expands_on_nfkc(codepoint u) {
+        inline bool expands_on_nfkc(code_point u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).expands_on_nfkc;
         }
         //[[deprecated("since 6.0")]]
-        inline bool expands_on_nfkd(codepoint u) {
+        inline bool expands_on_nfkd(code_point u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).expands_on_nfkd;
         }
         //[[deprecated("since 6.0")]]
-        inline ogonek::detail::array_slice<codepoint const> get_fc_nfkc_closure(codepoint u) {
+        inline ogonek::detail::array_slice<code_point const> get_fc_nfkc_closure(code_point u) {
             auto closure = detail::find_property_group(decomposition_data, decomposition_data_size, u).fc_nfkc_closure;
-            return { closure, closure + std::char_traits<codepoint>::length(closure) };
+            return { closure, closure + std::char_traits<code_point>::length(closure) };
         }
-        inline numeric_type get_numeric_type(codepoint u) {
+        inline numeric_type get_numeric_type(code_point u) {
             return detail::find_property_group(numeric_data, numeric_data_size, u).type;
         }
-        inline double get_numeric_value(codepoint u) {
+        inline double get_numeric_value(code_point u) {
             return detail::find_property_group(numeric_data, numeric_data_size, u).value;
         }
-        inline joining_class get_joining_class(codepoint u) {
+        inline joining_class get_joining_class(code_point u) {
             return detail::find_property_group(joining_data, joining_data_size, u).class_;
         }
-        inline joining_group get_joining_group(codepoint u) {
+        inline joining_group get_joining_group(code_point u) {
             return detail::find_property_group(joining_data, joining_data_size, u).group;
         }
-        inline bool is_join_control(codepoint u) {
+        inline bool is_join_control(code_point u) {
             return detail::find_property_group(joining_data, joining_data_size, u).control;
         }
-        inline linebreak get_linebreak_type(codepoint u) {
+        inline linebreak get_linebreak_type(code_point u) {
             return detail::find_property_group(linebreak_data, linebreak_data_size, u).data;
         }
-        inline east_asian_width get_east_asian_width_type(codepoint u) {
+        inline east_asian_width get_east_asian_width_type(code_point u) {
             return detail::find_property_group(east_asian_data, east_asian_data_size, u).data;
         }
-        inline bool is_uppercase(codepoint u) {
+        inline bool is_uppercase(code_point u) {
             return detail::find_property_group(case_data, case_data_size, u).is_uppercase;
         }
-        inline bool is_lowercase(codepoint u) {
+        inline bool is_lowercase(code_point u) {
             return detail::find_property_group(case_data, case_data_size, u).is_lowercase;
         }
-        inline codepoint get_simple_uppercase(codepoint u) {
+        inline code_point get_simple_uppercase(code_point u) {
             auto result = detail::find_property_group(case_data, case_data_size, u).simple_uppercase;
-            if(result == codepoint(-1)) return u;
+            if(result == code_point(-1)) return u;
             return result;
         }
-        inline codepoint get_simple_lowercase(codepoint u) {
+        inline code_point get_simple_lowercase(code_point u) {
             auto result = detail::find_property_group(case_data, case_data_size, u).simple_lowercase;
-            if(result == codepoint(-1)) return u;
+            if(result == code_point(-1)) return u;
             return result;
         }
-        inline codepoint get_simple_titlecase(codepoint u) {
+        inline code_point get_simple_titlecase(code_point u) {
             auto result = detail::find_property_group(case_data, case_data_size, u).simple_titlecase;
-            if(result == codepoint(-1)) return u;
+            if(result == code_point(-1)) return u;
             return result;
         }
-        inline vector_type<codepoint, 4> get_uppercase(codepoint u) {
+        inline vector_type<code_point, 4> get_uppercase(code_point u) {
             auto uc = detail::find_property_group(case_data, case_data_size, u).uppercase;
-            if(uc) return vector_type<codepoint, 4>(uc, uc + std::char_traits<codepoint>::length(uc));
-            else return vector_type<codepoint, 4>({u});
+            if(uc) return vector_type<code_point, 4>(uc, uc + std::char_traits<code_point>::length(uc));
+            else return vector_type<code_point, 4>({u});
         }
-        inline vector_type<codepoint, 4> get_lowercase(codepoint u) {
+        inline vector_type<code_point, 4> get_lowercase(code_point u) {
             auto lc = detail::find_property_group(case_data, case_data_size, u).lowercase;
-            if(lc) return vector_type<codepoint, 4>(lc, lc + std::char_traits<codepoint>::length(lc));
-            else return vector_type<codepoint, 4>({u});
+            if(lc) return vector_type<code_point, 4>(lc, lc + std::char_traits<code_point>::length(lc));
+            else return vector_type<code_point, 4>({u});
         }
-        inline vector_type<codepoint, 4> get_titlecase(codepoint u) {
+        inline vector_type<code_point, 4> get_titlecase(code_point u) {
             auto tc = detail::find_property_group(case_data, case_data_size, u).titlecase;
-            if(tc) return vector_type<codepoint, 4>(tc, tc + std::char_traits<codepoint>::length(tc));
-            else return vector_type<codepoint, 4>({u});
+            if(tc) return vector_type<code_point, 4>(tc, tc + std::char_traits<code_point>::length(tc));
+            else return vector_type<code_point, 4>({u});
         }
-        inline codepoint get_simple_case_folding(codepoint u) {
+        inline code_point get_simple_case_folding(code_point u) {
             auto result = detail::find_property_group(case_data, case_data_size, u).simple_case_folding;
-            if(result == codepoint(-1)) return u;
+            if(result == code_point(-1)) return u;
             return result;
         }
-        inline vector_type<codepoint, 4> get_case_folding(codepoint u) {
+        inline vector_type<code_point, 4> get_case_folding(code_point u) {
             auto cf = detail::find_property_group(case_data, case_data_size, u).case_folding;
-            if(cf) return vector_type<codepoint, 4>(cf, cf + std::char_traits<codepoint>::length(cf));
-            else return vector_type<codepoint, 4>({u});
+            if(cf) return vector_type<code_point, 4>(cf, cf + std::char_traits<code_point>::length(cf));
+            else return vector_type<code_point, 4>({u});
         }
-        inline bool is_case_ignorable(codepoint u) {
+        inline bool is_case_ignorable(code_point u) {
             return detail::find_property_group(case_data, case_data_size, u).case_ignorable;
         }
-        inline bool is_cased(codepoint u) {
+        inline bool is_cased(code_point u) {
             return detail::find_property_group(case_data, case_data_size, u).cased;
         }
-        inline bool changes_when_casefolded(codepoint u) {
+        inline bool changes_when_casefolded(code_point u) {
             return detail::find_property_group(case_data, case_data_size, u).changes_when_casefolded;
         }
-        inline bool changes_when_casemapped(codepoint u) {
+        inline bool changes_when_casemapped(code_point u) {
             return detail::find_property_group(case_data, case_data_size, u).changes_when_casemapped;
         }
-        inline bool changes_when_lowercased(codepoint u) {
+        inline bool changes_when_lowercased(code_point u) {
             return detail::find_property_group(case_data, case_data_size, u).changes_when_lowercased;
         }
-        inline bool changes_when_nfkc_casefolded(codepoint u) {
+        inline bool changes_when_nfkc_casefolded(code_point u) {
             return detail::find_property_group(case_data, case_data_size, u).changes_when_nfkc_casefolded;
         }
-        inline bool changes_when_titlecased(codepoint u) {
+        inline bool changes_when_titlecased(code_point u) {
             return detail::find_property_group(case_data, case_data_size, u).changes_when_titlecased;
         }
-        inline bool changes_when_uppercased(codepoint u) {
+        inline bool changes_when_uppercased(code_point u) {
             return detail::find_property_group(case_data, case_data_size, u).changes_when_uppercased;
         }
-        inline vector_type<codepoint, 4> get_nfkc_casefold(codepoint u) {
+        inline vector_type<code_point, 4> get_nfkc_casefold(code_point u) {
             auto cf = detail::find_property_group(case_data, case_data_size, u).nfkc_casefold;
-            if(cf) return vector_type<codepoint, 4>(cf, cf + std::char_traits<codepoint>::length(cf));
-            else return vector_type<codepoint, 4>({u});
+            if(cf) return vector_type<code_point, 4>(cf, cf + std::char_traits<code_point>::length(cf));
+            else return vector_type<code_point, 4>({u});
         }
-        inline script get_script(codepoint u) {
+        inline script get_script(code_point u) {
             return detail::find_property_group(script_data, script_data_size, u).script;
         }
-        inline ogonek::detail::array_slice<script const> get_script_extension(codepoint u) {
+        inline ogonek::detail::array_slice<script const> get_script_extension(code_point u) {
             auto& prop = detail::find_property_group(script_data, script_data_size, u);
             return { prop.first_script_extension, prop.first_script_extension + prop.script_extension_count };
         }
-        inline text_type get_iso_comment(codepoint u) {
+        inline text_type get_iso_comment(code_point u) {
             return text_type { detail::find_property_group(iso_comment_data, iso_comment_data_size, u).data };
         }
-        inline hangul_syllable_type get_hangul_syllable_type(codepoint u) {
+        inline hangul_syllable_type get_hangul_syllable_type(code_point u) {
             return detail::find_property_group(hangul_data, hangul_data_size, u).syllable_type;
         }
-        inline text_type get_jamo_short_name(codepoint u) {
+        inline text_type get_jamo_short_name(code_point u) {
             return text_type {{ detail::find_property_group(hangul_data, hangul_data_size, u).jamo_short_name }};
         }
-        inline indic_syllable_category get_indic_syllable_category(codepoint u) {
+        inline indic_syllable_category get_indic_syllable_category(code_point u) {
             return detail::find_property_group(indic_data, indic_data_size, u).syllable_category;
         }
-        inline indic_matra_category get_indic_matra_category(codepoint u) {
+        inline indic_matra_category get_indic_matra_category(code_point u) {
             return detail::find_property_group(indic_data, indic_data_size, u).matra_category;
         }
-        inline bool is_id_start(codepoint u) {
+        inline bool is_id_start(code_point u) {
             return detail::find_property_group(identifier_data, identifier_data_size, u).id_start;
         }
-        inline bool is_other_id_start(codepoint u) {
+        inline bool is_other_id_start(code_point u) {
             return detail::find_property_group(identifier_data, identifier_data_size, u).other_id_start;
         }
-        inline bool is_xid_start(codepoint u) {
+        inline bool is_xid_start(code_point u) {
             return detail::find_property_group(identifier_data, identifier_data_size, u).xid_start;
         }
-        inline bool is_id_continue(codepoint u) {
+        inline bool is_id_continue(code_point u) {
             return detail::find_property_group(identifier_data, identifier_data_size, u).id_continue;
         }
-        inline bool is_other_id_continue(codepoint u) {
+        inline bool is_other_id_continue(code_point u) {
             return detail::find_property_group(identifier_data, identifier_data_size, u).other_id_continue;
         }
-        inline bool is_xid_continue(codepoint u) {
+        inline bool is_xid_continue(code_point u) {
             return detail::find_property_group(identifier_data, identifier_data_size, u).xid_continue;
         }
-        inline bool is_pattern_syntax(codepoint u) {
+        inline bool is_pattern_syntax(code_point u) {
             return detail::find_property_group(pattern_data, pattern_data_size, u).syntax;
         }
-        inline bool is_pattern_white_space(codepoint u) {
+        inline bool is_pattern_white_space(code_point u) {
             return detail::find_property_group(pattern_data, pattern_data_size, u).white_space;
         }
-        inline bool is_dash(codepoint u) {
+        inline bool is_dash(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).dash;
         }
-        inline bool is_hyphen(codepoint u) {
+        inline bool is_hyphen(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).hyphen;
         }
-        inline bool is_quotation_mark(codepoint u) {
+        inline bool is_quotation_mark(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).quotation_mark;
         }
-        inline bool is_terminal_punctuation(codepoint u) {
+        inline bool is_terminal_punctuation(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).terminal_punctuation;
         }
-        inline bool is_sentence_terminal(codepoint u) {
+        inline bool is_sentence_terminal(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).sterm;
         }
-        inline bool is_diacritic(codepoint u) {
+        inline bool is_diacritic(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).diacritic;
         }
-        inline bool is_extender(codepoint u) {
+        inline bool is_extender(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).extender;
         }
-        inline bool is_soft_dotted(codepoint u) {
+        inline bool is_soft_dotted(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).soft_dotted;
         }
-        inline bool is_alphabetic(codepoint u) {
+        inline bool is_alphabetic(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).alphabetic;
         }
-        inline bool is_other_alphabetic(codepoint u) {
+        inline bool is_other_alphabetic(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).other_alphabetic;
         }
-        inline bool is_math(codepoint u) {
+        inline bool is_math(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).math;
         }
-        inline bool is_other_math(codepoint u) {
+        inline bool is_other_math(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).other_math;
         }
-        inline bool is_hex_digit(codepoint u) {
+        inline bool is_hex_digit(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).hex_digit;
         }
-        inline bool is_ascii_hex_digit(codepoint u) {
+        inline bool is_ascii_hex_digit(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).ascii_hex_digit;
         }
-        inline bool is_default_ignorable(codepoint u) {
+        inline bool is_default_ignorable(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).default_ignorable;
         }
-        inline bool is_other_default_ignorable(codepoint u) {
+        inline bool is_other_default_ignorable(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).other_default_ignorable;
         }
-        inline bool is_logical_order_exception(codepoint u) {
+        inline bool is_logical_order_exception(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).logical_order_exception;
         }
-        inline bool is_white_space(codepoint u) {
+        inline bool is_white_space(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).white_space;
         }
-        inline bool is_grapheme_base(codepoint u) {
+        inline bool is_grapheme_base(code_point u) {
             return detail::find_property_group(boundary_data, boundary_data_size, u).grapheme_base;
         }
         //[[deprecated("since 5.0")]]
-        inline bool is_grapheme_extend(codepoint u) {
+        inline bool is_grapheme_extend(code_point u) {
             return detail::find_property_group(boundary_data, boundary_data_size, u).grapheme_link;
         }
-        inline bool is_other_grapheme_extend(codepoint u) {
+        inline bool is_other_grapheme_extend(code_point u) {
             return detail::find_property_group(boundary_data, boundary_data_size, u).other_grapheme_extend;
         }
-        inline bool is_grapheme_link(codepoint u) {
+        inline bool is_grapheme_link(code_point u) {
             return detail::find_property_group(boundary_data, boundary_data_size, u).grapheme_link;
         }
-        inline grapheme_cluster_break get_grapheme_cluster_break(codepoint u) {
+        inline grapheme_cluster_break get_grapheme_cluster_break(code_point u) {
             return detail::find_property_group(boundary_data, boundary_data_size, u).grapheme_cluster_break;
         }
-        inline word_break get_word_break(codepoint u) {
+        inline word_break get_word_break(code_point u) {
             return detail::find_property_group(boundary_data, boundary_data_size, u).word_break;
         }
-        inline sentence_break get_sentence_break(codepoint u) {
+        inline sentence_break get_sentence_break(code_point u) {
             return detail::find_property_group(boundary_data, boundary_data_size, u).sentence_break;
         }
-        inline bool is_ideographic(codepoint u) {
+        inline bool is_ideographic(code_point u) {
             return detail::find_property_group(ideograph_data, ideograph_data_size, u).ideographic;
         }
-        inline bool is_unified_ideograph(codepoint u) {
+        inline bool is_unified_ideograph(code_point u) {
             return detail::find_property_group(ideograph_data, ideograph_data_size, u).unified_ideograph;
         }
-        inline bool is_ids_binary_operator(codepoint u) {
+        inline bool is_ids_binary_operator(code_point u) {
             return detail::find_property_group(ideograph_data, ideograph_data_size, u).ids_binary_operator;
         }
-        inline bool is_ids_trinary_operator(codepoint u) {
+        inline bool is_ids_trinary_operator(code_point u) {
             return detail::find_property_group(ideograph_data, ideograph_data_size, u).ids_trinary_operator;
         }
-        inline bool is_radical(codepoint u) {
+        inline bool is_radical(code_point u) {
             return detail::find_property_group(ideograph_data, ideograph_data_size, u).radical;
         }
-        inline bool is_deprecated(codepoint u) {
+        inline bool is_deprecated(code_point u) {
             return detail::find_property_group(miscellaneous_data, miscellaneous_data_size, u).deprecated;
         }
-        inline bool is_variant_selector(codepoint u) {
+        inline bool is_variant_selector(code_point u) {
             return detail::find_property_group(miscellaneous_data, miscellaneous_data_size, u).variant_selector;
         }
-        inline bool is_noncharacter(codepoint u) {
+        inline bool is_noncharacter(code_point u) {
             return detail::find_property_group(miscellaneous_data, miscellaneous_data_size, u).noncharacter;
         }
     } //namespace ucd

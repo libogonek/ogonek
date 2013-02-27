@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-02-27T01:59:00.3955760Z
+// This file was automatically generated on 2013-02-27T10:33:03.4886520Z
 
 // ISO-8859-3 encoding form
 
@@ -188,7 +188,7 @@ namespace ogonek {
             0x2D8,
             0xA3,
             0xA4,
-            -1,
+            0xFFFFFFFF,
             0x124,
             0xA7,
             0xA8,
@@ -197,7 +197,7 @@ namespace ogonek {
             0x11E,
             0x134,
             0xAD,
-            -1,
+            0xFFFFFFFF,
             0x17B,
             0xB0,
             0x127,
@@ -213,12 +213,12 @@ namespace ogonek {
             0x11F,
             0x135,
             0xBD,
-            -1,
+            0xFFFFFFFF,
             0x17C,
             0xC0,
             0xC1,
             0xC2,
-            -1,
+            0xFFFFFFFF,
             0xC4,
             0x10A,
             0x108,
@@ -231,7 +231,7 @@ namespace ogonek {
             0xCD,
             0xCE,
             0xCF,
-            -1,
+            0xFFFFFFFF,
             0xD1,
             0xD2,
             0xD3,
@@ -250,7 +250,7 @@ namespace ogonek {
             0xE0,
             0xE1,
             0xE2,
-            -1,
+            0xFFFFFFFF,
             0xE4,
             0x10B,
             0x109,
@@ -263,7 +263,7 @@ namespace ogonek {
             0xED,
             0xEE,
             0xEF,
-            -1,
+            0xFFFFFFFF,
             0xF1,
             0xF2,
             0xF3,

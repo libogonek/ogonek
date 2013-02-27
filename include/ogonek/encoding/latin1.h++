@@ -14,7 +14,7 @@
 #ifndef OGONEK_ENCODING_LATIN1_HPP
 #define OGONEK_ENCODING_LATIN1_HPP
 
-#include <ogonek/encoding/iso8859_1.h++>
+#include <ogonek/encoding/iso8859_1.g.h++>
 
 namespace ogonek {
     using latin1 = iso8859_1;

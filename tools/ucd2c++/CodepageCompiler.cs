@@ -64,7 +64,7 @@ namespace Ogonek.CodepageCompiler
                 if(dic.ContainsKey(i)) {
                     sb.AppendLine("            0x" + dic[i].ToString("X") + ",");
                 } else {
-                    sb.AppendLine("            -1,");
+                    sb.AppendLine("            0xFFFFFFFF,");
                 }
             }
             return sb.ToString();

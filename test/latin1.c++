@@ -33,7 +33,7 @@ TEST_CASE("latin1", "ISO-8859-1 encoding form") {
     SECTION("decode", "Decoding ISO-8859-1") {
         auto encoded = { 0x41_b, 0x82_b };
         auto range = ogonek::latin1::decode(encoded, ogonek::skip_validation);
-        std::vector<ogonek::codepoint> decoded(boost::begin(range), boost::end(range));
+        std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
         REQUIRE(decoded.size() == 2);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x0082');
@@ -41,7 +41,7 @@ TEST_CASE("latin1", "ISO-8859-1 encoding form") {
     SECTION("validation", "Validating ISO-8859-1") {
         auto encoded = { 0x41_b, 0x82_b, 0xFF_b };
         auto range = ogonek::latin1::decode(encoded, ogonek::use_replacement_character);
-        std::vector<ogonek::codepoint> decoded(boost::begin(range), boost::end(range));
+        std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
         REQUIRE(decoded.size() == 3);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x0082');

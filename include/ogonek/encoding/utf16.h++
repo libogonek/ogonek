@@ -31,8 +31,8 @@
 namespace ogonek {
     struct utf16 {
     private:
-        static constexpr codepoint last_bmp_value = 0xFFFF;
-        static constexpr codepoint normalizing_value = 0x10000;
+        static constexpr code_point last_bmp_value = 0xFFFF;
+        static constexpr code_point normalizing_value = 0x10000;
         static constexpr auto lead_surrogate_bitmask = 0xFFC00;
         static constexpr auto trail_surrogate_bitmask = 0x3FF;
         static constexpr auto lead_shifted_bits = 10;
@@ -63,7 +63,7 @@ namespace ogonek {
         }
 
         template <typename ValidationPolicy>
-        static detail::coded_character<utf16> encode_one(codepoint u, state&, ValidationPolicy) {
+        static detail::coded_character<utf16> encode_one(code_point u, state&, ValidationPolicy) {
             if(u <= last_bmp_value) {
                 return { static_cast<code_unit>(u) };
             } else {
@@ -77,14 +77,14 @@ namespace ogonek {
             }
         }
 
-        static codepoint combine_surrogates(char16_t lead, char16_t trail) {
+        static code_point combine_surrogates(char16_t lead, char16_t trail) {
             auto hi = lead - detail::first_lead_surrogate;
             auto lo = trail - detail::first_trail_surrogate;
             return normalizing_value + ((hi << lead_shifted_bits) | lo);
         }
 
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, skip_validation_t) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state&, skip_validation_t) {
             auto first = boost::begin(r);
             auto lead = *first++;
             if(!detail::is_surrogate(lead)) {
@@ -96,7 +96,7 @@ namespace ogonek {
             return { first, boost::end(r) };
         }
         template <typename SinglePassRange, typename ValidationPolicy>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s, ValidationPolicy) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, ValidationPolicy) {
             auto first = boost::begin(r);
             auto lead = *first++;
 

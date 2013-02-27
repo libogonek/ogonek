@@ -38,7 +38,7 @@ namespace ogonek {
         static constexpr bool is_fixed_width = true;
         static constexpr std::size_t max_width = 1;
         static constexpr bool is_self_synchronizing = true;
-        static constexpr codepoint replacement_character = U'?';
+        static constexpr code_point replacement_character = U'?';
         struct state {};
 
         template <typename SinglePassRange, typename ValidationPolicy,
@@ -58,12 +58,12 @@ namespace ogonek {
                     DecodingIterator { boost::end(r), boost::end(r) });
         }
 
-        static detail::coded_character<ascii> encode_one(codepoint u, state&, skip_validation_t) {
+        static detail::coded_character<ascii> encode_one(code_point u, state&, skip_validation_t) {
             return { static_cast<code_unit>(u) };
         }
 
 	template <typename ValidationPolicy>
-        static detail::coded_character<ascii> encode_one(codepoint u, state& s, ValidationPolicy) {
+        static detail::coded_character<ascii> encode_one(code_point u, state& s, ValidationPolicy) {
             if(u <= last_ascii_value) {
                 return { static_cast<code_unit>(u) };
             } else {
@@ -72,13 +72,13 @@ namespace ogonek {
         }
 
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, skip_validation_t) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state&, skip_validation_t) {
             auto first = boost::begin(r);
             out = *first++;
             return { first, boost::end(r) };
         }
         template <typename SinglePassRange, typename ValidationPolicy>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s, ValidationPolicy) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, ValidationPolicy) {
             auto first = boost::begin(r);
             byte b = *first++;
             if(b > last_ascii_value) {

@@ -16,24 +16,24 @@
 
 namespace ogonek {
     namespace detail {
-        constexpr codepoint last_codepoint = 0x10FFFF;
+        constexpr code_point last_code_point = 0x10FFFF;
 
-        constexpr codepoint first_lead_surrogate = 0xD800;
-        constexpr codepoint last_lead_surrogate = 0xDBFF;
+        constexpr code_point first_lead_surrogate = 0xD800;
+        constexpr code_point last_lead_surrogate = 0xDBFF;
 
-        constexpr codepoint first_trail_surrogate = 0xDC00;
-        constexpr codepoint last_trail_surrogate = 0xDFFF;
+        constexpr code_point first_trail_surrogate = 0xDC00;
+        constexpr code_point last_trail_surrogate = 0xDFFF;
 
-        constexpr codepoint first_surrogate = first_lead_surrogate;
-        constexpr codepoint last_surrogate = last_trail_surrogate;
+        constexpr code_point first_surrogate = first_lead_surrogate;
+        constexpr code_point last_surrogate = last_trail_surrogate;
 
-        constexpr bool is_lead_surrogate(codepoint u) {
+        constexpr bool is_lead_surrogate(code_point u) {
             return u >= first_lead_surrogate && u <= last_lead_surrogate;
         }
-        constexpr bool is_trail_surrogate(codepoint u) {
+        constexpr bool is_trail_surrogate(code_point u) {
             return u >= first_trail_surrogate && u <= last_trail_surrogate;
         }
-        constexpr bool is_surrogate(codepoint u) {
+        constexpr bool is_surrogate(code_point u) {
             return u >= first_surrogate && u <= last_surrogate;
         }
     } // namespace detail

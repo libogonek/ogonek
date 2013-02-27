@@ -14,7 +14,7 @@
 #ifndef OGONEK_ENCODING_WINDOWS1252_HPP
 #define OGONEK_ENCODING_WINDOWS1252_HPP
 
-#include <ogonek/encoding/cp1252.h++>
+#include <ogonek/encoding/cp1252.g.h++>
 
 namespace ogonek {
     using windows1252 = cp1252;

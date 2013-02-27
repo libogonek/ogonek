@@ -16,7 +16,6 @@
 
 namespace ogonek {
     using byte = unsigned char;
-    using codepoint = char32_t;
     using code_point = char32_t;
 
     namespace literal {

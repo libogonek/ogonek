@@ -35,11 +35,11 @@ namespace ogonek {
 
     struct throw_validation_error_t {
         template <typename EncodingForm, typename Range>
-        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const&, typename EncodingForm::state&, codepoint&) {
+        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const&, typename EncodingForm::state&, code_point&) {
             throw validation_error();
         }
         template <typename EncodingForm>
-        static detail::coded_character<EncodingForm> apply_encode(codepoint, typename EncodingForm::state&) {
+        static detail::coded_character<EncodingForm> apply_encode(code_point, typename EncodingForm::state&) {
             throw validation_error();
         }
     } constexpr throw_validation_error = {};
@@ -58,33 +58,33 @@ namespace ogonek {
 
         template <typename EncodingForm, bool Custom = has_custom_replacement_character<EncodingForm>::value>
         struct replacement_character {
-            static constexpr codepoint value = U'\xFFFD';
+            static constexpr code_point value = U'\xFFFD';
         };
         template <typename EncodingForm>
         struct replacement_character<EncodingForm, true> {
-            static constexpr codepoint value = EncodingForm::replacement_character;
+            static constexpr code_point value = EncodingForm::replacement_character;
         };
     } // namespace detail
 
     struct use_replacement_character_t {
         template <typename EncodingForm, typename Range>
-        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, typename EncodingForm::state&, codepoint& out) {
+        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, typename EncodingForm::state&, code_point& out) {
             out = U'\xFFFD';
             return { std::next(boost::begin(source)), boost::end(source) };
         }
         template <typename EncodingForm>
-        static detail::coded_character<EncodingForm> apply_encode(codepoint, typename EncodingForm::state& s) {
+        static detail::coded_character<EncodingForm> apply_encode(code_point, typename EncodingForm::state& s) {
             return EncodingForm::encode_one(detail::replacement_character<EncodingForm>::value, s, skip_validation);
         }
     } constexpr use_replacement_character = {};
 
     struct ignore_errors_t {
         template <typename EncodingForm, typename Range>
-        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, typename EncodingForm::state&, codepoint&) {
+        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, typename EncodingForm::state&, code_point&) {
             return { std::next(boost::begin(source)), boost::end(source) };
         }
         template <typename EncodingForm>
-        static detail::coded_character<EncodingForm> apply_encode(codepoint, typename EncodingForm::state&) {
+        static detail::coded_character<EncodingForm> apply_encode(code_point, typename EncodingForm::state&) {
             return {};
         }
     } constexpr ignore_errors = {};

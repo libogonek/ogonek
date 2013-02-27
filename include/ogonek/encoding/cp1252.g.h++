@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-02-27T01:59:01.1760520Z
+// This file was automatically generated on 2013-02-27T10:33:04.3116950Z
 
 // CP1252 encoding form
 
@@ -152,7 +152,7 @@ namespace ogonek {
             0x7E,
             0x7F,
             0x20AC,
-            -1,
+            0xFFFFFFFF,
             0x201A,
             0x192,
             0x201E,
@@ -164,10 +164,10 @@ namespace ogonek {
             0x160,
             0x2039,
             0x152,
-            -1,
+            0xFFFFFFFF,
             0x17D,
-            -1,
-            -1,
+            0xFFFFFFFF,
+            0xFFFFFFFF,
             0x2018,
             0x2019,
             0x201C,
@@ -180,7 +180,7 @@ namespace ogonek {
             0x161,
             0x203A,
             0x153,
-            -1,
+            0xFFFFFFFF,
             0x17E,
             0x178,
             0xA0,

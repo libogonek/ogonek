@@ -89,13 +89,13 @@ namespace ogonek {
 
         // -- codepoints
         //! Construct from a null-terminated codepoint string (intended for UTF-32 literals)
-        text(codepoint const* literal)
+        text(code_point const* literal)
         : text(literal, throw_validation_error) {}
 
         //! Construct from a null-terminated codepoint string, with validation callback
         template <typename ValidationPolicy>
-        text(codepoint const* literal, ValidationPolicy)
-        : text(boost::make_iterator_range(literal, literal + std::char_traits<codepoint>::length(literal)),
+        text(code_point const* literal, ValidationPolicy)
+        : text(boost::make_iterator_range(literal, literal + std::char_traits<code_point>::length(literal)),
                      ValidationPolicy{}) {}
 
         //! Construct from a codepoint range
@@ -107,7 +107,7 @@ namespace ogonek {
         template <typename CodepointRange, typename ValidationPolicy>
         text(CodepointRange const& range, ValidationPolicy)
         : text(direct{}, EncodingForm::encode(range, ValidationPolicy{})) {
-            static_assert(std::is_same<detail::RangeValueType<CodepointRange>, codepoint>::value,
+            static_assert(std::is_same<detail::RangeValueType<CodepointRange>, code_point>::value,
                           "Can only construct text from a range of codepoints");
         }
 
@@ -163,7 +163,7 @@ namespace ogonek {
 
     class any_text {
     public:
-        using iterator = boost::any_range<codepoint, boost::single_pass_traversal_tag, codepoint, std::ptrdiff_t>::iterator;
+        using iterator = boost::any_range<code_point, boost::single_pass_traversal_tag, code_point, std::ptrdiff_t>::iterator;
         using const_iterator = iterator;
 
     private:

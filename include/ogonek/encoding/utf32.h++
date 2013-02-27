@@ -53,21 +53,21 @@ namespace ogonek {
         }
 
         template <typename ValidationPolicy>
-        static detail::coded_character<utf32> encode_one(codepoint u, state&, ValidationPolicy) {
+        static detail::coded_character<utf32> encode_one(code_point u, state&, ValidationPolicy) {
             return { u };
         }
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, skip_validation_t) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state&, skip_validation_t) {
             auto first = boost::begin(r);
             out = *first++;
             return { first, boost::end(r) };
         }
         template <typename SinglePassRange, typename ValidationPolicy>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s, ValidationPolicy) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, ValidationPolicy) {
             auto first = boost::begin(r);
             auto u = *first++;
 
-            if(u > detail::last_codepoint || detail::is_surrogate(u)) {
+            if(u > detail::last_code_point || detail::is_surrogate(u)) {
                 return ValidationPolicy::template apply_decode<utf32>(r, s, out);
             }
 

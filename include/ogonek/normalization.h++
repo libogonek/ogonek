@@ -29,9 +29,9 @@ namespace ogonek {
         struct decomposing_iterator
         : boost::iterator_facade<
             decomposing_iterator<Iterator>,
-            codepoint,
+            code_point,
             std::input_iterator_tag, // TODO
-            codepoint
+            code_point
           > {
         public:
             decomposing_iterator(Iterator first, Iterator last)
@@ -41,7 +41,7 @@ namespace ogonek {
                 }
             }
 
-            codepoint dereference() const {
+            code_point dereference() const {
                 return current[position];
             }
             bool equal(decomposing_iterator const& that) const {
@@ -78,7 +78,7 @@ namespace ogonek {
 
             Iterator first, last;
             int position = depleted;
-            vector_type<codepoint, 4> current;
+            vector_type<code_point, 4> current;
         };
 
         template <typename Iterator>
@@ -88,9 +88,9 @@ namespace ogonek {
         struct ordered_decomposing_iterator
         : boost::iterator_facade<
             ordered_decomposing_iterator<Iterator>,
-            codepoint,
+            code_point,
             std::input_iterator_tag, // TODO
-            codepoint
+            code_point
           > {
         public:
             ordered_decomposing_iterator(Iterator first, Iterator last)
@@ -100,7 +100,7 @@ namespace ogonek {
                 }
             }
 
-            codepoint dereference() const {
+            code_point dereference() const {
                 return current[position];
             }
             bool equal(ordered_decomposing_iterator const& that) const {
@@ -124,7 +124,7 @@ namespace ogonek {
                     current.push_back(*it++);
                 }
                 std::sort(current.begin(), current.end(),
-                          [](codepoint a, codepoint b) {
+                          [](code_point a, code_point b) {
                               return ucd::get_combining_class(a) < ucd::get_combining_class(b);
                           });
                 position = 0;
@@ -141,7 +141,7 @@ namespace ogonek {
 
             decomposing_iterator<Iterator> it;
             int position = depleted;
-            vector_type<codepoint, 4> current;
+            vector_type<code_point, 4> current;
         };
 
         template <typename Iterator>
@@ -171,9 +171,9 @@ namespace ogonek {
         struct composing_iterator
         : boost::iterator_facade<
             composing_iterator<Iterator>,
-            codepoint,
+            code_point,
             std::input_iterator_tag, // TODO
-            codepoint
+            code_point
           > {
             composing_iterator(Iterator first, Iterator last)
             : it(std::move(first), std::move(last)), exhausted(it.exhausted()) {
@@ -182,7 +182,7 @@ namespace ogonek {
                 }
             }
 
-            codepoint dereference() const {
+            code_point dereference() const {
                 return current;
             }
             bool equal(composing_iterator const& that) const {
@@ -201,8 +201,8 @@ namespace ogonek {
             }
 
         private:
-            static void compose(vector_type<codepoint, 4>& sequence) {
-                auto is_blocked = [](codepoint u, int last_ccc) {
+            static void compose(vector_type<code_point, 4>& sequence) {
+                auto is_blocked = [](code_point u, int last_ccc) {
                     return last_ccc != -1 && (last_ccc == 0 || last_ccc >= ucd::get_combining_class(u));
                 };
                 for(auto l = sequence.begin(); l != sequence.end(); ++l) {
@@ -222,7 +222,7 @@ namespace ogonek {
             
             ordered_decomposing_iterator<Iterator> it;
             bool exhausted;
-            codepoint current;
+            code_point current;
         };
     } // namespace detail
 

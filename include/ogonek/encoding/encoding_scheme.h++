@@ -104,7 +104,7 @@ namespace ogonek {
         }
 
         template <typename ValidationPolicy>
-        static detail::coded_character<encoding_scheme<EncodingForm, ByteOrder>> encode_one(codepoint u, state& s, ValidationPolicy) {
+        static detail::coded_character<encoding_scheme<EncodingForm, ByteOrder>> encode_one(code_point u, state& s, ValidationPolicy) {
             std::array<byte, max_width> result;
             auto encoded = EncodingForm::encode_one(u, s, ValidationPolicy{});
             auto out = result.begin();
@@ -115,7 +115,7 @@ namespace ogonek {
             return { result, std::size_t(out - result.begin()) };
         }
         template <typename SinglePassRange, typename ValidationPolicy>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s, ValidationPolicy) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, ValidationPolicy) {
             using code_unit_range = detail::byte_ordered_range<ByteOrder, typename EncodingForm::code_unit, SinglePassRange>;
             using iterator = typename boost::range_iterator<code_unit_range>::type;
             code_unit_range range {

@@ -36,7 +36,7 @@ namespace ogonek {
             bool is_break;
             gcb after;
 
-            bool matches(codepoint before, codepoint after) const;
+            bool matches(code_point before, code_point after) const;
         };
     } // namespace detail
 } // namespace ogonek
@@ -74,12 +74,12 @@ namespace ogonek {
             // Otherwise, break everywhere.
             /* GB10. */                      gcb_any / gcb_any,
         };
-        inline bool grapheme_cluster_rule::matches(codepoint before, codepoint after) const {
+        inline bool grapheme_cluster_rule::matches(code_point before, code_point after) const {
             const gcb none = static_cast<gcb>(0);
             return (ucd::get_grapheme_cluster_break(before) & this->before) != none
                 && (ucd::get_grapheme_cluster_break(after) & this->after) != none;
         }
-        inline bool is_grapheme_cluster_boundary(codepoint before, codepoint after) {
+        inline bool is_grapheme_cluster_boundary(code_point before, code_point after) {
             return std::find_if(std::begin(grapheme_cluster_rules), std::end(grapheme_cluster_rules),
                                 [before, after](grapheme_cluster_rule const& rule) {
                                     return rule.matches(before, after);
@@ -142,7 +142,7 @@ namespace ogonek {
             wb after0;
             wb after1;
 
-            bool matches(codepoint before1, codepoint before0, codepoint after0, codepoint after1) const;
+            bool matches(code_point before1, code_point before0, code_point after0, code_point after1) const;
         };
     } // namespace detail
 } // namespace ogonek
@@ -197,21 +197,21 @@ namespace ogonek {
             // Otherwise, break everywhere (including around ideographs).
             /* WB14. */                               wb_any / wb_any,
         };
-        inline bool word_rule::matches(codepoint before1, codepoint before0, codepoint after0, codepoint after1) const {
+        inline bool word_rule::matches(code_point before1, code_point before0, code_point after0, code_point after1) const {
             const wb none = static_cast<wb>(0);
             return (this->before1 == wb_any || (before1 != -1u && (ucd::get_word_break(before1) & this->before1) != none))
                 && (ucd::get_word_break(before0) & this->before0) != none
                 && (ucd::get_word_break(after0) & this->after0) != none
                 && (this->after1 == wb_any || (after1 != -1u && (ucd::get_word_break(after1) & this->after1) != none));
         }
-        inline bool is_word_boundary(codepoint before1, codepoint before0, codepoint after0, codepoint after1) {
+        inline bool is_word_boundary(code_point before1, code_point before0, code_point after0, code_point after1) {
             return std::find_if(std::begin(word_rules), std::end(word_rules),
                                 [before1, before0, after0, after1](word_rule const& rule) {
                                     return rule.matches(before1, before0, after0, after1);
                                 })
                    ->is_break;
         }
-        inline bool should_skip_in_word(codepoint before, codepoint after) {
+        inline bool should_skip_in_word(code_point before, code_point after) {
             return before != -1u && after != -1u &&
                 word_rules[3].matches(-1, before, after, -1);
                 //|| word_rules[3].matches(-1, after, before, -1));
