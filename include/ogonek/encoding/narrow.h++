@@ -67,7 +67,7 @@ namespace ogonek {
                 return { units, r };
             } else {
                 throw validation_error();
-                // FFS, else what?
+                // TODO FFS, else what?
             }
         }
 

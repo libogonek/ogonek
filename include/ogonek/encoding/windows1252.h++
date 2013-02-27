@@ -88,11 +88,7 @@ namespace ogonek {
                 return { static_cast<code_unit>(u & 0xFF) };
             } else {
                 auto b = find_decoded(u);
-                if(b != static_cast<byte>(-1)) {
-                    return { static_cast<code_unit>(b) };
-                } else {
-                    return {};
-                }
+                return { static_cast<code_unit>(b) };
             }
         }
 

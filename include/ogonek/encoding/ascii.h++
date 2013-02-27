@@ -59,11 +59,7 @@ namespace ogonek {
         }
 
         static detail::coded_character<ascii> encode_one(codepoint u, state&, skip_validation_t) {
-            if(u <= last_ascii_value) {
-                return { static_cast<code_unit>(u) };
-            } else {
-                return {};
-            }
+            return { static_cast<code_unit>(u) };
         }
 
 	template <typename ValidationPolicy>

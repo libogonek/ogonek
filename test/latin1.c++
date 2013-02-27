@@ -54,7 +54,7 @@ TEST_CASE("latin1", "ISO-8859-1 encoding form") {
         REQUIRE(encoded.size() == 3);
         CHECK(encoded[0] == 0x41_b);
         CHECK(encoded[1] == 0x32_b);
-        CHECK(encoded[2] == '?');
+        CHECK(encoded[2] == 0x3F_b);
     }
 }
 
