@@ -82,11 +82,23 @@ namespace ogonek {
             }
         }
 
-        template <typename SinglePassRange, typename ValidationPolicy>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, ValidationPolicy) {
+        template <typename SinglePassRange>
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, skip_validation_t) {
             auto first = boost::begin(r);
             out = Codepage::to_unicode[*first++];
             return { first, boost::end(r) };
+        }
+        
+        template <typename SinglePassRange, typename ValidationPolicy>
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state& s, ValidationPolicy) {
+            auto first = boost::begin(r);
+            auto decoded = Codepage::to_unicode[*first++];
+            if(decoded == code_point(-1)) {
+                return ValidationPolicy::template apply_decode<codepage_encoding<Codepage>>(r, s, out);
+            } else {
+                out = decoded;
+                return { first, boost::end(r) };
+            }
         }
     };
 } // namespace ogonek
