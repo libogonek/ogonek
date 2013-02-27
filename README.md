@@ -8,13 +8,18 @@ Check out the [documentation] for more detailed information.
 
 Ogonek is mostly header-only. The only part that needs compilation is the data
 in the Unicode Character Database. Currently I am translating the database to
-C++ source as static initializers (I am aware of the benefits and drawbacks of
+C++ source as static initializers (I am aware of benefits and drawbacks of this
+and other approaches and may or may not change in future versions).
 
-You can compile that data whole shebang by running `scons dist` from the
-command line (requires SCons to be installed, for obvious reasons). This will
-create a zip file in the dist/ directory with both the headers and the library
-files necessary to use ogonek. By default, a static library is built. To build
-a shared library (DLL), add `lib=shared` to the command-line when building.
+You can compile that data by running `scons dist` from the command line
+(requires SCons to be installed, for obvious reasons). This will create a zip
+file in the dist/ directory with both the headers and the library files
+necessary to use ogonek. By default, a static library is built. To build a
+shared library (DLL), add `lib=shared` to the command-line when building.
+
+Note that as of this writing only compilation with GCC 4.7.2 and clang 3.2 has
+been tested. MSVC will only be considered as a target after the big C++11
+update to VS 2012.
 
 # Helping out
 
