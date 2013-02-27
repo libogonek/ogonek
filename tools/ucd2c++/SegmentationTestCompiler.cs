@@ -19,7 +19,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Xml.Linq;
 
 [assembly: AssemblyTitle("Ogonek.SegmentationTestCompiler")]
 [assembly: AssemblyDescription("Unicode segmentation test-to-C++ compiler")]

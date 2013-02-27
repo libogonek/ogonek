@@ -19,7 +19,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Xml.Linq;
 
 [assembly: AssemblyTitle("Ogonek.NormalizationTestCompiler")]
 [assembly: AssemblyDescription("Unicode normalization test-to-C++ compiler")]
