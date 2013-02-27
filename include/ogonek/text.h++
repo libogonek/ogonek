@@ -262,4 +262,16 @@ namespace ogonek {
     };
 } // namespace ogonek
 
+#include <ogonek/normalization.h++>
+
+namespace ogonek {
+    template <typename Encoding1, typename Container1, typename Encoding2, typename Container2>
+    bool operator==(text<Encoding1, Container1> const& lhs, text<Encoding2, Container2> const& rhs) {
+        return canonically_equivalent(lhs, rhs);
+    }
+    template <typename Encoding1, typename Container1, typename Encoding2, typename Container2>
+    bool operator!=(text<Encoding1, Container1> const& lhs, text<Encoding2, Container2> const& rhs) {
+        return !(lhs == rhs);
+    }
+} // namespace ogonek
 #endif // OGONEK_TEXT_HPP

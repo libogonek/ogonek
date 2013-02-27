@@ -76,6 +76,13 @@ TEST_CASE("text", "text tests") {
 
         // (fail to) construct ASCII text from data not ASCII compatible
         REQUIRE_THROWS_AS(text_ascii { U"blah\x80" }, ogonek::validation_error);
+        
+        // Canonical equivalence through ==
+        text8 k { string8 { u8"bla\u0308h" } };
+        text16 l { string16 { u"bl\u00e4h" } };
+        text16 m { string16 { u"blah" } };
+        REQUIRE(k == l);
+        REQUIRE(k != m);
     }
     SECTION("any", "any_text tests") {
         auto foo = text16 { U"foo" };

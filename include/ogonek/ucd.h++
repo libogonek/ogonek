@@ -15,7 +15,6 @@
 #define OGONEK_UCD_HPP
 
 #include <ogonek/types.h++>
-#include <ogonek/text.h++>
 #include <ogonek/encoding/utf8.h++>
 #include <ogonek/detail/array_slice.h++>
 #include <ogonek/detail/small_vector.h++>
@@ -27,11 +26,6 @@
 #include <string>
 
 namespace ogonek {
-    // Forward declare for text properties
-    template <typename Encoding, typename Container>
-    class text;
-    class utf8;
-
     template <typename T, std::size_t N>
     using vector_type = detail::small_vector<T, N>; 
 
@@ -455,8 +449,6 @@ namespace ogonek {
         extern OGONEK_PUBLIC miscellaneous_properties const* miscellaneous_data;
         extern OGONEK_PUBLIC std::size_t miscellaneous_data_size;
 
-        using text_type = text<utf8, std::string>;
-
         namespace detail {
             struct property_group_locator {
                 template <typename T>
@@ -481,48 +473,6 @@ namespace ogonek {
 
         inline version get_age(code_point u) {
             return detail::find_property_group(version_data, version_data_size, u).data;
-        }
-
-        namespace detail {
-            inline std::string to_hex(code_point u) {
-                char const hex[] = "0123456789ABCDEF";
-                std::string result;
-                int factor;
-                if(u > 0xFFFFF) factor = 0x100000;
-                else if(u > 0xFFFF) factor = 0x10000;
-                else factor = 0x1000;
-                for(; factor > 0; u %= factor, factor /= 0x10) {
-                    result.push_back(hex[u / factor]);
-                }
-                return result;
-            }
-
-            inline text_type get_name(name_properties const* data, std::size_t data_size, code_point u) {
-                name_properties const& p = detail::find_property_group(data, data_size, u);
-                if(p.variable) {
-                    std::string name { p.name };
-                    name.reserve(name.size() + 5);
-                    name.replace(name.find('#'), 1, to_hex(u));
-                    return text_type { std::move(name) };
-                } else {
-                    return text_type {{ p.name }};
-                }
-            }
-        } // namespace detail
-        inline text_type get_name(code_point u) {
-            return detail::get_name(name_data, name_data_size, u);
-        }
-        inline text_type get_unicode1_name(code_point u) {
-            return detail::get_name(v1name_data, v1name_data_size, u);
-        }
-        struct alias {
-            alias(alias_raw const& raw) : type{raw.type}, name{{raw.name}} {}
-            alias_type type;
-            text_type name;
-        };
-        inline std::vector<alias> get_aliases(code_point u) {
-            auto group = detail::find_property_group(aliases_data, aliases_data_size, u);
-            return { group.first, group.first + group.count };
         }
 
         inline block get_block(code_point u) {
@@ -729,14 +679,8 @@ namespace ogonek {
             auto& prop = detail::find_property_group(script_data, script_data_size, u);
             return { prop.first_script_extension, prop.first_script_extension + prop.script_extension_count };
         }
-        inline text_type get_iso_comment(code_point u) {
-            return text_type { detail::find_property_group(iso_comment_data, iso_comment_data_size, u).data };
-        }
         inline hangul_syllable_type get_hangul_syllable_type(code_point u) {
             return detail::find_property_group(hangul_data, hangul_data_size, u).syllable_type;
-        }
-        inline text_type get_jamo_short_name(code_point u) {
-            return text_type {{ detail::find_property_group(hangul_data, hangul_data_size, u).jamo_short_name }};
         }
         inline indic_syllable_category get_indic_syllable_category(code_point u) {
             return detail::find_property_group(indic_data, indic_data_size, u).syllable_category;
@@ -867,6 +811,61 @@ namespace ogonek {
         }
         inline bool is_noncharacter(code_point u) {
             return detail::find_property_group(miscellaneous_data, miscellaneous_data_size, u).noncharacter;
+        }
+    } //namespace ucd
+} // namespace ogonek
+
+#include <ogonek/text.h++>
+
+namespace ogonek {
+    namespace ucd {
+        using text_type = text<utf8, std::string>;
+        namespace detail {
+            inline std::string to_hex(code_point u) {
+                char const hex[] = "0123456789ABCDEF";
+                std::string result;
+                int factor;
+                if(u > 0xFFFFF) factor = 0x100000;
+                else if(u > 0xFFFF) factor = 0x10000;
+                else factor = 0x1000;
+                for(; factor > 0; u %= factor, factor /= 0x10) {
+                    result.push_back(hex[u / factor]);
+                }
+                return result;
+            }
+
+            inline text_type get_name(name_properties const* data, std::size_t data_size, code_point u) {
+                name_properties const& p = detail::find_property_group(data, data_size, u);
+                if(p.variable) {
+                    std::string name { p.name };
+                    name.reserve(name.size() + 5);
+                    name.replace(name.find('#'), 1, to_hex(u));
+                    return text_type { std::move(name) };
+                } else {
+                    return text_type {{ p.name }};
+                }
+            }
+        } // namespace detail
+        inline text_type get_name(code_point u) {
+            return detail::get_name(name_data, name_data_size, u);
+        }
+        inline text_type get_unicode1_name(code_point u) {
+            return detail::get_name(v1name_data, v1name_data_size, u);
+        }
+        struct alias {
+            alias(alias_raw const& raw) : type{raw.type}, name{{raw.name}} {}
+            alias_type type;
+            text_type name;
+        };
+        inline std::vector<alias> get_aliases(code_point u) {
+            auto group = detail::find_property_group(aliases_data, aliases_data_size, u);
+            return { group.first, group.first + group.count };
+        }
+        inline text_type get_iso_comment(code_point u) {
+            return text_type { detail::find_property_group(iso_comment_data, iso_comment_data_size, u).data };
+        }
+        inline text_type get_jamo_short_name(code_point u) {
+            return text_type {{ detail::find_property_group(hangul_data, hangul_data_size, u).jamo_short_name }};
         }
     } //namespace ucd
 } // namespace ogonek
