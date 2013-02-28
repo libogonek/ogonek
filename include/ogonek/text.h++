@@ -265,12 +265,37 @@ namespace ogonek {
 #include <ogonek/normalization.h++>
 
 namespace ogonek {
+    template <typename SinglePassRange1, typename SinglePassRange2>
+    bool canonically_equivalent(SinglePassRange1 const& lhs, SinglePassRange2 const& rhs);
+        
     template <typename Encoding1, typename Container1, typename Encoding2, typename Container2>
     bool operator==(text<Encoding1, Container1> const& lhs, text<Encoding2, Container2> const& rhs) {
         return canonically_equivalent(lhs, rhs);
     }
     template <typename Encoding1, typename Container1, typename Encoding2, typename Container2>
     bool operator!=(text<Encoding1, Container1> const& lhs, text<Encoding2, Container2> const& rhs) {
+        return !(lhs == rhs);
+    }
+    template <typename Encoding, typename Container>
+    bool operator==(any_text const& lhs, text<Encoding, Container> const& rhs) {
+        return canonically_equivalent(lhs, rhs);
+    }
+    template <typename Encoding, typename Container>
+    bool operator!=(any_text const& lhs, text<Encoding, Container> const& rhs) {
+        return !(lhs == rhs);
+    }
+    template <typename Encoding, typename Container>
+    bool operator==(text<Encoding, Container> const& lhs, any_text const& rhs) {
+        return canonically_equivalent(lhs, rhs);
+    }
+    template <typename Encoding, typename Container>
+    bool operator!=(text<Encoding, Container> const& lhs, any_text const& rhs) {
+        return !(lhs == rhs);
+    }
+    inline bool operator==(any_text const& lhs, any_text const& rhs) {
+        return canonically_equivalent<any_text, any_text>(lhs, rhs);
+    }
+    inline bool operator!=(any_text const& lhs, any_text const& rhs) {
         return !(lhs == rhs);
     }
 } // namespace ogonek
