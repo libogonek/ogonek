@@ -138,6 +138,10 @@ namespace ogonek {
             return storage_;
         }
 
+        //** Operations **
+
+        bool empty() const { return storage_.empty(); }
+
     private:
         template <typename Range>
         text(direct, Range&& range)
@@ -185,6 +189,8 @@ namespace ogonek {
             virtual void* get() = 0;
             virtual void const* get() const = 0;
 
+            virtual bool empty() const = 0;
+            
         protected:
             placeholder(placeholder const&) = default;
             placeholder(placeholder&&) = default;
@@ -209,6 +215,8 @@ namespace ogonek {
 
             void* get() override { return &t; }
             void const* get() const override { return &t; }
+            
+            bool empty() const override { return t.empty(); }
 
         private:
             holder(holder const&) = default;
@@ -219,7 +227,6 @@ namespace ogonek {
 
     public:
         //** Constructors **
-        any_text() {}
         any_text(any_text const& that)
         : handle { that.handle->clone() } {}
         any_text(any_text&&) = default;
@@ -256,6 +263,8 @@ namespace ogonek {
         Text& get() { return *static_cast<Text*>(handle->get()); }
         template <typename Text>
         Text const& get() const { return *static_cast<Text const*>(handle->get()); }
+        
+        bool empty() const { return handle->empty(); }
 
     private:
         handle_type handle;

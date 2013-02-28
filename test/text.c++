@@ -77,12 +77,23 @@ TEST_CASE("text", "text tests") {
         // (fail to) construct ASCII text from data not ASCII compatible
         REQUIRE_THROWS_AS(text_ascii { U"blah\x80" }, ogonek::validation_error);
         
+        REQUIRE(text8{}.empty());
+        
         // Canonical equivalence through ==
         text8 k { string8 { u8"bla\u0308h" } };
         text16 l { string16 { u"bl\u00e4h" } };
         text16 m { string16 { u"blah" } };
+        REQUIRE(k == k);
         REQUIRE(k == l);
         REQUIRE(k != m);
+        REQUIRE(l == k);
+        REQUIRE(l == l);
+        REQUIRE(l != m);
+        REQUIRE(m != k);
+        REQUIRE(m != l);
+        REQUIRE(m == m);
+        
+        // Emptiness
     }
     SECTION("any", "any_text tests") {
         auto foo = text16 { U"foo" };
@@ -94,6 +105,22 @@ TEST_CASE("text", "text tests") {
         any = bar;
         REQUIRE(std::equal(any.begin(), any.end(), bar.begin()));
         REQUIRE(any.get<text8>().storage() == string8(u8"bar"));
+        
+        REQUIRE(ogonek::any_text{text8{}}.empty());
+        
+        // Canonical equivalence through ==
+        ogonek::any_text a = text16 { U"bla\u0308h" };
+        ogonek::any_text b = text8 { U"bl\u00e4h" };
+        ogonek::any_text c = text32 { U"blah" };
+        REQUIRE(a == a);
+        REQUIRE(a == b);
+        REQUIRE(a != c);
+        REQUIRE(b == a);
+        REQUIRE(b == b);
+        REQUIRE(b != c);
+        REQUIRE(c != a);
+        REQUIRE(c != b);
+        REQUIRE(c == c);
     }
 }
 
