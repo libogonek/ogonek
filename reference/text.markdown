@@ -7,8 +7,7 @@ title: ogonek::text reference
 
 {% highlight cpp %}
 namespace ogonek {
-    template <typename EncodingForm,
-              typename Container = std::basic_string<CodeUnit<EncodingForm>>>
+    template <typename EncodingForm, typename Container = std::basic_string<CodeUnit<EncodingForm>>>
     class text {
         // Construction
         text(); 
