@@ -64,52 +64,33 @@ namespace ogonek {
         bool empty() const;
 
         // Appending
-        iterator append(text const& that);
-        iterator append(text&& that);
-        template <typename EncodingForm1, typename Container1>
-        iterator append(text<EncodingForm1, Container1> const& that);
-
-        iterator append(code_point const* literal);
-        template <typename Validation>
-        iterator append(code_point const* literal, Validation validation);
-
         template <typename CodePointRange>
-        iterator append(CodePointRange const& range);
+        iterator append(CodePointRange&& that);
         template <typename CodePointRange, typename Validation>
-        iterator append(CodePointRange const& range, Validation validation);
+        iterator append(CodePointRange&& range, Validation validation);
 
         // Erasure
         iterator erase(iterator first, iterator last);
+        template <typename Range>
+        iterator erase(Range const& range);
 
         // Insertion
-        iterator insert(iterator at, text const& that);
-        iterator insert(iterator at, text&& that);
-        template <typename EncodingForm1, typename Container1>
-        iterator insert(iterator at, text<EncodingForm1, Container1> const& that);
-
-        iterator insert(iterator at, code_point const* literal);
-        template <typename Validation>
-        iterator insert(iterator at, code_point const* literal, Validation validation);
-
         template <typename CodePointRange>
-        iterator insert(iterator at, CodePointRange const& range);
+        iterator insert(iterator at, CodePointRange&& that);
         template <typename CodePointRange, typename Validation>
-        iterator insert(iterator at, CodePointRange const& range, Validation validation);
+        iterator insert(iterator at, CodePointRange&& that, Validation validation);
 
         // Replacement
-        void replace(iterator from, iterator to, text const& that);
-        void replace(iterator from, iterator to, text&& that);
-        template <typename EncodingForm1, typename Container1>
-        void replace(iterator from, iterator to, text<EncodingForm1, Container1> const& that);
-
-        void replace(iterator from, iterator to, code_point const* literal);
-        template <typename Validation>
-        void replace(iterator from, iterator to, code_point const* literal, Validation validation);
+        template <typename Range, typename CodePointRange>
+        void replace(Range const& range, CodePointRange&& range);
+        template <typename Range, typename CodePointRange, typename Validation>
+        void replace(Range const& range, CodePointRange&& range, Validation validation);
 
         template <typename CodePointRange>
-        void replace(iterator from, iterator to, CodePointRange const& range);
+        void replace(iterator from, iterator to, CodePointRange&& range);
         template <typename CodePointRange, typename Validation>
-        void replace(iterator from, iterator to, CodePointRange const& range, Validation validation);
+        void replace(iterator from, iterator to, CodePointRange&& range, Validation validation);
+
     };
 
     // Canonical equivalence
