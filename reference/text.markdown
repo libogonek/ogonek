@@ -101,7 +101,7 @@ namespace ogonek {
     bool operator>=(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
 
     // Concatenation
-    template <typename EncodingForm = /*magic*/, typename Container = /*magic*/, typename... Ranges>
+    template <typename EncodingForm = /* magic */, typename Container = /* magic */, typename... Ranges>
     text<EncodingForm, Container> concat(Ranges&&... ranges);
 } // namespace ogonek
 {% endhighlight %}
