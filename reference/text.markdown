@@ -82,7 +82,6 @@ namespace ogonek {
         void replace(iterator from, iterator to, CodePointRange&& range);
         template <typename CodePointRange, typename Validation>
         void replace(iterator from, iterator to, CodePointRange&& range, Validation validation);
-
     };
 
     // Canonical equivalence
