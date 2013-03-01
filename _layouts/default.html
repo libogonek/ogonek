@@ -17,7 +17,7 @@
       
       <section>
         {% if page.title %}
-        <h2>{{ page.title }}</h2>
+        <h2>{{ page.title | markdownify }}</h2>
         {% endif %}
       
         {{ content }}
