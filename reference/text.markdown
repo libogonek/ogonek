@@ -99,5 +99,9 @@ namespace ogonek {
     bool operator<=(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
     template <typename EncodingForm0, typename Container0, typename EncodingForm1, typename Container1>
     bool operator>=(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
+
+    // Concatenation
+    template <typename EncodingForm, typename Container, typename... Ranges>
+    text<EncodingForm, Container> concat(Ranges&&... ranges);
 } // namespace ogonek
 {% endhighlight %}
