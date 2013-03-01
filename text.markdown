@@ -82,96 +82,10 @@ instead.
 
 ### Construction and assignment
 
-Instances of `text` can be constructed from a pointer to a `char32_t`
-null-terminated string, from a range of codepoints, or from an instance of the
-underlying container.
-
----
-
-{% highlight cpp %}
-text();
-{% endhighlight %}
-
-*Requires*: `Container` is default-constructible.
-
-*Effects*: Initialises an instance of `text` with default-constructed storage
-\[*Note*: the intent is that this results an empty string &mdash; *end note*].
-
----
-
-{% highlight cpp %}
-text(text const& that); // (1)
-text& operator=(text const& that); // (2)
-{% endhighlight %}
-
-*Requires*: `Container` is copyable.
-
-*Effects*: (1) Initialises an instance of `text` with a copy of the underlying
-storage of `that`; (2) copy-assigns the underlying storage of `that` into this
-instance's underlying storage. No validation is performed in either case.
-
-{% highlight cpp %}
-text(text&& that); // 1
-text& operator=(text&& that); // 2
-{% endhighlight %}
-
-*Requires*: `Container` is movable.
-
-*Effects*: (1) Initialises an instance of `text` by moving the underlying
-storage of `that`; (2) move-assigns the underlying storage of `that` into this
-instance's underlying storage. No validation is performed in either case.
-
----
-
-{% highlight cpp %}
-text(code_point const* str); // 1
-template <typename Validation>
-text(code_point const* str, Validation policy); // 2
-
-text& operator=(code_point const* str); // 3
-void assign(code_point const* str); // 4
-template <typename Validation>
-void assign(code_point const* str, Validation policy); // 5
-{% endhighlight %}
-
-*Requires*: `str` points to a null-terminated string of code points and `policy`
-is a [validation policy object][validation].
-
-*Effects*: (1-2) Initialises an instance of `text` by encoding the given code
-points (not including the null-terminator) into the underlying storage,
-validating with, respectively, `throw_validation_error` or `policy`;
-(3-5) like (1-2) but assign to the current instance's storage instead.
-
----
-
-{% highlight cpp %}
-template <typename CodepointRange>
-text(CodepointRange const& range); // 1
-template <typename CodepointRange, typename Validation>
-text(CodepointRange const& range, Validation policy); // 2
-
-template <typename CodepointRange>
-text& operator=(CodepointRange const& str); // 3
-template <typename CodepointRange>
-void assign(CodepointRange const& str); // 4
-template <typename CodepointRange, typename Validation>
-void assign(CodepointRange const& str, Validation policy); // 5
-{% endhighlight %}
-
-*Requires*: `range` is a range of code points and `policy` is a [validation
-policy object][validation].
-
-*Effects*: (1-2) Initialises an instance of `text` by encoding the given code
-points (not including the null-terminator) into the underlying storage,
-validating with, respectively, `throw_validation_error` or `policy`; (3-5)
-like (1-2) but assign to the current instance's storage instead.
-
----
-
-{% highlight cpp %}
-explicit text(Container const& container); // 1
-explicit text(Container&& container); // 2
-{% endhighlight %}
+Instances of `text` can be constructed from code point sequences or from an
+instance of the underlying container. Validation is not performed if validity of
+the source is guaranteed (i.e. either the sequence is a `text` instance of the
+same encoding, or `skip_validation` is explicitly passed).
 
 ### Iteration
 
