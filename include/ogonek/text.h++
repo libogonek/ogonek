@@ -142,10 +142,26 @@ namespace ogonek {
 
         bool empty() const { return storage_.empty(); }
 
+        void append(text const& that) {
+            static_assert(is_stateless<EncodingForm>(), "appending with stateful encodings not implemented");
+            append_code_units(that.storage_);
+        }
+        template <typename CodePointRange>
+        void append(CodePointRange const& range) {
+            static_assert(std::is_same<detail::RangeValueType<CodePointRange>, code_point>::value,
+                          "Can only append from a range of codepoints");
+            append_code_units(EncodingForm::decode(range, skip_validation));
+        }
+
     private:
         template <typename Range>
         text(direct, Range&& range)
         : storage_(boost::begin(range), boost::end(range)) {}
+        
+        template <typename CodeUnitRange>
+        void append_code_units(CodeUnitRange const& range) {
+            storage_.insert(storage_.end(), boost::begin(range), boost::end(range));
+        }
 
         Container storage_;
     };

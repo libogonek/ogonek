@@ -12,9 +12,15 @@
 #ifndef OGONEK_TRAITS_HPP
 #define OGONEK_TRAITS_HPP
 
+#include <type_traits>
+
 namespace ogonek {
     template <typename EncodingForm>
     using CodeUnit = typename EncodingForm::code_unit;
+    template <typename EncodingForm>
+    using StateType = typename EncodingForm::state;
+    template <typename EncodingForm>
+    using is_stateless = std::is_empty<StateType<EncodingForm>>;
 } // namespace ogonek
 
 #endif // OGONEK_TRAITS_HPP

@@ -20,18 +20,18 @@
 #include "utils.h++"
 #include <catch.h++>
 
-TEST_CASE("text", "text tests") {
-    using text8 = test::text<ogonek::utf8>;
-    using text16 = test::text<ogonek::utf16>;
-    using text32 = test::text<ogonek::utf32>;
-    using text_ascii = test::text<ogonek::ascii>;
-    
-    using string8 = test::string<ogonek::utf8>;
-    using string16 = test::string<ogonek::utf16>;
-    using string32 = test::string<ogonek::utf32>;
-    using string_ascii = test::string<ogonek::ascii>;
+using text8 = test::text<ogonek::utf8>;
+using text16 = test::text<ogonek::utf16>;
+using text32 = test::text<ogonek::utf32>;
+using text_ascii = test::text<ogonek::ascii>;
 
-    SECTION("general", "General test") {
+using string8 = test::string<ogonek::utf8>;
+using string16 = test::string<ogonek::utf16>;
+using string32 = test::string<ogonek::utf32>;
+using string_ascii = test::string<ogonek::ascii>;
+
+TEST_CASE("text", "text tests") {
+    SECTION("construction", "text constructor tests") {
         // construct UTF-8 text from a UTF-32 string literal
         text8 a { U"blah\U0001F4A9" };
         REQUIRE(a.storage() == string8(u8"blah\U0001F4A9"));
@@ -76,10 +76,13 @@ TEST_CASE("text", "text tests") {
 
         // (fail to) construct ASCII text from data not ASCII compatible
         REQUIRE_THROWS_AS(text_ascii { U"blah\x80" }, ogonek::validation_error);
-        
+    }
+    SECTION("empty", "any_text emptiness query tests") {
         REQUIRE(text8{}.empty());
-        
-        // Canonical equivalence through ==
+        REQUIRE(text8{U""}.empty());
+        REQUIRE_FALSE(text8{U"foo"}.empty());
+    }
+    SECTION("op==", "text::op== tests"){
         text8 k { string8 { u8"bla\u0308h" } };
         text16 l { string16 { u"bl\u00e4h" } };
         text16 m { string16 { u"blah" } };
@@ -92,23 +95,32 @@ TEST_CASE("text", "text tests") {
         REQUIRE(m != k);
         REQUIRE(m != l);
         REQUIRE(m == m);
-        
-        // Emptiness
     }
-    SECTION("any", "any_text tests") {
+    SECTION("append", "text::append tests") {
+    }
+    SECTION("concat", "concat() tests") {
+    }
+}
+TEST_CASE("any", "any_text tests") {
+    SECTION("construction", "any_text construction tests") {
         auto foo = text16 { U"foo" };
         ogonek::any_text any = foo; 
         REQUIRE(std::equal(any.begin(), any.end(), foo.begin()));
         REQUIRE(any.get<text16>().storage() == string16(u"foo"));
-
+    }
+    SECTION("assignment", "any_text assignment tests") {
+        ogonek::any_text any = text16 { U"foo" }; 
         auto bar = text8 { U"bar" };
         any = bar;
         REQUIRE(std::equal(any.begin(), any.end(), bar.begin()));
         REQUIRE(any.get<text8>().storage() == string8(u8"bar"));
-        
+    }
+    SECTION("empty", "any_text emptiness query tests") {
         REQUIRE(ogonek::any_text{text8{}}.empty());
-        
-        // Canonical equivalence through ==
+        REQUIRE(ogonek::any_text{text8{U""}}.empty());
+        REQUIRE_FALSE(ogonek::any_text{text8{U"foo"}}.empty());
+    }
+    SECTION("op==", "any_text::op== tests") {
         ogonek::any_text a = text16 { U"bla\u0308h" };
         ogonek::any_text b = text8 { U"bl\u00e4h" };
         ogonek::any_text c = text32 { U"blah" };
