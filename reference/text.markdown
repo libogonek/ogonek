@@ -114,31 +114,19 @@ namespace ogonek {
     };
 
     // Canonical equivalence
-    template <typename EncodingForm0, typename Container0,
-              typename EncodingForm1, typename Container1>
-    bool operator==(text<EncodingForm0, Container0> const& lhs, 
-                    text<EncodingForm1, Container1> const& rhs);
-    template <typename EncodingForm0, typename Container0,
-              typename EncodingForm1, typename Container1>
-    bool operator!=(text<EncodingForm0, Container0> const& lhs, 
-                    text<EncodingForm1, Container1> const& rhs);
+    template <typename EncodingForm0, typename Container0, typename EncodingForm1, typename Container1>
+    bool operator==(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
+    template <typename EncodingForm0, typename Container0, typename EncodingForm1, typename Container1>
+    bool operator!=(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
 
     // Default collation
-    template <typename EncodingForm0, typename Container0,
-              typename EncodingForm1, typename Container1>
-    bool operator<(text<EncodingForm0, Container0> const& lhs, 
-                   text<EncodingForm1, Container1> const& rhs);
-    template <typename EncodingForm0, typename Container0,
-              typename EncodingForm1, typename Container1>
-    bool operator>(text<EncodingForm0, Container0> const& lhs, 
-                   text<EncodingForm1, Container1> const& rhs);
-    template <typename EncodingForm0, typename Container0,
-              typename EncodingForm1, typename Container1>
-    bool operator<=(text<EncodingForm0, Container0> const& lhs, 
-                    text<EncodingForm1, Container1> const& rhs);
-    template <typename EncodingForm0, typename Container0,
-              typename EncodingForm1, typename Container1>
-    bool operator>=(text<EncodingForm0, Container0> const& lhs, 
-                    text<EncodingForm1, Container1> const& rhs);
+    template <typename EncodingForm0, typename Container0, typename EncodingForm1, typename Container1>
+    bool operator<(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
+    template <typename EncodingForm0, typename Container0, typename EncodingForm1, typename Container1>
+    bool operator>(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
+    template <typename EncodingForm0, typename Container0, typename EncodingForm1, typename Container1>
+    bool operator<=(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
+    template <typename EncodingForm0, typename Container0, typename EncodingForm1, typename Container1>
+    bool operator>=(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
 } // namespace ogonek
 {% endhighlight %}
