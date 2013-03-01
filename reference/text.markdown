@@ -16,14 +16,10 @@ namespace ogonek {
         template <typename EncodingForm1, typename Container1>
         text(text<EncodingForm1, Container1> const& that);
 
-        text(code_point const* literal);
-        template <typename Validation>
-        text(code_point const* literal, Validation validation);
-
         template <typename CodePointRange>
-        explicit text(CodePointRange const& range);
+        explicit text(CodePointRange&& range);
         template <typename CodePointRange, typename Validation>
-        text(CodePointRange const& range, Validation validation);
+        text(CodePointRange&& range, Validation validation);
 
         explicit text(Container const& storage);
         explicit text(Container&& storage);
@@ -34,15 +30,10 @@ namespace ogonek {
         template <typename EncodingForm1, typename Container1>
         text& operator=(text<EncodingForm1, Container1> const& that);
 
-        text& operator=(code_point const* literal);
-        void assign(code_point const* literal);
-        template <typename Validation>
-        void assign(code_point const* literal, Validation validation);
-
         template <typename CodePointRange>
-        void assign(CodePointRange const& range);
+        void assign(CodePointRange&& range);
         template <typename CodePointRange, typename Validation>
-        void assign(CodePointRange const& range, Validation validation);
+        void assign(CodePointRange&& range, Validation validation);
 
         void assign(Container const& storage);
         void assign(Container&& storage);
