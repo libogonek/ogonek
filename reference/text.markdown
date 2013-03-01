@@ -29,6 +29,7 @@ namespace ogonek {
         text& operator=(text&& that);
         template <typename EncodingForm1, typename Container1>
         text& operator=(text<EncodingForm1, Container1> const& that);
+        text& operator=(code_point const* literal);
 
         template <typename CodePointRange>
         void assign(CodePointRange&& range);
