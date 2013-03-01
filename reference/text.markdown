@@ -62,9 +62,9 @@ namespace ogonek {
         iterator append(CodePointRange&& range, Validation validation);
 
         // Erasure
-        iterator erase(iterator first, iterator last);
         template <typename Range>
         iterator erase(Range const& range);
+        iterator erase(iterator first, iterator last);
 
         // Insertion
         template <typename CodePointRange>
