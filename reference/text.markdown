@@ -505,11 +505,24 @@ template <typename Range>
 iterator erase(Range const& range);
 {% endhighlight %}
 
+*Requires*: `range` is a range of iterators into this instance.
+
+*Effects*: removes the code points in `range` from the underlying storage.
+
+*Returns*: an iterator to the code point after the removed range.
+
 ---
 
 {% highlight cpp %}
 iterator erase(iterator first, iterator last);
 {% endhighlight %}
+
+*Requires*: [`first`, `last`) is a range of iterators into this instance.
+
+*Effects*: removes the code points in [`first`, `last`) from the underlying
+storage.
+
+*Returns*: an iterator to the code point after the removed range.
 
 ### Insertion
 
