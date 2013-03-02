@@ -125,7 +125,9 @@ text(text const& that);
 *Requires*: `Container` is copyable.
 
 *Effects*: Initialises an instance of `text` with a copy of the underlying
-storage of `that`; no validation is performed.
+storage of `that`.
+
+*Validation*: no validation is performed.
 
 ---
 
@@ -136,7 +138,9 @@ text(text&& that);
 *Requires*: `Container` is movable.
 
 *Effects*: Initialises an instance of `text` by moving the underlying storage of
-`that`; no validation is performed.
+`that`.
+
+*Validation*: no validation is performed.
 
 ---
 
@@ -146,8 +150,9 @@ text(text<EncodingForm1, Container1> const& that);
 {% endhighlight %}
 
 *Effects*: Initialises an instance of `text` by encoding the code points from
-`that` into the underlying storage according to `EncodingForm`; if the sequence
-cannot be encoded a `validation_error` is thrown.
+`that` into the underlying storage according to `EncodingForm`.
+
+*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
 
 ---
 
@@ -159,8 +164,9 @@ text(text<EncodingForm1, Container1> const& that, Validation validation);
 *Requires*: `validation` is a validation strategy object.
 
 *Effects*: Initialises an instance of `text` by encoding the code points from
-`that` into the underlying storage according to `EncodingForm`; invalid
-sequences are treated according to `validation`.
+`that` into the underlying storage according to `EncodingForm`.
+
+*Validation*: invalid sequences are treated according to `validation`.
 
 ---
 
@@ -172,8 +178,9 @@ explicit text(CodePointSequence&& range);
 *Requires*: `CodePointSequence` is a code point sequence.
 
 *Effects*: Initialises an instance of `text` by encoding the code points from
-`that` into the underlying storage according to `EncodingForm`; if the sequence
-cannot be encoded a `validation_error` is thrown.
+`that` into the underlying storage according to `EncodingForm`.
+
+*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
 
 ---
 
@@ -186,8 +193,9 @@ text(CodePointSequence&& range, Validation validation);
 validation strategy object.
 
 *Effects*: Initialises an instance of `text` by encoding the code points from
-`that` into the underlying storage according to `EncodingForm`; invalid
-sequences are treated according to `validation`.
+`that` into the underlying storage according to `EncodingForm`.
+
+*Validation*: invalid sequences are treated according to `validation`.
 
 ---
 
@@ -196,7 +204,9 @@ explicit text(Container const& storage);
 {% endhighlight %}
 
 *Effects*: Initialises an instance of `text` with `storage` as the underlying
-storage; if the data is not valid a `validation_error` is thrown.
+storage.
+
+*Validation*: if the data is not valid a `validation_error` is thrown.
 
 ---
 
@@ -205,7 +215,9 @@ explicit text(Container&& storage);
 {% endhighlight %}
 
 *Effects*: Initialises an instance of `text` with `storage` as the underlying
-storage; invalid data is treated according to `validation`.
+storage.
+
+*Validation*: invalid data is treated according to `validation`.
 
 ### Assignment
 

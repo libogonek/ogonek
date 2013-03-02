@@ -5,12 +5,38 @@ title: How to read this manual
 
 ### Unicode version
 
-Ogonek follows the Unicode standard version 6.2. Any reference to an Unicode
+Ogonek {{ site.doc_version }} follows the Unicode standard version 6.2. Any reference to an Unicode
 algorithm refers to the algorithm from version 6.2.
 
 ### Namespaces
 
 Unless otherwise mentioned, all entities described are in namespace `ogonek`.
+
+### Reference
+
+_In reference pages entities are described using following elements.
+
+- *Invariants* sections describe conditions that always hold for any object of
+a class;
+
+- *Requires* sections describe preconditions that must hold before calling a
+function; the behaviour is undefined if the preconditions do not hold;
+
+- *Effects* sections describe the actions performed by a function;
+
+- *Postconditions* sections describe the observable results established by a
+function;
+
+- *Returns* sections describe the value returned by a function;
+
+- *Validation* sections describe what kind of data validation is performed by a
+function, and how invalid data is treated;
+
+- *Complexity* sections describe the time and/or space complexity of a function;
+
+- *Remarks* sections describe additional semantics of a function;
+
+- *Notes* sections provide additional information about the entity;
 
 ### Exposition functions
 
