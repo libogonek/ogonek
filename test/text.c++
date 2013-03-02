@@ -97,6 +97,10 @@ TEST_CASE("text", "text tests") {
         REQUIRE(m == m);
     }
     SECTION("append", "text::append tests") {
+        text8 n { U"foo" };
+        text16 o { U"bar" };
+        n.append(o);
+        REQUIRE(n == text8{U"foobar"});
     }
     SECTION("concat", "concat() tests") {
     }
