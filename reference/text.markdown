@@ -72,13 +72,13 @@ namespace ogonek {
         // Erasure
         template <typename Range>
         iterator erase(Range const& range);
-        iterator erase(iterator first, iterator last);
+        iterator erase(iterator from, iterator to);
 
         // Insertion
         template <typename CodePointSequence>
-        iterator insert(iterator at, CodePointSequence&& that);
+        iterator insert(iterator position, CodePointSequence&& that);
         template <typename CodePointSequence, typename Validation>
-        iterator insert(iterator at, CodePointSequence&& that, Validation validation);
+        iterator insert(iterator position, CodePointSequence&& that, Validation validation);
 
         // Replacement
         template <typename Range, typename CodePointSequence>
@@ -475,7 +475,7 @@ iterator append(CodePointSequence&& that);
 *Requires*: `CodePointSequence` is a code point sequence.
 
 *Effects*: encodes the code points from `that` at the end of this instance's
-underlying storage.
+underlying storage according to `EncodingForm`.
 
 *Returns*: an iterator to the beginning of the inserted values.
 
@@ -492,7 +492,7 @@ iterator append(CodePointSequence&& sequence, Validation validation);
 validation strategy object.
 
 *Effects*: encodes the code points from `that` at the end of this instance's
-underlying storage.
+underlying storage according to `EncodingForm`.
 
 *Returns*: an iterator to the beginning of the inserted values.
 
@@ -514,12 +514,12 @@ iterator erase(Range const& range);
 ---
 
 {% highlight cpp %}
-iterator erase(iterator first, iterator last);
+iterator erase(iterator from, iterator to);
 {% endhighlight %}
 
-*Requires*: [`first`, `last`) is a range of iterators into this instance.
+*Requires*: [`from`, `to`) is a range of iterators into this instance.
 
-*Effects*: removes the code points in [`first`, `last`) from the underlying
+*Effects*: removes the code points in [`from`, `to`) from the underlying
 storage.
 
 *Returns*: an iterator to the code point after the removed range.
@@ -528,10 +528,14 @@ storage.
 
 {% highlight cpp %}
 template <typename CodePointSequence>
-iterator insert(iterator at, CodePointSequence&& that);
+iterator insert(iterator position, CodePointSequence&& that);
 {% endhighlight %}
 
-*Requires*: `CodePointSequence` is a code point sequence.
+*Requires*: `CodePointSequence` is a code point sequence and `position` is an
+iterator into this instance.
+
+*Effects*: inserts the code points from `that` at starting at `position`, by
+encoding them into the underlying storage according to `EncodingForm`.
 
 *Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
 
@@ -539,11 +543,14 @@ iterator insert(iterator at, CodePointSequence&& that);
 
 {% highlight cpp %}
 template <typename CodePointSequence, typename Validation>
-iterator insert(iterator at, CodePointSequence&& that, Validation validation);
+iterator insert(iterator position, CodePointSequence&& that, Validation validation);
 {% endhighlight %}
 
-*Requires*: `CodePointSequence` is a code point sequence, and `validation` is a
-validation strategy object.
+*Requires*: `CodePointSequence` is a code point sequence, `validation` is a
+validation strategy object, and `position` is an iterator into this instance.
+
+*Effects*: inserts the code points from `that` at starting at `position`, by
+encoding them into the underlying storage according to `EncodingForm`.
 
 *Validation*: invalid sequences are treated according to `validation`.
 
@@ -554,7 +561,11 @@ template <typename Range, typename CodePointSequence>
 void replace(Range const& range, CodePointSequence&& sequence);
 {% endhighlight %}
 
-*Requires*: `CodePointSequence` is a code point sequence.
+*Requires*: `CodePointSequence` is a code point sequence, and `range` is a range
+of iterators into this instance.
+
+*Effects*: replaces the code points in `range` in the underlying storage by
+encoding the code points from `sequence` according to `EncodingForm`.
 
 *Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
 
@@ -565,8 +576,12 @@ template <typename Range, typename CodePointSequence, typename Validation>
 void replace(Range const& range, CodePointSequence&& sequence, Validation validation);
 {% endhighlight %}
 
-*Requires*: `CodePointSequence` is a code point sequence, and `validation` is a
-validation strategy object.
+*Requires*: `CodePointSequence` is a code point sequence, `validation` is a
+validation strategy object, and `range` is a range of iterators into this
+instance.
+
+*Effects*: replaces the code points in `range` in the underlying storage by
+encoding the code points from `sequence` according to `EncodingForm`.
 
 *Validation*: invalid sequences are treated according to `validation`.
 
@@ -577,7 +592,11 @@ template <typename CodePointSequence>
 void replace(iterator from, iterator to, CodePointSequence&& sequence);
 {% endhighlight %}
 
-*Requires*: `CodePointSequence` is a code point sequence.
+*Requires*: `CodePointSequence` is a code point sequence, and [`from`, `to`) is
+a range of iterators into this instance.
+
+*Effects*: replaces the code points in [`from`, `to`) in the underlying storage by
+encoding the code points from `sequence` according to `EncodingForm`.
 
 *Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
 
@@ -588,8 +607,12 @@ template <typename CodePointSequence, typename Validation>
 void replace(iterator from, iterator to, CodePointSequence&& sequence, Validation validation);
 {% endhighlight %}
 
-*Requires*: `CodePointSequence` is a code point sequence, and `validation` is a
-validation strategy object.
+*Requires*: `CodePointSequence` is a code point sequence, `validation` is a
+validation strategy object, and [`from`, `to`) is a range of iterators into this
+instance.
+
+*Effects*: replaces the code points in [`from`, `to`) in the underlying storage by
+encoding the code points from `sequence` according to `EncodingForm`.
 
 *Validation*: invalid sequences are treated according to `validation`.
 
