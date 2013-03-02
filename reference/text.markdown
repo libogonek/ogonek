@@ -420,11 +420,16 @@ using const_iterator = /* unspecified */;
 using iterator = const_iterator;
 {% endhighlight %}
 
+These types are at least forward iterators with `code_point` as their value
+type.
+
 ---
 
 {% highlight cpp %}
 const_iterator begin() const;
 {% endhighlight %}
+
+*Returns*: an iterator to the beginning of this code point sequence.
 
 ---
 
@@ -432,11 +437,15 @@ const_iterator begin() const;
 const_iterator end() const;
 {% endhighlight %}
 
+*Returns*: an iterator to the end of this code point sequence.
+
 ### Interoperation
 
 {% highlight cpp %}
 Container const& storage() const;
 {% endhighlight %}
+
+*Returns*: a reference to the underlying storage.
 
 ---
 
@@ -444,11 +453,17 @@ Container const& storage() const;
 Container extract_storage();
 {% endhighlight %}
 
+*Effects*: moves this instance's underlying storage out.
+
+*Returns*: the underlying storage.
+
 ### Emptiness
 
 {% highlight cpp %}
 bool empty() const;
 {% endhighlight %}
+
+*Returns*: `true` is this instance is an empty sequence; `false` otherwise.
 
 ### Appending
 
@@ -459,8 +474,12 @@ iterator append(CodePointSequence&& that);
 
 *Requires*: `CodePointSequence` is a code point sequence.
 
-*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+*Effects*: encodes the code points from `that` at the end of this instance's
+underlying storage.
 
+*Returns*: an iterator to the beginning of the inserted values.
+
+*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
 
 ---
 
@@ -471,6 +490,11 @@ iterator append(CodePointSequence&& sequence, Validation validation);
 
 *Requires*: `CodePointSequence` is a code point sequence, and `validation` is a
 validation strategy object.
+
+*Effects*: encodes the code points from `that` at the end of this instance's
+underlying storage.
+
+*Returns*: an iterator to the beginning of the inserted values.
 
 *Validation*: invalid sequences are treated according to `validation`.
 
