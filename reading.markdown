@@ -24,9 +24,6 @@ function; the behaviour is undefined if the preconditions do not hold;
 
 - *Effects* sections describe the actions performed by a function;
 
-- *Postconditions* sections describe the observable results established by a
-function;
-
 - *Returns* sections describe the value returned by a function;
 
 - *Validation* sections describe what kind of data validation is performed by a

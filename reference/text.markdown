@@ -19,12 +19,16 @@ namespace ogonek {
         text(text<EncodingForm1, Container1> const& that, Validation validation);
 
         template <typename CodePointSequence>
-        explicit text(CodePointSequence&& range);
+        explicit text(CodePointSequence&& sequence);
         template <typename CodePointSequence, typename Validation>
-        text(CodePointSequence&& range, Validation validation);
+        text(CodePointSequence&& sequence, Validation validation);
 
         explicit text(Container const& storage);
+        template <typename Validation>
+        text(Container const& storage, Validation validation);
         explicit text(Container&& storage);
+        template <typename Validation>
+        text(Container&& storage, Validation validation);
 
         // Assignment
         text& operator=(text const& that);
@@ -34,12 +38,16 @@ namespace ogonek {
         text& operator=(code_point const* literal);
 
         template <typename CodePointSequence>
-        void assign(CodePointSequence&& range);
+        void assign(CodePointSequence&& sequence);
         template <typename CodePointSequence, typename Validation>
-        void assign(CodePointSequence&& range, Validation validation);
+        void assign(CodePointSequence&& sequence, Validation validation);
 
         void assign(Container const& storage);
+        template <typename Validation>
+        void assign(Container const& storage, Validation validation);
         void assign(Container&& storage);
+        template <typename Validation>
+        void assign(Container&& storage, Validation validation);
 
         // Iteration
         using const_iterator = /* unspecified */;
@@ -59,7 +67,7 @@ namespace ogonek {
         template <typename CodePointSequence>
         iterator append(CodePointSequence&& that);
         template <typename CodePointSequence, typename Validation>
-        iterator append(CodePointSequence&& range, Validation validation);
+        iterator append(CodePointSequence&& sequence, Validation validation);
 
         // Erasure
         template <typename Range>
@@ -74,14 +82,14 @@ namespace ogonek {
 
         // Replacement
         template <typename Range, typename CodePointSequence>
-        void replace(Range const& range, CodePointSequence&& range);
+        void replace(Range const& range, CodePointSequence&& sequence);
         template <typename Range, typename CodePointSequence, typename Validation>
-        void replace(Range const& range, CodePointSequence&& range, Validation validation);
+        void replace(Range const& range, CodePointSequence&& sequence, Validation validation);
 
         template <typename CodePointSequence>
-        void replace(iterator from, iterator to, CodePointSequence&& range);
+        void replace(iterator from, iterator to, CodePointSequence&& sequence);
         template <typename CodePointSequence, typename Validation>
-        void replace(iterator from, iterator to, CodePointSequence&& range, Validation validation);
+        void replace(iterator from, iterator to, CodePointSequence&& sequence, Validation validation);
     };
 
     // Canonical equivalence
@@ -101,10 +109,26 @@ namespace ogonek {
     bool operator>=(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
 
     // Concatenation
-    template <typename EncodingForm = /* magic */, typename Container = /* magic */, typename... Ranges>
-    text<EncodingForm, Container> concat(Ranges&&... ranges);
+    template <typename EncodingForm = /* magic */, typename Container = /* magic */, typename... CodePointSequences>
+    text<EncodingForm, Container> concat(CodePointSequences&&... sequences);
 } // namespace ogonek
 {% endhighlight %}
+
+### Text class template
+
+`text` template classes hold a sequence of code units on an underlying
+container, and expose it as a code point sequence.
+
+{% highlight cpp %}
+template <typename EncodingForm,
+          typename Container = std::basic_string<CodeUnit<EncodingForm>>>
+class text;
+{% endhighlight %}
+
+*Requires*: `EncodingForm::code_unit` is convertible to `Container::value_type`
+and `Container::value_type` is convertible to `EncodingForm::code_unit`.
+
+*Invariants*: the underlying storage holds a valid sequence of code units.
 
 ### Constructors
 
@@ -114,7 +138,7 @@ text();
 
 *Requires*: `Container` is default-constructible.
 
-*Effects*: Initialises an instance of `text` with an empty string.
+*Effects*: initialises an instance of `text` with an empty string.
 
 ---
 
@@ -124,10 +148,10 @@ text(text const& that);
 
 *Requires*: `Container` is copyable.
 
-*Effects*: Initialises an instance of `text` with a copy of the underlying
+*Effects*: initialises an instance of `text` with a copy of the underlying
 storage of `that`.
 
-*Validation*: no validation is performed.
+*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
 
 ---
 
@@ -137,7 +161,7 @@ text(text&& that);
 
 *Requires*: `Container` is movable.
 
-*Effects*: Initialises an instance of `text` by moving the underlying storage of
+*Effects*: initialises an instance of `text` by moving the underlying storage of
 `that`.
 
 *Validation*: no validation is performed.
@@ -149,7 +173,7 @@ template <typename EncodingForm1, typename Container1>
 text(text<EncodingForm1, Container1> const& that);
 {% endhighlight %}
 
-*Effects*: Initialises an instance of `text` by encoding the code points from
+*Effects*: initialises an instance of `text` by encoding the code points from
 `that` into the underlying storage according to `EncodingForm`.
 
 *Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
@@ -163,7 +187,7 @@ text(text<EncodingForm1, Container1> const& that, Validation validation);
 
 *Requires*: `validation` is a validation strategy object.
 
-*Effects*: Initialises an instance of `text` by encoding the code points from
+*Effects*: initialises an instance of `text` by encoding the code points from
 `that` into the underlying storage according to `EncodingForm`.
 
 *Validation*: invalid sequences are treated according to `validation`.
@@ -172,12 +196,12 @@ text(text<EncodingForm1, Container1> const& that, Validation validation);
 
 {% highlight cpp %}
 template <typename CodePointSequence>
-explicit text(CodePointSequence&& range);
+explicit text(CodePointSequence&& sequence);
 {% endhighlight %}
 
 *Requires*: `CodePointSequence` is a code point sequence.
 
-*Effects*: Initialises an instance of `text` by encoding the code points from
+*Effects*: initialises an instance of `text` by encoding the code points from
 `that` into the underlying storage according to `EncodingForm`.
 
 *Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
@@ -186,13 +210,13 @@ explicit text(CodePointSequence&& range);
 
 {% highlight cpp %}
 template <typename CodePointSequence, typename Validation>
-text(CodePointSequence&& range, Validation validation);
+text(CodePointSequence&& sequence, Validation validation);
 {% endhighlight %}
 
 *Requires*: `CodePointSequence` is a code point sequence, and `validation` is a
 validation strategy object.
 
-*Effects*: Initialises an instance of `text` by encoding the code points from
+*Effects*: initialises an instance of `text` by encoding the code points from
 `that` into the underlying storage according to `EncodingForm`.
 
 *Validation*: invalid sequences are treated according to `validation`.
@@ -203,10 +227,26 @@ validation strategy object.
 explicit text(Container const& storage);
 {% endhighlight %}
 
-*Effects*: Initialises an instance of `text` with `storage` as the underlying
-storage.
+*Requires*: `Container` is copyable.
+
+*Effects*: initialises an instance of `text` with a copy of `storage` as the
+underlying storage.
 
 *Validation*: if the data is not valid a `validation_error` is thrown.
+
+---
+
+{% highlight cpp %}
+template <typename Validation>
+text(Container const& storage, Validation validation);
+{% endhighlight %}
+
+*Requires*: `Container` is copyable.
+
+*Effects*: initialises an instance of `text` with a copy of `storage` as the
+underlying storage.
+
+*Validation*: invalid data is treated according to `validation`.
 
 ---
 
@@ -214,7 +254,23 @@ storage.
 explicit text(Container&& storage);
 {% endhighlight %}
 
-*Effects*: Initialises an instance of `text` with `storage` as the underlying
+*Requires*: `Container` is movable.
+
+*Effects*: initialises an instance of `text` by moving `storage` into underlying
+storage.
+
+*Validation*: if the data is not valid a `validation_error` is thrown.
+
+---
+
+{% highlight cpp %}
+template <typename Validation>
+text(Container&& storage, Validation validation);
+{% endhighlight %}
+
+*Requires*: `Container` is movable.
+
+*Effects*: initialises an instance of `text` by moving `storage` into underlying
 storage.
 
 *Validation*: invalid data is treated according to `validation`.
@@ -225,11 +281,29 @@ storage.
 text& operator=(text const& that);
 {% endhighlight %}
 
+*Requires*: `Container` is copy-assignable.
+
+*Effects*: copy-assigns the underlying storage of `that` into this instance's
+underlying storage.
+
+*Validation*: no validation is performed.
+
+*Returns*: `*this`.
+
 ---
 
 {% highlight cpp %}
 text& operator=(text&& that);
 {% endhighlight %}
+
+*Requires*: `Container` is move-assignable.
+
+*Effects*: move-assigns the underlying storage of `that` into this instance's
+underlying storage.
+
+*Validation*: no validation is performed.
+
+*Returns*: `*this`.
 
 ---
 
@@ -238,25 +312,56 @@ template <typename EncodingForm1, typename Container1>
 text& operator=(text<EncodingForm1, Container1> const& that);
 {% endhighlight %}
 
+*Effects*: encodes the code points from `that` into this instance's underlying
+storage.
+
+*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+
+*Returns*: `*this`.
+
 ---
 
 {% highlight cpp %}
 text& operator=(code_point const* literal);
 {% endhighlight %}
 
+*Requires*: `literal` is a pointer to a null-terminated array of code points.
+
+*Effects*: encodes the code points from the array pointed to by `literal` (not
+including the null terminator) into this instance's underlying storage.
+
+*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+
+*Returns*: `*this`.
+
 ---
 
 {% highlight cpp %}
 template <typename CodePointSequence>
-void assign(CodePointSequence&& range);
+void assign(CodePointSequence&& sequence);
 {% endhighlight %}
+
+*Requires*: `CodePointSequence` is a code point sequence.
+
+*Effects*: encodes the code points from `sequence` into this instance's
+underlying storage.
+
+*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
 
 ---
 
 {% highlight cpp %}
 template <typename CodePointSequence, typename Validation>
-void assign(CodePointSequence&& range, Validation validation);
+void assign(CodePointSequence&& sequence, Validation validation);
 {% endhighlight %}
+
+*Requires*: `CodePointSequence` is a code point sequence, and `validation` is a
+validation strategy object.
+
+*Effects*: encodes the code points from `sequence` into this instance's
+underlying storage.
+
+*Validation*: invalid sequences are treated according to `validation`.
 
 ---
 
@@ -264,11 +369,49 @@ void assign(CodePointSequence&& range, Validation validation);
 void assign(Container const& storage);
 {% endhighlight %}
 
+*Requires*: `Container` is copy-assignable.
+
+*Effects*: copy-assigns `storage` into this instance's underlying storage.
+
+*Validation*: if the data is not valid a `validation_error` is thrown.
+
+---
+
+{% highlight cpp %}
+template <typename Validation>
+void assign(Container const& storage, Validation validation);
+{% endhighlight %}
+
+*Requires*: `Container` is copy-assignable.
+
+*Effects*: copy-assigns `storage` into this instance's underlying storage.
+
+*Validation*: invalid data is treated according to `validation`.
+
 ---
 
 {% highlight cpp %}
 void assign(Container&& storage);
 {% endhighlight %}
+
+*Requires*: `Container` is move-assignable.
+
+*Effects*: move-assigns `storage` into this instance's underlying storage.
+
+*Validation*: if the data is not valid a `validation_error` is thrown.
+
+---
+
+{% highlight cpp %}
+template <typename Validation>
+void assign(Container&& storage, Validation validation);
+{% endhighlight %}
+
+*Requires*: `Container` is move-assignable.
+
+*Effects*: move-assigns `storage` into this instance's underlying storage.
+
+*Validation*: invalid data is treated according to `validation`.
 
 ### Iteration
 
@@ -314,12 +457,22 @@ template <typename CodePointSequence>
 iterator append(CodePointSequence&& that);
 {% endhighlight %}
 
+*Requires*: `CodePointSequence` is a code point sequence.
+
+*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+
+
 ---
 
 {% highlight cpp %}
 template <typename CodePointSequence, typename Validation>
-iterator append(CodePointSequence&& range, Validation validation);
+iterator append(CodePointSequence&& sequence, Validation validation);
 {% endhighlight %}
+
+*Requires*: `CodePointSequence` is a code point sequence, and `validation` is a
+validation strategy object.
+
+*Validation*: invalid sequences are treated according to `validation`.
 
 ### Erasure
 
@@ -341,6 +494,10 @@ template <typename CodePointSequence>
 iterator insert(iterator at, CodePointSequence&& that);
 {% endhighlight %}
 
+*Requires*: `CodePointSequence` is a code point sequence.
+
+*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+
 ---
 
 {% highlight cpp %}
@@ -348,33 +505,56 @@ template <typename CodePointSequence, typename Validation>
 iterator insert(iterator at, CodePointSequence&& that, Validation validation);
 {% endhighlight %}
 
+*Requires*: `CodePointSequence` is a code point sequence, and `validation` is a
+validation strategy object.
+
+*Validation*: invalid sequences are treated according to `validation`.
+
 ### Replacement
 
 {% highlight cpp %}
 template <typename Range, typename CodePointSequence>
-void replace(Range const& range, CodePointSequence&& range);
+void replace(Range const& range, CodePointSequence&& sequence);
 {% endhighlight %}
+
+*Requires*: `CodePointSequence` is a code point sequence.
+
+*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
 
 ---
 
 {% highlight cpp %}
 template <typename Range, typename CodePointSequence, typename Validation>
-void replace(Range const& range, CodePointSequence&& range, Validation validation);
+void replace(Range const& range, CodePointSequence&& sequence, Validation validation);
 {% endhighlight %}
+
+*Requires*: `CodePointSequence` is a code point sequence, and `validation` is a
+validation strategy object.
+
+*Validation*: invalid sequences are treated according to `validation`.
 
 ---
 
 {% highlight cpp %}
 template <typename CodePointSequence>
-void replace(iterator from, iterator to, CodePointSequence&& range);
+void replace(iterator from, iterator to, CodePointSequence&& sequence);
 {% endhighlight %}
+
+*Requires*: `CodePointSequence` is a code point sequence.
+
+*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
 
 ---
 
 {% highlight cpp %}
 template <typename CodePointSequence, typename Validation>
-void replace(iterator from, iterator to, CodePointSequence&& range, Validation validation);
+void replace(iterator from, iterator to, CodePointSequence&& sequence, Validation validation);
 {% endhighlight %}
+
+*Requires*: `CodePointSequence` is a code point sequence, and `validation` is a
+validation strategy object.
+
+*Validation*: invalid sequences are treated according to `validation`.
 
 ### Canonical equivalence
 
@@ -421,7 +601,21 @@ bool operator>=(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, 
 ### Concatenation
 
 {% highlight cpp %}
-template <typename EncodingForm = /* magic */, typename Container = /* magic */, typename... Ranges>
-text<EncodingForm, Container> concat(Ranges&&... ranges);
+template <typename EncodingForm = /* magic */, typename Container = /* magic */, typename... CodePointSequences>
+text<EncodingForm, Container> concat(CodePointSequences&&... sequences);
 {% endhighlight %}
+
+*Requires*: All `CodePointSequences` are code point sequences.
+
+*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+
+{% highlight cpp %}
+template <typename EncodingForm = /* magic */, typename Container = /* magic */, typename Validation, typename... CodePointSequences>
+text<EncodingForm, Container> concat(Validation validation, CodePointSequences&&... sequences);
+{% endhighlight %}
+
+*Requires*: All `CodePointSequences` are code point sequences and `validation`
+is a validation strategy object.
+
+*Validation*: invalid sequences are treated according to `validation`.
 

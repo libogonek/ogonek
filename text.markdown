@@ -16,9 +16,6 @@ template <typename Encoding,
 class text;
 {% endhighlight %}
 
-*Requires*: `Encoding::code_unit` shall be convertible to
-`Container::value_type` and vice-versa.
-
 `text` classes are basically wrappers that tag a container with an encoding.
 This allows the compiler to prevent certain mistakes like passing data in a
 certain encoding to functions expecting another.
