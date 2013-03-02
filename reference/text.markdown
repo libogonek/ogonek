@@ -65,7 +65,7 @@ namespace ogonek {
 
         // Appending
         template <typename CodePointSequence>
-        iterator append(CodePointSequence&& that);
+        iterator append(CodePointSequence&& sequence);
         template <typename CodePointSequence, typename Validation>
         iterator append(CodePointSequence&& sequence, Validation validation);
 
@@ -76,9 +76,9 @@ namespace ogonek {
 
         // Insertion
         template <typename CodePointSequence>
-        iterator insert(iterator position, CodePointSequence&& that);
+        iterator insert(iterator position, CodePointSequence&& sequence);
         template <typename CodePointSequence, typename Validation>
-        iterator insert(iterator position, CodePointSequence&& that, Validation validation);
+        iterator insert(iterator position, CodePointSequence&& sequence, Validation validation);
 
         // Replacement
         template <typename Range, typename CodePointSequence>
@@ -173,10 +173,7 @@ template <typename EncodingForm1, typename Container1>
 text(text<EncodingForm1, Container1> const& that);
 {% endhighlight %}
 
-*Effects*: initialises an instance of `text` by encoding the code points from
-`that` into the underlying storage according to `EncodingForm`.
-
-*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+*Effects*: `text(that, throw_validation_error)`.
 
 ---
 
@@ -199,12 +196,7 @@ template <typename CodePointSequence>
 explicit text(CodePointSequence&& sequence);
 {% endhighlight %}
 
-*Requires*: `CodePointSequence` is a code point sequence.
-
-*Effects*: initialises an instance of `text` by encoding the code points from
-`that` into the underlying storage according to `EncodingForm`.
-
-*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+*Effects*: `text(std::forward<CodePointSequence>(sequence), throw_validation_error)`.
 
 ---
 
@@ -227,12 +219,7 @@ validation strategy object.
 explicit text(Container const& storage);
 {% endhighlight %}
 
-*Requires*: `Container` is copyable.
-
-*Effects*: initialises an instance of `text` with a copy of `storage` as the
-underlying storage.
-
-*Validation*: if the data is not valid a `validation_error` is thrown.
+*Effects*: `text(storage, throw_validation_error)`.
 
 ---
 
@@ -254,12 +241,7 @@ underlying storage.
 explicit text(Container&& storage);
 {% endhighlight %}
 
-*Requires*: `Container` is movable.
-
-*Effects*: initialises an instance of `text` by moving `storage` into underlying
-storage.
-
-*Validation*: if the data is not valid a `validation_error` is thrown.
+*Effects*: `text(std::move(storage), throw_validation_error)`.
 
 ---
 
@@ -312,10 +294,7 @@ template <typename EncodingForm1, typename Container1>
 text& operator=(text<EncodingForm1, Container1> const& that);
 {% endhighlight %}
 
-*Effects*: encodes the code points from `that` into this instance's underlying
-storage.
-
-*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+*Effects*: `assign(that)`.
 
 *Returns*: `*this`.
 
@@ -327,10 +306,7 @@ text& operator=(code_point const* literal);
 
 *Requires*: `literal` is a pointer to a null-terminated array of code points.
 
-*Effects*: encodes the code points from the array pointed to by `literal` (not
-including the null terminator) into this instance's underlying storage.
-
-*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+*Effects*: `assign(literal)`.
 
 *Returns*: `*this`.
 
@@ -341,12 +317,7 @@ template <typename CodePointSequence>
 void assign(CodePointSequence&& sequence);
 {% endhighlight %}
 
-*Requires*: `CodePointSequence` is a code point sequence.
-
-*Effects*: encodes the code points from `sequence` into this instance's
-underlying storage.
-
-*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+*Effects*: `assign(std::forward<CodePointSequence>(sequence), throw_validation_error)`.
 
 ---
 
@@ -369,11 +340,7 @@ underlying storage.
 void assign(Container const& storage);
 {% endhighlight %}
 
-*Requires*: `Container` is copy-assignable.
-
-*Effects*: copy-assigns `storage` into this instance's underlying storage.
-
-*Validation*: if the data is not valid a `validation_error` is thrown.
+*Effects*: `assign(storage, throw_validation_error)`.
 
 ---
 
@@ -394,11 +361,7 @@ void assign(Container const& storage, Validation validation);
 void assign(Container&& storage);
 {% endhighlight %}
 
-*Requires*: `Container` is move-assignable.
-
-*Effects*: move-assigns `storage` into this instance's underlying storage.
-
-*Validation*: if the data is not valid a `validation_error` is thrown.
+*Effects*: `assign(std::move(storage), throw_validation_error)`.
 
 ---
 
@@ -469,17 +432,10 @@ bool empty() const;
 
 {% highlight cpp %}
 template <typename CodePointSequence>
-iterator append(CodePointSequence&& that);
+iterator append(CodePointSequence&& sequence);
 {% endhighlight %}
 
-*Requires*: `CodePointSequence` is a code point sequence.
-
-*Effects*: encodes the code points from `that` at the end of this instance's
-underlying storage according to `EncodingForm`.
-
-*Returns*: an iterator to the beginning of the inserted values.
-
-*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+*Effects*: `append(std::forward<CodePointSequence>(sequence), throw_validation_error)`.
 
 ---
 
@@ -505,11 +461,7 @@ template <typename Range>
 iterator erase(Range const& range);
 {% endhighlight %}
 
-*Requires*: `range` is a range of iterators into this instance.
-
-*Effects*: removes the code points in `range` from the underlying storage.
-
-*Returns*: an iterator to the code point after the removed range.
+*Effects*: `erase(boost::begin(range), boost::end(range))`.
 
 ---
 
@@ -528,28 +480,22 @@ storage.
 
 {% highlight cpp %}
 template <typename CodePointSequence>
-iterator insert(iterator position, CodePointSequence&& that);
+iterator insert(iterator position, CodePointSequence&& sequence);
 {% endhighlight %}
 
-*Requires*: `CodePointSequence` is a code point sequence and `position` is an
-iterator into this instance.
-
-*Effects*: inserts the code points from `that` at starting at `position`, by
-encoding them into the underlying storage according to `EncodingForm`.
-
-*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+*Effects*: `insert(position, std::forward<CodePointSequence>(sequence))`.
 
 ---
 
 {% highlight cpp %}
 template <typename CodePointSequence, typename Validation>
-iterator insert(iterator position, CodePointSequence&& that, Validation validation);
+iterator insert(iterator position, CodePointSequence&& sequence, Validation validation);
 {% endhighlight %}
 
 *Requires*: `CodePointSequence` is a code point sequence, `validation` is a
 validation strategy object, and `position` is an iterator into this instance.
 
-*Effects*: inserts the code points from `that` at starting at `position`, by
+*Effects*: inserts the code points from `sequence` at starting at `position`, by
 encoding them into the underlying storage according to `EncodingForm`.
 
 *Validation*: invalid sequences are treated according to `validation`.
@@ -561,13 +507,7 @@ template <typename Range, typename CodePointSequence>
 void replace(Range const& range, CodePointSequence&& sequence);
 {% endhighlight %}
 
-*Requires*: `CodePointSequence` is a code point sequence, and `range` is a range
-of iterators into this instance.
-
-*Effects*: replaces the code points in `range` in the underlying storage by
-encoding the code points from `sequence` according to `EncodingForm`.
-
-*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+*Effects*: `replace(boost::begin(range), boost::end(range), std::forward<CodePointSequence>(sequence))`.
 
 ---
 
@@ -576,14 +516,7 @@ template <typename Range, typename CodePointSequence, typename Validation>
 void replace(Range const& range, CodePointSequence&& sequence, Validation validation);
 {% endhighlight %}
 
-*Requires*: `CodePointSequence` is a code point sequence, `validation` is a
-validation strategy object, and `range` is a range of iterators into this
-instance.
-
-*Effects*: replaces the code points in `range` in the underlying storage by
-encoding the code points from `sequence` according to `EncodingForm`.
-
-*Validation*: invalid sequences are treated according to `validation`.
+*Effects*: `replace(boost::begin(range), boost::end(range), std::forward<CodePointSequence>(sequence), throw_validation_error)`.
 
 ---
 
@@ -592,13 +525,7 @@ template <typename CodePointSequence>
 void replace(iterator from, iterator to, CodePointSequence&& sequence);
 {% endhighlight %}
 
-*Requires*: `CodePointSequence` is a code point sequence, and [`from`, `to`) is
-a range of iterators into this instance.
-
-*Effects*: replaces the code points in [`from`, `to`) in the underlying storage by
-encoding the code points from `sequence` according to `EncodingForm`.
-
-*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+*Effects*: `replace(from, to, std::forward<CodePointSequence>(sequence), throw_validation_error)`.
 
 ---
 
@@ -679,16 +606,7 @@ template <typename EncodingForm = /* magic */, typename Container = /* magic */,
 text<EncodingForm, Container> concat(CodePointSequences&&... sequences);
 {% endhighlight %}
 
-*Requires*: all `CodePointSequences` are code point sequences. If `EncodingForm`
-or `Container` are not explicitly provided, there must be at least one sequence
-whose type is an instantiation of `text` and there must be no sequences with
-types that are different instantiations of `text`; the default values of those
-template parameters are those used in that instantiation.
-
-*Returns*: an instance of `text` with the sequence of code points resulting from
-the concatenation of `sequences`.
-
-*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+*Effects*: `concat(throw_validation_error, std::forward<CodePointSequences>(sequences)...)`.
 
 {% highlight cpp %}
 template <typename EncodingForm = /* magic */, typename Container = /* magic */, typename Validation, typename... CodePointSequences>
