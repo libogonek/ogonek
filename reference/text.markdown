@@ -152,7 +152,7 @@ text(text const& that);
 *Effects*: initialises an instance of `text` with a copy of the underlying
 storage of `that`.
 
-*Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
+*Validation*: no validation is performed.
 
 ---
 
