@@ -623,12 +623,17 @@ template <typename EncodingForm0, typename Container0, typename EncodingForm1, t
 bool operator==(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
 {% endhighlight %}
 
+*Returns*: `true` if the sequence of code points in `lhs` is canonically
+equivalent to the sequence of code points in `rhs`; `false` otherwise.
+
 ---
 
 {% highlight cpp %}
 template <typename EncodingForm0, typename Container0, typename EncodingForm1, typename Container1>
 bool operator!=(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
 {% endhighlight %}
+
+*Returns*: `!(lhs == rhs)`.
 
 ### Default collation
 
@@ -637,12 +642,17 @@ template <typename EncodingForm0, typename Container0, typename EncodingForm1, t
 bool operator<(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
 {% endhighlight %}
 
+*Returns*: `true` if `lhs` is ordered before `rhs` according to the Unicode
+default collation algorithm.
+
 ---
 
 {% highlight cpp %}
 template <typename EncodingForm0, typename Container0, typename EncodingForm1, typename Container1>
 bool operator>(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
 {% endhighlight %}
+
+*Returns*: `rhs < lhs`.
 
 ---
 
@@ -651,12 +661,16 @@ template <typename EncodingForm0, typename Container0, typename EncodingForm1, t
 bool operator<=(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
 {% endhighlight %}
 
+*Returns*: `!(lhs > rhs)`.
+
 ---
 
 {% highlight cpp %}
 template <typename EncodingForm0, typename Container0, typename EncodingForm1, typename Container1>
 bool operator>=(text<EncodingForm0, Container0> const& lhs, text<EncodingForm1, Container1> const& rhs);
 {% endhighlight %}
+
+*Returns*: `!(rhs > lhs)`.
 
 ### Concatenation
 
@@ -665,7 +679,14 @@ template <typename EncodingForm = /* magic */, typename Container = /* magic */,
 text<EncodingForm, Container> concat(CodePointSequences&&... sequences);
 {% endhighlight %}
 
-*Requires*: All `CodePointSequences` are code point sequences.
+*Requires*: all `CodePointSequences` are code point sequences. If `EncodingForm`
+or `Container` are not explicitly provided, there must be at least one sequence
+whose type is an instantiation of `text` and there must be no sequences with
+types that are different instantiations of `text`; the default values of those
+template parameters are those used in that instantiation.
+
+*Returns*: an instance of `text` with the sequence of code points resulting from
+the concatenation of `sequences`.
 
 *Validation*: if the sequence cannot be encoded a `validation_error` is thrown.
 
@@ -674,8 +695,14 @@ template <typename EncodingForm = /* magic */, typename Container = /* magic */,
 text<EncodingForm, Container> concat(Validation validation, CodePointSequences&&... sequences);
 {% endhighlight %}
 
-*Requires*: All `CodePointSequences` are code point sequences and `validation`
-is a validation strategy object.
+*Requires*: all `CodePointSequences` are code point sequences. If `EncodingForm`
+or `Container` are not explicitly provided, there must be at least one sequence
+whose type is an instantiation of `text` and there must be no sequences with
+types that are different instantiations of `text`; the default values of those
+template parameters are those used in that instantiation.
+
+*Returns*: an instance of `text` with the sequence of code points resulting from
+the concatenation of `sequences`.
 
 *Validation*: invalid sequences are treated according to `validation`.
 
