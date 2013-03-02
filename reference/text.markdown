@@ -111,6 +111,8 @@ namespace ogonek {
     // Concatenation
     template <typename EncodingForm = /* magic */, typename Container = /* magic */, typename... CodePointSequences>
     text<EncodingForm, Container> concat(CodePointSequences&&... sequences);
+    template <typename EncodingForm = /* magic */, typename Container = /* magic */, typename Validation, typename... CodePointSequences>
+    text<EncodingForm, Container> concat(Validation validation, CodePointSequences&&... sequences);
 } // namespace ogonek
 {% endhighlight %}
 
