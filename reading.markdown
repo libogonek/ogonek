@@ -14,7 +14,7 @@ Unless otherwise mentioned, all entities described are in namespace `ogonek`.
 
 ### Reference
 
-_In reference pages entities are described using following elements.
+In reference pages entities are described using following elements.
 
 - *Invariants* sections describe conditions that always hold for any object of
 a class;
