@@ -77,7 +77,7 @@ flame", which arguably makes it sound a lot cooler than "little tail".
 
 The name was picked randomly and it has absolutely no special meaning as the
 name of this project. It's just a label the author appropriated for it. In
-English it is pronounced [/&#712;o&#650;&#609;&#601;n&#603;k/][pronounciation]).
+English it is pronounced [/&#712;o&#650;&#609;&#601;n&#603;k/][pronounciation].
 
 <!-- #### History -->
 
