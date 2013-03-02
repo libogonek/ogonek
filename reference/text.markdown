@@ -120,8 +120,7 @@ namespace ogonek {
 container, and expose it as a code point sequence.
 
 {% highlight cpp %}
-template <typename EncodingForm,
-          typename Container = std::basic_string<CodeUnit<EncodingForm>>>
+template <typename EncodingForm, typename Container = std::basic_string<CodeUnit<EncodingForm>>>
 class text;
 {% endhighlight %}
 
