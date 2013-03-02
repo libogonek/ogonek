@@ -468,9 +468,9 @@ iterator erase(Range const& range);
 iterator erase(iterator from, iterator to);
 {% endhighlight %}
 
-*Requires*: [`from`, `to`) is a range of iterators into this instance.
+*Requires*: \[`from`, `to`) is a range of iterators into this instance.
 
-*Effects*: removes the code points in [`from`, `to`) from the underlying
+*Effects*: removes the code points in \[`from`, `to`) from the underlying
 storage.
 
 *Returns*: an iterator to the code point after the removed range.
@@ -534,10 +534,10 @@ void replace(iterator from, iterator to, CodePointSequence&& sequence, Validatio
 {% endhighlight %}
 
 *Requires*: `CodePointSequence` is a code point sequence, `validation` is a
-validation strategy object, and [`from`, `to`) is a range of iterators into this
+validation strategy object, and \[`from`, `to`) is a range of iterators into this
 instance.
 
-*Effects*: replaces the code points in [`from`, `to`) in the underlying storage by
+*Effects*: replaces the code points in \[`from`, `to`) in the underlying storage by
 encoding the code points from `sequence` according to `EncodingForm`.
 
 *Validation*: invalid sequences are treated according to `validation`.
