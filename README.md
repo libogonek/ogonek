@@ -1,6 +1,6 @@
 Ogonek is mostly the result of me playing around with Unicode. Currently the
 library is still in alpha stages, so I don't recommend using it for anything
-serious.
+serious. You are welcome to play around with it for any other reasons, though.
 
 Check out the [documentation] for more detailed information.
 
@@ -33,7 +33,6 @@ Pull requests are welcome too! There is a list of tasks I want done for 1.0.0 in
 the [issue tracker]. Feel free to pick one to tackle!
 
  [documentation]: http://flamingdangerzone.com/ogonek
- [downloads]: http://bitbucket.org/martinhofernandes/ogonek/downloads
  [lounge]: http://chat.stackoverflow.com/rooms/10/loungec
- [issue tracker]: https://github.com/rmartinho/ogonek/issues?sort=created&state=open
+ [issue tracker]: https://github.com/rmartinho/ogonek/issues?state=open
 
