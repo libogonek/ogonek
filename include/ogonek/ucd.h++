@@ -26,428 +26,430 @@
 #include <string>
 
 namespace ogonek {
-    template <typename T, std::size_t N>
-    using vector_type = detail::small_vector<T, N>; 
-
     namespace ucd {
-        enum class version {
-            v1_1,
-            v2_0, v2_1,
-            v3_0, v3_1, v3_2,
-            v4_0, v4_1,
-            v5_0, v5_1, v5_2,
-            v6_0, v6_1, v6_2,
-            unassigned = 0xFF,
-        };
-        enum class alias_type {
-            abbreviation, alternate, control, correction, figment,
-        };
-        struct alias_raw {
-            alias_type type;
-            char const* name;
-        };
-        enum class block {
-            Aegean_Numbers, Alchemical, Alphabetic_PF, Ancient_Greek_Music, Ancient_Greek_Numbers,
-            Ancient_Symbols, Arabic, Arabic_Ext_A, Arabic_Math, Arabic_PF_A, Arabic_PF_B, Arabic_Sup,
-            Armenian, Arrows, ASCII, Avestan, Balinese, Bamum, Bamum_Sup, Batak, Bengali, Block_Elements,
-            Bopomofo, Bopomofo_Ext, Box_Drawing, Brahmi, Braille, Buginese, Buhid, Byzantine_Music,
-            Carian, Chakma, Cham, Cherokee, CJK, CJK_Compat, CJK_Compat_Forms, CJK_Compat_Ideographs,
-            CJK_Compat_Ideographs_Sup, CJK_Ext_A, CJK_Ext_B, CJK_Ext_C, CJK_Ext_D, CJK_Radicals_Sup,
-            CJK_Strokes, CJK_Symbols, Compat_Jamo, Control_Pictures, Coptic, Counting_Rod, Cuneiform,
-            Cuneiform_Numbers, Currency_Symbols, Cypriot_Syllabary, Cyrillic, Cyrillic_Ext_A, Cyrillic_Ext_B,
-            Cyrillic_Sup, Deseret, Devanagari, Devanagari_Ext, Diacriticals, Diacriticals_For_Symbols,
-            Diacriticals_Sup, Dingbats, Domino, Egyptian_Hieroglyphs, Emoticons, Enclosed_Alphanum,
-            Enclosed_Alphanum_Sup, Enclosed_CJK, Enclosed_Ideographic_Sup, Ethiopic, Ethiopic_Ext,
-            Ethiopic_Ext_A, Ethiopic_Sup, Geometric_Shapes, Georgian, Georgian_Sup, Glagolitic, Gothic, Greek,
-            Greek_Ext, Gujarati, Gurmukhi, Half_And_Full_Forms, Half_Marks, Hangul, Hanunoo, Hebrew,
-            High_PU_Surrogates, High_Surrogates, Hiragana, IDC, Imperial_Aramaic, Indic_Number_Forms,
-            Inscriptional_Pahlavi, Inscriptional_Parthian, IPA_Ext, Jamo, Jamo_Ext_A, Jamo_Ext_B, Javanese,
-            Kaithi, Kana_Sup, Kanbun, Kangxi, Kannada, Katakana, Katakana_Ext, Kayah_Li, Kharoshthi, Khmer,
-            Khmer_Symbols, Lao, Latin_1_Sup, Latin_Ext_A, Latin_Ext_Additional, Latin_Ext_B, Latin_Ext_C,
-            Latin_Ext_D, Lepcha, Letterlike_Symbols, Limbu, Linear_B_Ideograms, Linear_B_Syllabary, Lisu,
-            Low_Surrogates, Lycian, Lydian, Mahjong, Malayalam, Mandaic, Math_Alphanum, Math_Operators,
-            Meetei_Mayek, Meetei_Mayek_Ext, Meroitic_Cursive, Meroitic_Hieroglyphs, Miao, Misc_Arrows,
-            Misc_Math_Symbols_A, Misc_Math_Symbols_B, Misc_Pictographs, Misc_Symbols, Misc_Technical,
-            Modifier_Letters, Modifier_Tone_Letters, Mongolian, Music, Myanmar, Myanmar_Ext_A, NB,
-            New_Tai_Lue, NKo, Number_Forms, OCR, Ogham, Ol_Chiki, Old_Italic, Old_Persian, Old_South_Arabian,
-            Old_Turkic, Oriya, Osmanya, Phags_Pa, Phaistos, Phoenician, Phonetic_Ext, Phonetic_Ext_Sup,
-            Playing_Cards, PUA, Punctuation, Rejang, Rumi, Runic, Samaritan, Saurashtra, Sharada, Shavian,
-            Sinhala, Small_Forms, Sora_Sompeng, Specials, Sundanese, Sundanese_Sup, Sup_Arrows_A, Sup_Arrows_B,
-            Sup_Math_Operators, Sup_PUA_A, Sup_PUA_B, Sup_Punctuation, Super_And_Sub, Syloti_Nagri, Syriac,
-            Tagalog, Tagbanwa, Tags, Tai_Le, Tai_Tham, Tai_Viet, Tai_Xuan_Jing, Takri, Tamil, Telugu, Thaana,
-            Thai, Tibetan, Tifinagh, Transport_And_Map, UCAS, UCAS_Ext, Ugaritic, Vai, Vedic_Ext,
-            Vertical_Forms, VS, VS_Sup, Yi_Radicals, Yi_Syllables, Yijing,
-        };
-        enum class category {
-            Lu, Ll, Lt, Lm, Lo,
-            Mn, Mc, Me,
-            Nd, Nl, No,
-            Pc, Pd, Ps, Pe, Pi, Pf, Po,
-            Sm, Sc, Sk, So,
-            Zs, Zl, Zp,
-            Cc, Cf, Cs, Co, Cn,
-        };
-        enum class bidi_category {
-            AL, AN,
-            B, BN,
-            CS,
-            EN, ES, ET,
-            L, LRE, LRO,
-            NSM,
-            ON,
-            PDF,
-            R, RLE, RLO,
-            S,
-            WS,
-        };
-        enum class decomposition_type {
-            can, com, enc, fin, font, fra,
-            init, iso, med, nar, nb, sml,
-            sqr, sub, sup, vert, wide, none,
-        };
-        enum class yes_no_maybe {
-            y, n, m,
-        };
-        enum class numeric_type {
-            None, De, Di, Nu,
-        };
-        enum class joining_class {
-            U, C, T, D, L, R,
-        };
-        enum class joining_group {
-            Ain, Alaph, Alef, Alef_Maqsurah,
-            Beh, Beth, Burushaski_Yeh_Barree,
-            Dal, Dalath_Rish, E,
-            Farsi_Yeh, Fe, Feh, Final_Semkath,
-            Gaf, Gamal,
-            Hah, Hamza_On_Heh_Goal, He,
-            Heh, Heh_Goal, Heth,
-            Kaf, Kaph, Khaph, Knotted_Heh,
-            Lam, Lamadh, Meem, Mim,
-            No_Joining_Group, Noon, Nun, Nya,
-            Pe, Qaf, Qaph, Reh, Reversed_Pe,
-            Rohingya_Yeh,
-            Sad, Sadhe, Seen, Semkath, Shin,
-            Swash_Kaf, Syriac_Waw, Tah, Taw,
-            Teh_Marbuta, Teh_Marbuta_Goal, Teth, Waw, Yeh,
-            Yeh_Barree, Yeh_With_Tail, Yudh,
-            Yudh_He, Zain, Zhain,
-        };
-        enum class linebreak {
-            AI, AL,
-            B2, BA, BB, BK,
-            CB, CJ, CL, CM, CP, CR,
-            EX,
-            GL,
-            H2, H3, HL, HY,
-            ID, IN, IS,
-            JL, JT, JV,
-            LF,
-            NL, NS, NU,
-            OP,
-            PO, PR,
-            QU,
-            SA, SG, SP, SY,
-            WJ,
-            XX,
-            ZW,
-            RI,
-        };
-        enum class east_asian_width {
-            A, F, H, N, Na, W,
-        };
-        enum class script {
-            Arab, Armi, Armn, Avst,
-            Bali, Bamu, Batk, Beng, Bopo, Brah, Brai, Bugi, Buhd,
-            Cakm, Cans, Cari, Cham, Cher, Copt, Cprt,
-            Cyrl,
-            Deva, Dsrt,
-            Egyp, Ethi,
-            Geor, Glag, Goth, Grek, Gujr, Guru,
-            Hang, Hani, Hano, Hebr, Hira, Hrkt,
-            Ital,
-            Java,
-            Kali, Kana, Khar, Khmr, Knda, Kthi,
-            Lana, Laoo, Latn, Lepc, Limb, Linb, Lisu, Lyci,
-            Lydi,
-            Mand, Merc, Mero, Mlym, Mong, Mtei, Mymr,
-            Nkoo,
-            Ogam, Olck, Orkh, Orya, Osma,
-            Phag, Phli, Phnx, Plrd, Prti,
-            Qaai,
-            Rjng, Runr,
-            Samr, Sarb, Saur, Shaw, Shrd,  Sinh, Sora, Sund, Sylo, Syrc,
-            Tagb, Takr, Tale, Talu, Taml, Tavt, Telu, Tfng,
-            Tglg, Thaa, Thai, Tibt,
-            Ugar,
-            Vaii,
-            Xpeo, Xsux,
-            Yiii,
-            Zinh, Zyyy, Zzzz,
-        };
-        enum class hangul_syllable_type {
-            L, LV, LVT, T, V, NA,
-        };
-        enum class indic_syllable_category {
-            Bindu,
-            Visarga,
-            Avagraha,
-            Nukta,
-            Virama,
-            Vowel_Independent,
-            Vowel_Dependent,
-            Vowel,
-            Consonant_Placeholder,
-            Consonant,
-            Consonant_Dead,
-            Consonant_Repha,
-            Consonant_Subjoined,
-            Consonant_Medial,
-            Consonant_Final,
-            Consonant_Head_Letter,
-            Modifying_Letter,
-            Tone_Letter,
-            Tone_Mark,
-            Register_Shifter,
-            Other,
-        };
-        enum class indic_matra_category {
-            Right,
-            Left,
-            Visual_Order_Left,
-            Left_And_Right,
-            Top,
-            Bottom,
-            Top_And_Bottom,
-            Top_And_Right,
-            Top_And_Left,
-            Top_And_Left_And_Right,
-            Bottom_And_Right,
-            Top_And_Bottom_And_Right,
-            Overstruck,
-            Invisible,
-            NA,
-        };
-        enum class grapheme_cluster_break : unsigned {
-            CN  = 1u << 0,
-            CR  = 1u << 1,
-            EX  = 1u << 2,
-            L   = 1u << 3,
-            LF  = 1u << 4,
-            LV  = 1u << 5,
-            LVT = 1u << 6,
-            PP  = 1u << 7,
-            SM  = 1u << 8,
-            T   = 1u << 9,
-            V   = 1u << 10,
-            XX  = 1u << 11,
-            RI  = 1u << 12,
-        };
-        enum class word_break : unsigned {
-            CR     = 1u << 0,
-            EX     = 1u << 1,
-            Extend = 1u << 2,
-            FO     = 1u << 3,
-            KA     = 1u << 4,
-            LE     = 1u << 5,
-            LF     = 1u << 6,
-            MB     = 1u << 7,
-            ML     = 1u << 8,
-            MN     = 1u << 9,
-            NL     = 1u << 10,
-            NU     = 1u << 11,
-            XX     = 1u << 12,
-            RI     = 1u << 13,
-        };
-        enum class sentence_break {
-            AT, CL, CR, EX, FO, LE, LF, LO,
-            NU, SC, SE, SP, ST, UP, XX,
-        };
+        inline namespace abiv0 {
+            enum class version {
+                v1_1,
+                v2_0, v2_1,
+                v3_0, v3_1, v3_2,
+                v4_0, v4_1,
+                v5_0, v5_1, v5_2,
+                v6_0, v6_1, v6_2,
+                unassigned = 0xFF,
+            };
+            enum class alias_type {
+                abbreviation, alternate, control, correction, figment,
+            };
+            struct alias_raw {
+                alias_type type;
+                char const* name;
+            };
+            enum class block {
+                Aegean_Numbers, Alchemical, Alphabetic_PF, Ancient_Greek_Music, Ancient_Greek_Numbers,
+                Ancient_Symbols, Arabic, Arabic_Ext_A, Arabic_Math, Arabic_PF_A, Arabic_PF_B, Arabic_Sup,
+                Armenian, Arrows, ASCII, Avestan, Balinese, Bamum, Bamum_Sup, Batak, Bengali, Block_Elements,
+                Bopomofo, Bopomofo_Ext, Box_Drawing, Brahmi, Braille, Buginese, Buhid, Byzantine_Music,
+                Carian, Chakma, Cham, Cherokee, CJK, CJK_Compat, CJK_Compat_Forms, CJK_Compat_Ideographs,
+                CJK_Compat_Ideographs_Sup, CJK_Ext_A, CJK_Ext_B, CJK_Ext_C, CJK_Ext_D, CJK_Radicals_Sup,
+                CJK_Strokes, CJK_Symbols, Compat_Jamo, Control_Pictures, Coptic, Counting_Rod, Cuneiform,
+                Cuneiform_Numbers, Currency_Symbols, Cypriot_Syllabary, Cyrillic, Cyrillic_Ext_A, Cyrillic_Ext_B,
+                Cyrillic_Sup, Deseret, Devanagari, Devanagari_Ext, Diacriticals, Diacriticals_For_Symbols,
+                Diacriticals_Sup, Dingbats, Domino, Egyptian_Hieroglyphs, Emoticons, Enclosed_Alphanum,
+                Enclosed_Alphanum_Sup, Enclosed_CJK, Enclosed_Ideographic_Sup, Ethiopic, Ethiopic_Ext,
+                Ethiopic_Ext_A, Ethiopic_Sup, Geometric_Shapes, Georgian, Georgian_Sup, Glagolitic, Gothic, Greek,
+                Greek_Ext, Gujarati, Gurmukhi, Half_And_Full_Forms, Half_Marks, Hangul, Hanunoo, Hebrew,
+                High_PU_Surrogates, High_Surrogates, Hiragana, IDC, Imperial_Aramaic, Indic_Number_Forms,
+                Inscriptional_Pahlavi, Inscriptional_Parthian, IPA_Ext, Jamo, Jamo_Ext_A, Jamo_Ext_B, Javanese,
+                Kaithi, Kana_Sup, Kanbun, Kangxi, Kannada, Katakana, Katakana_Ext, Kayah_Li, Kharoshthi, Khmer,
+                Khmer_Symbols, Lao, Latin_1_Sup, Latin_Ext_A, Latin_Ext_Additional, Latin_Ext_B, Latin_Ext_C,
+                Latin_Ext_D, Lepcha, Letterlike_Symbols, Limbu, Linear_B_Ideograms, Linear_B_Syllabary, Lisu,
+                Low_Surrogates, Lycian, Lydian, Mahjong, Malayalam, Mandaic, Math_Alphanum, Math_Operators,
+                Meetei_Mayek, Meetei_Mayek_Ext, Meroitic_Cursive, Meroitic_Hieroglyphs, Miao, Misc_Arrows,
+                Misc_Math_Symbols_A, Misc_Math_Symbols_B, Misc_Pictographs, Misc_Symbols, Misc_Technical,
+                Modifier_Letters, Modifier_Tone_Letters, Mongolian, Music, Myanmar, Myanmar_Ext_A, NB,
+                New_Tai_Lue, NKo, Number_Forms, OCR, Ogham, Ol_Chiki, Old_Italic, Old_Persian, Old_South_Arabian,
+                Old_Turkic, Oriya, Osmanya, Phags_Pa, Phaistos, Phoenician, Phonetic_Ext, Phonetic_Ext_Sup,
+                Playing_Cards, PUA, Punctuation, Rejang, Rumi, Runic, Samaritan, Saurashtra, Sharada, Shavian,
+                Sinhala, Small_Forms, Sora_Sompeng, Specials, Sundanese, Sundanese_Sup, Sup_Arrows_A, Sup_Arrows_B,
+                Sup_Math_Operators, Sup_PUA_A, Sup_PUA_B, Sup_Punctuation, Super_And_Sub, Syloti_Nagri, Syriac,
+                Tagalog, Tagbanwa, Tags, Tai_Le, Tai_Tham, Tai_Viet, Tai_Xuan_Jing, Takri, Tamil, Telugu, Thaana,
+                Thai, Tibetan, Tifinagh, Transport_And_Map, UCAS, UCAS_Ext, Ugaritic, Vai, Vedic_Ext,
+                Vertical_Forms, VS, VS_Sup, Yi_Radicals, Yi_Syllables, Yijing,
+            };
+            enum class category {
+                Lu, Ll, Lt, Lm, Lo,
+                Mn, Mc, Me,
+                Nd, Nl, No,
+                Pc, Pd, Ps, Pe, Pi, Pf, Po,
+                Sm, Sc, Sk, So,
+                Zs, Zl, Zp,
+                Cc, Cf, Cs, Co, Cn,
+            };
+            enum class bidi_category {
+                AL, AN,
+                B, BN,
+                CS,
+                EN, ES, ET,
+                L, LRE, LRO,
+                NSM,
+                ON,
+                PDF,
+                R, RLE, RLO,
+                S,
+                WS,
+            };
+            enum class decomposition_type {
+                can, com, enc, fin, font, fra,
+                init, iso, med, nar, nb, sml,
+                sqr, sub, sup, vert, wide, none,
+            };
+            enum class yes_no_maybe {
+                y, n, m,
+            };
+            enum class numeric_type {
+                None, De, Di, Nu,
+            };
+            enum class joining_class {
+                U, C, T, D, L, R,
+            };
+            enum class joining_group {
+                Ain, Alaph, Alef, Alef_Maqsurah,
+                Beh, Beth, Burushaski_Yeh_Barree,
+                Dal, Dalath_Rish, E,
+                Farsi_Yeh, Fe, Feh, Final_Semkath,
+                Gaf, Gamal,
+                Hah, Hamza_On_Heh_Goal, He,
+                Heh, Heh_Goal, Heth,
+                Kaf, Kaph, Khaph, Knotted_Heh,
+                Lam, Lamadh, Meem, Mim,
+                No_Joining_Group, Noon, Nun, Nya,
+                Pe, Qaf, Qaph, Reh, Reversed_Pe,
+                Rohingya_Yeh,
+                Sad, Sadhe, Seen, Semkath, Shin,
+                Swash_Kaf, Syriac_Waw, Tah, Taw,
+                Teh_Marbuta, Teh_Marbuta_Goal, Teth, Waw, Yeh,
+                Yeh_Barree, Yeh_With_Tail, Yudh,
+                Yudh_He, Zain, Zhain,
+            };
+            enum class linebreak {
+                AI, AL,
+                B2, BA, BB, BK,
+                CB, CJ, CL, CM, CP, CR,
+                EX,
+                GL,
+                H2, H3, HL, HY,
+                ID, IN, IS,
+                JL, JT, JV,
+                LF,
+                NL, NS, NU,
+                OP,
+                PO, PR,
+                QU,
+                SA, SG, SP, SY,
+                WJ,
+                XX,
+                ZW,
+                RI,
+            };
+            enum class east_asian_width {
+                A, F, H, N, Na, W,
+            };
+            enum class script {
+                Arab, Armi, Armn, Avst,
+                Bali, Bamu, Batk, Beng, Bopo, Brah, Brai, Bugi, Buhd,
+                Cakm, Cans, Cari, Cham, Cher, Copt, Cprt,
+                Cyrl,
+                Deva, Dsrt,
+                Egyp, Ethi,
+                Geor, Glag, Goth, Grek, Gujr, Guru,
+                Hang, Hani, Hano, Hebr, Hira, Hrkt,
+                Ital,
+                Java,
+                Kali, Kana, Khar, Khmr, Knda, Kthi,
+                Lana, Laoo, Latn, Lepc, Limb, Linb, Lisu, Lyci,
+                Lydi,
+                Mand, Merc, Mero, Mlym, Mong, Mtei, Mymr,
+                Nkoo,
+                Ogam, Olck, Orkh, Orya, Osma,
+                Phag, Phli, Phnx, Plrd, Prti,
+                Qaai,
+                Rjng, Runr,
+                Samr, Sarb, Saur, Shaw, Shrd,  Sinh, Sora, Sund, Sylo, Syrc,
+                Tagb, Takr, Tale, Talu, Taml, Tavt, Telu, Tfng,
+                Tglg, Thaa, Thai, Tibt,
+                Ugar,
+                Vaii,
+                Xpeo, Xsux,
+                Yiii,
+                Zinh, Zyyy, Zzzz,
+            };
+            enum class hangul_syllable_type {
+                L, LV, LVT, T, V, NA,
+            };
+            enum class indic_syllable_category {
+                Bindu,
+                Visarga,
+                Avagraha,
+                Nukta,
+                Virama,
+                Vowel_Independent,
+                Vowel_Dependent,
+                Vowel,
+                Consonant_Placeholder,
+                Consonant,
+                Consonant_Dead,
+                Consonant_Repha,
+                Consonant_Subjoined,
+                Consonant_Medial,
+                Consonant_Final,
+                Consonant_Head_Letter,
+                Modifying_Letter,
+                Tone_Letter,
+                Tone_Mark,
+                Register_Shifter,
+                Other,
+            };
+            enum class indic_matra_category {
+                Right,
+                Left,
+                Visual_Order_Left,
+                Left_And_Right,
+                Top,
+                Bottom,
+                Top_And_Bottom,
+                Top_And_Right,
+                Top_And_Left,
+                Top_And_Left_And_Right,
+                Bottom_And_Right,
+                Top_And_Bottom_And_Right,
+                Overstruck,
+                Invisible,
+                NA,
+            };
+            enum class grapheme_cluster_break : unsigned {
+                CN  = 1u << 0,
+                CR  = 1u << 1,
+                EX  = 1u << 2,
+                L   = 1u << 3,
+                LF  = 1u << 4,
+                LV  = 1u << 5,
+                LVT = 1u << 6,
+                PP  = 1u << 7,
+                SM  = 1u << 8,
+                T   = 1u << 9,
+                V   = 1u << 10,
+                XX  = 1u << 11,
+                RI  = 1u << 12,
+            };
+            enum class word_break : unsigned {
+                CR     = 1u << 0,
+                EX     = 1u << 1,
+                Extend = 1u << 2,
+                FO     = 1u << 3,
+                KA     = 1u << 4,
+                LE     = 1u << 5,
+                LF     = 1u << 6,
+                MB     = 1u << 7,
+                ML     = 1u << 8,
+                MN     = 1u << 9,
+                NL     = 1u << 10,
+                NU     = 1u << 11,
+                XX     = 1u << 12,
+                RI     = 1u << 13,
+            };
+            enum class sentence_break {
+                AT, CL, CR, EX, FO, LE, LF, LO,
+                NU, SC, SE, SP, ST, UP, XX,
+            };
 
-        template <typename T>
-        struct simple_properties {
-            code_point start;
-            T data;
-        };
-        using version_properties = simple_properties<version>;
-        struct name_properties {
-            code_point start;
-            bool variable; // whether # needs to be replaced
-            char const* name;
-        };
-        struct alias_properties {
-            code_point start;
-            alias_raw const* first;
-            int count;
-        };
-        using block_properties = simple_properties<block>;
-        using category_properties = simple_properties<category>;
-        using combining_class_properties = simple_properties<int>;
-        struct bidi_properties {
-            code_point start;
-            bidi_category category;
-            bool mirrored;
-            code_point mirrored_glyph;
-            bool control;
-        };
-        struct composition_entry {
-            code_point other;
-            code_point precomposed;
-        };
-        struct composition_properties {
-            code_point starter;
-            std::initializer_list<composition_entry> compositions;
-        };
-        struct decomposition_properties {
-            code_point start;
-            decomposition_type type;
-            code_point const* mapping;
-            bool composition_exclusion;
-            bool full_composition_exclusion;
-            yes_no_maybe nfc_quick_check;
-            bool nfd_quick_check;
-            yes_no_maybe nfkc_quick_check;
-            bool nfkd_quick_check;
-            bool expands_on_nfc;
-            bool expands_on_nfd;
-            bool expands_on_nfkc;
-            bool expands_on_nfkd;
-            code_point const* fc_nfkc_closure;
-        };
-        struct numeric_properties {
-            code_point start;
-            numeric_type type;
-            double value;
-        };
-        struct joining_properties {
-            code_point start;
-            joining_class class_;
-            joining_group group;
-            bool control;
-        };
-        using linebreak_properties = simple_properties<linebreak>;
-        using east_asian_properties = simple_properties<east_asian_width>;
-        struct case_properties {
-            code_point start;
-            bool is_uppercase, is_lowercase, other_uppercase, other_lowercase;
-            code_point simple_uppercase, simple_lowercase, simple_titlecase;
-            code_point const* uppercase;
-            code_point const* lowercase;
-            code_point const* titlecase;
-            code_point simple_case_folding;
-            code_point const* case_folding;
-            bool case_ignorable;
-            bool cased;
-            bool changes_when_casefolded, changes_when_casemapped, changes_when_lowercased,
-                 changes_when_nfkc_casefolded, changes_when_titlecased, changes_when_uppercased;
-            code_point const* nfkc_casefold;
-        };
-        struct script_properties {
-            code_point start;
-            ucd::script script;
-            ucd::script const* first_script_extension;
-            int script_extension_count;
-        };
-        using iso_comment_properties = simple_properties<code_point const*>;
-        struct hangul_properties {
-            code_point start;
-            hangul_syllable_type syllable_type;
-            char const jamo_short_name[4];
-        };
-        struct indic_properties {
-            code_point start;
-            indic_syllable_category syllable_category;
-            indic_matra_category matra_category;
-        };
-        struct identifier_properties {
-            code_point start;
-            bool id_start, other_id_start, xid_start;
-            bool id_continue, other_id_continue, xid_continue;
-        };
-        struct pattern_properties {
-            code_point start;
-            bool syntax;
-            bool white_space;
-        };
-        struct function_properties {
-            code_point start;
-            bool dash, hyphen, quotation_mark, terminal_punctuation, sterm, diacritic,
-                 extender, soft_dotted, alphabetic, other_alphabetic, math, other_math,
-                 hex_digit, ascii_hex_digit, default_ignorable, other_default_ignorable,
-                 logical_order_exception, white_space;
-        };
-        struct boundary_properties {
-            code_point start;
-            bool grapheme_base, grapheme_extend, other_grapheme_extend, grapheme_link;
-            ucd::grapheme_cluster_break grapheme_cluster_break;
-            ucd::word_break word_break;
-            ucd::sentence_break sentence_break;
-        };
-        struct ideograph_properties {
-            code_point start;
-            bool ideographic;
-            bool unified_ideograph;
-            bool ids_binary_operator;
-            bool ids_trinary_operator;
-            bool radical;
-        };
-        struct miscellaneous_properties {
-            code_point start;
-            bool deprecated;
-            bool variant_selector;
-            bool noncharacter;
-        };
+            template <typename T>
+            struct simple_properties {
+                code_point start;
+                T data;
+            };
+            using version_properties = simple_properties<version>;
+            struct name_properties {
+                code_point start;
+                bool variable; // whether # needs to be replaced
+                char const* name;
+            };
+            struct alias_properties {
+                code_point start;
+                alias_raw const* first;
+                int count;
+            };
+            using block_properties = simple_properties<block>;
+            using category_properties = simple_properties<category>;
+            using combining_class_properties = simple_properties<int>;
+            struct bidi_properties {
+                code_point start;
+                bidi_category category;
+                bool mirrored;
+                code_point mirrored_glyph;
+                bool control;
+            };
+            struct composition_entry {
+                code_point other;
+                code_point precomposed;
+            };
+            struct composition_properties {
+                code_point starter;
+                std::initializer_list<composition_entry> compositions;
+            };
+            struct decomposition_properties {
+                code_point start;
+                decomposition_type type;
+                code_point const* mapping;
+                bool composition_exclusion;
+                bool full_composition_exclusion;
+                yes_no_maybe nfc_quick_check;
+                bool nfd_quick_check;
+                yes_no_maybe nfkc_quick_check;
+                bool nfkd_quick_check;
+                bool expands_on_nfc;
+                bool expands_on_nfd;
+                bool expands_on_nfkc;
+                bool expands_on_nfkd;
+                code_point const* fc_nfkc_closure;
+            };
+            struct numeric_properties {
+                code_point start;
+                numeric_type type;
+                double value;
+            };
+            struct joining_properties {
+                code_point start;
+                joining_class class_;
+                joining_group group;
+                bool control;
+            };
+            using linebreak_properties = simple_properties<linebreak>;
+            using east_asian_properties = simple_properties<east_asian_width>;
+            struct case_properties {
+                code_point start;
+                bool is_uppercase, is_lowercase, other_uppercase, other_lowercase;
+                code_point simple_uppercase, simple_lowercase, simple_titlecase;
+                code_point const* uppercase;
+                code_point const* lowercase;
+                code_point const* titlecase;
+                code_point simple_case_folding;
+                code_point const* case_folding;
+                bool case_ignorable;
+                bool cased;
+                bool changes_when_casefolded, changes_when_casemapped, changes_when_lowercased,
+                     changes_when_nfkc_casefolded, changes_when_titlecased, changes_when_uppercased;
+                code_point const* nfkc_casefold;
+            };
+            struct script_properties {
+                code_point start;
+                ucd::script script;
+                ucd::script const* first_script_extension;
+                int script_extension_count;
+            };
+            using iso_comment_properties = simple_properties<code_point const*>;
+            struct hangul_properties {
+                code_point start;
+                hangul_syllable_type syllable_type;
+                char const jamo_short_name[4];
+            };
+            struct indic_properties {
+                code_point start;
+                indic_syllable_category syllable_category;
+                indic_matra_category matra_category;
+            };
+            struct identifier_properties {
+                code_point start;
+                bool id_start, other_id_start, xid_start;
+                bool id_continue, other_id_continue, xid_continue;
+            };
+            struct pattern_properties {
+                code_point start;
+                bool syntax;
+                bool white_space;
+            };
+            struct function_properties {
+                code_point start;
+                bool dash, hyphen, quotation_mark, terminal_punctuation, sterm, diacritic,
+                     extender, soft_dotted, alphabetic, other_alphabetic, math, other_math,
+                     hex_digit, ascii_hex_digit, default_ignorable, other_default_ignorable,
+                     logical_order_exception, white_space;
+            };
+            struct boundary_properties {
+                code_point start;
+                bool grapheme_base, grapheme_extend, other_grapheme_extend, grapheme_link;
+                ucd::grapheme_cluster_break grapheme_cluster_break;
+                ucd::word_break word_break;
+                ucd::sentence_break sentence_break;
+            };
+            struct ideograph_properties {
+                code_point start;
+                bool ideographic;
+                bool unified_ideograph;
+                bool ids_binary_operator;
+                bool ids_trinary_operator;
+                bool radical;
+            };
+            struct miscellaneous_properties {
+                code_point start;
+                bool deprecated;
+                bool variant_selector;
+                bool noncharacter;
+            };
 
-        extern OGONEK_PUBLIC version_properties const* version_data;
-        extern OGONEK_PUBLIC std::size_t version_data_size;
-        extern OGONEK_PUBLIC name_properties const* name_data;
-        extern OGONEK_PUBLIC std::size_t name_data_size;
-        extern OGONEK_PUBLIC name_properties const* v1name_data;
-        extern OGONEK_PUBLIC std::size_t v1name_data_size;
-        extern OGONEK_PUBLIC alias_properties const* aliases_data;
-        extern OGONEK_PUBLIC std::size_t aliases_data_size;
-        extern OGONEK_PUBLIC block_properties const* block_data;
-        extern OGONEK_PUBLIC std::size_t block_data_size;
-        extern OGONEK_PUBLIC category_properties const* category_data;
-        extern OGONEK_PUBLIC std::size_t category_data_size;
-        extern OGONEK_PUBLIC combining_class_properties const* combining_class_data;
-        extern OGONEK_PUBLIC std::size_t combining_class_data_size;
-        extern OGONEK_PUBLIC bidi_properties const* bidi_data;
-        extern OGONEK_PUBLIC std::size_t bidi_data_size;
-        extern OGONEK_PUBLIC composition_properties const* composition_data;
-        extern OGONEK_PUBLIC std::size_t composition_data_size;
-        extern OGONEK_PUBLIC decomposition_properties const* decomposition_data;
-        extern OGONEK_PUBLIC std::size_t decomposition_data_size;
-        extern OGONEK_PUBLIC numeric_properties const* numeric_data;
-        extern OGONEK_PUBLIC std::size_t numeric_data_size;
-        extern OGONEK_PUBLIC joining_properties const* joining_data;
-        extern OGONEK_PUBLIC std::size_t joining_data_size;
-        extern OGONEK_PUBLIC linebreak_properties const* linebreak_data;
-        extern OGONEK_PUBLIC std::size_t linebreak_data_size;
-        extern OGONEK_PUBLIC east_asian_properties const* east_asian_data;
-        extern OGONEK_PUBLIC std::size_t east_asian_data_size;
-        extern OGONEK_PUBLIC case_properties const* case_data;
-        extern OGONEK_PUBLIC std::size_t case_data_size;
-        extern OGONEK_PUBLIC script_properties const* script_data;
-        extern OGONEK_PUBLIC std::size_t script_data_size;
-        extern OGONEK_PUBLIC iso_comment_properties const* iso_comment_data;
-        extern OGONEK_PUBLIC std::size_t iso_comment_data_size;
-        extern OGONEK_PUBLIC hangul_properties const* hangul_data;
-        extern OGONEK_PUBLIC std::size_t hangul_data_size;
-        extern OGONEK_PUBLIC indic_properties const* indic_data;
-        extern OGONEK_PUBLIC std::size_t indic_data_size;
-        extern OGONEK_PUBLIC identifier_properties const* identifier_data;
-        extern OGONEK_PUBLIC std::size_t identifier_data_size;
-        extern OGONEK_PUBLIC pattern_properties const* pattern_data;
-        extern OGONEK_PUBLIC std::size_t pattern_data_size;
-        extern OGONEK_PUBLIC function_properties const* function_data;
-        extern OGONEK_PUBLIC std::size_t function_data_size;
-        extern OGONEK_PUBLIC boundary_properties const* boundary_data;
-        extern OGONEK_PUBLIC std::size_t boundary_data_size;
-        extern OGONEK_PUBLIC ideograph_properties const* ideograph_data;
-        extern OGONEK_PUBLIC std::size_t ideograph_data_size;
-        extern OGONEK_PUBLIC miscellaneous_properties const* miscellaneous_data;
-        extern OGONEK_PUBLIC std::size_t miscellaneous_data_size;
+            extern OGONEK_PUBLIC version_properties const* version_data;
+            extern OGONEK_PUBLIC std::size_t version_data_size;
+            extern OGONEK_PUBLIC name_properties const* name_data;
+            extern OGONEK_PUBLIC std::size_t name_data_size;
+            extern OGONEK_PUBLIC name_properties const* v1name_data;
+            extern OGONEK_PUBLIC std::size_t v1name_data_size;
+            extern OGONEK_PUBLIC alias_properties const* aliases_data;
+            extern OGONEK_PUBLIC std::size_t aliases_data_size;
+            extern OGONEK_PUBLIC block_properties const* block_data;
+            extern OGONEK_PUBLIC std::size_t block_data_size;
+            extern OGONEK_PUBLIC category_properties const* category_data;
+            extern OGONEK_PUBLIC std::size_t category_data_size;
+            extern OGONEK_PUBLIC combining_class_properties const* combining_class_data;
+            extern OGONEK_PUBLIC std::size_t combining_class_data_size;
+            extern OGONEK_PUBLIC bidi_properties const* bidi_data;
+            extern OGONEK_PUBLIC std::size_t bidi_data_size;
+            extern OGONEK_PUBLIC composition_properties const* composition_data;
+            extern OGONEK_PUBLIC std::size_t composition_data_size;
+            extern OGONEK_PUBLIC decomposition_properties const* decomposition_data;
+            extern OGONEK_PUBLIC std::size_t decomposition_data_size;
+            extern OGONEK_PUBLIC numeric_properties const* numeric_data;
+            extern OGONEK_PUBLIC std::size_t numeric_data_size;
+            extern OGONEK_PUBLIC joining_properties const* joining_data;
+            extern OGONEK_PUBLIC std::size_t joining_data_size;
+            extern OGONEK_PUBLIC linebreak_properties const* linebreak_data;
+            extern OGONEK_PUBLIC std::size_t linebreak_data_size;
+            extern OGONEK_PUBLIC east_asian_properties const* east_asian_data;
+            extern OGONEK_PUBLIC std::size_t east_asian_data_size;
+            extern OGONEK_PUBLIC case_properties const* case_data;
+            extern OGONEK_PUBLIC std::size_t case_data_size;
+            extern OGONEK_PUBLIC script_properties const* script_data;
+            extern OGONEK_PUBLIC std::size_t script_data_size;
+            extern OGONEK_PUBLIC iso_comment_properties const* iso_comment_data;
+            extern OGONEK_PUBLIC std::size_t iso_comment_data_size;
+            extern OGONEK_PUBLIC hangul_properties const* hangul_data;
+            extern OGONEK_PUBLIC std::size_t hangul_data_size;
+            extern OGONEK_PUBLIC indic_properties const* indic_data;
+            extern OGONEK_PUBLIC std::size_t indic_data_size;
+            extern OGONEK_PUBLIC identifier_properties const* identifier_data;
+            extern OGONEK_PUBLIC std::size_t identifier_data_size;
+            extern OGONEK_PUBLIC pattern_properties const* pattern_data;
+            extern OGONEK_PUBLIC std::size_t pattern_data_size;
+            extern OGONEK_PUBLIC function_properties const* function_data;
+            extern OGONEK_PUBLIC std::size_t function_data_size;
+            extern OGONEK_PUBLIC boundary_properties const* boundary_data;
+            extern OGONEK_PUBLIC std::size_t boundary_data_size;
+            extern OGONEK_PUBLIC ideograph_properties const* ideograph_data;
+            extern OGONEK_PUBLIC std::size_t ideograph_data_size;
+            extern OGONEK_PUBLIC miscellaneous_properties const* miscellaneous_data;
+            extern OGONEK_PUBLIC std::size_t miscellaneous_data_size;
+        } // namespace abiv0
+
+        template <typename T, std::size_t N>
+        using vector_type = detail::small_vector<T, N>; 
 
         namespace detail {
             struct property_group_locator {
