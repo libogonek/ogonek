@@ -1,6 +1,6 @@
 ---
 layout: default
-title: `ogonek::text` reference
+title: Text reference
 ---
 
 ### Header `<ogonek/text.h++>` synopsis
