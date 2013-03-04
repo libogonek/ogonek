@@ -584,7 +584,7 @@ namespace wheels {
     using Decay = Invoke<std::decay<T>>;
     //! Removes all reference and cv qualifiers
     template <typename T>
-    using Bare = RemoveCv<RemoveReference<T>>;
+    using Unqualified = RemoveCv<RemoveReference<T>>;
 
     //! ???
     template <typename... T>
@@ -622,7 +622,7 @@ namespace wheels {
     // other traits
     //! Tests if two types are the same after stripping all qualifiers
     template <typename T, typename U>
-    using is_related = std::is_same<Bare<T>, Bare<U>>;
+    using is_related = std::is_same<Unqualified<T>, Unqualified<U>>;
 
     //! Obtains the value_type nested type of T
     template <typename T>
@@ -663,8 +663,8 @@ namespace wheels {
 
     namespace invoke_detail {
         template <typename Fun, typename Obj, typename... Args,
-                  EnableIf<std::is_member_function_pointer<Bare<Fun>>,
-                           std::is_base_of<ClassOf<Bare<Fun>>, Bare<Obj>>
+                  EnableIf<std::is_member_function_pointer<Unqualified<Fun>>,
+                           std::is_base_of<ClassOf<Unqualified<Fun>>, Unqualified<Obj>>
                           > = _>
         auto invoke(Fun&& fun, Obj&& obj, Args&&... args)
         -> decltype((std::declval<Obj>().*std::declval<Fun>())(std::declval<Args>()...)) {
@@ -672,8 +672,8 @@ namespace wheels {
         }
 
         template <typename Fun, typename Obj, typename... Args,
-                  EnableIf<std::is_member_function_pointer<Bare<Fun>>,
-                           Not<std::is_base_of<ClassOf<Bare<Fun>>, Bare<Obj>>>
+                  EnableIf<std::is_member_function_pointer<Unqualified<Fun>>,
+                           Not<std::is_base_of<ClassOf<Unqualified<Fun>>, Unqualified<Obj>>>
                           > = _>
         auto invoke(Fun&& fun, Obj&& obj, Args&&... args)
         -> decltype(((*std::declval<Obj>()).*std::declval<Fun>())(std::declval<Args>()...)) {
@@ -681,8 +681,8 @@ namespace wheels {
         }
 
         template <typename Fun, typename Obj,
-                  EnableIf<std::is_member_object_pointer<Bare<Fun>>,
-                           std::is_base_of<ClassOf<Bare<Fun>>, Bare<Obj>>
+                  EnableIf<std::is_member_object_pointer<Unqualified<Fun>>,
+                           std::is_base_of<ClassOf<Unqualified<Fun>>, Unqualified<Obj>>
                           > = _>
         auto invoke(Fun&& fun, Obj&& obj)
         -> decltype(std::declval<Obj>().*std::declval<Fun>()) {
@@ -690,8 +690,8 @@ namespace wheels {
         }
 
         template <typename Fun, typename Obj,
-                  EnableIf<std::is_member_object_pointer<Bare<Fun>>,
-                           Not<std::is_base_of<ClassOf<Bare<Fun>>, Bare<Obj>>>
+                  EnableIf<std::is_member_object_pointer<Unqualified<Fun>>,
+                           Not<std::is_base_of<ClassOf<Unqualified<Fun>>, Unqualified<Obj>>>
                           > = _>
         auto invoke(Fun&& fun, Obj&& obj)
         -> decltype((*std::declval<Obj>()).*std::declval<Fun>()) {
@@ -699,7 +699,7 @@ namespace wheels {
         }
 
         template <typename Fun, typename... Args,
-                  DisableIf<std::is_member_pointer<Bare<Fun>>> = _>
+                  DisableIf<std::is_member_pointer<Unqualified<Fun>>> = _>
         auto invoke(Fun&& fun, Args&&... args)
         -> decltype(std::declval<Fun>()(std::declval<Args>()...)) {
             return std::forward<Fun>(fun)(std::forward<Args>(args)...);
@@ -900,7 +900,7 @@ namespace wheels {
 
     //! Tests if a type is not a reference and has no cv-qualifiers
     template <typename T>
-    struct is_bare : std::is_same<T, Bare<T>> {};
+    struct is_unqualified : std::is_same<T, Unqualified<T>> {};
 } // namespace wheels
 
 #if !WHEELS_HAS_FEATURE(CXX_ALIGNED_UNION)
@@ -1011,7 +1011,7 @@ namespace wheels {
     struct named_parameter {
     public:
         static_assert(std::is_reference<T>::value, "T must be a reference type");
-        static_assert(is_bare<Name>::value, "Name must be a bare type");
+        static_assert(is_unqualified<Name>::value, "Name must be a bare type");
 
         using name = Name;
         using type = T;
@@ -1152,7 +1152,7 @@ namespace wheels {
 
     //! Indices pack for a given tuple
     template <typename Tuple>
-    using IndicesFor = BuildIndices<std::tuple_size<Bare<Tuple>>::value>;
+    using IndicesFor = BuildIndices<std::tuple_size<Unqualified<Tuple>>::value>;
 
     template <std::size_t I, typename T>
     using TupleElement = Invoke<std::tuple_element<I, T>>;
@@ -1315,9 +1315,9 @@ namespace wheels {
         template <std::size_t I, std::size_t X, std::size_t Acc, typename Head, typename... Tail>
         struct position_of_impl<I, X, Acc, Head, Tail...>
         : Conditional<
-            Bool<(std::tuple_size<Bare<Head>>::value + Acc > I)>,
+            Bool<(std::tuple_size<Unqualified<Head>>::value + Acc > I)>,
             position<X, I - Acc>,
-            position_of_impl<I, X+1, Acc + std::tuple_size<Bare<Head>>::value, Tail...>
+            position_of_impl<I, X+1, Acc + std::tuple_size<Unqualified<Head>>::value, Tail...>
         > {};
         template <std::size_t I, typename... Tuples>
         struct position_of : position_of_impl<I, 0, 0, Tuples...> {};
@@ -1337,13 +1337,13 @@ namespace wheels {
         struct concat_tuples_impl<tuple<Acc...>, std::tuple<Heads...>, Tail...>
         : concat_tuples_impl<tuple<Acc..., Heads...>, Tail...> {};
         template <typename... Tuples>
-        struct concat_tuples : concat_tuples_impl<tuple<>, ToStdTuple<Bare<Tuples>>...> {};
+        struct concat_tuples : concat_tuples_impl<tuple<>, ToStdTuple<Unqualified<Tuples>>...> {};
         template <typename... Tuples>
         using ConcatTuples = Invoke<concat_tuples<Tuples...>>;
 
         template <typename P, typename Tuple,
-                  typename Inner = TupleElement<P::x, Bare<Tuple>>,
-                  typename Outer = TupleElement<P::y, Bare<Inner>>,
+                  typename Inner = TupleElement<P::x, Unqualified<Tuple>>,
+                  typename Outer = TupleElement<P::y, Unqualified<Inner>>,
                   typename Result = WithQualificationsOf<Inner, Outer>>
         Result get_position(Tuple t) {
             using std::get;
@@ -1606,7 +1606,7 @@ namespace wheels {
     Concatenated tuple_cat(Tuples&&... t) {
         return Concatenated {
                 tuple_detail::forward_cat(
-                    BuildIndices<tuple_detail::sum<std::tuple_size<Bare<Tuples>>...>::value>{},
+                    BuildIndices<tuple_detail::sum<std::tuple_size<Unqualified<Tuples>>...>::value>{},
                     std::forward<Tuples>(t)...)
         };
     }
@@ -1700,7 +1700,7 @@ namespace wheels {
     //! make_unique from a raw pointer (like `unique_ptr<T>(p)` but with deduction)
     template <typename T = deduced,
               typename Raw,
-              typename Pointee = Conditional<is_deduced<T>, RemovePointer<Bare<Raw>>, T>,
+              typename Pointee = Conditional<is_deduced<T>, RemovePointer<Unqualified<Raw>>, T>,
               typename Pointer = std::unique_ptr<Pointee>>
     Pointer make_unique(names::raw_parameter<Raw> const& raw) {
         return Pointer { raw.forward() };
@@ -1740,7 +1740,7 @@ namespace wheels {
                        > = _,
               typename Raw = GetParameterType<names::raw_name, Arg0, Arg1>,
               typename Deleter = GetParameterType<names::deleter_name, Arg0, Arg1>,
-              typename Pointee = Conditional<is_deduced<T>, RemovePointer<Bare<Raw>>, T>,
+              typename Pointee = Conditional<is_deduced<T>, RemovePointer<Unqualified<Raw>>, T>,
               typename Pointer = std::unique_ptr<Pointee, Decay<Deleter>>>
     Pointer make_unique(Arg0 const& arg0, Arg1 const& arg1) {
         return Pointer { forward_named(names::raw, arg0, arg1), forward_named(names::deleter, arg0, arg1) };

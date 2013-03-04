@@ -550,7 +550,7 @@ namespace wheels {
     using Decay = Invoke<std::decay<T>>;
     //! Removes all reference and cv qualifiers
     template <typename T>
-    using Bare = RemoveCv<RemoveReference<T>>;
+    using Unqualified = RemoveCv<RemoveReference<T>>;
 
     //! ???
     template <typename... T>
@@ -588,7 +588,7 @@ namespace wheels {
     // other traits
     //! Tests if two types are the same after stripping all qualifiers
     template <typename T, typename U>
-    using is_related = std::is_same<Bare<T>, Bare<U>>;
+    using is_related = std::is_same<Unqualified<T>, Unqualified<U>>;
 
     //! Obtains the value_type nested type of T
     template <typename T>
@@ -629,8 +629,8 @@ namespace wheels {
 
     namespace invoke_detail {
         template <typename Fun, typename Obj, typename... Args,
-                  EnableIf<std::is_member_function_pointer<Bare<Fun>>,
-                           std::is_base_of<ClassOf<Bare<Fun>>, Bare<Obj>>
+                  EnableIf<std::is_member_function_pointer<Unqualified<Fun>>,
+                           std::is_base_of<ClassOf<Unqualified<Fun>>, Unqualified<Obj>>
                           > = _>
         auto invoke(Fun&& fun, Obj&& obj, Args&&... args)
         -> decltype((std::declval<Obj>().*std::declval<Fun>())(std::declval<Args>()...)) {
@@ -638,8 +638,8 @@ namespace wheels {
         }
 
         template <typename Fun, typename Obj, typename... Args,
-                  EnableIf<std::is_member_function_pointer<Bare<Fun>>,
-                           Not<std::is_base_of<ClassOf<Bare<Fun>>, Bare<Obj>>>
+                  EnableIf<std::is_member_function_pointer<Unqualified<Fun>>,
+                           Not<std::is_base_of<ClassOf<Unqualified<Fun>>, Unqualified<Obj>>>
                           > = _>
         auto invoke(Fun&& fun, Obj&& obj, Args&&... args)
         -> decltype(((*std::declval<Obj>()).*std::declval<Fun>())(std::declval<Args>()...)) {
@@ -647,8 +647,8 @@ namespace wheels {
         }
 
         template <typename Fun, typename Obj,
-                  EnableIf<std::is_member_object_pointer<Bare<Fun>>,
-                           std::is_base_of<ClassOf<Bare<Fun>>, Bare<Obj>>
+                  EnableIf<std::is_member_object_pointer<Unqualified<Fun>>,
+                           std::is_base_of<ClassOf<Unqualified<Fun>>, Unqualified<Obj>>
                           > = _>
         auto invoke(Fun&& fun, Obj&& obj)
         -> decltype(std::declval<Obj>().*std::declval<Fun>()) {
@@ -656,8 +656,8 @@ namespace wheels {
         }
 
         template <typename Fun, typename Obj,
-                  EnableIf<std::is_member_object_pointer<Bare<Fun>>,
-                           Not<std::is_base_of<ClassOf<Bare<Fun>>, Bare<Obj>>>
+                  EnableIf<std::is_member_object_pointer<Unqualified<Fun>>,
+                           Not<std::is_base_of<ClassOf<Unqualified<Fun>>, Unqualified<Obj>>>
                           > = _>
         auto invoke(Fun&& fun, Obj&& obj)
         -> decltype((*std::declval<Obj>()).*std::declval<Fun>()) {
@@ -665,7 +665,7 @@ namespace wheels {
         }
 
         template <typename Fun, typename... Args,
-                  DisableIf<std::is_member_pointer<Bare<Fun>>> = _>
+                  DisableIf<std::is_member_pointer<Unqualified<Fun>>> = _>
         auto invoke(Fun&& fun, Args&&... args)
         -> decltype(std::declval<Fun>()(std::declval<Args>()...)) {
             return std::forward<Fun>(fun)(std::forward<Args>(args)...);
@@ -866,7 +866,7 @@ namespace wheels {
 
     //! Tests if a type is not a reference and has no cv-qualifiers
     template <typename T>
-    struct is_bare : std::is_same<T, Bare<T>> {};
+    struct is_unqualified : std::is_same<T, Unqualified<T>> {};
 } // namespace wheels
 
 #if !WHEELS_HAS_FEATURE(CXX_ALIGNED_UNION)
