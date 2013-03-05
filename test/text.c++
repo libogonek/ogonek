@@ -128,6 +128,13 @@ TEST_CASE("text", "text tests") {
         t.insert(at, U"ob");
         REQUIRE(t == text8{U"foobar"});
     }
+    SECTION("replace", "text::repalce tests") {
+        text8 t { U"fo\u200bar" };
+        auto from = std::next(t.begin(), 2);
+        auto to = std::next(from);
+        t.replace(from, to, U"ob");
+        REQUIRE(t == text8{U"foobar"});
+    }
 }
 TEST_CASE("any", "any_text tests") {
     SECTION("construction", "any_text construction tests") {

@@ -378,6 +378,55 @@ namespace ogonek {
             insert_code_units(detail::decoding_iterator_access::first(at), EncodingForm::encode(sequence, Validation{}));
         }
         
+        // -- replacing
+        template <typename Range, typename CodePointSequence>
+        void replace(Range const& range, CodePointSequence&& sequence) {
+            replace(range, std::forward<CodePointSequence>(sequence), default_validation);
+        }
+        template <typename Range, typename CodePointSequence, typename Validation>
+        void replace(Range const& range, CodePointSequence&& sequence, Validation) {
+            replace(boost::begin(range), boost::end(range), sequence, Validation{});
+        }
+
+        void replace(iterator from, iterator to, text const& that) {
+            auto it = erase(from, to);
+            insert_code_units(detail::decoding_iterator_access::first(it), that.storage_);
+        }
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void replace(iterator from, iterator to, text const& that, Validation) {
+            replace(from, to, that);
+        }
+        void replace(iterator from, iterator to, char32_t const* literal) {
+            replace(from, to, literal, default_validation);
+        }
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void replace(iterator from, iterator to, char32_t const* literal, Validation) {
+            replace(from, to, make_range(literal), Validation{});
+        }
+        void replace(iterator from, iterator to, char16_t const* literal) {
+            replace(from, to, literal, default_validation);
+        }
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void replace(iterator from, iterator to, char16_t const* literal, Validation) {
+            replace(from, to, utf16::decode(make_range(literal), Validation{}), skip_validation);
+        }
+        template <typename CodePointSequence,
+                  wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
+                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
+        void replace(iterator from, iterator to, CodePointSequence const& sequence) {
+            replace(from, to, sequence, default_validation);
+        }
+        template <typename CodePointSequence, typename Validation,
+                  wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...,
+                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
+        void replace(iterator from, iterator to, CodePointSequence const& sequence, Validation) {
+            auto it = erase(from, to);
+            insert_code_units(detail::decoding_iterator_access::first(it), EncodingForm::encode(sequence, Validation{}));
+        }
     private:
         boost::iterator_range<char32_t const*> make_range(char32_t const* literal) {
             return boost::make_iterator_range(literal, literal + std::char_traits<char32_t>::length(literal));
