@@ -31,12 +31,20 @@ namespace ogonek {
             return "Unicode validation failed";
         }
     };
+    
+    namespace detail {
+        struct validation_strategy {
+            struct is_validation_strategy : std::true_type {};
+        };
+        template <typename T>
+        using is_validation_strategy = typename T::is_validation_strategy;
+    } // namespace detail
 
     //! Policy for skipping validation
-    struct skip_validation_t {} constexpr skip_validation = {};
+    struct skip_validation_t : detail::validation_strategy {} constexpr skip_validation = {};
 
     //! Policy for throwing upon discovering invalid data
-    struct throw_validation_error_t {
+    struct throw_validation_error_t : detail::validation_strategy {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const&, typename EncodingForm::state&, code_point&) {
             throw validation_error();
@@ -70,7 +78,7 @@ namespace ogonek {
     } // namespace detail
 
     //! Policy for replacing invalid data with a replacement character
-    struct use_replacement_character_t {
+    struct use_replacement_character_t : detail::validation_strategy {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, typename EncodingForm::state&, code_point& out) {
             out = U'\xFFFD';
@@ -83,7 +91,7 @@ namespace ogonek {
     } constexpr use_replacement_character = {};
 
     // Policy for discarding erroneous data
-    struct discard_errors_t {
+    struct discard_errors_t : detail::validation_strategy {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, typename EncodingForm::state&, code_point&) {
             return { std::next(boost::begin(source)), boost::end(source) };

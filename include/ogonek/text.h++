@@ -18,6 +18,7 @@
 #include <ogonek/traits.h++>
 #include <ogonek/types.h++>
 #include <ogonek/validation.h++>
+#include <ogonek/encoding/utf16.h++>
 
 #include <wheels/smart_ptr/unique_ptr.h++>
 
@@ -39,9 +40,9 @@ namespace ogonek {
             validated() = default;
             template <typename Range>
             validated(Range const& range) : validated(range, throw_validation_error) {}
-            template <typename Range, typename ValidationPolicy>
-            validated(Range const& range, ValidationPolicy) {
-                for(auto&& _ : EncodingForm::decode(range, ValidationPolicy{})) {
+            template <typename Range, typename Validation>
+            validated(Range const& range, Validation) {
+                for(auto&& _ : EncodingForm::decode(range, Validation{})) {
                     (void)_;
                     // TODO this is *wrong*
                     // do nothing, just consume the input
@@ -56,12 +57,36 @@ namespace ogonek {
         template <typename Container>
         using ValueType = typename Container::value_type;
         template <typename Iterator>
-        using IteratorValueType = typename std::iterator_traits<Iterator>::value_type;
-        template <typename Range>
-        using RangeValueType = typename boost::range_value<Range>::type;
+        using IteratorValue = typename std::iterator_traits<Iterator>::value_type;
 
+        template <typename T>
+        struct range_iterator
+        : wheels::Conditional<std::is_const<T>,
+                              boost::range_const_iterator<wheels::RemoveConst<T>>,
+                              boost::range_mutable_iterator<T>> {};
+        
+        template <typename Range>
+        using RangeIterator = typename range_iterator<Range>::type;
+        struct range_value_tester {
+            template <typename T, typename = IteratorValue<RangeIterator<T>>>
+            std::true_type static test(int);
+            template <typename>
+            std::false_type static test(...);
+        };
+        template <typename Range>
+        using has_range_value = wheels::TraitOf<range_value_tester, Range>;
+        template <typename Range>
+        using RangeValue = IteratorValue<RangeIterator<Range>>;
+
+        template <typename Range, typename Value, bool = has_range_value<Range>()>
+        struct is_range_of : std::is_same<RangeValue<Range>, Value> {};
         template <typename Range, typename Value>
-        struct is_range_of : std::is_same<RangeValueType<Range>, Value> {};
+        struct is_range_of<Range, Value, false> : std::false_type {};
+        
+        template <typename T>
+        struct is_code_point_sequence : is_range_of<T, code_point> {};
+        template <>
+        struct is_code_point_sequence<char32_t const*> : std::true_type {};
     } // namespace detail
 
     template <typename EncodingForm, typename Container = std::basic_string<CodeUnit<EncodingForm>>>
@@ -76,51 +101,104 @@ namespace ogonek {
 
     public:
         //** Constructors **
-
         // -- basic
         //! Empty string
         text() = default;
 
-        // Copies and moves (explicit to prevent the range construction templates from being used)
         text(text const&) = default;
         text(text&&) = default;
+
+        // -- literals
+        //! Construct from a null-terminated char32_t string (intended for UTF-32 literals)
+        explicit text(char32_t const* literal)
+        : text(literal, throw_validation_error) {}
+
+        //! Construct from a null-terminated char32_t string, with validation callback
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        text(char32_t const* literal, Validation)
+        : text(make_range(literal), Validation{}) {}
+
+        //! Construct from a null-terminated char16_t string (intended for UTF-16 literals)
+        explicit text(char16_t const* literal)
+        : text(literal, throw_validation_error) {}
+
+        //! Construct from a null-terminated char16_t string, with validation callback
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        text(char16_t const* literal, Validation)
+        : text(utf16::decode(make_range(literal), Validation{}), skip_validation) {}
+
+        // -- safe implicit conversions
+        //! Construct from a different text
+        template <typename EncodingForm1, typename Container1>
+        text(text<EncodingForm1, Container1> const& that)
+        : text(that, throw_validation_error) {}
+        
+        //! Construct from a different text, same encoding, ignore validation
+        template <typename Container1, typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        text(text<EncodingForm, Container1> const& that, Validation)
+        : storage_(that.storage_.begin(), that.storage_.end()) {}
+        
+        //! Construct from a different text, different encoding, with validation
+        template <typename EncodingForm1, typename Container1, typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        text(text<EncodingForm1, Container1> const& that, Validation)
+        : text(direct{}, EncodingForm::encode(that, Validation{})) {}
+        
+        // -- ranges
+        //! Construct from a codepoint sequence
+        template <typename CodePointSequence,
+                  wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
+                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
+        explicit text(CodePointSequence const& sequence)
+        : text(sequence, throw_validation_error) {}
+
+        //! Construct from a codepoint sequence, with validation policy
+        template <typename CodePointSequence, typename Validation,
+                  wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...,
+                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
+        text(CodePointSequence const& sequence, Validation)
+        : text(direct{}, EncodingForm::encode(sequence, Validation{})) {}
+
+        // -- storage
+        //! Construct directly from a container
+        explicit text(Container const& storage) : text(storage, throw_validation_error) {}
+
+        //! Construct directly from a container, with validation
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        text(Container const& storage, Validation)
+        : text(direct{}, EncodingForm::encode(EncodingForm::decode(storage, Validation{}), skip_validation)) {}
+
+        //! Construct directly from a container, moving
+        explicit text(Container&& storage) : text(std::move(storage), throw_validation_error) {}
+        
+        //! Construct directly from a container, with throwing validation, moving
+        text(Container&& storage, throw_validation_error_t)
+        : detail::validated<EncodingForm>(storage, throw_validation_error), storage_(std::move(storage)) {}
+
+        //! Construct directly from a container, without validation, moving
+        text(Container&& storage, skip_validation_t)
+        : storage_(std::move(storage)) {}
+
+        //! Construct directly from a container, with validation, (not) moving
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        text(Container&& storage, Validation)
+        : text(storage, Validation{}) {}
+        
+        //** Assignments **
+        // Copies and moves
         text& operator=(text const&) = default;
         text& operator=(text&&) = default;
 
-        // -- codepoints
-        //! Construct from a null-terminated codepoint string (intended for UTF-32 literals)
-        text(code_point const* literal)
-        : text(literal, throw_validation_error) {}
-
-        //! Construct from a null-terminated codepoint string, with validation callback
-        template <typename ValidationPolicy>
-        text(code_point const* literal, ValidationPolicy)
-        : text(boost::make_iterator_range(literal, literal + std::char_traits<code_point>::length(literal)),
-                     ValidationPolicy{}) {}
-
-        //! Construct from a codepoint range
-        template <typename CodepointRange>
-        explicit text(CodepointRange const& range)
-        : text(range, throw_validation_error) {}
-
-        //! Construct from a codepoint range, with validation policy
-        template <typename CodepointRange, typename ValidationPolicy>
-        text(CodepointRange const& range, ValidationPolicy)
-        : text(direct{}, EncodingForm::encode(range, ValidationPolicy{})) {
-            static_assert(std::is_same<detail::RangeValueType<CodepointRange>, code_point>::value,
-                          "Can only construct text from a range of codepoints");
-        }
-
-        // -- storage
-        //! Construct from an underlying container
-        explicit text(Container storage) // TODO: strong guarantee!
-        : detail::validated<EncodingForm>(storage, throw_validation_error),
-          storage_(std::move(storage)) {}
-
         //** Range **
-
-        using iterator = decoding_iterator<EncodingForm, typename Container::iterator, skip_validation_t>;
-        using const_iterator = decoding_iterator<EncodingForm, typename Container::const_iterator, skip_validation_t>;
+        // TODO iterator convertible to const_iterator
+        using iterator = decoding_iterator<EncodingForm, detail::Iterator<Container>, skip_validation_t>;
+        using const_iterator = decoding_iterator<EncodingForm, detail::ConstIterator<Container>, skip_validation_t>;
 
         iterator begin() { return iterator { storage_.begin(), storage_.end() }; }
         iterator end() { return iterator { storage_.end(), storage_.end() }; }
@@ -128,9 +206,8 @@ namespace ogonek {
         const_iterator end() const { return const_iterator { storage_.end(), storage_.end() }; }
 
         //** Interoperation **
-
         //! Move the underlying storage out
-        Container move_storage() {
+        Container extract_storage() {
             return std::move(storage_);
         }
         //! View the underlying storage
@@ -139,28 +216,62 @@ namespace ogonek {
         }
 
         //** Operations **
-
+        // -- empty
         bool empty() const { return storage_.empty(); }
 
+        // -- appending
         void append(text const& that) {
-            static_assert(is_stateless<EncodingForm>(), "appending with stateful encodings not implemented");
             append_code_units(that.storage_);
         }
-        template <typename CodePointRange>
-        void append(CodePointRange const& range) {
-            static_assert(std::is_same<detail::RangeValueType<CodePointRange>, code_point>::value,
-                          "Can only append from a range of codepoints");
-            append_code_units(EncodingForm::decode(range, skip_validation));
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void append(text const& that, Validation) {
+            append(that);
         }
-
+        void append(char32_t const* literal) {
+            append(literal, throw_validation_error);
+        }
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void append(char32_t const* literal, Validation) {
+            append(make_range(literal), Validation{});
+        }
+        void append(char16_t const* literal) {
+            append(literal, throw_validation_error);
+        }
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void append(char16_t const* literal, Validation) {
+            append(utf16::decode(make_range(literal), Validation{}), skip_validation);
+        }
+        template <typename CodePointSequence,
+                  wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...>
+        void append(CodePointSequence const& sequence) {
+            append(sequence, throw_validation_error);
+        }
+        template <typename CodePointSequence, typename Validation,
+                  wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void append(CodePointSequence const& sequence, Validation) {
+            insert_code_units(storage_.end(), EncodingForm::encode(sequence, Validation{}));
+        }
+        
     private:
-        template <typename Range>
-        text(direct, Range&& range)
+        boost::iterator_range<char32_t const*> make_range(char32_t const* literal) {
+            return boost::make_iterator_range(literal, literal + std::char_traits<char32_t>::length(literal));
+        }
+        boost::iterator_range<char16_t const*> make_range(char16_t const* literal) {
+            return boost::make_iterator_range(literal, literal + std::char_traits<char16_t>::length(literal));
+        }
+        
+        template <typename CodeUnitRange>
+        text(direct, CodeUnitRange&& range)
         : storage_(boost::begin(range), boost::end(range)) {}
         
         template <typename CodeUnitRange>
-        void append_code_units(CodeUnitRange const& range) {
-            storage_.insert(storage_.end(), boost::begin(range), boost::end(range));
+        void insert_code_units(detail::Iterator<Container> it, CodeUnitRange const& range) {
+            static_assert(is_stateless<EncodingForm>(), "appending with stateful encodings not implemented");
+            storage_.insert(it, boost::begin(range), boost::end(range));
         }
 
         Container storage_;

@@ -32,6 +32,7 @@ using string_ascii = test::string<ogonek::ascii>;
 
 TEST_CASE("text", "text tests") {
     SECTION("construction", "text constructor tests") {
+        text8 x { u"blah\U0001F4A9" };
         // construct UTF-8 text from a UTF-32 string literal
         text8 a { U"blah\U0001F4A9" };
         REQUIRE(a.storage() == string8(u8"blah\U0001F4A9"));
@@ -97,9 +98,19 @@ TEST_CASE("text", "text tests") {
         REQUIRE(m == m);
     }
     SECTION("append", "text::append tests") {
-        text8 n { U"foo" };
+        text8 foo { U"foo" };
+        auto n = foo;
         text16 o { U"bar" };
         n.append(o);
+        REQUIRE(n == text8{U"foobar"});
+
+        n = foo;
+        string32 p { U"bar" };
+        n.append(p);
+        REQUIRE(n == text8{U"foobar"});
+        
+        n = foo;
+        n.append(U"bar");
         REQUIRE(n == text8{U"foobar"});
     }
     SECTION("concat", "concat() tests") {
