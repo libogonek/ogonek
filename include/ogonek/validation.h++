@@ -17,6 +17,8 @@
 #include <ogonek/traits.h++>
 #include <ogonek/detail/partial_array.h++>
 
+#include <wheels/meta.h++>
+
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
@@ -37,8 +39,15 @@ namespace ogonek {
         struct validation_strategy {
             struct is_validation_strategy : std::true_type {};
         };
+        
+        struct validation_strategy_tester {
+            template <typename T, typename = typename T::is_validation_strategy>
+            std::true_type static test(int);
+            template <typename T>
+            std::false_type static test(...);
+        };
         template <typename T>
-        using is_validation_strategy = typename T::is_validation_strategy;
+        using is_validation_strategy = wheels::TraitOf<validation_strategy_tester, T>;
     } // namespace detail
 
     //! Strategy for skipping validation

@@ -674,11 +674,18 @@ namespace ogonek {
         using SameContainer = typename same_container<T...>::container_type;
         
         template <typename Result, typename Validation>
-        Result concat_impl(Validation) { return Result{}; }
+        Result concat_impl() { return Result{}; }
+        template <typename Result, typename Validation>
+        void concat_acc(Result&) {}
         template <typename Result, typename Validation, typename Head, typename... Tail>
-        Result concat_impl(Validation, Head&& head, Tail&&... tail) {
+        void concat_acc(Result& acc, Head&& head, Tail&&... tail) {
+            acc.append(std::forward<Head>(head), Validation{});
+            concat_acc<Result, Validation>(acc, std::forward<Tail>(tail)...);
+        }
+        template <typename Result, typename Validation, typename Head, typename... Tail>
+        Result concat_impl(Head&& head, Tail&&... tail) {
             Result result { std::forward<Head>(head) };
-            result.append(concat_impl<Result>(Validation{}, std::forward<Tail>(tail)...));
+            concat_acc<Result, Validation>(result, std::forward<Tail>(tail)...);
             return result;
         }
 
@@ -725,7 +732,7 @@ namespace ogonek {
               wheels::EnableIf<detail::is_validation_strategy<wheels::Unqualified<Validation>>>...,
               typename Text = detail::CommonText<EncodingForm, Container, CodePointSequences...>>
     Text concat(Validation&&, CodePointSequences&&... sequences) {
-        return detail::concat_impl<Text>(wheels::Unqualified<Validation>{}, std::forward<CodePointSequences>(sequences)...);
+        return detail::concat_impl<Text, wheels::Unqualified<Validation>>(std::forward<CodePointSequences>(sequences)...);
     }
     
     template <typename EncodingForm, typename Container>

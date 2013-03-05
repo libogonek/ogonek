@@ -121,12 +121,19 @@ TEST_CASE("text", "text tests") {
         string32 e { U"e" };
         char32_t const* f = U"f";
         char16_t const* g = u"g";
+        string32 bad { U"\xD800" };
         
-        auto r0 = ogonek::concat(ogonek::throw_validation_error, a, e, b, f, c);
+        auto r0 = ogonek::concat(a, e, b, f, c);
         REQUIRE(r0 == text8{U"aebfc"});
         
-        auto r1 = ogonek::concat<ogonek::utf8>(ogonek::discard_errors, a, b, c, d, e, f, g);
+        auto r1 = ogonek::concat<ogonek::utf8>(a, b, c, d, e, f, g);
         REQUIRE(r1 == text8{U"abcdefg"});
+        
+        auto r2 = ogonek::concat(ogonek::use_replacement_character, a, e, bad, b, f, c);
+        REQUIRE(r2 == text8{U"ae\uFFFDbfc"});
+        
+        auto r3 = ogonek::concat<ogonek::utf8>(ogonek::use_replacement_character, a, b, c, d, bad, e, f, g);
+        REQUIRE(r3 == text8{U"abcd\uFFFDefg"});
     }
     SECTION("erase", "text::erase tests") {
         text8 t { U"foo\u200bxbar" };
@@ -141,7 +148,7 @@ TEST_CASE("text", "text tests") {
         t.insert(at, U"ob");
         REQUIRE(t == text8{U"foobar"});
     }
-    SECTION("replace", "text::repalce tests") {
+    SECTION("replace", "text::replace tests") {
         text8 t { U"fo\u200bar" };
         auto from = std::next(t.begin(), 2);
         auto to = std::next(from);
