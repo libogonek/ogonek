@@ -39,7 +39,7 @@ namespace ogonek {
         struct validated {
             validated() = default;
             template <typename Range>
-            validated(Range const& range) : validated(range, throw_validation_error) {}
+            validated(Range const& range) : validated(range, default_validation) {}
             template <typename Range, typename Validation>
             validated(Range const& range, Validation) {
                 for(auto&& _ : EncodingForm::decode(range, Validation{})) {
@@ -111,7 +111,7 @@ namespace ogonek {
         // -- literals
         //! Construct from a null-terminated char32_t string (intended for UTF-32 literals)
         explicit text(char32_t const* literal)
-        : text(literal, throw_validation_error) {}
+        : text(literal, default_validation) {}
 
         //! Construct from a null-terminated char32_t string, with validation callback
         template <typename Validation,
@@ -121,7 +121,7 @@ namespace ogonek {
 
         //! Construct from a null-terminated char16_t string (intended for UTF-16 literals)
         explicit text(char16_t const* literal)
-        : text(literal, throw_validation_error) {}
+        : text(literal, default_validation) {}
 
         //! Construct from a null-terminated char16_t string, with validation callback
         template <typename Validation,
@@ -133,7 +133,7 @@ namespace ogonek {
         //! Construct from a different text
         template <typename EncodingForm1, typename Container1>
         text(text<EncodingForm1, Container1> const& that)
-        : text(that, throw_validation_error) {}
+        : text(that, default_validation) {}
         
         //! Construct from a different text, same encoding, ignore validation
         template <typename Container1, typename Validation,
@@ -153,7 +153,7 @@ namespace ogonek {
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
                   wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         explicit text(CodePointSequence const& sequence)
-        : text(sequence, throw_validation_error) {}
+        : text(sequence, default_validation) {}
 
         //! Construct from a codepoint sequence, with validation policy
         template <typename CodePointSequence, typename Validation,
@@ -165,7 +165,7 @@ namespace ogonek {
 
         // -- storage
         //! Construct directly from a container
-        explicit text(Container const& storage) : text(storage, throw_validation_error) {}
+        explicit text(Container const& storage) : text(storage, default_validation) {}
 
         //! Construct directly from a container, with validation
         template <typename Validation,
@@ -174,7 +174,7 @@ namespace ogonek {
         : text(direct{}, EncodingForm::encode(EncodingForm::decode(storage, Validation{}), skip_validation)) {}
 
         //! Construct directly from a container, moving
-        explicit text(Container&& storage) : text(std::move(storage), throw_validation_error) {}
+        explicit text(Container&& storage) : text(std::move(storage), default_validation) {}
         
         //! Construct directly from a container, with throwing validation, moving
         text(Container&& storage, throw_validation_error_t)
@@ -229,7 +229,7 @@ namespace ogonek {
             append(that);
         }
         void append(char32_t const* literal) {
-            append(literal, throw_validation_error);
+            append(literal, default_validation);
         }
         template <typename Validation,
                   wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
@@ -237,7 +237,7 @@ namespace ogonek {
             append(make_range(literal), Validation{});
         }
         void append(char16_t const* literal) {
-            append(literal, throw_validation_error);
+            append(literal, default_validation);
         }
         template <typename Validation,
                   wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
@@ -247,7 +247,7 @@ namespace ogonek {
         template <typename CodePointSequence,
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...>
         void append(CodePointSequence const& sequence) {
-            append(sequence, throw_validation_error);
+            append(sequence, default_validation);
         }
         template <typename CodePointSequence, typename Validation,
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,

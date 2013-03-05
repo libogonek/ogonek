@@ -101,6 +101,8 @@ namespace ogonek {
             return {};
         }
     } constexpr discard_errors = {};
+
+    constexpr auto default_validation = throw_validation_error;
 } // namespace ogonek
 
 #endif // OGONEK_VALIDATION_HPP
