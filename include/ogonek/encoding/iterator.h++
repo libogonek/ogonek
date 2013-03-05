@@ -30,6 +30,10 @@
 #include <cstddef>
 
 namespace ogonek {
+    namespace detail {
+        class decoding_iterator_access;
+    } // namespace detail
+    
     template <typename EncodingForm, typename Iterator, typename ValidationPolicy>
     struct encoding_iterator
     : boost::iterator_facade<
@@ -83,7 +87,7 @@ namespace ogonek {
         }
 
         Iterator first, last;
-        typename EncodingForm::state state {};
+        EncodingState<EncodingForm> state {};
         detail::coded_character<EncodingForm> encoded {};
         std::size_t current;
     };
@@ -117,8 +121,10 @@ namespace ogonek {
     private:
         using range = boost::iterator_range<Iterator>;
 
+        friend class detail::decoding_iterator_access;
+        
         Iterator first, last;
-        typename EncodingForm::state state {};
+        EncodingState<EncodingForm> state {};
     };
 } // namespace ogonek
 

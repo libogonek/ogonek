@@ -34,6 +34,9 @@
 #include <iterator>
 
 namespace ogonek {
+    template <typename EncodingForm, typename Container>
+    class text;
+    
     namespace detail {
         template <typename EncodingForm>
         struct validated {
@@ -87,6 +90,14 @@ namespace ogonek {
         struct is_code_point_sequence : is_range_of<T, code_point> {};
         template <>
         struct is_code_point_sequence<char32_t const*> : std::true_type {};
+        
+        class decoding_iterator_access {
+            template <typename EncodingForm, typename Iterator, typename Validation>
+            static Iterator first(decoding_iterator<EncodingForm, Iterator, Validation> const& it) { return it.first; }
+            
+            template <typename EncodingForm, typename Container>
+            friend class ::ogonek::text;
+        };
     } // namespace detail
 
     template <typename EncodingForm, typename Container = std::basic_string<CodeUnit<EncodingForm>>>
@@ -279,7 +290,7 @@ namespace ogonek {
 
         // -- appending
         void append(text const& that) {
-            append_code_units(that.storage_);
+            insert_code_units(storage_.end(), that.storage_);
         }
         template <typename Validation,
                   wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
@@ -314,6 +325,57 @@ namespace ogonek {
                   wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void append(CodePointSequence const& sequence, Validation) {
             insert_code_units(storage_.end(), EncodingForm::encode(sequence, Validation{}));
+        }
+        
+        // -- erasure
+        template <typename Range>
+        iterator erase(Range const& range) {
+            return erase(boost::begin(range), boost::end(range));
+        }
+        iterator erase(iterator from, iterator to) {
+            return {
+                storage_.erase(detail::decoding_iterator_access::first(from), detail::decoding_iterator_access::first(to)),
+                storage_.end()
+            };
+        }
+
+        // -- inserting
+        void insert(iterator at, text const& that) {
+            insert_code_units(detail::decoding_iterator_access::first(at), that.storage_);
+        }
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void insert(iterator at, text const& that, Validation) {
+            insert(at, that);
+        }
+        void insert(iterator at, char32_t const* literal) {
+            insert(at, literal, default_validation);
+        }
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void insert(iterator at, char32_t const* literal, Validation) {
+            insert(at, make_range(literal), Validation{});
+        }
+        void insert(iterator at, char16_t const* literal) {
+            insert(at, literal, default_validation);
+        }
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void insert(iterator at, char16_t const* literal, Validation) {
+            insert(at, utf16::decode(make_range(literal), Validation{}), skip_validation);
+        }
+        template <typename CodePointSequence,
+                  wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
+                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
+        void insert(iterator at, CodePointSequence const& sequence) {
+            insert(at, sequence, default_validation);
+        }
+        template <typename CodePointSequence, typename Validation,
+                  wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...,
+                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
+        void insert(iterator at, CodePointSequence const& sequence, Validation) {
+            insert_code_units(detail::decoding_iterator_access::first(at), EncodingForm::encode(sequence, Validation{}));
         }
         
     private:

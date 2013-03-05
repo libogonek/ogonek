@@ -115,6 +115,19 @@ TEST_CASE("text", "text tests") {
     }
     SECTION("concat", "concat() tests") {
     }
+    SECTION("erase", "text::erase tests") {
+        text8 t { U"foo\u200bxbar" };
+        auto from = std::next(t.begin(), 3);
+        auto to = std::next(from, 2);
+        t.erase(from, to);
+        REQUIRE(t == text8{U"foobar"});
+    }
+    SECTION("insert", "text::insert tests") {
+        text8 t { U"foar" };
+        auto at = std::next(t.begin(), 2);
+        t.insert(at, U"ob");
+        REQUIRE(t == text8{U"foobar"});
+    }
 }
 TEST_CASE("any", "any_text tests") {
     SECTION("construction", "any_text construction tests") {
