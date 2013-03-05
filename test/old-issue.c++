@@ -19,7 +19,7 @@
 #include <ogonek/segmentation.h++>
 #include <ogonek/validation.h++>
 
-TEST_CASE("issue13", "Tests for issue #13") {
+TEST_CASE("old-issue", "Tests for an old issue") {
     using text8 = test::text<ogonek::utf8>;
     using string8 = test::string<ogonek::utf8>;
 
