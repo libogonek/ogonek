@@ -114,6 +114,19 @@ TEST_CASE("text", "text tests") {
         REQUIRE(n == text8{U"foobar"});
     }
     SECTION("concat", "concat() tests") {
+        text8 a { U"a" };
+        text8 b { U"b" };
+        text8 c { U"c" };
+        text16 d { U"d" };
+        string32 e { U"e" };
+        char32_t const* f = U"f";
+        char16_t const* g = u"g";
+        
+        auto r0 = ogonek::concat(ogonek::throw_validation_error, a, e, b, f, c);
+        REQUIRE(r0 == text8{U"aebfc"});
+        
+        auto r1 = ogonek::concat<ogonek::utf8>(ogonek::discard_errors, a, b, c, d, e, f, g);
+        REQUIRE(r1 == text8{U"abcdefg"});
     }
     SECTION("erase", "text::erase tests") {
         text8 t { U"foo\u200bxbar" };

@@ -46,9 +46,7 @@ namespace ogonek {
             template <typename Range, typename Validation>
             validated(Range const& range, Validation) {
                 for(auto&& _ : EncodingForm::decode(range, Validation{})) {
-                    (void)_;
-                    // TODO this is *wrong*
-                    // do nothing, just consume the input
+                    (void)_; // do nothing, just consume the input
                 }
             }
         };
@@ -100,7 +98,10 @@ namespace ogonek {
         };
     } // namespace detail
 
-    template <typename EncodingForm, typename Container = std::basic_string<CodeUnit<EncodingForm>>>
+    template <typename EncodingForm>
+    using DefaultContainer = std::basic_string<CodeUnit<EncodingForm>>;
+
+    template <typename EncodingForm, typename Container = DefaultContainer<EncodingForm>>
     struct text : private detail::validated<EncodingForm> {
     private:
         static_assert(std::is_convertible<CodeUnit<EncodingForm>, detail::ValueType<Container>>::value,
@@ -441,10 +442,13 @@ namespace ogonek {
         
         template <typename CodeUnitRange>
         void insert_code_units(detail::Iterator<Container> it, CodeUnitRange const& range) {
-            static_assert(is_stateless<EncodingForm>(), "appending with stateful encodings not implemented");
+            static_assert(is_stateless<EncodingForm>(), "inserting with stateful encodings is not supported");
             storage_.insert(it, boost::begin(range), boost::end(range));
         }
 
+        template <typename, typename>
+        friend class text;
+        
         Container storage_;
     };
 
@@ -604,6 +608,135 @@ namespace ogonek {
     }
     inline bool operator!=(any_text const& lhs, any_text const& rhs) {
         return !(lhs == rhs);
+    }
+    
+    namespace detail {
+        template <typename... T> struct list;
+        
+        template <typename Acc, typename... T>
+        struct same_encoding_impl : wheels::Not<std::is_void<Acc>> {
+            using encoding_type = Acc;
+        };
+        
+        template <typename Acc, typename Head, typename... Tail>
+        struct same_encoding_impl<Acc, Head, Tail...>
+        : same_encoding_impl<Acc, Tail...> {};
+
+        template <typename Acc, typename Container, typename... Tail>
+        struct same_encoding_impl<void, text<Acc, Container>, Tail...>
+        : same_encoding_impl<Acc, Tail...> {};
+        
+        template <typename Acc, typename Container, typename... Tail>
+        struct same_encoding_impl<Acc, text<Acc, Container>, Tail...>
+        : same_encoding_impl<Acc, Tail...> {};
+        
+        template <typename Acc, typename EncodingForm, typename Container, typename... Tail>
+        struct same_encoding_impl<Acc, text<EncodingForm, Container>, Tail...>
+        : std::false_type {
+            using container_type = void;
+        };
+
+        template <typename T>
+        struct same_encoding;
+        template <typename... T>
+        struct same_encoding<list<T...>> : same_encoding_impl<void, wheels::Unqualified<T>...> {};
+        template <typename... T>
+        using SameEncoding = typename same_encoding<T...>::encoding_type;
+
+        template <typename Acc, typename... T>
+        struct same_container_impl : wheels::Not<std::is_void<Acc>> {
+            using container_type = Acc;
+        };
+        
+        template <typename Acc, typename Head, typename... Tail>
+        struct same_container_impl<Acc, Head, Tail...>
+        : same_container_impl<Acc, Tail...> {};
+
+        template <typename Acc, typename EncodingForm, typename... Tail>
+        struct same_container_impl<void, text<EncodingForm, Acc>, Tail...>
+        : same_container_impl<Acc, Tail...> {};
+        
+        template <typename Acc, typename EncodingForm, typename... Tail>
+        struct same_container_impl<Acc, text<EncodingForm, Acc>, Tail...>
+        : same_container_impl<Acc, Tail...> {};
+        
+        template <typename Acc, typename EncodingForm, typename Container, typename... Tail>
+        struct same_container_impl<Acc, text<EncodingForm, Container>, Tail...>
+        : std::false_type {
+            using container_type = void;
+        };
+
+        template <typename T>
+        struct same_container;
+        template <typename... T>
+        struct same_container<list<T...>> : same_container_impl<void, wheels::Unqualified<T>...> {};
+        template <typename... T>
+        using SameContainer = typename same_container<T...>::container_type;
+        
+        template <typename Result, typename Validation>
+        Result concat_impl(Validation) { return Result{}; }
+        template <typename Result, typename Validation, typename Head, typename... Tail>
+        Result concat_impl(Validation, Head&& head, Tail&&... tail) {
+            Result result { std::forward<Head>(head) };
+            result.append(concat_impl<Result>(Validation{}, std::forward<Tail>(tail)...));
+            return result;
+        }
+
+        template <typename EncodingForm, typename Container,
+                  typename CodePointSequences,
+                  bool = wheels::is_deduced<EncodingForm>{},
+                  bool = wheels::is_deduced<Container>{},
+                  bool = detail::same_encoding<CodePointSequences>{}
+                      && detail::same_container<CodePointSequences>{}>
+        struct common_text {};
+
+        template <typename EncodingForm, typename Container,
+                  typename X, bool Y>
+        struct common_text<EncodingForm, Container, X, false, false, Y>
+        : wheels::identity<text<EncodingForm, Container>> {};
+        
+        template <typename EncodingForm, typename CodePointSequences>
+        struct deduce_container
+        : std::conditional<
+            detail::same_container<CodePointSequences>{},
+            detail::SameContainer<CodePointSequences>,
+            DefaultContainer<EncodingForm>> {};
+        template <typename EncodingForm, typename... CodePointSequences>
+        using DeduceContainer = wheels::Invoke<deduce_container<EncodingForm, list<CodePointSequences...>>>;
+        
+        template <typename EncodingForm, typename Container,
+                  typename CodePointSequences,
+                  bool X>
+        struct common_text<EncodingForm, Container, CodePointSequences, false, true, X>
+        : wheels::identity<text<EncodingForm, DeduceContainer<EncodingForm, CodePointSequences>>> {};
+
+        template <typename EncodingForm, typename Container, typename CodePointSequences>
+        struct common_text<EncodingForm, Container, CodePointSequences, true, true, true>
+        : wheels::identity<text<SameEncoding<CodePointSequences>, SameContainer<CodePointSequences>>> {};
+
+        template <typename EncodingForm, typename Container, typename... CodePointSequences>
+        using CommonText = wheels::Invoke<common_text<EncodingForm, Container, list<CodePointSequences...>>>;
+    } // namespace detail
+
+    // Concatenation
+    
+    template <typename EncodingForm = wheels::deduced, typename Container = wheels::deduced,
+              typename Validation, typename... CodePointSequences,
+              wheels::EnableIf<detail::is_validation_strategy<wheels::Unqualified<Validation>>>...,
+              typename Text = detail::CommonText<EncodingForm, Container, CodePointSequences...>>
+    Text concat(Validation&&, CodePointSequences&&... sequences) {
+        return detail::concat_impl<Text>(wheels::Unqualified<Validation>{}, std::forward<CodePointSequences>(sequences)...);
+    }
+    
+    template <typename EncodingForm, typename Container>
+    text<EncodingForm, Container> concat() { return {}; }
+    
+    template <typename EncodingForm = wheels::deduced, typename Container = wheels::deduced,
+              typename Head, typename... Tail,
+              wheels::DisableIf<detail::is_validation_strategy<wheels::Unqualified<Head>>>...,
+              typename Text = detail::CommonText<EncodingForm, Container, Head, Tail...>>
+    Text concat(Head&& head, Tail&&... tail) {
+        return concat<EncodingForm, Container>(default_validation, std::forward<Head>(head), std::forward<Tail>(tail)...);
     }
 } // namespace ogonek
 #endif // OGONEK_TEXT_HPP
