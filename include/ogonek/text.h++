@@ -194,6 +194,64 @@ namespace ogonek {
         // Copies and moves
         text& operator=(text const&) = default;
         text& operator=(text&&) = default;
+        template <typename Container1>
+        text& operator=(text<EncodingForm, Container1> const& that) {
+            storage_.assign(that.storage_.begin(), that.storage_.end());
+            return *this;
+        }
+        template <typename EncodingForm1, typename Container1>
+        text& operator=(text<EncodingForm1, Container1> const& that) {
+            assign(that, default_validation);
+            return *this;
+        }
+        
+        void assign(text const& that) { operator=(that); }
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void assign(text const& that, Validation) { operator=(that); }
+
+        void assign(text&& that) { operator=(std::move(that)); }
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void assign(text&& that, Validation) { operator=(std::move(that)); }
+        
+        template <typename Container1, typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void assign(text<EncodingForm, Container1> const& that, Validation) {
+            storage_.assign(that.storage_.begin(), that.storage_.end());
+        }
+        
+        void assign(char32_t const* literal) {
+            assign(literal, default_validation);
+        }
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void assign(char32_t const* literal, Validation) {
+            assign(make_range(literal), Validation{});
+        }
+
+        void assign(char16_t const* literal) {
+            assign(literal, default_validation);
+        }
+        template <typename Validation,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+        void assign(char16_t const* literal, Validation) {
+            assign(utf16::decode(make_range(literal), Validation{}), skip_validation);
+        }
+        
+        template <typename CodePointSequence,
+                  wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
+                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
+        void assign(CodePointSequence const& that) {
+            assign(that, default_validation);
+        }
+        template <typename CodePointSequence, typename Validation,
+                  wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...,
+                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
+        void assign(CodePointSequence const& that, Validation) {
+            insert_code_units(storage_.end(), EncodingForm::encode(that, Validation{}));
+        }
 
         //** Range **
         // TODO iterator convertible to const_iterator
@@ -245,13 +303,15 @@ namespace ogonek {
             append(utf16::decode(make_range(literal), Validation{}), skip_validation);
         }
         template <typename CodePointSequence,
-                  wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...>
+                  wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
+                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void append(CodePointSequence const& sequence) {
             append(sequence, default_validation);
         }
         template <typename CodePointSequence, typename Validation,
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...,
+                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void append(CodePointSequence const& sequence, Validation) {
             insert_code_units(storage_.end(), EncodingForm::encode(sequence, Validation{}));
         }
