@@ -44,26 +44,26 @@ namespace ogonek {
         static constexpr bool is_self_synchronizing = true;
         struct state {};
 
-        template <typename SinglePassRange, typename ValidationPolicy,
+        template <typename SinglePassRange, typename Validation,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename EncodingIterator = encoding_iterator<utf16, Iterator, ValidationPolicy>>
-        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ValidationPolicy) {
+                  typename EncodingIterator = encoding_iterator<utf16, Iterator, Validation>>
+        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, Validation) {
             return boost::make_iterator_range(
                     EncodingIterator { boost::begin(r), boost::end(r) },
                     EncodingIterator { boost::end(r), boost::end(r) });
         }
 
-        template <typename SinglePassRange, typename ValidationPolicy,
+        template <typename SinglePassRange, typename Validation,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename DecodingIterator = decoding_iterator<utf16, Iterator, ValidationPolicy>>
-        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, ValidationPolicy) {
+                  typename DecodingIterator = decoding_iterator<utf16, Iterator, Validation>>
+        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, Validation) {
             return boost::make_iterator_range(
                     DecodingIterator { boost::begin(r), boost::end(r) },
                     DecodingIterator { boost::end(r), boost::end(r) });
         }
 
-        template <typename ValidationPolicy>
-        static detail::coded_character<utf16> encode_one(code_point u, state&, ValidationPolicy) {
+        template <typename Validation>
+        static detail::coded_character<utf16> encode_one(code_point u, state&, Validation) {
             if(u <= last_bmp_value) {
                 return { static_cast<code_unit>(u) };
             } else {
@@ -95,8 +95,8 @@ namespace ogonek {
             }
             return { first, boost::end(r) };
         }
-        template <typename SinglePassRange, typename ValidationPolicy>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, ValidationPolicy) {
+        template <typename SinglePassRange, typename Validation>
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, Validation) {
             auto first = boost::begin(r);
             auto lead = *first++;
 
@@ -105,12 +105,12 @@ namespace ogonek {
                 return { first, boost::end(r) };
             }
             if(!detail::is_lead_surrogate(lead)) {
-                return ValidationPolicy::template apply_decode<utf16>(r, s, out);
+                return Validation::template apply_decode<utf16>(r, s, out);
             }
 
             auto trail = *first++;
             if(!detail::is_trail_surrogate(trail)) {
-                return ValidationPolicy::template apply_decode<utf16>(r, s, out);
+                return Validation::template apply_decode<utf16>(r, s, out);
             }
 
             out = combine_surrogates(lead, trail);
@@ -120,5 +120,3 @@ namespace ogonek {
 } // namespace ogonek
 
 #endif // OGONEK_ENCODING_UTF16_HPP
-
-

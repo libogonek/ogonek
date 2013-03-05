@@ -14,6 +14,7 @@
 #ifndef OGONEK_VALIDATION_HPP
 #define OGONEK_VALIDATION_HPP
 
+#include <ogonek/traits.h++>
 #include <ogonek/detail/partial_array.h++>
 
 #include <boost/range/sub_range.hpp>
@@ -40,17 +41,17 @@ namespace ogonek {
         using is_validation_strategy = typename T::is_validation_strategy;
     } // namespace detail
 
-    //! Policy for skipping validation
+    //! Strategy for skipping validation
     struct skip_validation_t : detail::validation_strategy {} constexpr skip_validation = {};
 
-    //! Policy for throwing upon discovering invalid data
+    //! Strategy for throwing upon discovering invalid data
     struct throw_validation_error_t : detail::validation_strategy {
         template <typename EncodingForm, typename Range>
-        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const&, typename EncodingForm::state&, code_point&) {
+        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const&, EncodingState<EncodingForm>&, code_point&) {
             throw validation_error();
         }
         template <typename EncodingForm>
-        static detail::coded_character<EncodingForm> apply_encode(code_point, typename EncodingForm::state&) {
+        static detail::coded_character<EncodingForm> apply_encode(code_point, EncodingState<EncodingForm>&) {
             throw validation_error();
         }
     } constexpr throw_validation_error = {};
@@ -77,27 +78,27 @@ namespace ogonek {
         };
     } // namespace detail
 
-    //! Policy for replacing invalid data with a replacement character
+    //! Strategy for replacing invalid data with a replacement character
     struct use_replacement_character_t : detail::validation_strategy {
         template <typename EncodingForm, typename Range>
-        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, typename EncodingForm::state&, code_point& out) {
+        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, EncodingState<EncodingForm>&, code_point& out) {
             out = U'\xFFFD';
             return { std::next(boost::begin(source)), boost::end(source) };
         }
         template <typename EncodingForm>
-        static detail::coded_character<EncodingForm> apply_encode(code_point, typename EncodingForm::state& s) {
+        static detail::coded_character<EncodingForm> apply_encode(code_point, EncodingState<EncodingForm>& s) {
             return EncodingForm::encode_one(detail::replacement_character<EncodingForm>::value, s, skip_validation);
         }
     } constexpr use_replacement_character = {};
 
-    // Policy for discarding erroneous data
+    // Strategy for discarding erroneous data
     struct discard_errors_t : detail::validation_strategy {
         template <typename EncodingForm, typename Range>
-        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, typename EncodingForm::state&, code_point&) {
+        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, EncodingState<EncodingForm>&, code_point&) {
             return { std::next(boost::begin(source)), boost::end(source) };
         }
         template <typename EncodingForm>
-        static detail::coded_character<EncodingForm> apply_encode(code_point, typename EncodingForm::state&) {
+        static detail::coded_character<EncodingForm> apply_encode(code_point, EncodingState<EncodingForm>&) {
             return {};
         }
     } constexpr discard_errors = {};

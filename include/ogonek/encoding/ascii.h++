@@ -41,18 +41,18 @@ namespace ogonek {
         static constexpr code_point replacement_character = U'?';
         struct state {};
 
-        template <typename SinglePassRange, typename ValidationPolicy,
+        template <typename SinglePassRange, typename Validation,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename EncodingIterator = encoding_iterator<ascii, Iterator, ValidationPolicy>>
-        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ValidationPolicy) {
+                  typename EncodingIterator = encoding_iterator<ascii, Iterator, Validation>>
+        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, Validation) {
             return boost::make_iterator_range(
                     EncodingIterator { boost::begin(r), boost::end(r) },
                     EncodingIterator { boost::end(r), boost::end(r) });
         }
-        template <typename SinglePassRange, typename ValidationPolicy,
+        template <typename SinglePassRange, typename Validation,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename DecodingIterator = decoding_iterator<ascii, Iterator, ValidationPolicy>>
-        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, ValidationPolicy) {
+                  typename DecodingIterator = decoding_iterator<ascii, Iterator, Validation>>
+        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, Validation) {
             return boost::make_iterator_range(
                     DecodingIterator { boost::begin(r), boost::end(r) },
                     DecodingIterator { boost::end(r), boost::end(r) });
@@ -62,12 +62,12 @@ namespace ogonek {
             return { static_cast<code_unit>(u) };
         }
 
-	template <typename ValidationPolicy>
-        static detail::coded_character<ascii> encode_one(code_point u, state& s, ValidationPolicy) {
+	template <typename Validation>
+        static detail::coded_character<ascii> encode_one(code_point u, state& s, Validation) {
             if(u <= last_ascii_value) {
                 return { static_cast<code_unit>(u) };
             } else {
-                return ValidationPolicy::template apply_encode<ascii>(u, s);
+                return Validation::template apply_encode<ascii>(u, s);
             }
         }
 
@@ -77,12 +77,12 @@ namespace ogonek {
             out = *first++;
             return { first, boost::end(r) };
         }
-        template <typename SinglePassRange, typename ValidationPolicy>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, ValidationPolicy) {
+        template <typename SinglePassRange, typename Validation>
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, Validation) {
             auto first = boost::begin(r);
             byte b = *first++;
             if(b > last_ascii_value) {
-                return  ValidationPolicy::template apply_decode<ascii>(r, s, out);
+                return  Validation::template apply_decode<ascii>(r, s, out);
             }
             out = b;
             return { first, boost::end(r) };
