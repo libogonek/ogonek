@@ -128,10 +128,16 @@ namespace ogonek {
                 while(!it.exhausted() && ucd::get_combining_class(*it) != 0) {
                     current.push_back(*it++);
                 }
-                std::sort(current.begin(), current.end(),
-                          [](code_point a, code_point b) {
-                              return ucd::get_combining_class(a) < ucd::get_combining_class(b);
-                          });
+                struct by_combining_class {
+                    bool operator()(code_point a, code_point b) const {
+                        return ucd::get_combining_class(a) < ucd::get_combining_class(b);
+                    }
+                };
+                auto l = current.begin();
+                for(auto r = l; r != current.end(); l = r) {
+                    r = std::find_if(r+1, current.end(), [](code_point u) { return ucd::get_combining_class(u) == 0; });
+                    std::sort(l, r, by_combining_class());
+                }
                 position = 0;
             }
 

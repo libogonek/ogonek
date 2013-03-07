@@ -39,23 +39,26 @@ namespace {
         test::ustring nfkd_expected { test.nfkd };
         
         test::utext nfc { ogonek::normalize<ogonek::nfc>(input) };
-        CHECK(nfc.storage() == nfc_expected);
+        REQUIRE(nfc.storage() == nfc_expected);
         
         test::utext nfd { ogonek::normalize<ogonek::nfd>(input) };
-        CHECK(nfd.storage() == nfd_expected);
+        REQUIRE(nfd.storage() == nfd_expected);
         
         test::utext nfkc { ogonek::normalize<ogonek::nfkc>(input) };
-        CHECK(nfkc.storage() == nfkc_expected);
+        REQUIRE(nfkc.storage() == nfkc_expected);
         
         test::utext nfkd { ogonek::normalize<ogonek::nfkd>(input) };
-        CHECK(nfkd.storage() == nfkd_expected);
+        REQUIRE(nfkd.storage() == nfkd_expected);
     }
 }
 
 TEST_CASE("normalization", "Normalization tests") {
     SECTION("official", "official normalization tests") {
+        int i = 0;
         for(auto&& test : normalization_test_data) {
+            INFO(i);
             test_norm(test);
+            ++i;
         }
     }
     SECTION("madness", "crazy test with ten thousand umlauts") {
