@@ -366,7 +366,8 @@ namespace Ogonek.UcdCompiler
         public int? BidiMirroredGlyph;
         public bool BidiControl;
         public DecompositionType DecompositionType;
-        public int[] DecompositionMapping;
+        public int[] CanonicalDecompositionMapping;
+        public int[] CompatibilityDecompositionMapping;
         public bool CompositionExclusion;
         public bool FullCompositionExclusion;
         public bool? NfcQuickCheck;
@@ -756,7 +757,8 @@ namespace Ogonek.UcdCompiler
                 x => new
                 {
                     x.DecompositionType,
-                    dm = FakeComparable(x.DecompositionMapping),
+                    dm = FakeComparable(x.CanonicalDecompositionMapping),
+                    kdm = FakeComparable(x.CompatibilityDecompositionMapping),
                     x.CompositionExclusion,
                     x.FullCompositionExclusion,
                     x.NfcQuickCheck,
@@ -769,10 +771,11 @@ namespace Ogonek.UcdCompiler
                     x.ExpandsOnNfkd,
                     fcnfkc = FakeComparable(x.FcNfkcClosure),
                 },
-                x => string.Format("{{ {0}, decomposition_type::{1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}}}",
+                x => string.Format("{{ {0}, decomposition_type::{1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14} }}",
                                 FormatCodepoint(x.From),
                                 x.DecompositionType,
-                                FormatCodepointArray(x.DecompositionMapping),
+                                FormatCodepointArray(x.CanonicalDecompositionMapping),
+                                FormatCodepointArray(x.CompatibilityDecompositionMapping),
                                 Format(x.CompositionExclusion),
                                 Format(x.FullCompositionExclusion),
                                 Format(x.NfcQuickCheck), Format(x.NfdQuickCheck), Format(x.NfkcQuickCheck), Format(x.NfkdQuickCheck),
@@ -912,33 +915,57 @@ namespace Ogonek.UcdCompiler
 
         static IDictionary<int, IEnumerable<Tuple<int, int>>> GetCompositions(CodepointSet[] sets)
         {
-            return sets.Where(s => !s.FullCompositionExclusion && s.DecompositionType == DecompositionType.can && s.DecompositionMapping.Length > 1 && !s.FullCompositionExclusion)
-                   .GroupBy(s => s.DecompositionMapping[0], s => Tuple.Create(s.DecompositionMapping[1], s.From))
+            return sets.Where(s => !s.FullCompositionExclusion && s.DecompositionType == DecompositionType.can && s.CanonicalDecompositionMapping.Length > 1 && !s.FullCompositionExclusion)
+                   .GroupBy(s => s.CanonicalDecompositionMapping[0], s => Tuple.Create(s.CanonicalDecompositionMapping[1], s.From))
                    .ToDictionary(g => g.Key, g => (IEnumerable<Tuple<int,int>>) g.ToList());
         }
 
-        static IEnumerable<int> Decompose(int codepoint, CodepointSet[] sets)
+        static IEnumerable<int> CompatibilityDecompose(int codepoint, CodepointSet[] sets)
         {
             var set = sets.Single(s => s.From <= codepoint && s.To >= codepoint);
-            var map = set.DecompositionMapping;
-            if (map.Length == 1 && map[0] == -1 || set.DecompositionType != DecompositionType.can)
+            var map = set.CompatibilityDecompositionMapping;
+            if (map.Length == 1 && map[0] == -1)
             {
                 return new[] { codepoint };
             }
 
-            return map.SelectMany(c => Decompose(c, sets));
+            return map.SelectMany(c => CompatibilityDecompose(c, sets));
         }
 
-        static IEnumerable<int> Decompose(CodepointSet set, CodepointSet[] sets)
+        static IEnumerable<int> CompatibilityDecompose(CodepointSet set, CodepointSet[] sets)
         {
-            var map = set.DecompositionMapping;
+            var map = set.CompatibilityDecompositionMapping;
             if (map.Length == 1 && map[0] == -1)
             {
                 return map;
             }
             else
             {
-                return map.SelectMany(c => Decompose(c, sets));
+                return map.SelectMany(c => CompatibilityDecompose(c, sets));
+            }
+        }
+        static IEnumerable<int> CanonicalDecompose(int codepoint, CodepointSet[] sets)
+        {
+            var set = sets.Single(s => s.From <= codepoint && s.To >= codepoint);
+            var map = set.CanonicalDecompositionMapping;
+            if (map.Length == 1 && map[0] == -1 || set.DecompositionType != DecompositionType.can)
+            {
+                return new[] { codepoint };
+            }
+
+            return map.SelectMany(c => CanonicalDecompose(c, sets));
+        }
+
+        static IEnumerable<int> CanonicalDecompose(CodepointSet set, CodepointSet[] sets)
+        {
+            var map = set.CanonicalDecompositionMapping;
+            if (map.Length == 1 && map[0] == -1)
+            {
+                return map;
+            }
+            else
+            {
+                return map.SelectMany(c => CanonicalDecompose(c, sets));
             }
         }
 
@@ -946,7 +973,8 @@ namespace Ogonek.UcdCompiler
         {
             foreach (var set in sets)
             {
-                set.DecompositionMapping = Decompose(set, sets).ToArray();
+                set.CanonicalDecompositionMapping = CanonicalDecompose(set, sets).ToArray();
+                set.CompatibilityDecompositionMapping = CompatibilityDecompose(set, sets).ToArray();
             }
         }
 
@@ -1100,7 +1128,8 @@ namespace Ogonek.UcdCompiler
                 BidiMirroredGlyph = e.Attribute("bmg").AsOptionalCodepoint(),
                 BidiControl = e.Attribute("Bidi_C").AsBool(),
                 DecompositionType = e.Attribute("dt").AsEnum<DecompositionType>(),
-                DecompositionMapping = e.Attribute("dm").AsCodepointArray(),
+                CanonicalDecompositionMapping = e.Attribute("dm").AsCodepointArray(),
+                CompatibilityDecompositionMapping = e.Attribute("dm").AsCodepointArray(),
                 CompositionExclusion = e.Attribute("CE").AsBool(),
                 FullCompositionExclusion = e.Attribute("Comp_Ex").AsBool(),
                 NfcQuickCheck = e.Attribute("NFC_QC").AsTriBool(),
