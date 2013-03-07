@@ -24,6 +24,8 @@ namespace {
         ogonek::code_point const* input;
         ogonek::code_point const* nfc;
         ogonek::code_point const* nfd;
+        ogonek::code_point const* nfkc;
+        ogonek::code_point const* nfkd;
     };
     
     normalization_test normalization_test_data[] = {
@@ -33,12 +35,20 @@ namespace {
         test::ustring input { test.input };
         test::ustring nfc_expected { test.nfc };
         test::ustring nfd_expected { test.nfd };
+        test::ustring nfkc_expected { test.nfkc };
+        test::ustring nfkd_expected { test.nfkd };
         
         test::utext nfc { ogonek::normalize<ogonek::nfc>(input) };
         CHECK(nfc.storage() == nfc_expected);
         
         test::utext nfd { ogonek::normalize<ogonek::nfd>(input) };
         CHECK(nfd.storage() == nfd_expected);
+        
+        test::utext nfkc { ogonek::normalize<ogonek::nfkc>(input) };
+        CHECK(nfkc.storage() == nfkc_expected);
+        
+        test::utext nfkd { ogonek::normalize<ogonek::nfkd>(input) };
+        CHECK(nfkd.storage() == nfkd_expected);
     }
 }
 

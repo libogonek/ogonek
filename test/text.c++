@@ -16,6 +16,9 @@
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf32.h++>
 #include <ogonek/encoding/ascii.h++>
+#include <ogonek/normalization.h++> // TODO fix includes
+
+#include <unordered_map>
 
 #include "utils.h++"
 #include <catch.h++>
@@ -154,6 +157,18 @@ TEST_CASE("text", "text tests") {
         auto to = std::next(from);
         t.replace(from, to, U"ob");
         REQUIRE(t == text8{U"foobar"});
+    }
+    SECTION("hash", "hashing tests") {
+        text8 a { U"bla\u0308h" };
+        text8 b { U"blah" };
+        text8 c { U"bl\u00e4h" };
+        std::unordered_map<text8, int> map { { a, 42 } };
+        map[b] = 17;
+        map[c] = 23;
+        REQUIRE(map.size() == 2);
+        REQUIRE(map[a] == 23);
+        REQUIRE(map[b] == 17);
+        REQUIRE(map[c] == 23);
     }
 }
 TEST_CASE("any", "any_text tests") {

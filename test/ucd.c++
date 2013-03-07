@@ -90,10 +90,10 @@ TEST_CASE("query", "UCD property queries") {
     }
     using code_point_list = std::initializer_list<ogonek::code_point>;
     SECTION("decomposition_mapping", "Querying decomposition mapping") {
-        CHECK(boost::equal(ucd::get_decomposition_mapping(U'\x0041'), code_point_list{ U'\x0041' }));
-        CHECK(boost::equal(ucd::get_decomposition_mapping(U'\x00C5'), code_point_list{ U'\x0041', U'\x030A' }));
-        CHECK(boost::equal(ucd::get_decomposition_mapping(U'\x1EA0'), code_point_list{ U'\x0041', U'\x0323' }));
-        CHECK(boost::equal(ucd::get_decomposition_mapping(U'\x3000'), code_point_list{ U'\x0020' }));
+        CHECK(boost::equal(ucd::get_canonical_decomposition_mapping(U'\x0041'), code_point_list{ U'\x0041' }));
+        CHECK(boost::equal(ucd::get_canonical_decomposition_mapping(U'\x00C5'), code_point_list{ U'\x0041', U'\x030A' }));
+        CHECK(boost::equal(ucd::get_canonical_decomposition_mapping(U'\x1EA0'), code_point_list{ U'\x0041', U'\x0323' }));
+        CHECK(boost::equal(ucd::get_canonical_decomposition_mapping(U'\x3000'), code_point_list{ U'\x0020' }));
     }
     SECTION("full_composition_exclusion", "Querying composition exclusion") {
         CHECK(ucd::is_excluded_from_composition(U'\x0041') == false);

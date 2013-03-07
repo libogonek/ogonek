@@ -17,18 +17,22 @@
 #include <ogonek/ucd.h++>
 #include <ogonek/detail/small_vector.h++>
 
+#include <boost/functional/hash.hpp>
+
+#include <functional>
+
 namespace ogonek {
     namespace detail {
         template <typename T, std::size_t N>
         using vector_type = detail::small_vector<T, N>; 
 
-        template <typename Iterator>
+        template <typename Iterator, bool Compatibility = false>
         struct ordered_decomposing_iterator;
 
-        template <typename Iterator>
+        template <typename Iterator, bool Compatibility = false>
         struct decomposing_iterator
         : boost::iterator_facade<
-            decomposing_iterator<Iterator>,
+            decomposing_iterator<Iterator, Compatibility>,
             code_point,
             std::input_iterator_tag, // TODO
             code_point
@@ -58,9 +62,10 @@ namespace ogonek {
                     return;
                 }
                 auto u = *first++;
-                auto type = ucd::get_decomposition_type(u);
-                if(type == ucd::decomposition_type::can) {
-                    current = ucd::get_decomposition_mapping(u);
+                if(Compatibility) {
+                    current = ucd::get_compatibility_decomposition_mapping(u);
+                } else if(ucd::get_decomposition_type(u) == ucd::decomposition_type::can) {
+                    current = ucd::get_canonical_decomposition_mapping(u);
                 } else {
                     current = { u };
                 }
@@ -68,7 +73,7 @@ namespace ogonek {
             }
 
         private:
-            friend class ordered_decomposing_iterator<Iterator>;
+            friend class ordered_decomposing_iterator<Iterator, Compatibility>;
 
             static constexpr int depleted = -1;
 
@@ -81,13 +86,13 @@ namespace ogonek {
             vector_type<code_point, 4> current;
         };
 
-        template <typename Iterator>
+        template <typename Iterator, bool Compatibility = false>
         struct composing_iterator;
 
-        template <typename Iterator>
+        template <typename Iterator, bool Compatibility>
         struct ordered_decomposing_iterator
         : boost::iterator_facade<
-            ordered_decomposing_iterator<Iterator>,
+            ordered_decomposing_iterator<Iterator, Compatibility>,
             code_point,
             std::input_iterator_tag, // TODO
             code_point
@@ -131,7 +136,7 @@ namespace ogonek {
             }
 
         private:
-            friend class composing_iterator<Iterator>;
+            friend class composing_iterator<Iterator, Compatibility>;
 
             static constexpr int depleted = -1;
 
@@ -139,13 +144,10 @@ namespace ogonek {
                 return position == depleted;
             }
 
-            decomposing_iterator<Iterator> it;
+            decomposing_iterator<Iterator, Compatibility> it;
             int position = depleted;
             vector_type<code_point, 4> current;
         };
-
-        template <typename Iterator>
-        class composing_iterator;
     } // namespace detail
 
     template <typename SinglePassRange,
@@ -167,10 +169,10 @@ namespace ogonek {
     }
 
     namespace detail {
-        template <typename Iterator>
+        template <typename Iterator, bool Compatibility>
         struct composing_iterator
         : boost::iterator_facade<
-            composing_iterator<Iterator>,
+            composing_iterator<Iterator, Compatibility>,
             code_point,
             std::input_iterator_tag, // TODO
             code_point
@@ -220,7 +222,7 @@ namespace ogonek {
                 }
             }
             
-            ordered_decomposing_iterator<Iterator> it;
+            ordered_decomposing_iterator<Iterator, Compatibility> it;
             bool exhausted;
             code_point current;
         };
@@ -228,6 +230,8 @@ namespace ogonek {
 
     class nfc {};
     class nfd {};
+    class nfkc {};
+    class nfkd {};
 
     namespace detail {
         template <typename NormalizationForm, typename Iterator>
@@ -241,6 +245,16 @@ namespace ogonek {
         template <typename Iterator>
         struct normalizing_iterator_impl<nfc, Iterator> {
             using type = composing_iterator<Iterator>;
+        };
+
+        template <typename Iterator>
+        struct normalizing_iterator_impl<nfkd, Iterator> {
+            using type = ordered_decomposing_iterator<Iterator, true>;
+        };
+
+        template <typename Iterator>
+        struct normalizing_iterator_impl<nfkc, Iterator> {
+            using type = composing_iterator<Iterator, true>;
         };
 
         template <typename NormalizationForm, typename Iterator>
@@ -268,6 +282,44 @@ namespace ogonek {
     bool canonically_equivalent(SinglePassRange1 const& r1, SinglePassRange2 const& r2) {
         return canonical_equivalence{}(r1, r2);
     }
+    
+    struct canonical_hash {
+    public:
+        template <typename CodePointSequence>
+        std::size_t operator()(CodePointSequence const& sequence) const {
+            return hash_normalized(normalize<nfd>(sequence));
+        }
+    private:
+        template <typename NormalizedSequence>
+        std::size_t hash_normalized(NormalizedSequence const& sequence) const {
+            return boost::hash_range(boost::begin(sequence), boost::end(sequence));
+        }
+    };
+
+    struct compatibility_equivalence {
+        template <typename SinglePassRange1, typename SinglePassRange2>
+        bool operator()(SinglePassRange1 const& r1, SinglePassRange2 const& r2) const {
+            return boost::equal(normalize<nfkd>(r1), normalize<nfkd>(r2));
+        }
+    };
+
+    template <typename SinglePassRange1, typename SinglePassRange2>
+    bool compatibility_equivalent(SinglePassRange1 const& r1, SinglePassRange2 const& r2) {
+        return compatibility_equivalence{}(r1, r2);
+    }
+
+    struct compatibility_hash {
+    public:
+        template <typename CodePointSequence>
+        std::size_t operator()(CodePointSequence const& sequence) const {
+            return hash_normalized(normalize<nfkd>(sequence));
+        }
+    private:
+        template <typename NormalizedSequence>
+        std::size_t hash_normalized(NormalizedSequence const& sequence) const {
+            return boost::hash_range(boost::begin(sequence), boost::end(sequence));
+        }
+    };
 } // namespace ogonek
 
 #endif // OGONEK_NORMALIZATION_HPP

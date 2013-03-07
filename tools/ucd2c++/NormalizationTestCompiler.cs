@@ -49,7 +49,7 @@ namespace Ogonek.SegmentationTestCompiler
                             .ToList();
             var forms = GetForms(tests);
             File.WriteAllLines(destination, new []{ string.Format(CopyrightNotice, DateTime.Now.ToUniversalTime().ToString("O")) });
-            File.AppendAllLines(destination, forms.Select(f => "{ " + f[0] + ", " + f[1] + ", " + f[2] + " },"));
+            File.AppendAllLines(destination, forms.Select(f => string.Format("{{ {0}, {1}, {2}, {3}, {4} }},", f)));
 
             return 0;
         }
