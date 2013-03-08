@@ -77,14 +77,14 @@ namespace ogonek {
                 Thai, Tibetan, Tifinagh, Transport_And_Map, UCAS, UCAS_Ext, Ugaritic, Vai, Vedic_Ext,
                 Vertical_Forms, VS, VS_Sup, Yi_Radicals, Yi_Syllables, Yijing,
             };
-            enum class category {
-                Lu, Ll, Lt, Lm, Lo,
-                Mn, Mc, Me,
-                Nd, Nl, No,
-                Pc, Pd, Ps, Pe, Pi, Pf, Po,
-                Sm, Sc, Sk, So,
-                Zs, Zl, Zp,
-                Cc, Cf, Cs, Co, Cn,
+            enum class category : unsigned {
+                Lu = 0x1, Ll = 0x2, Lt = 0x4, Lm = 0x8, Lo = 0x10, L = 0x1F,
+                Mn = 0x20, Mc = 0x40, Me = 0x80, M = 0xE0,
+                Nd = 0x100, Nl = 0x200, No = 0x400, N = 0x700,
+                Pc = 0x800, Pd = 0x1000, Ps = 0x2000, Pe = 0x4000, Pi = 0x8000, Pf = 0x10000, Po = 0x20000, P = 0x3F800,
+                Sm = 0x40000, Sc = 0x80000, Sk = 0x100000, So = 0x200000, S = 0x3C0000,
+                Zs = 0x400000, Zl = 0x800000, Zp = 0x1000000, Z = 0x1C00000,
+                Cc = 0x2000000, Cf = 0x4000000, Cs = 0x8000000, Co = 0x10000000, Cn = 0x2000000, C = 0x3E000000,
             };
             enum class bidi_category {
                 AL, AN,
