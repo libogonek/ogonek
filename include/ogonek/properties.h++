@@ -85,9 +85,6 @@ namespace ogonek {
     bool is_punctuation(code_point u) {
         return wheels::has_flag(ucd::category::P, ucd::get_general_category(u));
     }
-    bool is_separator(code_point u) {
-        return wheels::has_flag(ucd::category::Z, ucd::get_general_category(u));
-    }
     bool is_symbol(code_point u) {
         return wheels::has_flag(ucd::category::S, ucd::get_general_category(u));
     }
@@ -106,7 +103,7 @@ namespace ogonek {
         return ucd::get_general_category(u) == ucd::category::Co;
     }
     bool is_defined(code_point u) {
-        return ucd::get_age(u) == ucd::age::unassigned;
+        return ucd::get_age(u) != ucd::version::unassigned;
     }
 } // namespace ogonek
 
