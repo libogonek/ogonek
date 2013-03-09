@@ -11,8 +11,8 @@ namespace ogonek {
     class nfc;
     class nfd;
 
-    class nfkc; // NOT IMPLEMENTED
-    class nfkd; // NOT IMPLEMENTED
+    class nfkc;
+    class nfkd;
 
     class fcd; // NOT IMPLEMENTED
     class fcc; // NOT IMPLEMENTED
@@ -28,15 +28,21 @@ namespace ogonek {
     };
     template <typename CodePointRange1, typename CodePointRange2>
     bool canonically_equivalent(CodePointRange1 const& range1, CodePointRange2 const& range2);
+    struct canonical_hash {
+        template <typename CodePointRange>
+        std::size_t operator()(CodePointRange const& range) const;
+    };
 
-    /* NOT IMPLEMENTED
     struct compatibility_equivalence {
         template <typename CodePointRange1, typename CodePointRange2>
         bool operator()(CodePointRange1 const& range1, CodePointRange2 const& range2) const;
     };
     template <typename CodePointRange1, typename CodePointRange2>
     bool compatibility_equivalent(CodePointRange1 const& range1, CodePointRange2 const& range2);
-    */
+    struct compatibility_hash {
+        template <typename CodePointRange>
+        std::size_t operator()(CodePointRange const& range) const;
+    };
 } // namespace ogonek
 {% endhighlight %}
 
@@ -124,4 +130,56 @@ bool canonically_equivalent(CodePointRange1 const& range1, CodePointRange2 const
 *Requires*: `CodePointRange1` and `CodePointRange2` are ranges of code points.
 
 *Returns*: `boost::equal(normalize<nfd>(range1), normalize<nfd>(range2))`.
+
+---
+
+{% highlight cpp %}
+struct canonical_hash {
+    template <typename CodePointRange>
+    std::size_t operator()(CodePointRange const& range) const;
+};
+{% endhighlight %}
+
+*Requires*: `CodePointRange` is a range of code points.
+
+*Returns*: a value such that if `a` and `b` are canonically equivalent ranges,
+`canonical_hash{}(a) == canonical_hash{}(b)`.
+
+---
+
+{% highlight cpp %}
+struct compatibility_equivalence {
+    template <typename CodePointRange1, typename CodePointRange2>
+    bool operator()(CodePointRange1 const& range1, CodePointRange2 const& range2) const;
+};
+{% endhighlight %}
+
+*Requires*: `CodePointRange1` and `CodePointRange2` are ranges of code points.
+
+*Returns*: `compatibility_equivalent(range1, range2)`.
+
+---
+
+{% highlight cpp %}
+template <typename CodePointRange1, typename CodePointRange2>
+bool compatibility_equivalent(CodePointRange1 const& range1, CodePointRange2 const& range2);
+{% endhighlight %}
+
+*Requires*: `CodePointRange1` and `CodePointRange2` are ranges of code points.
+
+*Returns*: `boost::equal(normalize<nfkd>(range1), normalize<nfkd>(range2))`.
+
+---
+
+{% highlight cpp %}
+struct compatibility_hash {
+    template <typename CodePointRange>
+    std::size_t operator()(CodePointRange const& range) const;
+};
+{% endhighlight %}
+
+*Requires*: `CodePointRange` is a range of code points.
+
+*Returns*: a value such that if `a` and `b` are compatibility equivalent ranges,
+`compatibility_hash{}(a) == compatibility_hash{}(b)`.
 

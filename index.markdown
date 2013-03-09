@@ -18,7 +18,7 @@ Ogonek version numbers use the [semantic versioning] rules 2.0.0-rc.1.
 
  - Unicode normalization forms;
 
- - canonical equivalence comparisons;
+ - canonical and compatibility equivalence comparisons;
 
  - boundary analysis algorithms (currently grapheme clusters and words);
 
