@@ -5,6 +5,7 @@ import sys
 vars = Variables()
 vars.Add(EnumVariable('lib', 'Select the kind of library to build', 'static', allowed_values=('static', 'shared')))
 vars.Add(BoolVariable('fatal', 'Stop on first error', True))
+vars.Add('test', 'Named of test case to run (use "none" for none)', 'all')
 
 # Create a base environment
 if sys.platform == 'win32':
@@ -97,7 +98,11 @@ test.MergeFlags(test_flags)
 test.Append(LIBS = test_libs)
 test.VariantDir(test_builddir, '.', duplicate=0)
 test_program = test.Program(test_target, prefix(test_builddir, test_sources), LIBS='ogonek_ucd', LIBPATH='bin/debug')
-test_alias = test.Alias('test', [test_program], test_target)
+if env['test'] == 'all':
+    test_arguments = ''
+else:
+    test_arguments = ' -t "' + env['test'] + '"'
+test_alias = test.Alias('runtest', [test_program], test_target + test_arguments)
 test.AlwaysBuild(test_alias)
 
 # Setup the distribution targets
@@ -120,6 +125,9 @@ dist.Install('ogonek/include', Glob('deps/wheels'))
 binary_zip = Zip('dist/ogonek-dist-' + env['lib'] + '.zip', 'ogonek')
 dist.Alias('dist', binary_zip)
 
-Default('test')
+if env['test'] == 'none':
+    Default('debug')
+else:
+    Default('runtest')
 
 # vim:set ft=python:
