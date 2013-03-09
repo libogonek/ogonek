@@ -112,12 +112,16 @@ moved back into the `text` instance, and it will re-validated.
 
 ### Equality
 
-`text::operator==` and `text::operator!=` test whether two instances of `text`
-are canonically equivalent or not. The Unicode standard requires that a
-conformant process treat any two canonically equivalent strings the same way.
+`operator==` and `operator!=` for `text` types test whether two instances of
+`text` are canonically equivalent or not. The Unicode standard requires that a
+conformant process treat any two canonically equivalent strings the same way,
+so no distinction is made by those operators.
 
 Instances of text with different template arguments can be compared with these
 operators.
+
+`std::hash` is specialised for `text` types with semantics that match those of
+`operator==`.
 
 ### See Also
 
