@@ -4,18 +4,17 @@ title: Normalization
 ---
 
 Unicode defines [normalization forms][UAX15] which ensure that equivalent
-strings have the same underlying representation. Currently, ogonek supports the
-canonical Unicode normalization forms NFC and NFD. These are provided in the
-header `<ogonek/normalization.h++>`.
+strings have the same underlying representation. Currently, ogonek supports both the 
+canonical and compatibility Unicode normalization forms: NFC, NFD, NFKC, and
+NFDK. These are provided in the header `<ogonek/normalization.h++>`.
 
 #### `normalize`
 
 This function template takes a range of code points as argument and returns a range of
 code points. It also takes a normalization form as a template parameter. The
 result is normalized according to the requested normalization form. All the four
-standard normalization forms are supported: Normalization Form C as `nfc`,
-Normalization Form D as `nfd`, Normalization Form Compatiblity C as `nfkc`, and
-Normalization Form Compatiblity D as `nfkd`.
+standard normalization forms are supported, under the names `nfc`, `nfd`,
+`nfkc`, and `nfkd`.
 
 *Example*:
 {% highlight cpp %}
