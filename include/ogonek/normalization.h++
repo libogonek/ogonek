@@ -234,10 +234,26 @@ namespace ogonek {
         };
     } // namespace detail
 
-    class nfc {};
-    class nfd {};
-    class nfkc {};
-    class nfkd {};
+    struct nfc {
+        static boost::tribool quick_check(code_point u) {
+            return ucd::is_nfc_quick_check(u);
+        }
+    };
+    struct nfd {
+        static bool quick_check(code_point u) {
+            return ucd::is_nfd_quick_check(u);
+        }
+    };
+    struct nfkc {
+        static boost::tribool quick_check(code_point u) {
+            return ucd::is_nfkc_quick_check(u);
+        }
+    };
+    struct nfkd {
+        static bool quick_check(code_point u) {
+            return ucd::is_nfkd_quick_check(u);
+        }
+    };
 
     namespace detail {
         template <typename NormalizationForm, typename Iterator>
@@ -326,7 +342,35 @@ namespace ogonek {
             return boost::hash_range(boost::begin(sequence), boost::end(sequence));
         }
     };
+
+    template <typename NormalForm, typename CodePointSequence,
+              typename Result = decltype(NormalForm::quick_check(0))>
+    Result is_normalized_quick(CodePointSequence const& sequence) {
+        for(auto u : sequence) {
+            auto quick_check = NormalForm::quick_check(u);
+            if(quick_check) {} // this looks weird, but consider boost::indeterminate
+            else return quick_check;
+        }
+        return true;
+    }
+    template <typename NormalForm, typename CodePointSequence>
+    bool is_normalized(CodePointSequence const& sequence) {
+        auto last_starter = boost::begin(sequence);
+        for(auto it = boost::begin(sequence); it != boost::end(sequence); ++it) {
+            auto quick_check = NormalForm::quick_check(*it);
+            if(!quick_check) return false;
+            if(boost::indeterminate(quick_check)) {
+                auto range = boost::make_iterator_range(last_starter, std::next(it));
+                if(!boost::equal(range, normalize<NormalForm>(range))) {
+                    return false;
+                }
+            }
+            if(ucd::get_combining_class(*it) == 0) {
+                last_starter = it;
+            }
+        }
+        return true;
+    }
 } // namespace ogonek
 
 #endif // OGONEK_NORMALIZATION_HPP
-
