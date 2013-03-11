@@ -43,7 +43,7 @@ def prefix(p, list):
 
 # List of files to build
 sources = stringify(Glob('src/*.c++') + Glob('src/*/*.c++'))
-test_sources = sources + stringify(Glob('test/*.c++'))
+test_sources = stringify(Glob('test/*.c++'))
 
 # Define visibility flags for shared libs
 if env['lib'] == 'static':
