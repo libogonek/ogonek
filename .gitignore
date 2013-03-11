@@ -7,3 +7,4 @@ dist/
 .vimrc
 _site/
 *scons*
+/ogonek/

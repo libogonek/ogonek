@@ -118,9 +118,10 @@ Zip(source_zip, source_files)
 srcdist_alias = Alias('distsrc', source_zip)
 
 dist = release.Clone()
+# TODO remove directory before putting stuff n
 dist.Install('ogonek', ['README.md', 'COPYING.txt', 'ogonek.png'])
 dist.Install('ogonek', 'include')
-dist.Install('ogonek/lib', Glob('bin/release/*'))
+dist.Install('ogonek/lib', release_lib)
 dist.Install('ogonek/include', Glob('deps/wheels'))
 binary_zip = Zip('dist/ogonek-dist-' + env['lib'] + '.zip', 'ogonek')
 dist.Alias('dist', binary_zip)
