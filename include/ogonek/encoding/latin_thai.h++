@@ -9,16 +9,16 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// Latin-1 encoding form (alias for ISO-8859-1)
+// Latin/Thai encoding form (alias for ISO-8859-11)
 
-#ifndef OGONEK_ENCODING_LATIN1_HPP
-#define OGONEK_ENCODING_LATIN1_HPP
+#ifndef OGONEK_ENCODING_LATIN_THAI_HPP
+#define OGONEK_ENCODING_LATIN_THAI_HPP
 
-#include <ogonek/encoding/iso8859_1.h++>
+#include <ogonek/encoding/iso8859_11.h++>
 
 namespace ogonek {
-    using latin1 = iso8859_1;
+    using latin_thai = iso8859_11;
 } // namespace ogonek
 
-#endif // OGONEK_ENCODING_LATIN1_HPP
+#endif // OGONEK_ENCODING_LATIN_THAI_HPP
 

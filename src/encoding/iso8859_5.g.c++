@@ -9,20 +9,15 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-02-27T10:33:03.6083260Z
+// This file was automatically generated on 2013-03-11T05:08:07.1374310Z
 
 // ISO-8859-5 encoding form
 
-
-#ifndef OGONEK_ISO8859_5_HPP
-#define OGONEK_ISO8859_5_HPP
-
 #include <ogonek/types.h++>
-#include <ogonek/encoding/codepage_encoding.h++>
+#include <ogonek/encoding/iso8859_5.h++>
 
 namespace ogonek {
-    struct iso8859_5_codepage {
-        static constexpr code_point to_unicode[256] = {
+    code_point iso8859_5_codepage::to_unicode[256] = {
             0x0,
             0x1,
             0x2,
@@ -280,8 +275,8 @@ namespace ogonek {
             0x45E,
             0x45F,
 
-        };
-        static constexpr codepage_entry from_unicode[] = {
+    };
+    codepage_entry iso8859_5_codepage::from_unicode[] = {
             { char(0x0), 0x0 },
             { char(0x1), 0x1 },
             { char(0x2), 0x2 },
@@ -538,12 +533,6 @@ namespace ogonek {
             { char(0xFE), 0x45E },
             { char(0xFF), 0x45F },
             { char(0xF0), 0x2116 },
-        };
     };
-    constexpr code_point iso8859_5_codepage::to_unicode[256];
-    constexpr codepage_entry iso8859_5_codepage::from_unicode[256];
-
-    using iso8859_5 = codepage_encoding<iso8859_5_codepage>;
 } // namespace ogonek
-#endif // OGONEK_ISO8859_5_HPP
 

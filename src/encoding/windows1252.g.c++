@@ -9,20 +9,15 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-02-27T10:33:04.3116950Z
+// This file was automatically generated on 2013-03-11T05:08:08.0461630Z
 
-// CP1252 encoding form
-
-
-#ifndef OGONEK_CP1252_HPP
-#define OGONEK_CP1252_HPP
+// Windows-1252 encoding form
 
 #include <ogonek/types.h++>
-#include <ogonek/encoding/codepage_encoding.h++>
+#include <ogonek/encoding/windows1252.h++>
 
 namespace ogonek {
-    struct cp1252_codepage {
-        static constexpr code_point to_unicode[256] = {
+    code_point windows1252_codepage::to_unicode[256] = {
             0x0,
             0x1,
             0x2,
@@ -280,8 +275,8 @@ namespace ogonek {
             0xFE,
             0xFF,
 
-        };
-        static constexpr codepage_entry from_unicode[] = {
+    };
+    codepage_entry windows1252_codepage::from_unicode[] = {
             { char(0x0), 0x0 },
             { char(0x1), 0x1 },
             { char(0x2), 0x2 },
@@ -533,12 +528,6 @@ namespace ogonek {
             { char(0x9B), 0x203A },
             { char(0x80), 0x20AC },
             { char(0x99), 0x2122 },
-        };
     };
-    constexpr code_point cp1252_codepage::to_unicode[256];
-    constexpr codepage_entry cp1252_codepage::from_unicode[251];
-
-    using cp1252 = codepage_encoding<cp1252_codepage>;
 } // namespace ogonek
-#endif // OGONEK_CP1252_HPP
 

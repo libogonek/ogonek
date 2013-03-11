@@ -42,7 +42,7 @@ def prefix(p, list):
     return map(lambda e: p + e, list)
 
 # List of files to build
-sources = stringify(Glob('src/*.c++'))
+sources = stringify(Glob('src/*.c++') + Glob('src/*/*.c++'))
 test_sources = sources + stringify(Glob('test/*.c++'))
 
 # Define visibility flags for shared libs
@@ -53,7 +53,7 @@ if env['lib'] == 'shared':
 
 # Setup the debug target
 debug_builddir = 'obj/debug/'
-debug_target = 'bin/debug/ogonek_ucd'
+debug_target = 'bin/debug/ogonek_data'
 debug_flags = lib_flags + ['-g', '-D_GLIBCXX_DEBUG']
 debug_libs = []
 
@@ -69,7 +69,7 @@ debug.Alias('debug', debug_lib)
 
 # Setup the release target
 release_builddir = 'obj/release/'
-release_target = 'bin/release/ogonek_ucd'
+release_target = 'bin/release/ogonek_data'
 release_flags = lib_flags + ['-flto' , '-O3', '-DNDEBUG']
 release_libs = []
 
@@ -97,7 +97,7 @@ test = debug.Clone()
 test.MergeFlags(test_flags)
 test.Append(LIBS = test_libs)
 test.VariantDir(test_builddir, '.', duplicate=0)
-test_program = test.Program(test_target, prefix(test_builddir, test_sources), LIBS='ogonek_ucd', LIBPATH='bin/debug')
+test_program = test.Program(test_target, prefix(test_builddir, test_sources), LIBS='ogonek_data', LIBPATH='bin/debug')
 if env['test'] == 'all':
     test_arguments = ''
 else:
@@ -109,7 +109,7 @@ test.AlwaysBuild(test_alias)
 info_files = ['README.md', 'COPYING.txt', 'ogonek.png']
 build_files = ['SConstruct'] + Glob('scons*.py') + Glob('scons-local-2.2.0/*')
 header_files = Glob('include/ogonek/*.h++') + Glob('include/ogonek/*/*.h++')
-source_files = Glob('src/*.c++') + Glob('src/ucd/*.g.inl')
+source_files = sources + Glob('src/ucd/*.g.inl')
 source_zip = 'dist/ogonek-src.zip'
 Zip(source_zip, info_files)
 Zip(source_zip, build_files)

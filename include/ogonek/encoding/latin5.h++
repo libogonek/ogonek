@@ -9,16 +9,16 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// Latin-1 encoding form (alias for ISO-8859-1)
+// Latin-5 encoding form (alias for ISO-8859-9)
 
-#ifndef OGONEK_ENCODING_LATIN1_HPP
-#define OGONEK_ENCODING_LATIN1_HPP
+#ifndef OGONEK_ENCODING_LATIN5_HPP
+#define OGONEK_ENCODING_LATIN5_HPP
 
-#include <ogonek/encoding/iso8859_1.h++>
+#include <ogonek/encoding/iso8859_9.h++>
 
 namespace ogonek {
-    using latin1 = iso8859_1;
+    using latin5 = iso8859_9;
 } // namespace ogonek
 
-#endif // OGONEK_ENCODING_LATIN1_HPP
+#endif // OGONEK_ENCODING_LATIN5_HPP
 

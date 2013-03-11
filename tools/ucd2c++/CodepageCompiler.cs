@@ -20,6 +20,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Text;
+using System.Text.RegularExpressions;
 
 [assembly: AssemblyTitle("Ogonek.CodepageCompiler")]
 [assembly: AssemblyDescription("Codepage-to-C++ compiler")]
@@ -38,20 +39,26 @@ namespace Ogonek.CodepageCompiler
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-            if(args.Length != 5)
+            if(args.Length != 2)
             {
-                Console.WriteLine("Usage: codepage2c++ <codepage source> <name> <code name> <ppsymbol> <output file>");
+                Console.WriteLine("Usage: codepage2c++ <codepage source> <name>");
                 return 1;
             }
             string source = args[0];
             string name = args[1];
-            string codename = args[2];
-            string ppsymbol = args[3];
-            string header = args[4];
+            string codename = Regex.Replace(name.ToLower(), @"((?<!\d)[ -](?!\d)|(?<=\d))[ -]", "_");
+            codename = Regex.Replace(codename, @"(?<!\d)[ -](?=\d)", "");
+            //string codename = name.ToLower().Replace(" ", "_").Replace("-", "_");
+            string ppsymbol = codename.ToUpper();
+            string header = codename + ".h++";
+            string impl = codename + ".g.c++";
 
             var entries = GetEntries(File.ReadLines(source)).ToList();
             File.WriteAllLines(header, new []{ string.Format(CopyrightNotice, DateTime.Now.ToUniversalTime().ToString("O"), name) });
             File.AppendAllLines(header, new []{ string.Format(HeaderTemplate, codename, ppsymbol, ToUnicode(entries), FromUnicode(entries), entries.Count) });
+            
+            File.WriteAllLines(impl, new []{ string.Format(CopyrightNotice, DateTime.Now.ToUniversalTime().ToString("O"), name) });
+            File.AppendAllLines(impl, new []{ string.Format(ImplTemplate, codename, header, ToUnicode(entries), FromUnicode(entries), entries.Count) });
 
             return 0;
         }
@@ -89,8 +96,7 @@ namespace Ogonek.CodepageCompiler
                         .Select(a => Tuple.Create(a[0], a[1]));
         }
 
-        const string HeaderTemplate = @"
-#ifndef OGONEK_{1}_HPP
+        const string HeaderTemplate = @"#ifndef OGONEK_{1}_HPP
 #define OGONEK_{1}_HPP
 
 #include <ogonek/types.h++>
@@ -98,19 +104,26 @@ namespace Ogonek.CodepageCompiler
 
 namespace ogonek {{
     struct {0}_codepage {{
-        static constexpr code_point to_unicode[256] = {{
-{2}
-        }};
-        static constexpr codepage_entry from_unicode[] = {{
-{3}
-        }};
+        static code_point to_unicode[256];
+        static codepage_entry from_unicode[{4}];
     }};
-    constexpr code_point {0}_codepage::to_unicode[256];
-    constexpr codepage_entry {0}_codepage::from_unicode[{4}];
 
     using {0} = codepage_encoding<{0}_codepage>;
 }} // namespace ogonek
 #endif // OGONEK_{1}_HPP
+";
+        
+        const string ImplTemplate = @"#include <ogonek/types.h++>
+#include <ogonek/encoding/{1}>
+
+namespace ogonek {{
+    code_point {0}_codepage::to_unicode[256] = {{
+{2}
+    }};
+    codepage_entry {0}_codepage::from_unicode[] = {{
+{3}
+    }};
+}} // namespace ogonek
 ";
         
         const string CopyrightNotice = @"// Ogonek

@@ -41,7 +41,7 @@ namespace {
         test::utext nfc { ogonek::normalize<ogonek::nfc>(input) };
         REQUIRE(nfc.storage() == nfc_expected);
         REQUIRE(ogonek::is_normalized<ogonek::nfc>(nfc));
-        REQUIRE_FALSE(bool(!ogonek::is_normalized_quick<ogonek::nfc>(b)));
+        REQUIRE_FALSE(bool(!ogonek::is_normalized_quick<ogonek::nfc>(nfc)));
         
         test::utext nfd { ogonek::normalize<ogonek::nfd>(input) };
         REQUIRE(nfd.storage() == nfd_expected);
