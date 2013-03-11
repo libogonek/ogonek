@@ -1,6 +1,7 @@
 Ogonek is mostly the result of me playing around with Unicode. Currently the
 library is still in alpha stages, so I don't recommend using it for anything
-serious. You are welcome to play around with it for any other reasons, though.
+serious, mainly because not all APIs are stabilised. You are welcome to play
+around with it for any non-serious purposes, though.
 
 Check out the [documentation] for more detailed information.
 
