@@ -73,38 +73,67 @@ namespace ogonek {
     }
 
     using ucd::is_alphabetic;
+    using ucd::is_ideographic;
+    using ucd::is_unified_ideograph;
+    
     using ucd::is_white_space;
-    inline bool is_control(code_point u) {
-        return ucd::get_general_category(u) == ucd::category::Cc;
-    }
     using ucd::is_hex_digit;
     using ucd::is_ascii_hex_digit;
-    inline bool is_letter(code_point u) {
-        return wheels::has_flag(ucd::category::L, ucd::get_general_category(u));
-    }
-    inline bool is_punctuation(code_point u) {
-        return wheels::has_flag(ucd::category::P, ucd::get_general_category(u));
-    }
-    inline bool is_symbol(code_point u) {
-        return wheels::has_flag(ucd::category::S, ucd::get_general_category(u));
-    }
     using ucd::is_quotation_mark;
     using ucd::is_dash;
     using ucd::is_diacritic;
     inline bool is_mathematical(code_point u) {
         return ucd::is_math(u);
     }
-    using ucd::is_ideographic;
-    using ucd::is_unified_ideograph;
     
-    using ucd::is_noncharacter;
-
+    inline bool is_graphic(code_point u) {
+        constexpr auto graphic = ucd::category::L
+                               | ucd::category::M
+                               | ucd::category::N
+                               | ucd::category::P
+                               | ucd::category::S
+                               | ucd::category::Zs;
+        return wheels::has_flag(graphic, ucd::get_general_category(u));
+    }
+    inline bool is_format(code_point u) {
+        constexpr auto format = ucd::category::Cf
+                              | ucd::category::Zl
+                              | ucd::category::Zp;
+        return wheels::has_flag(format, ucd::get_general_category(u));
+    }
+    inline bool is_control(code_point u) {
+        return ucd::get_general_category(u) == ucd::category::Cc;
+    }
     inline bool is_private_use(code_point u) {
         return ucd::get_general_category(u) == ucd::category::Co;
     }
+    inline bool is_surrogate(code_point u) {
+        return ucd::get_general_category(u) == ucd::category::Cs;
+    }
+    using ucd::is_noncharacter;
+    inline bool is_reserved(code_point u) {
+        return !is_noncharacter(u) && ucd::get_general_category(u) == ucd::category::Cn;
+    }
+
     inline bool is_defined(code_point u) {
         return ucd::get_age(u) != ucd::version::unassigned;
     } 
+    
+    inline text<utf8> label(code_point u) {
+        if(is_control(u)) {
+            return text<utf8>{ucd::detail::make_variable_name(u, "<control-#>")};
+        } else if(is_reserved(u)) {
+            return text<utf8>{ucd::detail::make_variable_name(u, "<reserved-#>")};
+        } else if(is_noncharacter(u)) {
+            return text<utf8>{ucd::detail::make_variable_name(u, "<noncharacter-#>")};
+        } else if(is_private_use(u)) {
+            return text<utf8>{ucd::detail::make_variable_name(u, "<private-use-#>")};
+        } else if(is_surrogate(u)) {
+            return text<utf8>{ucd::detail::make_variable_name(u, "<surrogate-#>")};
+        } else {
+            return ucd::get_name(u);
+        }
+    }
 } // namespace ogonek
 
 #endif // OGONEK_PROPERTIES_HPP
