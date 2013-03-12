@@ -146,19 +146,6 @@ TEST_CASE("properties", "user-facing property queries") {
         REQUIRE_FALSE(ogonek::is_ascii_hex_digit(0xFF27)); // FULLWIDTH LATIN CAPITAL LETTER G
         REQUIRE_FALSE(ogonek::is_ascii_hex_digit(0xFF47)); // FULLWIDTH LATIN SMALL LETTER G
         
-        REQUIRE(ogonek::is_letter(U'A')); // LATIN CAPITAL LETTER A
-        REQUIRE_FALSE(ogonek::is_letter(U'0')); // DIGIT ZERO
-        REQUIRE_FALSE(ogonek::is_letter(U',')); // COMMA
-        
-        REQUIRE_FALSE(ogonek::is_punctuation(U'A')); // LATIN CAPITAL LETTER A
-        REQUIRE_FALSE(ogonek::is_punctuation(U'0')); // DIGIT ZERO
-        REQUIRE(ogonek::is_punctuation(U',')); // COMMA
-        
-        REQUIRE_FALSE(ogonek::is_symbol(U'A')); // LATIN CAPITAL LETTER A
-        REQUIRE_FALSE(ogonek::is_symbol(U'0')); // DIGIT ZERO
-        REQUIRE_FALSE(ogonek::is_symbol(U',')); // COMMA
-        REQUIRE(ogonek::is_symbol(0x1F34C)); // BANANA
-        
         REQUIRE_FALSE(ogonek::is_quotation_mark(U'A')); // LATIN CAPITAL LETTER A
         REQUIRE(ogonek::is_quotation_mark(U'\'')); // APOSTROPHE
         REQUIRE(ogonek::is_quotation_mark(U'"')); // QUOTATION MARK

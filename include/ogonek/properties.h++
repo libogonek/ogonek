@@ -75,7 +75,6 @@ namespace ogonek {
     using ucd::is_alphabetic;
     using ucd::is_ideographic;
     using ucd::is_unified_ideograph;
-    
     using ucd::is_white_space;
     using ucd::is_hex_digit;
     using ucd::is_ascii_hex_digit;
