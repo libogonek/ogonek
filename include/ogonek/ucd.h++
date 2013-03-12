@@ -491,13 +491,16 @@ namespace ogonek {
                 return result;
             }
 
+            inline std::string make_variable_name(code_point u, const char* base) {
+                std::string name { base };
+                name.reserve(name.size() + 5);
+                name.replace(name.find('#'), 1, to_hex(u));
+                return name;
+            }
             inline text_type get_name(name_properties const* data, std::size_t data_size, code_point u) {
                 name_properties const& p = detail::find_property_group(data, data_size, u);
                 if(p.variable) {
-                    std::string name { p.name };
-                    name.reserve(name.size() + 5);
-                    name.replace(name.find('#'), 1, to_hex(u));
-                    return text_type { std::move(name) };
+                    return text_type { make_variable_name(u, p.name) };
                 } else {
                     return text_type {{ p.name }};
                 }

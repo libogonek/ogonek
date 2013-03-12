@@ -28,70 +28,70 @@ namespace wheels {
 }
 
 namespace ogonek {
-    text<utf8> name(code_point u) {
+    inline text<utf8> name(code_point u) {
         return ucd::get_name(u);
     }
 
-    bool is_numeric(code_point u) {
+    inline bool is_numeric(code_point u) {
         return ucd::get_numeric_type(u) != ucd::numeric_type::None;
     }
-    double numeric_value(code_point u) {
+    inline double numeric_value(code_point u) {
         return ucd::get_numeric_value(u);
     }
 
-    bool is_digit(code_point u) {
+    inline bool is_digit(code_point u) {
         auto type = ucd::get_numeric_type(u);
         return type == ucd::numeric_type::Di || type == ucd::numeric_type::De;
     }
-    int digit_value(code_point u) {
+    inline int digit_value(code_point u) {
         return ucd::get_numeric_value(u);
     }
 
-    bool is_decimal(code_point u) {
+    inline bool is_decimal(code_point u) {
         return ucd::get_numeric_type(u) == ucd::numeric_type::De;
     }
-    int decimal_value(code_point u) {
+    inline int decimal_value(code_point u) {
         return ucd::get_numeric_value(u);
     }
 
-    bool is_uppercase(code_point u) {
+    inline bool is_uppercase(code_point u) {
         return ucd::is_uppercase(u);
     }
-    ucd::vector_type<code_point, 4> uppercase(code_point u) {
+    inline ucd::vector_type<code_point, 4> uppercase(code_point u) {
         return ucd::get_uppercase(u);
     }
 
-    bool is_lowercase(code_point u) {
+    inline bool is_lowercase(code_point u) {
         return ucd::is_lowercase(u);
     }
-    ucd::vector_type<code_point, 4> lowercase(code_point u) {
+    inline ucd::vector_type<code_point, 4> lowercase(code_point u) {
         return ucd::get_lowercase(u);
     }
 
-    ucd::vector_type<code_point, 4> titlecase(code_point u) {
+    inline ucd::vector_type<code_point, 4> titlecase(code_point u) {
         return ucd::get_titlecase(u);
     }
 
     using ucd::is_alphabetic;
     using ucd::is_white_space;
-    bool is_control(code_point u) {
+    inline bool is_control(code_point u) {
         return ucd::get_general_category(u) == ucd::category::Cc;
     }
     using ucd::is_hex_digit;
     using ucd::is_ascii_hex_digit;
-    bool is_letter(code_point u) {
+    inline bool is_letter(code_point u) {
         return wheels::has_flag(ucd::category::L, ucd::get_general_category(u));
     }
-    bool is_punctuation(code_point u) {
+    inline bool is_punctuation(code_point u) {
         return wheels::has_flag(ucd::category::P, ucd::get_general_category(u));
     }
-    bool is_symbol(code_point u) {
+    inline bool is_symbol(code_point u) {
         return wheels::has_flag(ucd::category::S, ucd::get_general_category(u));
     }
     using ucd::is_quotation_mark;
     using ucd::is_dash;
     using ucd::is_diacritic;
-    bool is_mathematical(code_point u) {
+    inline bool is_mathematical(code_point u) {
         return ucd::is_math(u);
     }
     using ucd::is_ideographic;
@@ -99,12 +99,12 @@ namespace ogonek {
     
     using ucd::is_noncharacter;
 
-    bool is_private_use(code_point u) {
+    inline bool is_private_use(code_point u) {
         return ucd::get_general_category(u) == ucd::category::Co;
     }
-    bool is_defined(code_point u) {
+    inline bool is_defined(code_point u) {
         return ucd::get_age(u) != ucd::version::unassigned;
-    }
+    } 
 } // namespace ogonek
 
 #endif // OGONEK_PROPERTIES_HPP
