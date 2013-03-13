@@ -134,20 +134,6 @@ bool canonically_equivalent(CodePointRange1 const& range1, CodePointRange2 const
 ---
 
 {% highlight cpp %}
-struct canonical_hash {
-    template <typename CodePointRange>
-    std::size_t operator()(CodePointRange const& range) const;
-};
-{% endhighlight %}
-
-*Requires*: `CodePointRange` is a range of code points.
-
-*Returns*: a value such that if `a` and `b` are canonically equivalent ranges,
-`canonical_hash{}(a) == canonical_hash{}(b)`.
-
----
-
-{% highlight cpp %}
 struct compatibility_equivalence {
     template <typename CodePointRange1, typename CodePointRange2>
     bool operator()(CodePointRange1 const& range1, CodePointRange2 const& range2) const;
@@ -168,6 +154,20 @@ bool compatibility_equivalent(CodePointRange1 const& range1, CodePointRange2 con
 *Requires*: `CodePointRange1` and `CodePointRange2` are ranges of code points.
 
 *Returns*: `boost::equal(normalize<nfkd>(range1), normalize<nfkd>(range2))`.
+
+### Hashing
+
+{% highlight cpp %}
+struct canonical_hash {
+    template <typename CodePointRange>
+    std::size_t operator()(CodePointRange const& range) const;
+};
+{% endhighlight %}
+
+*Requires*: `CodePointRange` is a range of code points.
+
+*Returns*: a value such that if `a` and `b` are canonically equivalent ranges,
+`canonical_hash{}(a) == canonical_hash{}(b)`.
 
 ---
 
