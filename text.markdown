@@ -125,9 +125,9 @@ operators.
 
 ### See Also
 
-- [Validation][validation]
+- [Error handling][error]
 - [Encoding][encoding]
 
- [validation]: validation.html
+ [error]: error.html
  [encoding]: encoding.html
 

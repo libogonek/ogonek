@@ -207,10 +207,10 @@ using utf16be = ogonek::encoding_scheme<ogonek::utf16, ogonek::big_endian>;
 ### See Also
 
 - [Text][text]
-- [Validation][validation]
+- [Error handling][error]
 
  [text]: text.html
- [validation]: validation.html
+ [error]: error.html
  [UTF-8]: http://en.wikipedia.org/wiki/UTF-8
  [UTF-16]: http://en.wikipedia.org/wiki/UTF-16
  [UTF-32]: http://en.wikipedia.org/wiki/UTF-32

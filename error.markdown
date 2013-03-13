@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Validation
+title: Error handling
 ---
 
 When errors are found encoding or decoding streams, there are various ways of
