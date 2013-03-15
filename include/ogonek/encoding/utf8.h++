@@ -67,25 +67,25 @@ namespace ogonek {
         static constexpr bool is_self_synchronizing = true;
         struct state {};
 
-        template <typename SinglePassRange, typename Validation,
+        template <typename SinglePassRange, typename ErrorHandler,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename EncodingIterator = encoding_iterator<utf8, Iterator, Validation>>
-        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, Validation) {
+                  typename EncodingIterator = encoding_iterator<utf8, Iterator, ErrorHandler>>
+        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ErrorHandler) {
             return boost::make_iterator_range(
                     EncodingIterator { boost::begin(r), boost::end(r) },
                     EncodingIterator { boost::end(r), boost::end(r) });
         }
-        template <typename SinglePassRange, typename Validation,
+        template <typename SinglePassRange, typename ErrorHandler,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename DecodingIterator = decoding_iterator<utf8, Iterator, Validation>>
-        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, Validation) {
+                  typename DecodingIterator = decoding_iterator<utf8, Iterator, ErrorHandler>>
+        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, ErrorHandler) {
             return boost::make_iterator_range(
                     DecodingIterator { boost::begin(r), boost::end(r) },
                     DecodingIterator { boost::end(r), boost::end(r) });
         }
 
-        template <typename Validation>
-        static detail::coded_character<utf8> encode_one(code_point u, state&, Validation) {
+        template <typename ErrorHandler>
+        static detail::coded_character<utf8> encode_one(code_point u, state&, ErrorHandler) {
             if(u <= last_1byte_value) {
                 return { static_cast<code_unit>(u) };
             } else if(u <= last_2byte_value) {
@@ -130,8 +130,8 @@ namespace ogonek {
             out = decode(b0, b1, b2, b3);
             return { first, boost::end(r) };
         }
-        template <typename SinglePassRange, typename Validation>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, Validation) {
+        template <typename SinglePassRange, typename ErrorHandler>
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, ErrorHandler) {
             auto first = boost::begin(r);
             byte b0 = *first++;
             auto length = sequence_length(b0);
@@ -147,14 +147,14 @@ namespace ogonek {
             };
 
             if(is_invalid(b0) || is_continuation(b0)) {
-                return Validation::template apply_decode<utf8>(r, s, out);
+                return ErrorHandler::template apply_decode<utf8>(r, s, out);
             }
 
             std::array<byte, 4> b = {{ b0, }};
             for(int i = 1; i < length; ++i) {
                 b[i] = *first++;
                 if(!is_continuation(b[i])) {
-                    return Validation::template apply_decode<utf8>(r, s, out);
+                    return ErrorHandler::template apply_decode<utf8>(r, s, out);
                 }
             }
 
@@ -172,10 +172,10 @@ namespace ogonek {
                     || (u <= last_3byte_value && bytes > 3);
             };
             if(is_overlong(out, length)) {
-                return Validation::template apply_decode<utf8>(r, s, out);
+                return ErrorHandler::template apply_decode<utf8>(r, s, out);
             }
             if(detail::is_surrogate(out) || out > detail::last_code_point) {
-                return Validation::template apply_decode<utf8>(r, s, out);
+                return ErrorHandler::template apply_decode<utf8>(r, s, out);
             }
             return { first, boost::end(r) };
         }

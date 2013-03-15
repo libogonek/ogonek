@@ -85,28 +85,28 @@ namespace ogonek {
         using state = typename EncodingForm::state;
         using code_unit = ogonek::byte;
 
-        template <typename SinglePassRange, typename Validation,
+        template <typename SinglePassRange, typename ErrorHandler,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename EncodingIterator = encoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, Iterator, Validation>>
-        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, Validation) {
+                  typename EncodingIterator = encoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, Iterator, ErrorHandler>>
+        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ErrorHandler) {
             return boost::make_iterator_range(
                     EncodingIterator { boost::begin(r), boost::end(r) },
                     EncodingIterator { boost::end(r), boost::end(r) });
         }
 
-        template <typename SinglePassRange, typename Validation,
+        template <typename SinglePassRange, typename ErrorHandler,
                   typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename DecodingIterator = decoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, Iterator, Validation>>
-        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, Validation) {
+                  typename DecodingIterator = decoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, Iterator, ErrorHandler>>
+        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, ErrorHandler) {
             return boost::make_iterator_range(
                     DecodingIterator { boost::begin(r), boost::end(r) },
                     DecodingIterator { boost::end(r), boost::end(r) });
         }
 
-        template <typename Validation>
-        static detail::coded_character<encoding_scheme<EncodingForm, ByteOrder>> encode_one(code_point u, state& s, Validation) {
+        template <typename ErrorHandler>
+        static detail::coded_character<encoding_scheme<EncodingForm, ByteOrder>> encode_one(code_point u, state& s, ErrorHandler) {
             std::array<byte, max_width> result;
-            auto encoded = EncodingForm::encode_one(u, s, Validation{});
+            auto encoded = EncodingForm::encode_one(u, s, ErrorHandler{});
             auto out = result.begin();
             for(auto it = encoded.begin(); it != encoded.end(); ++it) {
                 auto bytes = ByteOrder::map(static_cast<detail::Uint<CodeUnit<EncodingForm>>>(*it));
@@ -114,14 +114,14 @@ namespace ogonek {
             }
             return { result, std::size_t(out - result.begin()) };
         }
-        template <typename SinglePassRange, typename Validation>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, Validation) {
+        template <typename SinglePassRange, typename ErrorHandler>
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, ErrorHandler) {
             using code_unit_range = detail::byte_ordered_range<ByteOrder, typename EncodingForm::code_unit, SinglePassRange>;
             using iterator = typename boost::range_iterator<code_unit_range>::type;
             code_unit_range range {
                 iterator { boost::begin(r) }, iterator { boost::end(r) }
             };
-            auto remaining = EncodingForm::decode_one(range, out, s, Validation{});
+            auto remaining = EncodingForm::decode_one(range, out, s, ErrorHandler{});
             return { remaining.begin().it, r.end() };
         }
     };

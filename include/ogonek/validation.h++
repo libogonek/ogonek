@@ -9,10 +9,10 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// Validation
+// Error handlers
 
-#ifndef OGONEK_VALIDATION_HPP
-#define OGONEK_VALIDATION_HPP
+#ifndef OGONEK_ERROR_HPP
+#define OGONEK_ERROR_HPP
 
 #include <ogonek/traits.h++>
 #include <ogonek/detail/partial_array.h++>
@@ -115,5 +115,5 @@ namespace ogonek {
     constexpr auto default_error_handler = throw_error;
 } // namespace ogonek
 
-#endif // OGONEK_VALIDATION_HPP
+#endif // OGONEK_ERROR_HPP
 
