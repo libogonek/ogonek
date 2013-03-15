@@ -35,11 +35,11 @@ namespace ogonek {
         }
     };
     
-    namespace detail {
-        struct error_handler {
-            struct is_error_handler : std::true_type {};
-        };
+    struct error_handler {
+        struct is_error_handler : std::true_type {};
+    };
         
+    namespace detail {
         struct error_handler_tester {
             template <typename T, typename = typename T::is_error_handler>
             std::true_type static test(int);
@@ -51,10 +51,10 @@ namespace ogonek {
     } // namespace detail
 
     //! Strategy for skipping validation
-    struct skip_validation_t : detail::error_handler {} constexpr skip_validation = {};
+    struct skip_validation_t : error_handler {} constexpr skip_validation = {};
 
     //! Strategy for throwing upon discovering invalid data
-    struct throw_error_t : detail::error_handler {
+    struct throw_error_t : error_handler {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const&, EncodingState<EncodingForm>&, code_point&) {
             throw unicode_error();
@@ -88,7 +88,7 @@ namespace ogonek {
     } // namespace detail
 
     //! Strategy for replacing invalid data with a replacement character
-    struct replace_errors_t : detail::error_handler {
+    struct replace_errors_t : error_handler {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, EncodingState<EncodingForm>&, code_point& out) {
             out = U'\xFFFD';
@@ -101,7 +101,7 @@ namespace ogonek {
     } constexpr replace_errors = {};
 
     // Strategy for discarding erroneous data
-    struct discard_errors_t : detail::error_handler {
+    struct discard_errors_t : error_handler {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, EncodingState<EncodingForm>&, code_point&) {
             return { std::next(boost::begin(source)), boost::end(source) };
