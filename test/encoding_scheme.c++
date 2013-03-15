@@ -15,7 +15,7 @@
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf32.h++>
 #include <ogonek/types.h++>
-#include <ogonek/validation.h++>
+#include <ogonek/error.h++>
 
 #include <catch.h++>
 

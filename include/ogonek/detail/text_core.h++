@@ -17,7 +17,7 @@
 #include <ogonek/encoding/iterator.h++>
 #include <ogonek/traits.h++>
 #include <ogonek/types.h++>
-#include <ogonek/validation.h++>
+#include <ogonek/error.h++>
 #include <ogonek/encoding/utf16.h++>
 
 #include <wheels/smart_ptr/unique_ptr.h++>

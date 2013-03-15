@@ -16,7 +16,7 @@
 
 #include <ogonek/encoding/iterator.h++>
 #include <ogonek/types.h++>
-#include <ogonek/validation.h++>
+#include <ogonek/error.h++>
 #include <ogonek/detail/partial_array.h++>
 #include <ogonek/detail/constants.h++>
 

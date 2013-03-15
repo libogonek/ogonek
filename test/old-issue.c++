@@ -17,7 +17,7 @@
 #include <ogonek/text.h++>
 #include <ogonek/encoding/utf8.h++>
 #include <ogonek/segmentation.h++>
-#include <ogonek/validation.h++>
+#include <ogonek/error.h++>
 
 TEST_CASE("old-issue", "Tests for an old issue") {
     using text8 = test::text<ogonek::utf8>;
