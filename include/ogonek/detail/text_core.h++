@@ -195,8 +195,8 @@ namespace ogonek {
         explicit text(Container&& storage) : text(std::move(storage), default_validation) {}
         
         //! Construct directly from a container, with throwing validation, moving
-        text(Container&& storage, throw_validation_error_t)
-        : detail::validated<EncodingForm>(storage, throw_validation_error), storage_(std::move(storage)) {}
+        text(Container&& storage, throw_error_t)
+        : detail::validated<EncodingForm>(storage, throw_error), storage_(std::move(storage)) {}
 
         //! Construct directly from a container, without validation, moving
         text(Container&& storage, skip_validation_t)

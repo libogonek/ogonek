@@ -54,7 +54,7 @@ namespace ogonek {
     struct skip_validation_t : detail::validation_strategy {} constexpr skip_validation = {};
 
     //! Strategy for throwing upon discovering invalid data
-    struct throw_validation_error_t : detail::validation_strategy {
+    struct throw_error_t : detail::validation_strategy {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const&, EncodingState<EncodingForm>&, code_point&) {
             throw validation_error();
@@ -63,7 +63,7 @@ namespace ogonek {
         static detail::coded_character<EncodingForm> apply_encode(code_point, EncodingState<EncodingForm>&) {
             throw validation_error();
         }
-    } constexpr throw_validation_error = {};
+    } constexpr throw_error = {};
 
     namespace detail {
         template <typename T>
@@ -112,7 +112,7 @@ namespace ogonek {
         }
     } constexpr discard_errors = {};
 
-    constexpr auto default_validation = throw_validation_error;
+    constexpr auto default_validation = throw_error;
 } // namespace ogonek
 
 #endif // OGONEK_VALIDATION_HPP

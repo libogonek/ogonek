@@ -42,7 +42,7 @@ TEST_CASE("old-issue", "Tests for an old issue") {
     }
     SECTION("zeroed in", "found out the issue is with UTF-8 encoding") {
         ogonek::utf8::state s {};
-        auto encoded = ogonek::utf8::encode_one(U'\x0440', s, ogonek::throw_validation_error);
+        auto encoded = ogonek::utf8::encode_one(U'\x0440', s, ogonek::throw_error);
         REQUIRE(encoded.size() == 2);
         CHECK(int(encoded[0]) == int(char(0xD1)));
         CHECK(int(encoded[1]) == int(char(0x80)));
