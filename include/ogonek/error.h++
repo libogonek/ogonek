@@ -88,7 +88,7 @@ namespace ogonek {
     } // namespace detail
 
     //! Strategy for replacing invalid data with a replacement character
-    struct use_replacement_character_t : detail::error_handler {
+    struct replace_errors_t : detail::error_handler {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, EncodingState<EncodingForm>&, code_point& out) {
             out = U'\xFFFD';
@@ -98,7 +98,7 @@ namespace ogonek {
         static detail::coded_character<EncodingForm> apply_encode(code_point, EncodingState<EncodingForm>& s) {
             return EncodingForm::encode_one(detail::replacement_character<EncodingForm>::value, s, skip_validation);
         }
-    } constexpr use_replacement_character = {};
+    } constexpr replace_errors = {};
 
     // Strategy for discarding erroneous data
     struct discard_errors_t : detail::error_handler {

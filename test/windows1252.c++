@@ -40,7 +40,7 @@ TEST_CASE("windows1252", "Windows-1252 encoding form") {
     }
     SECTION("validation", "Validating Windows-1252") {
         auto encoded = { 0x41_b, 0x80_b, 0x81_b };
-        auto range = ogonek::windows1252::decode(encoded, ogonek::use_replacement_character);
+        auto range = ogonek::windows1252::decode(encoded, ogonek::replace_errors);
         std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
         REQUIRE(decoded.size() == 3);
         CHECK(decoded[0] == U'\x0041');
@@ -49,7 +49,7 @@ TEST_CASE("windows1252", "Windows-1252 encoding form") {
     }
     SECTION("replacement", "Windows-1252's custom replacement character (?)") {
         auto decoded = { U'\x0041', U'\x20AC', U'\x1F4A9' };
-        auto range = ogonek::windows1252::encode(decoded, ogonek::use_replacement_character);
+        auto range = ogonek::windows1252::encode(decoded, ogonek::replace_errors);
         std::vector<ogonek::windows1252::code_unit> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 3);
         CHECK(encoded[0] == 0x41_b);

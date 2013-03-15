@@ -132,10 +132,10 @@ TEST_CASE("text", "text tests") {
         auto r1 = ogonek::concat<ogonek::utf8>(a, b, c, d, e, f, g);
         REQUIRE(r1 == text8{U"abcdefg"});
         
-        auto r2 = ogonek::concat(ogonek::use_replacement_character, a, e, bad, b, f, c);
+        auto r2 = ogonek::concat(ogonek::replace_errors, a, e, bad, b, f, c);
         REQUIRE(r2 == text8{U"ae\uFFFDbfc"});
         
-        auto r3 = ogonek::concat<ogonek::utf8>(ogonek::use_replacement_character, a, b, c, d, bad, e, f, g);
+        auto r3 = ogonek::concat<ogonek::utf8>(ogonek::replace_errors, a, b, c, d, bad, e, f, g);
         REQUIRE(r3 == text8{U"abcd\uFFFDefg"});
     }
     SECTION("erase", "text::erase tests") {
