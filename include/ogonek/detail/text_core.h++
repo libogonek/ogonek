@@ -42,7 +42,7 @@ namespace ogonek {
         struct validated {
             validated() = default;
             template <typename Range>
-            validated(Range const& range) : validated(range, default_validation) {}
+            validated(Range const& range) : validated(range, default_error_handler) {}
             template <typename Range, typename Validation>
             validated(Range const& range, Validation) {
                 for(auto&& _ : EncodingForm::decode(range, Validation{})) {
@@ -123,21 +123,21 @@ namespace ogonek {
         // -- literals
         //! Construct from a null-terminated char32_t string (intended for UTF-32 literals)
         explicit text(char32_t const* literal)
-        : text(literal, default_validation) {}
+        : text(literal, default_error_handler) {}
 
         //! Construct from a null-terminated char32_t string, with validation callback
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         text(char32_t const* literal, Validation)
         : text(make_range(literal), Validation{}) {}
 
         //! Construct from a null-terminated char16_t string (intended for UTF-16 literals)
         explicit text(char16_t const* literal)
-        : text(literal, default_validation) {}
+        : text(literal, default_error_handler) {}
 
         //! Construct from a null-terminated char16_t string, with validation callback
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         text(char16_t const* literal, Validation)
         : text(utf16::decode(make_range(literal), Validation{}), skip_validation) {}
 
@@ -145,54 +145,54 @@ namespace ogonek {
         //! Construct from a different text
         template <typename EncodingForm1, typename Container1>
         text(text<EncodingForm1, Container1> const& that)
-        : text(that, default_validation) {}
+        : text(that, default_error_handler) {}
         
         //! Construct from a different text, same encoding, ignore validation
         template <typename Container1, typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         text(text<EncodingForm, Container1> const& that, Validation)
         : storage_(that.storage_.begin(), that.storage_.end()) {}
         
         //! Construct from a different text, different encoding, with validation
         template <typename EncodingForm1, typename Container1, typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         text(text<EncodingForm1, Container1> const& that, Validation)
         : text(direct{}, EncodingForm::encode(that, Validation{})) {}
         
         // -- ranges
         //! Construct from an initializer list
         explicit text(std::initializer_list<code_point> list)
-        : text(list, default_validation) {}
+        : text(list, default_error_handler) {}
         //! Construct from an initializer list, with validation strategy
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         explicit text(std::initializer_list<code_point> list, Validation)
         : text(direct{}, EncodingForm::encode(list, Validation{})) {}
         //! Construct from a code point sequence
         template <typename CodePointSequence,
                   wheels::EnableIf<detail::is_code_point_sequence<CodePointSequence>>...>
         explicit text(CodePointSequence const& sequence)
-        : text(sequence, default_validation) {}
+        : text(sequence, default_error_handler) {}
 
         //! Construct from a code point sequence, with validation policy
         template <typename CodePointSequence, typename Validation,
                   wheels::EnableIf<detail::is_code_point_sequence<CodePointSequence>>...,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         text(CodePointSequence const& sequence, Validation)
         : text(direct{}, EncodingForm::encode(sequence, Validation{})) {}
 
         // -- storage
         //! Construct directly from a container
-        explicit text(Container const& storage) : text(storage, default_validation) {}
+        explicit text(Container const& storage) : text(storage, default_error_handler) {}
 
         //! Construct directly from a container, with validation
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         text(Container const& storage, Validation)
         : text(direct{}, EncodingForm::encode(EncodingForm::decode(storage, Validation{}), skip_validation)) {}
 
         //! Construct directly from a container, moving
-        explicit text(Container&& storage) : text(std::move(storage), default_validation) {}
+        explicit text(Container&& storage) : text(std::move(storage), default_error_handler) {}
         
         //! Construct directly from a container, with throwing validation, moving
         text(Container&& storage, throw_error_t)
@@ -204,7 +204,7 @@ namespace ogonek {
 
         //! Construct directly from a container, with validation, (not) moving
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         text(Container&& storage, Validation)
         : text(storage, Validation{}) {}
         
@@ -219,49 +219,49 @@ namespace ogonek {
         }
         template <typename EncodingForm1, typename Container1>
         text& operator=(text<EncodingForm1, Container1> const& that) {
-            assign(that, default_validation);
+            assign(that, default_error_handler);
             return *this;
         }
 
         void assign(std::initializer_list<code_point> list) {
-            assign(list, default_validation);
+            assign(list, default_error_handler);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void assign(std::initializer_list<code_point> list, Validation) {
             assign<std::initializer_list<code_point>>(list, Validation{});
         }
         
         void assign(text const& that) { operator=(that); }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void assign(text const& that, Validation) { operator=(that); }
 
         void assign(text&& that) { operator=(std::move(that)); }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void assign(text&& that, Validation) { operator=(std::move(that)); }
         
         template <typename Container1, typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void assign(text<EncodingForm, Container1> const& that, Validation) {
             storage_.assign(that.storage_.begin(), that.storage_.end());
         }
         
         void assign(char32_t const* literal) {
-            assign(literal, default_validation);
+            assign(literal, default_error_handler);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void assign(char32_t const* literal, Validation) {
             assign(make_range(literal), Validation{});
         }
 
         void assign(char16_t const* literal) {
-            assign(literal, default_validation);
+            assign(literal, default_error_handler);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void assign(char16_t const* literal, Validation) {
             assign(utf16::decode(make_range(literal), Validation{}), skip_validation);
         }
@@ -270,11 +270,11 @@ namespace ogonek {
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
                   wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void assign(CodePointSequence const& that) {
-            assign(that, default_validation);
+            assign(that, default_error_handler);
         }
         template <typename CodePointSequence, typename Validation,
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...,
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...,
                   wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void assign(CodePointSequence const& that, Validation) {
             insert_code_units(storage_.end(), EncodingForm::encode(that, Validation{}));
@@ -309,31 +309,31 @@ namespace ogonek {
             insert_code_units(storage_.end(), that.storage_);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void append(text const& that, Validation) {
             append(that);
         }
         void append(std::initializer_list<code_point> list) {
-            append(list, default_validation);
+            append(list, default_error_handler);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void append(std::initializer_list<code_point> list, Validation) {
             append<std::initializer_list<code_point>>(list, Validation{});
         }
         void append(char32_t const* literal) {
-            append(literal, default_validation);
+            append(literal, default_error_handler);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void append(char32_t const* literal, Validation) {
             append(make_range(literal), Validation{});
         }
         void append(char16_t const* literal) {
-            append(literal, default_validation);
+            append(literal, default_error_handler);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void append(char16_t const* literal, Validation) {
             append(utf16::decode(make_range(literal), Validation{}), skip_validation);
         }
@@ -341,11 +341,11 @@ namespace ogonek {
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
                   wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void append(CodePointSequence const& sequence) {
-            append(sequence, default_validation);
+            append(sequence, default_error_handler);
         }
         template <typename CodePointSequence, typename Validation,
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...,
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...,
                   wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void append(CodePointSequence const& sequence, Validation) {
             insert_code_units(storage_.end(), EncodingForm::encode(sequence, Validation{}));
@@ -368,31 +368,31 @@ namespace ogonek {
             insert_code_units(detail::decoding_iterator_access::first(at), that.storage_);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void insert(iterator at, text const& that, Validation) {
             insert(at, that);
         }
         void insert(iterator at, std::initializer_list<code_point> list) {
-            insert(at, list, default_validation);
+            insert(at, list, default_error_handler);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void insert(iterator at, std::initializer_list<code_point> list, Validation) {
             insert<std::initializer_list<code_point>>(at, list, Validation{});
         }
         void insert(iterator at, char32_t const* literal) {
-            insert(at, literal, default_validation);
+            insert(at, literal, default_error_handler);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void insert(iterator at, char32_t const* literal, Validation) {
             insert(at, make_range(literal), Validation{});
         }
         void insert(iterator at, char16_t const* literal) {
-            insert(at, literal, default_validation);
+            insert(at, literal, default_error_handler);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void insert(iterator at, char16_t const* literal, Validation) {
             insert(at, utf16::decode(make_range(literal), Validation{}), skip_validation);
         }
@@ -400,11 +400,11 @@ namespace ogonek {
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
                   wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void insert(iterator at, CodePointSequence const& sequence) {
-            insert(at, sequence, default_validation);
+            insert(at, sequence, default_error_handler);
         }
         template <typename CodePointSequence, typename Validation,
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...,
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...,
                   wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void insert(iterator at, CodePointSequence const& sequence, Validation) {
             insert_code_units(detail::decoding_iterator_access::first(at), EncodingForm::encode(sequence, Validation{}));
@@ -413,7 +413,7 @@ namespace ogonek {
         // -- replacing
         template <typename Range, typename CodePointSequence>
         void replace(Range const& range, CodePointSequence&& sequence) {
-            replace(range, std::forward<CodePointSequence>(sequence), default_validation);
+            replace(range, std::forward<CodePointSequence>(sequence), default_error_handler);
         }
         template <typename Range, typename CodePointSequence, typename Validation>
         void replace(Range const& range, CodePointSequence&& sequence, Validation) {
@@ -421,7 +421,7 @@ namespace ogonek {
         }
         template <typename Range>
         void replace(Range const& range, std::initializer_list<code_point> list) {
-            replace(range, list, default_validation);
+            replace(range, list, default_error_handler);
         }
         template <typename Range, typename Validation>
         void replace(Range const& range, std::initializer_list<code_point> list, Validation) {
@@ -433,31 +433,31 @@ namespace ogonek {
             insert_code_units(detail::decoding_iterator_access::first(it), that.storage_);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void replace(iterator from, iterator to, text const& that, Validation) {
             replace(from, to, that);
         }
         void replace(iterator from, iterator to, std::initializer_list<code_point> list) {
-            replace(from, to, list, default_validation);
+            replace(from, to, list, default_error_handler);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void replace(iterator from, iterator to, std::initializer_list<code_point> list, Validation) {
             replace<std::initializer_list<code_point>>(from, to, list, Validation{});
         }
         void replace(iterator from, iterator to, char32_t const* literal) {
-            replace(from, to, literal, default_validation);
+            replace(from, to, literal, default_error_handler);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void replace(iterator from, iterator to, char32_t const* literal, Validation) {
             replace(from, to, make_range(literal), Validation{});
         }
         void replace(iterator from, iterator to, char16_t const* literal) {
-            replace(from, to, literal, default_validation);
+            replace(from, to, literal, default_error_handler);
         }
         template <typename Validation,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...>
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...>
         void replace(iterator from, iterator to, char16_t const* literal, Validation) {
             replace(from, to, utf16::decode(make_range(literal), Validation{}), skip_validation);
         }
@@ -465,11 +465,11 @@ namespace ogonek {
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
                   wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void replace(iterator from, iterator to, CodePointSequence const& sequence) {
-            replace(from, to, sequence, default_validation);
+            replace(from, to, sequence, default_error_handler);
         }
         template <typename CodePointSequence, typename Validation,
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
-                  wheels::EnableIf<detail::is_validation_strategy<Validation>>...,
+                  wheels::EnableIf<detail::is_error_handler<Validation>>...,
                   wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void replace(iterator from, iterator to, CodePointSequence const& sequence, Validation) {
             auto it = erase(from, to);
@@ -737,7 +737,7 @@ namespace ogonek {
     // Concatenation
     template <typename EncodingForm = wheels::deduced, typename Container = wheels::deduced,
               typename Validation, typename... CodePointSequences,
-              wheels::EnableIf<detail::is_validation_strategy<wheels::Unqualified<Validation>>>...,
+              wheels::EnableIf<detail::is_error_handler<wheels::Unqualified<Validation>>>...,
               typename Text = detail::CommonText<EncodingForm, Container, CodePointSequences...>>
     Text concat(Validation&&, CodePointSequences&&... sequences) {
         return detail::concat_impl<Text, wheels::Unqualified<Validation>>(std::forward<CodePointSequences>(sequences)...);
@@ -748,10 +748,10 @@ namespace ogonek {
     
     template <typename EncodingForm = wheels::deduced, typename Container = wheels::deduced,
               typename Head, typename... Tail,
-              wheels::DisableIf<detail::is_validation_strategy<wheels::Unqualified<Head>>>...,
+              wheels::DisableIf<detail::is_error_handler<wheels::Unqualified<Head>>>...,
               typename Text = detail::CommonText<EncodingForm, Container, Head, Tail...>>
     Text concat(Head&& head, Tail&&... tail) {
-        return concat<EncodingForm, Container>(default_validation, std::forward<Head>(head), std::forward<Tail>(tail)...);
+        return concat<EncodingForm, Container>(default_error_handler, std::forward<Head>(head), std::forward<Tail>(tail)...);
     }
 } // namespace ogonek
 

@@ -72,14 +72,14 @@ TEST_CASE("text", "text tests") {
         REQUIRE(d.storage() == string16(u"blah\U0001F4A9"));
 
         // (fail to) construct UTF-16 text from invalid data
-        REQUIRE_THROWS_AS(text16 { U"blah\x200000" }, ogonek::validation_error);
+        REQUIRE_THROWS_AS(text16 { U"blah\x200000" }, ogonek::unicode_error);
 
         // construct ASCII text from a range of codepoints
         text_ascii j { string32 { U"blah\U00000032" } };
-        REQUIRE(j.storage() == string_ascii("\x62\x6C\x61\x68\x32")); // don't test this on EBCDIC
+        REQUIRE(j.storage() == string_ascii("\x62\x6C\x61\x68\x32"));
 
         // (fail to) construct ASCII text from data not ASCII compatible
-        REQUIRE_THROWS_AS(text_ascii { U"blah\x80" }, ogonek::validation_error);
+        REQUIRE_THROWS_AS(text_ascii { U"blah\x80" }, ogonek::unicode_error);
     }
     SECTION("empty", "any_text emptiness query tests") {
         REQUIRE(text8{}.empty());

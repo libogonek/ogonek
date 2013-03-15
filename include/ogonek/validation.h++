@@ -29,39 +29,39 @@
 
 namespace ogonek {
     //! Exception that is thrown when validation fails
-    struct validation_error : std::exception { // TODO Boost.Exception
+    struct unicode_error : std::exception { // TODO Boost.Exception
         char const* what() const throw() override {
             return "Unicode validation failed";
         }
     };
     
     namespace detail {
-        struct validation_strategy {
-            struct is_validation_strategy : std::true_type {};
+        struct error_handler {
+            struct is_error_handler : std::true_type {};
         };
         
-        struct validation_strategy_tester {
-            template <typename T, typename = typename T::is_validation_strategy>
+        struct error_handler_tester {
+            template <typename T, typename = typename T::is_error_handler>
             std::true_type static test(int);
             template <typename T>
             std::false_type static test(...);
         };
         template <typename T>
-        using is_validation_strategy = wheels::TraitOf<validation_strategy_tester, T>;
+        using is_error_handler = wheels::TraitOf<error_handler_tester, T>;
     } // namespace detail
 
     //! Strategy for skipping validation
-    struct skip_validation_t : detail::validation_strategy {} constexpr skip_validation = {};
+    struct skip_validation_t : detail::error_handler {} constexpr skip_validation = {};
 
     //! Strategy for throwing upon discovering invalid data
-    struct throw_error_t : detail::validation_strategy {
+    struct throw_error_t : detail::error_handler {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const&, EncodingState<EncodingForm>&, code_point&) {
-            throw validation_error();
+            throw unicode_error();
         }
         template <typename EncodingForm>
         static detail::coded_character<EncodingForm> apply_encode(code_point, EncodingState<EncodingForm>&) {
-            throw validation_error();
+            throw unicode_error();
         }
     } constexpr throw_error = {};
 
@@ -88,7 +88,7 @@ namespace ogonek {
     } // namespace detail
 
     //! Strategy for replacing invalid data with a replacement character
-    struct use_replacement_character_t : detail::validation_strategy {
+    struct use_replacement_character_t : detail::error_handler {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, EncodingState<EncodingForm>&, code_point& out) {
             out = U'\xFFFD';
@@ -101,7 +101,7 @@ namespace ogonek {
     } constexpr use_replacement_character = {};
 
     // Strategy for discarding erroneous data
-    struct discard_errors_t : detail::validation_strategy {
+    struct discard_errors_t : detail::error_handler {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, EncodingState<EncodingForm>&, code_point&) {
             return { std::next(boost::begin(source)), boost::end(source) };
@@ -112,7 +112,7 @@ namespace ogonek {
         }
     } constexpr discard_errors = {};
 
-    constexpr auto default_validation = throw_error;
+    constexpr auto default_error_handler = throw_error;
 } // namespace ogonek
 
 #endif // OGONEK_VALIDATION_HPP
