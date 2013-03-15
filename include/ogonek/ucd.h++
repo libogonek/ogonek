@@ -24,6 +24,7 @@
 #include <boost/logic/tribool.hpp>
 
 #include <vector>
+#include <map>
 #include <string>
 
 namespace ogonek {
@@ -512,14 +513,13 @@ namespace ogonek {
         inline text_type get_unicode1_name(code_point u) {
             return detail::get_name(v1name_data, v1name_data_size, u);
         }
-        struct alias {
-            alias(alias_raw const& raw) : type{raw.type}, name{{raw.name}} {}
-            alias_type type;
-            text_type name;
-        };
-        inline std::vector<alias> get_aliases(code_point u) {
+        inline std::multimap<alias_type, text_type> get_aliases(code_point u) {
             auto group = detail::find_property_group(aliases_data, aliases_data_size, u);
-            return { group.first, group.first + group.count };
+            std::multimap<alias_type, text_type> map;
+            for(auto it = group.first; it != group.first + group.count; ++it) {
+                map.insert(std::make_pair(it->type, text_type{{it->name}}));
+            }
+            return map;
         }
 
         inline version get_age(code_point u) {

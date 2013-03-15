@@ -17,14 +17,6 @@
 #include <catch.h++>
 
 TEST_CASE("properties", "user-facing property queries") {
-    SECTION("name", "character name") {
-        REQUIRE(ogonek::name(U'A') == test::utext{U"LATIN CAPITAL LETTER A"});
-        REQUIRE(ogonek::name(0xFE18) == test::utext{U"PRESENTATION FORM FOR VERTICAL RIGHT WHITE LENTICULAR BRAKCET"});
-        REQUIRE(ogonek::name(0xF9E5) == test::utext{U"CJK COMPATIBILITY IDEOGRAPH-F9E5"});
-        REQUIRE(ogonek::name(0x1F22D) == test::utext{U"SQUARED CJK UNIFIED IDEOGRAPH-4E2D"});
-        REQUIRE(ogonek::name(0x1F34C) == test::utext{U"BANANA"});
-    }
-
     SECTION("numeric", "numeric properties") {
         REQUIRE_FALSE(ogonek::is_numeric(U'A'));
         REQUIRE(ogonek::is_numeric(U'0')); // DIGIT ZERO

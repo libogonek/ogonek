@@ -80,6 +80,11 @@ namespace test {
         os << ']';
         return os;
     }
+    
+    template <typename Encoding, typename Container>
+    inline std::ostream& operator<<(std::ostream& os, ogonek::text<Encoding, Container> const& t) {
+        return os << t.storage();
+    }
 } // namespace test
 
 #endif // OGONEK_TEST_UTILS_HPP

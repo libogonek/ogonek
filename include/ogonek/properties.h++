@@ -20,6 +20,7 @@
 
 #include <wheels/enums.h++>
 
+#include <algorithm>
 #include <type_traits>
 
 namespace wheels {
@@ -28,10 +29,6 @@ namespace wheels {
 }
 
 namespace ogonek {
-    inline text<utf8> name(code_point u) {
-        return ucd::get_name(u);
-    }
-
     inline bool is_numeric(code_point u) {
         return ucd::get_numeric_type(u) != ucd::numeric_type::None;
     }
@@ -117,22 +114,6 @@ namespace ogonek {
     inline bool is_defined(code_point u) {
         return ucd::get_age(u) != ucd::version::unassigned;
     } 
-    
-    inline text<utf8> label(code_point u) {
-        if(is_control(u)) {
-            return text<utf8>{ucd::detail::make_variable_name(u, "<control-#>")};
-        } else if(is_reserved(u)) {
-            return text<utf8>{ucd::detail::make_variable_name(u, "<reserved-#>")};
-        } else if(is_noncharacter(u)) {
-            return text<utf8>{ucd::detail::make_variable_name(u, "<noncharacter-#>")};
-        } else if(is_private_use(u)) {
-            return text<utf8>{ucd::detail::make_variable_name(u, "<private-use-#>")};
-        } else if(is_surrogate(u)) {
-            return text<utf8>{ucd::detail::make_variable_name(u, "<surrogate-#>")};
-        } else {
-            return ucd::get_name(u);
-        }
-    }
 } // namespace ogonek
 
 #endif // OGONEK_PROPERTIES_HPP
