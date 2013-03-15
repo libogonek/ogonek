@@ -46,9 +46,9 @@ namespace ogonek {
             template <typename T>
             std::false_type static test(...);
         };
-        template <typename T>
-        using is_error_handler = wheels::TraitOf<error_handler_tester, T>;
     } // namespace detail
+    template <typename T>
+    using is_error_handler = wheels::TraitOf<detail::error_handler_tester, T>;
 
     //! Strategy for skipping validation
     struct skip_validation_t : error_handler {} constexpr skip_validation = {};
@@ -78,14 +78,14 @@ namespace ogonek {
         using has_custom_replacement_character = decltype(has_custom_replacement_character_impl::test<EncodingForm>(0));
 
         template <typename EncodingForm, bool Custom = has_custom_replacement_character<EncodingForm>::value>
-        struct replacement_character {
-            static constexpr code_point value = U'\xFFFD';
-        };
+        struct replacement_character
+        : std::integral_constant<code_point, U'\xFFFD'> {};
         template <typename EncodingForm>
-        struct replacement_character<EncodingForm, true> {
-            static constexpr code_point value = EncodingForm::replacement_character;
-        };
+        struct replacement_character<EncodingForm, true>
+        : std::integral_constant<code_point, EncodingForm::replacement_character> {};
     } // namespace detail
+    template <typename EncodingForm>
+    struct replacement_character : detail::replacement_character<EncodingForm> {};
 
     //! Strategy for replacing invalid data with a replacement character
     struct replace_errors_t : error_handler {
@@ -96,7 +96,7 @@ namespace ogonek {
         }
         template <typename EncodingForm>
         static detail::coded_character<EncodingForm> apply_encode(code_point, EncodingState<EncodingForm>& s) {
-            return EncodingForm::encode_one(detail::replacement_character<EncodingForm>::value, s, skip_validation);
+            return EncodingForm::encode_one(replacement_character<EncodingForm>::value, s, skip_validation);
         }
     } constexpr replace_errors = {};
 

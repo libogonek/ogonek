@@ -127,7 +127,7 @@ namespace ogonek {
 
         //! Construct from a null-terminated char32_t string, with validation callback
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         text(char32_t const* literal, ErrorHandler)
         : text(make_range(literal), ErrorHandler{}) {}
 
@@ -137,7 +137,7 @@ namespace ogonek {
 
         //! Construct from a null-terminated char16_t string, with validation callback
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         text(char16_t const* literal, ErrorHandler)
         : text(utf16::decode(make_range(literal), ErrorHandler{}), skip_validation) {}
 
@@ -149,13 +149,13 @@ namespace ogonek {
         
         //! Construct from a different text, same encoding, ignore validation
         template <typename Container1, typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         text(text<EncodingForm, Container1> const& that, ErrorHandler)
         : storage_(that.storage_.begin(), that.storage_.end()) {}
         
         //! Construct from a different text, different encoding, with validation
         template <typename EncodingForm1, typename Container1, typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         text(text<EncodingForm1, Container1> const& that, ErrorHandler)
         : text(direct{}, EncodingForm::encode(that, ErrorHandler{})) {}
         
@@ -165,7 +165,7 @@ namespace ogonek {
         : text(list, default_error_handler) {}
         //! Construct from an initializer list, with validation strategy
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         explicit text(std::initializer_list<code_point> list, ErrorHandler)
         : text(direct{}, EncodingForm::encode(list, ErrorHandler{})) {}
         //! Construct from a code point sequence
@@ -177,7 +177,7 @@ namespace ogonek {
         //! Construct from a code point sequence, with validation policy
         template <typename CodePointSequence, typename ErrorHandler,
                   wheels::EnableIf<detail::is_code_point_sequence<CodePointSequence>>...,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         text(CodePointSequence const& sequence, ErrorHandler)
         : text(direct{}, EncodingForm::encode(sequence, ErrorHandler{})) {}
 
@@ -187,7 +187,7 @@ namespace ogonek {
 
         //! Construct directly from a container, with validation
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         text(Container const& storage, ErrorHandler)
         : text(direct{}, EncodingForm::encode(EncodingForm::decode(storage, ErrorHandler{}), skip_validation)) {}
 
@@ -204,7 +204,7 @@ namespace ogonek {
 
         //! Construct directly from a container, with validation, (not) moving
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         text(Container&& storage, ErrorHandler)
         : text(storage, ErrorHandler{}) {}
         
@@ -227,23 +227,23 @@ namespace ogonek {
             assign(list, default_error_handler);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void assign(std::initializer_list<code_point> list, ErrorHandler) {
             assign<std::initializer_list<code_point>>(list, ErrorHandler{});
         }
         
         void assign(text const& that) { operator=(that); }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void assign(text const& that, ErrorHandler) { operator=(that); }
 
         void assign(text&& that) { operator=(std::move(that)); }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void assign(text&& that, ErrorHandler) { operator=(std::move(that)); }
         
         template <typename Container1, typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void assign(text<EncodingForm, Container1> const& that, ErrorHandler) {
             storage_.assign(that.storage_.begin(), that.storage_.end());
         }
@@ -252,7 +252,7 @@ namespace ogonek {
             assign(literal, default_error_handler);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void assign(char32_t const* literal, ErrorHandler) {
             assign(make_range(literal), ErrorHandler{});
         }
@@ -261,7 +261,7 @@ namespace ogonek {
             assign(literal, default_error_handler);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void assign(char16_t const* literal, ErrorHandler) {
             assign(utf16::decode(make_range(literal), ErrorHandler{}), skip_validation);
         }
@@ -274,7 +274,7 @@ namespace ogonek {
         }
         template <typename CodePointSequence, typename ErrorHandler,
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...,
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...,
                   wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void assign(CodePointSequence const& that, ErrorHandler) {
             insert_code_units(storage_.end(), EncodingForm::encode(that, ErrorHandler{}));
@@ -309,7 +309,7 @@ namespace ogonek {
             insert_code_units(storage_.end(), that.storage_);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void append(text const& that, ErrorHandler) {
             append(that);
         }
@@ -317,7 +317,7 @@ namespace ogonek {
             append(list, default_error_handler);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void append(std::initializer_list<code_point> list, ErrorHandler) {
             append<std::initializer_list<code_point>>(list, ErrorHandler{});
         }
@@ -325,7 +325,7 @@ namespace ogonek {
             append(literal, default_error_handler);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void append(char32_t const* literal, ErrorHandler) {
             append(make_range(literal), ErrorHandler{});
         }
@@ -333,7 +333,7 @@ namespace ogonek {
             append(literal, default_error_handler);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void append(char16_t const* literal, ErrorHandler) {
             append(utf16::decode(make_range(literal), ErrorHandler{}), skip_validation);
         }
@@ -345,7 +345,7 @@ namespace ogonek {
         }
         template <typename CodePointSequence, typename ErrorHandler,
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...,
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...,
                   wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void append(CodePointSequence const& sequence, ErrorHandler) {
             insert_code_units(storage_.end(), EncodingForm::encode(sequence, ErrorHandler{}));
@@ -368,7 +368,7 @@ namespace ogonek {
             insert_code_units(detail::decoding_iterator_access::first(at), that.storage_);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void insert(iterator at, text const& that, ErrorHandler) {
             insert(at, that);
         }
@@ -376,7 +376,7 @@ namespace ogonek {
             insert(at, list, default_error_handler);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void insert(iterator at, std::initializer_list<code_point> list, ErrorHandler) {
             insert<std::initializer_list<code_point>>(at, list, ErrorHandler{});
         }
@@ -384,7 +384,7 @@ namespace ogonek {
             insert(at, literal, default_error_handler);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void insert(iterator at, char32_t const* literal, ErrorHandler) {
             insert(at, make_range(literal), ErrorHandler{});
         }
@@ -392,7 +392,7 @@ namespace ogonek {
             insert(at, literal, default_error_handler);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void insert(iterator at, char16_t const* literal, ErrorHandler) {
             insert(at, utf16::decode(make_range(literal), ErrorHandler{}), skip_validation);
         }
@@ -404,7 +404,7 @@ namespace ogonek {
         }
         template <typename CodePointSequence, typename ErrorHandler,
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...,
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...,
                   wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void insert(iterator at, CodePointSequence const& sequence, ErrorHandler) {
             insert_code_units(detail::decoding_iterator_access::first(at), EncodingForm::encode(sequence, ErrorHandler{}));
@@ -433,7 +433,7 @@ namespace ogonek {
             insert_code_units(detail::decoding_iterator_access::first(it), that.storage_);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void replace(iterator from, iterator to, text const& that, ErrorHandler) {
             replace(from, to, that);
         }
@@ -441,7 +441,7 @@ namespace ogonek {
             replace(from, to, list, default_error_handler);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void replace(iterator from, iterator to, std::initializer_list<code_point> list, ErrorHandler) {
             replace<std::initializer_list<code_point>>(from, to, list, ErrorHandler{});
         }
@@ -449,7 +449,7 @@ namespace ogonek {
             replace(from, to, literal, default_error_handler);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void replace(iterator from, iterator to, char32_t const* literal, ErrorHandler) {
             replace(from, to, make_range(literal), ErrorHandler{});
         }
@@ -457,7 +457,7 @@ namespace ogonek {
             replace(from, to, literal, default_error_handler);
         }
         template <typename ErrorHandler,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...>
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void replace(iterator from, iterator to, char16_t const* literal, ErrorHandler) {
             replace(from, to, utf16::decode(make_range(literal), ErrorHandler{}), skip_validation);
         }
@@ -469,7 +469,7 @@ namespace ogonek {
         }
         template <typename CodePointSequence, typename ErrorHandler,
                   wheels::EnableIf<detail::is_code_point_sequence<wheels::Unqualified<CodePointSequence>>>...,
-                  wheels::EnableIf<detail::is_error_handler<ErrorHandler>>...,
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...,
                   wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
         void replace(iterator from, iterator to, CodePointSequence const& sequence, ErrorHandler) {
             auto it = erase(from, to);
@@ -737,7 +737,7 @@ namespace ogonek {
     // Concatenation
     template <typename EncodingForm = wheels::deduced, typename Container = wheels::deduced,
               typename ErrorHandler, typename... CodePointSequences,
-              wheels::EnableIf<detail::is_error_handler<wheels::Unqualified<ErrorHandler>>>...,
+              wheels::EnableIf<is_error_handler<wheels::Unqualified<ErrorHandler>>>...,
               typename Text = detail::CommonText<EncodingForm, Container, CodePointSequences...>>
     Text concat(ErrorHandler&&, CodePointSequences&&... sequences) {
         return detail::concat_impl<Text, wheels::Unqualified<ErrorHandler>>(std::forward<CodePointSequences>(sequences)...);
@@ -748,7 +748,7 @@ namespace ogonek {
     
     template <typename EncodingForm = wheels::deduced, typename Container = wheels::deduced,
               typename Head, typename... Tail,
-              wheels::DisableIf<detail::is_error_handler<wheels::Unqualified<Head>>>...,
+              wheels::DisableIf<is_error_handler<wheels::Unqualified<Head>>>...,
               typename Text = detail::CommonText<EncodingForm, Container, Head, Tail...>>
     Text concat(Head&& head, Tail&&... tail) {
         return concat<EncodingForm, Container>(default_error_handler, std::forward<Head>(head), std::forward<Tail>(tail)...);
