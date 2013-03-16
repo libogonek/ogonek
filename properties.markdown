@@ -8,26 +8,6 @@ are provided in the header `<ogonek/properties.h++>`; the full set of properties
 in the Unicode Character Database is also provided: under namespace
 `ogonek::ucd`, in the header `<ogonek/ucd.h++>`.
 
-### Names
-
-The `name` function provides a textual identifier for a character. It is based
-on the Unicode Name property, but differs in a couple of ways:
-
-- official character name corrections are applied;
-- control characters use an alias instead of an empty string;
-- the remaining non-graphic non-format characters use a systematic unique label
-instead of an empty string.
-
-*Example*:
-{% highlight cpp %}
-auto a = ogonek::name(0x0041); // "LATIN CAPITAL LETTER A"
-auto b = ogonek::name(0x000A); // "LINE FEED"
-auto c = ogonek::name(0x0378); // "<reserved-0378>"
-auto d = ogonek::name(0xFFFF); // "<noncharacter-FFFF>"
-auto e = ogonek::name(0xF8FF); // "<private-use-F8FF>"
-auto f = ogonek::name(0xD8FF); // "<surrogate-D8FF>"
-{% endhighlight %}
-
 ### Classification
 
 Code points can be separated into various types: graphic, format, control,
