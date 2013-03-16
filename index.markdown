@@ -13,6 +13,8 @@ Ogonek version numbers use the [semantic versioning] rules 2.0.0-rc.1.
 
  - algorithms that support any range, with any encoding;
 
+ - character property queries
+
  - string with compile-time checked encoding conversions and built-in
    validation;
 
