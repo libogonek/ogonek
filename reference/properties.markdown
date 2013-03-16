@@ -7,9 +7,6 @@ title: Character properties reference
 
 {% highlight cpp %}
 namespace ogonek {
-    // Names
-    /* unspecified */ name(code_point u);
-
     // Classification
     bool is_graphic(code_point u);
     bool is_format(code_point u);
@@ -19,7 +16,7 @@ namespace ogonek {
     bool is_noncharacter(code_point u);
     bool is_reserved(code_point u);
 
-    bool is_designated(code_point u);
+    bool is_assigned(code_point u);
 
     // Numbers
     bool is_numeric(code_point u);
@@ -119,10 +116,10 @@ bool is_reserved(code_point u);
 ---
 
 {% highlight cpp %}
-bool is_designated(code_point u);
+bool is_assigned(code_point u);
 {% endhighlight %}
 
-*Returns*: `true` if `u` is a designated codepoint; `false` otherwise.
+*Returns*: `true` if `u` is an assigned codepoint; `false` otherwise.
 
 ### Numbers
 
