@@ -20,6 +20,17 @@
 #include <boost/functional/hash.hpp>
 
 #include <functional>
+#include <cstddef>
+
+// hack for char32_t and char16_t hashing
+namespace boost {
+    namespace hash_detail {
+        template <> struct basic_numbers<char16_t>
+        : boost::hash_detail::enable_hash_value {};
+        template <> struct basic_numbers<char32_t>
+        : boost::hash_detail::enable_hash_value {};
+    } // namespace hash_detail
+} // namespace boost
 
 namespace ogonek {
     namespace detail {
@@ -348,7 +359,7 @@ namespace ogonek {
     Result is_normalized_quick(CodePointSequence const& sequence) {
         for(auto u : sequence) {
             auto quick_check = NormalForm::quick_check(u);
-            if(quick_check) {} // this looks weird, but consider boost::indeterminate
+            if(quick_check) continue; // this looks weird, but consider boost::indeterminate
             else return quick_check;
         }
         return true;

@@ -19,6 +19,7 @@
 #include <ogonek/error.h++>
 #include <ogonek/detail/partial_array.h++>
 #include <ogonek/detail/constants.h++>
+#include <ogonek/detail/ranges.h++>
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>
@@ -117,6 +118,22 @@ namespace ogonek {
             return { first, boost::end(r) };
         }
     };
+    
+    namespace detail {
+        template <typename ErrorHandler>
+        null_terminated_utf16<ErrorHandler> as_code_point_range(char16_t const* sequence, ErrorHandler) {
+            using source_iterator = null_terminated_range_iterator<char16_t const>;
+            using result_iterator = decoding_iterator<utf16, source_iterator, ErrorHandler>;
+            return {
+                result_iterator(source_iterator(sequence), source_iterator()),
+                result_iterator(source_iterator(), source_iterator())
+            };
+        }
+        inline null_terminated_utf16<> as_code_point_range(char16_t const* sequence) {
+            return as_code_point_range(sequence, default_error_handler);
+        }
+
+    } // namespace detail
 } // namespace ogonek
 
 #endif // OGONEK_ENCODING_UTF16_HPP

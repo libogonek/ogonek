@@ -113,6 +113,7 @@ namespace ogonek {
     } constexpr discard_errors = {};
 
     constexpr auto default_error_handler = throw_error;
+    using default_error_handler_t = throw_error_t;
 } // namespace ogonek
 
 #endif // OGONEK_ERROR_HPP

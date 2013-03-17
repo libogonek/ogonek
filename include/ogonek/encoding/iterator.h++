@@ -19,6 +19,7 @@
 #include <ogonek/error.h++>
 #include <ogonek/detail/constants.h++>
 #include <ogonek/detail/partial_array.h++>
+#include <ogonek/detail/ranges.h++>
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>

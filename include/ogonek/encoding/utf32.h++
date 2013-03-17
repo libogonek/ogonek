@@ -75,6 +75,25 @@ namespace ogonek {
             return { first, boost::begin(r) };
         }
     };
+    
+    namespace detail {
+        inline null_terminated_utf32<> as_code_point_range(char32_t const* sequence) {
+            return as_code_point_range(sequence, default_error_handler);
+        }
+        inline null_terminated_range<char32_t const> as_code_point_range(char32_t const* sequence, skip_validation_t) {
+            return { sequence, {} };
+        }
+
+        template <typename ErrorHandler>
+        null_terminated_utf32<ErrorHandler> as_code_point_range(char32_t const* sequence, ErrorHandler) {
+            using source_iterator = null_terminated_range_iterator<char32_t const>;
+            using result_iterator = decoding_iterator<utf32, source_iterator, ErrorHandler>;
+            return {
+                result_iterator(source_iterator(sequence), source_iterator()),
+                result_iterator(source_iterator(), source_iterator())
+            };
+        }
+    } // namespace detail
 } // namespace ogonek
 
 #endif // OGONEK_ENCODING_UTF32_HPP
