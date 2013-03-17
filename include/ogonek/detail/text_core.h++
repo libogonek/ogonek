@@ -11,8 +11,8 @@
 
 // Unicode text string - core without normalization dependencies
 
-#ifndef OGONEK_TEXT_CORE_HPP
-#define OGONEK_TEXT_CORE_HPP
+#ifndef OGONEK_DETAIL_TEXT_CORE_HPP
+#define OGONEK_DETAIL_TEXT_CORE_HPP
 
 #include <ogonek/detail/ranges.h++>
 #include <ogonek/encoding/iterator.h++>
@@ -719,4 +719,4 @@ namespace ogonek {
     }
 } // namespace ogonek
 
-#endif // OGONEK_TEXT_CORE_HPP
+#endif // OGONEK_DETAIL_TEXT_CORE_HPP

@@ -15,46 +15,6 @@
 #define OGONEK_TEXT_HPP
 
 #include <ogonek/detail/text_core.h++>
-#include <ogonek/normalization.h++>
-
-namespace ogonek {
-    template <typename Encoding1, typename Container1, typename Encoding2, typename Container2>
-    bool operator==(text<Encoding1, Container1> const& lhs, text<Encoding2, Container2> const& rhs) {
-        return canonically_equivalent(lhs, rhs);
-    }
-    template <typename Encoding1, typename Container1, typename Encoding2, typename Container2>
-    bool operator!=(text<Encoding1, Container1> const& lhs, text<Encoding2, Container2> const& rhs) {
-        return !(lhs == rhs);
-    }
-    template <typename Encoding, typename Container>
-    bool operator==(any_text const& lhs, text<Encoding, Container> const& rhs) {
-        return canonically_equivalent(lhs, rhs);
-    }
-    template <typename Encoding, typename Container>
-    bool operator!=(any_text const& lhs, text<Encoding, Container> const& rhs) {
-        return !(lhs == rhs);
-    }
-    template <typename Encoding, typename Container>
-    bool operator==(text<Encoding, Container> const& lhs, any_text const& rhs) {
-        return canonically_equivalent(lhs, rhs);
-    }
-    template <typename Encoding, typename Container>
-    bool operator!=(text<Encoding, Container> const& lhs, any_text const& rhs) {
-        return !(lhs == rhs);
-    }
-    inline bool operator==(any_text const& lhs, any_text const& rhs) {
-        return canonically_equivalent<any_text, any_text>(lhs, rhs);
-    }
-    inline bool operator!=(any_text const& lhs, any_text const& rhs) {
-        return !(lhs == rhs);
-    }
-} // namespace ogonek
-
-namespace std {
-    template <typename EncodingForm, typename Container>
-    struct hash< ::ogonek::text<EncodingForm, Container>> : ::ogonek::canonical_hash {};
-    template <>
-    struct hash< ::ogonek::any_text> : ::ogonek::canonical_hash {};
-} //namespace std
+#include <ogonek/detail/text_equivalence.h++>
 
 #endif // OGONEK_TEXT_HPP
