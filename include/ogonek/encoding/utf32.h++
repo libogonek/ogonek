@@ -77,9 +77,6 @@ namespace ogonek {
     };
     
     namespace detail {
-        inline null_terminated_utf32<> as_code_point_range(char32_t const* sequence) {
-            return as_code_point_range(sequence, default_error_handler);
-        }
         inline null_terminated_range<char32_t const> as_code_point_range(char32_t const* sequence, skip_validation_t) {
             return { sequence, {} };
         }

@@ -129,10 +129,6 @@ namespace ogonek {
                 result_iterator(source_iterator(), source_iterator())
             };
         }
-        inline null_terminated_utf16<> as_code_point_range(char16_t const* sequence) {
-            return as_code_point_range(sequence, default_error_handler);
-        }
-
     } // namespace detail
 } // namespace ogonek
 

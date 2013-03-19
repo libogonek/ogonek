@@ -611,23 +611,23 @@ namespace ogonek {
         inline bool is_nfkd_quick_check(code_point u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).nfkd_quick_check;
         }
-        //[[deprecated("since 6.0")]]
+        //[[deprecated("since 6.0.0")]]
         inline bool expands_on_nfc(code_point u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).expands_on_nfc;
         }
-        //[[deprecated("since 6.0")]]
+        //[[deprecated("since 6.0.0")]]
         inline bool expands_on_nfd(code_point u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).expands_on_nfd;
         }
-        //[[deprecated("since 6.0")]]
+        //[[deprecated("since 6.0.0")]]
         inline bool expands_on_nfkc(code_point u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).expands_on_nfkc;
         }
-        //[[deprecated("since 6.0")]]
+        //[[deprecated("since 6.0.0")]]
         inline bool expands_on_nfkd(code_point u) {
             return detail::find_property_group(decomposition_data, decomposition_data_size, u).expands_on_nfkd;
         }
-        //[[deprecated("since 6.0")]]
+        //[[deprecated("since 6.0.0")]]
         inline ogonek::detail::array_slice<code_point const> get_fc_nfkc_closure(code_point u) {
             auto closure = detail::find_property_group(decomposition_data, decomposition_data_size, u).fc_nfkc_closure;
             return { closure, closure + std::char_traits<code_point>::length(closure) };
@@ -735,6 +735,7 @@ namespace ogonek {
             auto& prop = detail::find_property_group(script_data, script_data_size, u);
             return { prop.first_script_extension, prop.first_script_extension + prop.script_extension_count };
         }
+        //[[deprecated("since 6.0.0")]]
         inline text_type get_iso_comment(code_point u) {
             return text_type { detail::find_property_group(iso_comment_data, iso_comment_data_size, u).data };
         }
@@ -777,6 +778,7 @@ namespace ogonek {
         inline bool is_dash(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).dash;
         }
+        //[[deprecated("since 6.0.0")]]
         inline bool is_hyphen(code_point u) {
             return detail::find_property_group(function_data, function_data_size, u).hyphen;
         }
@@ -831,7 +833,7 @@ namespace ogonek {
         inline bool is_grapheme_base(code_point u) {
             return detail::find_property_group(boundary_data, boundary_data_size, u).grapheme_base;
         }
-        //[[deprecated("since 5.0")]]
+        //[[deprecated("since 5.0.0")]]
         inline bool is_grapheme_extend(code_point u) {
             return detail::find_property_group(boundary_data, boundary_data_size, u).grapheme_link;
         }

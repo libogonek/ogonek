@@ -84,27 +84,6 @@ namespace ogonek {
         text(text const&) = default;
         text(text&&) = default;
 
-        // -- literals
-        //! Construct from a null-terminated char32_t string (intended for UTF-32 literals)
-        explicit text(char32_t const* literal)
-        : text(literal, default_error_handler) {}
-
-        //! Construct from a null-terminated char32_t string, with validation callback
-        template <typename ErrorHandler,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
-        text(char32_t const* literal, ErrorHandler)
-        : text(utf32::decode(make_range(literal), ErrorHandler{}), ErrorHandler{}) {}
-
-        //! Construct from a null-terminated char16_t string (intended for UTF-16 literals)
-        explicit text(char16_t const* literal)
-        : text(literal, default_error_handler) {}
-
-        //! Construct from a null-terminated char16_t string, with validation callback
-        template <typename ErrorHandler,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
-        text(char16_t const* literal, ErrorHandler)
-        : text(utf16::decode(make_range(literal), ErrorHandler{}), ErrorHandler{}) {}
-
         // -- safe implicit conversions
         //! Construct from a different text
         template <typename EncodingForm1, typename Container1>
@@ -133,17 +112,17 @@ namespace ogonek {
         explicit text(std::initializer_list<code_point> list, ErrorHandler)
         : text(direct{}, EncodingForm::encode(list, ErrorHandler{})) {}
         //! Construct from a code point sequence
-        template <typename CodePointSequence,
-                  wheels::EnableIf<detail::is_unicode_sequence<CodePointSequence>>...>
-        explicit text(CodePointSequence const& sequence)
+        template <typename UnicodeSequence,
+                  wheels::EnableIf<detail::is_unicode_sequence<UnicodeSequence const&>>...>
+        explicit text(UnicodeSequence const& sequence)
         : text(sequence, default_error_handler) {}
 
         //! Construct from a code point sequence, with validation policy
-        template <typename CodePointSequence, typename ErrorHandler,
-                  wheels::EnableIf<detail::is_unicode_sequence<CodePointSequence>>...,
+        template <typename UnicodeSequence, typename ErrorHandler,
+                  wheels::EnableIf<detail::is_unicode_sequence<UnicodeSequence>>...,
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...>
-        text(CodePointSequence const& sequence, ErrorHandler)
-        : text(direct{}, EncodingForm::encode(sequence, ErrorHandler{})) {}
+        text(UnicodeSequence const& sequence, ErrorHandler)
+        : text(direct{}, EncodingForm::encode(detail::as_code_point_range(sequence, ErrorHandler{}), ErrorHandler{})) {}
 
         // -- storage
         //! Construct directly from a container
@@ -230,18 +209,18 @@ namespace ogonek {
             assign(utf16::decode(make_range(literal), ErrorHandler{}), ErrorHandler{});
         }
         
-        template <typename CodePointSequence,
-                  wheels::EnableIf<detail::is_unicode_sequence<wheels::Unqualified<CodePointSequence>>>...,
-                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
-        void assign(CodePointSequence const& that) {
+        template <typename UnicodeSequence,
+                  wheels::EnableIf<detail::is_unicode_sequence<UnicodeSequence>>...,
+                  wheels::DisableIf<wheels::is_related<UnicodeSequence, text<EncodingForm, Container>>>...>
+        void assign(UnicodeSequence const& that) {
             assign(that, default_error_handler);
         }
-        template <typename CodePointSequence, typename ErrorHandler,
-                  wheels::EnableIf<detail::is_unicode_sequence<wheels::Unqualified<CodePointSequence>>>...,
+        template <typename UnicodeSequence, typename ErrorHandler,
+                  wheels::EnableIf<detail::is_unicode_sequence<UnicodeSequence>>...,
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...,
-                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
-        void assign(CodePointSequence const& that, ErrorHandler) {
-            insert_code_units(storage_.end(), EncodingForm::encode(that, ErrorHandler{}));
+                  wheels::DisableIf<wheels::is_related<UnicodeSequence, text<EncodingForm, Container>>>...>
+        void assign(UnicodeSequence const& that, ErrorHandler) {
+            insert_code_units(storage_.end(), EncodingForm::encode(detail::as_code_point_range(that, ErrorHandler{}), ErrorHandler{}));
         }
 
         //** Range **
@@ -285,34 +264,18 @@ namespace ogonek {
         void append(std::initializer_list<code_point> list, ErrorHandler) {
             append<std::initializer_list<code_point>>(list, ErrorHandler{});
         }
-        void append(char32_t const* literal) {
-            append(literal, default_error_handler);
-        }
-        template <typename ErrorHandler,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
-        void append(char32_t const* literal, ErrorHandler) {
-            append(utf32::decode(make_range(literal), ErrorHandler{}), ErrorHandler{});
-        }
-        void append(char16_t const* literal) {
-            append(literal, default_error_handler);
-        }
-        template <typename ErrorHandler,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
-        void append(char16_t const* literal, ErrorHandler) {
-            append(utf16::decode(make_range(literal), ErrorHandler{}), ErrorHandler{});
-        }
-        template <typename CodePointSequence,
-                  wheels::EnableIf<detail::is_unicode_sequence<wheels::Unqualified<CodePointSequence>>>...,
-                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
-        void append(CodePointSequence const& sequence) {
+        template <typename UnicodeSequence,
+                  wheels::EnableIf<detail::is_unicode_sequence<UnicodeSequence>>...,
+                  wheels::DisableIf<wheels::is_related<UnicodeSequence, text<EncodingForm, Container>>>...>
+        void append(UnicodeSequence const& sequence) {
             append(sequence, default_error_handler);
         }
-        template <typename CodePointSequence, typename ErrorHandler,
-                  wheels::EnableIf<detail::is_unicode_sequence<wheels::Unqualified<CodePointSequence>>>...,
+        template <typename UnicodeSequence, typename ErrorHandler,
+                  wheels::EnableIf<detail::is_unicode_sequence<UnicodeSequence>>...,
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...,
-                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
-        void append(CodePointSequence const& sequence, ErrorHandler) {
-            insert_code_units(storage_.end(), EncodingForm::encode(sequence, ErrorHandler{}));
+                  wheels::DisableIf<wheels::is_related<UnicodeSequence, text<EncodingForm, Container>>>...>
+        void append(UnicodeSequence const& sequence, ErrorHandler) {
+            insert_code_units(storage_.end(), EncodingForm::encode(detail::as_code_point_range(sequence, ErrorHandler{}), ErrorHandler{}));
         }
         
         // -- erasure
@@ -344,43 +307,28 @@ namespace ogonek {
         void insert(iterator at, std::initializer_list<code_point> list, ErrorHandler) {
             insert<std::initializer_list<code_point>>(at, list, ErrorHandler{});
         }
-        void insert(iterator at, char32_t const* literal) {
-            insert(at, literal, default_error_handler);
-        }
-        template <typename ErrorHandler,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
-        void insert(iterator at, char32_t const* literal, ErrorHandler) {
-            insert(at, utf32::decode(make_range(literal), ErrorHandler{}), ErrorHandler{});
-        }
-        void insert(iterator at, char16_t const* literal) {
-            insert(at, literal, default_error_handler);
-        }
-        template <typename ErrorHandler,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
-        void insert(iterator at, char16_t const* literal, ErrorHandler) {
-            insert(at, utf16::decode(make_range(literal), ErrorHandler{}), ErrorHandler{});
-        }
-        template <typename CodePointSequence,
-                  wheels::EnableIf<detail::is_unicode_sequence<wheels::Unqualified<CodePointSequence>>>...,
-                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
-        void insert(iterator at, CodePointSequence const& sequence) {
+        template <typename UnicodeSequence,
+                  wheels::EnableIf<detail::is_unicode_sequence<UnicodeSequence>>...,
+                  wheels::DisableIf<wheels::is_related<UnicodeSequence, text<EncodingForm, Container>>>...>
+        void insert(iterator at, UnicodeSequence const& sequence) {
             insert(at, sequence, default_error_handler);
         }
-        template <typename CodePointSequence, typename ErrorHandler,
-                  wheels::EnableIf<detail::is_unicode_sequence<wheels::Unqualified<CodePointSequence>>>...,
+        template <typename UnicodeSequence, typename ErrorHandler,
+                  wheels::EnableIf<detail::is_unicode_sequence<UnicodeSequence>>...,
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...,
-                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
-        void insert(iterator at, CodePointSequence const& sequence, ErrorHandler) {
-            insert_code_units(detail::decoding_iterator_access::first(at), EncodingForm::encode(sequence, ErrorHandler{}));
+                  wheels::DisableIf<wheels::is_related<UnicodeSequence, text<EncodingForm, Container>>>...>
+        void insert(iterator at, UnicodeSequence const& sequence, ErrorHandler) {
+            insert_code_units(detail::decoding_iterator_access::first(at),
+                              EncodingForm::encode(detail::as_code_point_range(sequence, ErrorHandler{}), ErrorHandler{}));
         }
         
         // -- replacing
-        template <typename Range, typename CodePointSequence>
-        void replace(Range const& range, CodePointSequence&& sequence) {
-            replace(range, std::forward<CodePointSequence>(sequence), default_error_handler);
+        template <typename Range, typename UnicodeSequence>
+        void replace(Range const& range, UnicodeSequence&& sequence) {
+            replace(range, std::forward<UnicodeSequence>(sequence), default_error_handler);
         }
-        template <typename Range, typename CodePointSequence, typename ErrorHandler>
-        void replace(Range const& range, CodePointSequence&& sequence, ErrorHandler) {
+        template <typename Range, typename UnicodeSequence, typename ErrorHandler>
+        void replace(Range const& range, UnicodeSequence&& sequence, ErrorHandler) {
             replace(boost::begin(range), boost::end(range), sequence, ErrorHandler{});
         }
         template <typename Range>
@@ -409,35 +357,20 @@ namespace ogonek {
         void replace(iterator from, iterator to, std::initializer_list<code_point> list, ErrorHandler) {
             replace<std::initializer_list<code_point>>(from, to, list, ErrorHandler{});
         }
-        void replace(iterator from, iterator to, char32_t const* literal) {
-            replace(from, to, literal, default_error_handler);
-        }
-        template <typename ErrorHandler,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
-        void replace(iterator from, iterator to, char32_t const* literal, ErrorHandler) {
-            replace(from, to, utf32::decode(make_range(literal), ErrorHandler{}), ErrorHandler{});
-        }
-        void replace(iterator from, iterator to, char16_t const* literal) {
-            replace(from, to, literal, default_error_handler);
-        }
-        template <typename ErrorHandler,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
-        void replace(iterator from, iterator to, char16_t const* literal, ErrorHandler) {
-            replace(from, to, utf16::decode(make_range(literal), ErrorHandler{}), ErrorHandler{});
-        }
-        template <typename CodePointSequence,
-                  wheels::EnableIf<detail::is_unicode_sequence<wheels::Unqualified<CodePointSequence>>>...,
-                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
-        void replace(iterator from, iterator to, CodePointSequence const& sequence) {
+        template <typename UnicodeSequence,
+                  wheels::EnableIf<detail::is_unicode_sequence<UnicodeSequence>>...,
+                  wheels::DisableIf<wheels::is_related<UnicodeSequence, text<EncodingForm, Container>>>...>
+        void replace(iterator from, iterator to, UnicodeSequence const& sequence) {
             replace(from, to, sequence, default_error_handler);
         }
-        template <typename CodePointSequence, typename ErrorHandler,
-                  wheels::EnableIf<detail::is_unicode_sequence<wheels::Unqualified<CodePointSequence>>>...,
+        template <typename UnicodeSequence, typename ErrorHandler,
+                  wheels::EnableIf<detail::is_unicode_sequence<UnicodeSequence>>...,
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...,
-                  wheels::DisableIf<wheels::is_related<CodePointSequence, text<EncodingForm, Container>>>...>
-        void replace(iterator from, iterator to, CodePointSequence const& sequence, ErrorHandler) {
+                  wheels::DisableIf<wheels::is_related<UnicodeSequence, text<EncodingForm, Container>>>...>
+        void replace(iterator from, iterator to, UnicodeSequence const& sequence, ErrorHandler) {
             auto it = erase(from, to);
-            insert_code_units(detail::decoding_iterator_access::first(it), EncodingForm::encode(sequence, ErrorHandler{}));
+            insert_code_units(detail::decoding_iterator_access::first(it),
+                              EncodingForm::encode(detail::as_code_point_range(sequence, ErrorHandler{}), ErrorHandler{}));
         }
     private:
         boost::iterator_range<char32_t const*> make_range(char32_t const* literal) {
@@ -663,48 +596,48 @@ namespace ogonek {
         }
 
         template <typename EncodingForm, typename Container,
-                  typename CodePointSequences,
+                  typename UnicodeSequences,
                   bool = wheels::is_deduced<EncodingForm>{},
                   bool = wheels::is_deduced<Container>{},
-                  bool = detail::same_encoding<CodePointSequences>{}
-                      && detail::same_container<CodePointSequences>{}>
+                  bool = detail::same_encoding<UnicodeSequences>{}
+                      && detail::same_container<UnicodeSequences>{}>
         struct common_text {};
 
         template <typename EncodingForm, typename Container,
-                  typename X, bool Y>
-        struct common_text<EncodingForm, Container, X, false, false, Y>
+                  typename UnicodeSequences, bool Ignored>
+        struct common_text<EncodingForm, Container, UnicodeSequences, false, false, Ignored>
         : wheels::identity<text<EncodingForm, Container>> {};
         
-        template <typename EncodingForm, typename CodePointSequences>
+        template <typename EncodingForm, typename UnicodeSequences>
         struct deduce_container
         : std::conditional<
-            detail::same_container<CodePointSequences>{},
-            detail::SameContainer<CodePointSequences>,
+            detail::same_container<UnicodeSequences>{},
+            detail::SameContainer<UnicodeSequences>,
             DefaultContainer<EncodingForm>> {};
-        template <typename EncodingForm, typename... CodePointSequences>
-        using DeduceContainer = wheels::Invoke<deduce_container<EncodingForm, list<CodePointSequences...>>>;
+        template <typename EncodingForm, typename... UnicodeSequences>
+        using DeduceContainer = wheels::Invoke<deduce_container<EncodingForm, list<UnicodeSequences...>>>;
         
         template <typename EncodingForm, typename Container,
-                  typename CodePointSequences,
-                  bool X>
-        struct common_text<EncodingForm, Container, CodePointSequences, false, true, X>
-        : wheels::identity<text<EncodingForm, DeduceContainer<EncodingForm, CodePointSequences>>> {};
+                  typename UnicodeSequences,
+                  bool Ignored>
+        struct common_text<EncodingForm, Container, UnicodeSequences, false, true, Ignored>
+        : wheels::identity<text<EncodingForm, DeduceContainer<EncodingForm, UnicodeSequences>>> {};
 
-        template <typename EncodingForm, typename Container, typename CodePointSequences>
-        struct common_text<EncodingForm, Container, CodePointSequences, true, true, true>
-        : wheels::identity<text<SameEncoding<CodePointSequences>, SameContainer<CodePointSequences>>> {};
+        template <typename EncodingForm, typename Container, typename UnicodeSequences>
+        struct common_text<EncodingForm, Container, UnicodeSequences, true, true, true>
+        : wheels::identity<text<SameEncoding<UnicodeSequences>, SameContainer<UnicodeSequences>>> {};
 
-        template <typename EncodingForm, typename Container, typename... CodePointSequences>
-        using CommonText = wheels::Invoke<common_text<EncodingForm, Container, list<CodePointSequences...>>>;
+        template <typename EncodingForm, typename Container, typename... UnicodeSequences>
+        using CommonText = wheels::Invoke<common_text<EncodingForm, Container, list<UnicodeSequences...>>>;
     } // namespace detail
 
     // Concatenation
     template <typename EncodingForm = wheels::deduced, typename Container = wheels::deduced,
-              typename ErrorHandler, typename... CodePointSequences,
+              typename ErrorHandler, typename... UnicodeSequences,
               wheels::EnableIf<is_error_handler<wheels::Unqualified<ErrorHandler>>>...,
-              typename Text = detail::CommonText<EncodingForm, Container, CodePointSequences...>>
-    Text concat(ErrorHandler&&, CodePointSequences&&... sequences) {
-        return detail::concat_impl<Text, wheels::Unqualified<ErrorHandler>>(std::forward<CodePointSequences>(sequences)...);
+              typename Text = detail::CommonText<EncodingForm, Container, UnicodeSequences...>>
+    Text concat(ErrorHandler&&, UnicodeSequences&&... sequences) {
+        return detail::concat_impl<Text, wheels::Unqualified<ErrorHandler>>(std::forward<UnicodeSequences>(sequences)...);
     }
     
     template <typename EncodingForm, typename Container>
