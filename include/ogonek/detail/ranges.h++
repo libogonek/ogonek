@@ -20,6 +20,8 @@
 #include <wheels/meta.h++>
 
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <boost/range/const_iterator.hpp>
 #include <boost/range/mutable_iterator.hpp>
@@ -50,6 +52,8 @@ namespace ogonek {
         
         template <typename Range>
         using RangeIterator = typename range_iterator<Range>::type;
+        template <typename Range>
+        using RangeConstIterator = RangeIterator<Range const>;
     } // namespace detail
 
     template <typename EncodingForm, typename Range, typename ErrorHandler>
@@ -90,6 +94,14 @@ namespace ogonek {
     
         template <typename T>
         struct is_unicode_sequence : detail::is_unicode_sequence_impl<wheels::Unqualified<T>> {};
+
+        template <typename Iterator, typename Range>
+        boost::iterator_range<Iterator> wrap_range(Range&& range) {
+            return {
+                Iterator ( boost::begin(range), boost::end(range) ),
+                Iterator { boost::end(range), boost::end(range) }
+            };
+        }
         
         template <typename Char>
         struct null_terminated_range_iterator
@@ -135,22 +147,27 @@ namespace ogonek {
         template <typename ErrorHandler = default_error_handler_t>
         using null_terminated_utf32 = decoding_range<utf32, null_terminated_range<char32_t const>, ErrorHandler>;
         
-        null_terminated_range<char32_t const> as_code_point_range(char32_t const* sequence, skip_validation_t);
         template <typename UnicodeSequence, typename ErrorHandler,
                   wheels::EnableIf<is_unicode_sequence<UnicodeSequence>>...,
-                  typename It = decoding_iterator<utf32, RangeIterator<wheels::RemoveReference<UnicodeSequence>>, ErrorHandler>>
-        boost::iterator_range<It> as_code_point_range(UnicodeSequence&& sequence, ErrorHandler) {
-            return {
-                It(boost::begin(sequence), boost::end(sequence)),
-                It(boost::end(sequence), boost::end(sequence))
-            };
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...,
+                  typename Iterator = decoding_iterator<utf32, RangeIterator<wheels::RemoveReference<UnicodeSequence>>, ErrorHandler>>
+        boost::iterator_range<Iterator> as_code_point_range(UnicodeSequence&& sequence, ErrorHandler) {
+            return wrap_range<Iterator>(sequence);
+        }
+        template <typename UnicodeSequence,
+                  wheels::EnableIf<is_unicode_sequence<UnicodeSequence>>...>
+        UnicodeSequence&& as_code_point_range(UnicodeSequence&& sequence, skip_validation_t) {
+            return std::forward<UnicodeSequence>(sequence);
         }
         template <typename ErrorHandler>
         null_terminated_utf16<ErrorHandler> as_code_point_range(char16_t const* sequence, ErrorHandler);
         template <typename ErrorHandler>
         null_terminated_utf32<ErrorHandler> as_code_point_range(char32_t const* sequence, ErrorHandler);
+        null_terminated_range<char32_t const> as_code_point_range(char32_t const* sequence, skip_validation_t);
+        
+        template <typename UnicodeSequence, typename ErrorHandler = default_error_handler_t>
+        using UnicodeSequenceIterator = decltype(boost::begin(as_code_point_range(std::declval<UnicodeSequence>(), ErrorHandler{})));
     } // namespace detail
-    static_assert(detail::is_unicode_sequence<char16_t const[7]>(), "");
 } // namespace ogonek
 
 #endif // OGONEK_DETAIL_RANGES_HPP

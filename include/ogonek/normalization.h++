@@ -16,6 +16,7 @@
 
 #include <ogonek/ucd.h++>
 #include <ogonek/detail/small_vector.h++>
+#include <ogonek/detail/ranges.h++>
 
 #include <boost/functional/hash.hpp>
 
@@ -295,31 +296,29 @@ namespace ogonek {
     } // namespace detail
 
     template <typename NormalizationForm,
-              typename SinglePassRange,
-              typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
+              typename UnicodeSequence,
+              typename Iterator = detail::UnicodeSequenceIterator<UnicodeSequence, skip_validation_t>,
               typename NormalizingIterator = detail::normalizing_iterator<NormalizationForm, Iterator>>
-    boost::iterator_range<NormalizingIterator> normalize(SinglePassRange const& r) {
-        return boost::make_iterator_range(
-                NormalizingIterator { boost::begin(r), boost::end(r) },
-                NormalizingIterator { boost::end(r), boost::end(r) });
+    boost::iterator_range<NormalizingIterator> normalize(UnicodeSequence const& sequence) {
+        return detail::wrap_range<NormalizingIterator>(detail::as_code_point_range(sequence, skip_validation));
     }
 
     struct canonical_equivalence {
-        template <typename SinglePassRange1, typename SinglePassRange2>
-        bool operator()(SinglePassRange1 const& r1, SinglePassRange2 const& r2) const {
-            return boost::equal(normalize<nfd>(r1), normalize<nfd>(r2));
+        template <typename UnicodeSequence1, typename UnicodeSequence2>
+        bool operator()(UnicodeSequence1 const& sequence1, UnicodeSequence2 const& sequence2) const {
+            return boost::equal(normalize<nfd>(sequence1), normalize<nfd>(sequence2));
         }
     };
 
-    template <typename SinglePassRange1, typename SinglePassRange2>
-    bool canonically_equivalent(SinglePassRange1 const& r1, SinglePassRange2 const& r2) {
-        return canonical_equivalence{}(r1, r2);
+    template <typename UnicodeSequence1, typename UnicodeSequence2>
+    bool canonically_equivalent(UnicodeSequence1 const& sequence1, UnicodeSequence2 const& sequence2) {
+        return canonical_equivalence{}(sequence1, sequence2);
     }
     
     struct canonical_hash {
     public:
-        template <typename CodePointSequence>
-        std::size_t operator()(CodePointSequence const& sequence) const {
+        template <typename UnicodeSequence>
+        std::size_t operator()(UnicodeSequence const& sequence) const {
             return hash_normalized(normalize<nfd>(sequence));
         }
     private:
@@ -330,21 +329,21 @@ namespace ogonek {
     };
 
     struct compatibility_equivalence {
-        template <typename SinglePassRange1, typename SinglePassRange2>
-        bool operator()(SinglePassRange1 const& r1, SinglePassRange2 const& r2) const {
-            return boost::equal(normalize<nfkd>(r1), normalize<nfkd>(r2));
+        template <typename UnicodeSequence1, typename UnicodeSequence2>
+        bool operator()(UnicodeSequence1 const& sequence1, UnicodeSequence2 const& sequence2) const {
+            return boost::equal(normalize<nfkd>(sequence1), normalize<nfkd>(sequence2));
         }
     };
 
-    template <typename SinglePassRange1, typename SinglePassRange2>
-    bool compatibility_equivalent(SinglePassRange1 const& r1, SinglePassRange2 const& r2) {
-        return compatibility_equivalence{}(r1, r2);
+    template <typename UnicodeSequence1, typename UnicodeSequence2>
+    bool compatibility_equivalent(UnicodeSequence1 const& sequence1, UnicodeSequence2 const& sequence2) {
+        return compatibility_equivalence{}(sequence1, sequence2);
     }
 
     struct compatibility_hash {
     public:
-        template <typename CodePointSequence>
-        std::size_t operator()(CodePointSequence const& sequence) const {
+        template <typename UnicodeSequence>
+        std::size_t operator()(UnicodeSequence const& sequence) const {
             return hash_normalized(normalize<nfkd>(sequence));
         }
     private:
@@ -354,25 +353,28 @@ namespace ogonek {
         }
     };
 
-    template <typename NormalForm, typename CodePointSequence,
+    template <typename NormalForm, typename UnicodeSequence,
               typename Result = decltype(NormalForm::quick_check(0))>
-    Result is_normalized_quick(CodePointSequence const& sequence) {
-        for(auto u : sequence) {
+    Result is_normalized_quick(UnicodeSequence const& sequence) {
+        for(auto u : detail::as_code_point_range(sequence, skip_validation)) {
             auto quick_check = NormalForm::quick_check(u);
             if(quick_check) continue; // this looks weird, but consider boost::indeterminate
             else return quick_check;
         }
         return true;
     }
-    template <typename NormalForm, typename CodePointSequence>
-    bool is_normalized(CodePointSequence const& sequence) {
-        auto last_starter = boost::begin(sequence);
-        for(auto it = boost::begin(sequence); it != boost::end(sequence); ++it) {
+    namespace detail{} // namespace detail
+    // TODO unify with UnicodeSequence concept
+    template <typename NormalForm, typename UnicodeSequence>
+    bool is_normalized(UnicodeSequence const& sequence) {
+        auto&& range = detail::as_code_point_range(sequence, skip_validation);
+        auto last_starter = boost::begin(range);
+        for(auto it = boost::begin(range); it != boost::end(range); ++it) {
             auto quick_check = NormalForm::quick_check(*it);
             if(!quick_check) return false;
             if(boost::indeterminate(quick_check)) {
-                auto range = boost::make_iterator_range(last_starter, std::next(it));
-                if(!boost::equal(range, normalize<NormalForm>(range))) {
+                auto indeterminate_range = boost::make_iterator_range(last_starter, std::next(it));
+                if(!boost::equal(indeterminate_range, normalize<NormalForm>(indeterminate_range))) {
                     return false;
                 }
             }

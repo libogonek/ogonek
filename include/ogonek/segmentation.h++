@@ -17,6 +17,7 @@
 #include <ogonek/types.h++>
 #include <ogonek/ucd.h++>
 #include <ogonek/detail/lookahead_window.h++>
+#include <ogonek/detail/ranges.h++>
 
 #include <wheels/enums.h++>
 
@@ -88,22 +89,22 @@ namespace ogonek {
         }
     } // namespace detail
 
-    template <typename CodepointIterator>
+    template <typename CodePointIterator>
     struct grapheme_cluster_iterator
     : boost::iterator_facade<
-        grapheme_cluster_iterator<CodepointIterator>,
-        boost::iterator_range<CodepointIterator>,
+        grapheme_cluster_iterator<CodePointIterator>,
+        boost::iterator_range<CodePointIterator>,
         std::input_iterator_tag, // TODO
-        boost::iterator_range<CodepointIterator>>
+        boost::iterator_range<CodePointIterator>>
     {
     public:
-        grapheme_cluster_iterator(CodepointIterator first, CodepointIterator last)
+        grapheme_cluster_iterator(CodePointIterator first, CodePointIterator last)
         : first(first), last(last) {}
 
     private:
         friend class boost::iterator_core_access;
 
-        boost::iterator_range<CodepointIterator> dereference() const {
+        boost::iterator_range<CodePointIterator> dereference() const {
             auto begin = first;
             auto it = first;
             auto before = *it++;
@@ -114,7 +115,7 @@ namespace ogonek {
                 if(it == last) break;
                 before = after;
             } while(true);
-            return boost::iterator_range<CodepointIterator> { begin, it };
+            return boost::iterator_range<CodePointIterator> { begin, it };
         }
         void increment() {
             first = dereference().end();
@@ -123,14 +124,14 @@ namespace ogonek {
             return first == that.first;
         }
 
-        CodepointIterator first;
-        CodepointIterator last;
+        CodePointIterator first;
+        CodePointIterator last;
     };
 
-    template <typename ForwardRange>
-    boost::iterator_range<grapheme_cluster_iterator<typename boost::range_const_iterator<ForwardRange>::type>> grapheme_clusters(ForwardRange const& range) {
-        using iterator = grapheme_cluster_iterator<typename boost::range_const_iterator<ForwardRange>::type>;
-        return { iterator { range.begin(), range.end() }, iterator { range.end(), range.end() } };
+    template <typename UnicodeSequence,
+              typename Iterator = grapheme_cluster_iterator<detail::RangeConstIterator<UnicodeSequence>>>
+    boost::iterator_range<Iterator> grapheme_clusters(UnicodeSequence const& sequence) {
+        return detail::wrap_range<Iterator>(detail::as_code_point_range(sequence, skip_validation));
     }
 
     namespace detail {
@@ -217,23 +218,23 @@ namespace ogonek {
                 //|| word_rules[3].matches(-1, after, before, -1));
         }
     } // namespace detail
-    template <typename CodepointIterator>
+    template <typename CodePointIterator>
     struct word_iterator
     : boost::iterator_facade<
-        word_iterator<CodepointIterator>,
-        boost::iterator_range<CodepointIterator>,
+        word_iterator<CodePointIterator>,
+        boost::iterator_range<CodePointIterator>,
         std::input_iterator_tag, // TODO
-        boost::iterator_range<CodepointIterator>>
+        boost::iterator_range<CodePointIterator>>
     {
     public:
-        word_iterator(CodepointIterator first, CodepointIterator last)
+        word_iterator(CodePointIterator first, CodePointIterator last)
         : first(first), last(last) {}
 
     private:
         friend class boost::iterator_core_access;
 
-        boost::iterator_range<CodepointIterator> dereference() const {
-            detail::lookahead_window<CodepointIterator, 2, 2> window(first, last);
+        boost::iterator_range<CodePointIterator> dereference() const {
+            detail::lookahead_window<CodePointIterator, 2, 2> window(first, last);
 
             do {
                 while(detail::should_skip_in_word(window[-1], window[0])) {
@@ -248,7 +249,7 @@ namespace ogonek {
                 if(detail::is_word_boundary(window[-2], window[-1], window[0], window[1])) break;
                 window.advance();
             } while(true);
-            return boost::iterator_range<CodepointIterator> { first, window.position() };
+            return boost::iterator_range<CodePointIterator> { first, window.position() };
         }
         void increment() {
             first = dereference().end();
@@ -257,14 +258,14 @@ namespace ogonek {
             return first == that.first;
         }
 
-        CodepointIterator first;
-        CodepointIterator last;
+        CodePointIterator first;
+        CodePointIterator last;
     };
 
-    template <typename ForwardRange>
-    boost::iterator_range<word_iterator<typename boost::range_const_iterator<ForwardRange>::type>> words(ForwardRange const& range) {
-        using iterator = word_iterator<typename boost::range_const_iterator<ForwardRange>::type>;
-        return { iterator { range.begin(), range.end() }, iterator { range.end(), range.end() } };
+    template <typename UnicodeSequence,
+              typename Iterator = word_iterator<detail::RangeConstIterator<UnicodeSequence>>>
+    boost::iterator_range<Iterator> words(UnicodeSequence const& sequence) {
+        return detail::wrap_range<Iterator>(detail::as_code_point_range(sequence, skip_validation));
     }
 } // namespace ogonek
 

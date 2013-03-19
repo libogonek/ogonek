@@ -324,11 +324,11 @@ namespace ogonek {
         
         // -- replacing
         template <typename Range, typename UnicodeSequence>
-        void replace(Range const& range, UnicodeSequence&& sequence) {
+        void replace(Range const& range, UnicodeSequence const& sequence) {
             replace(range, std::forward<UnicodeSequence>(sequence), default_error_handler);
         }
         template <typename Range, typename UnicodeSequence, typename ErrorHandler>
-        void replace(Range const& range, UnicodeSequence&& sequence, ErrorHandler) {
+        void replace(Range const& range, UnicodeSequence const& sequence, ErrorHandler) {
             replace(boost::begin(range), boost::end(range), sequence, ErrorHandler{});
         }
         template <typename Range>
