@@ -18,6 +18,7 @@
 #include <ogonek/byte_order.h++>
 #include <ogonek/types.h++>
 #include <ogonek/detail/partial_array.h++>
+#include <ogonek/detail/encoded_character.h++>
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>
@@ -104,7 +105,7 @@ namespace ogonek {
         }
 
         template <typename ErrorHandler>
-        static detail::coded_character<encoding_scheme<EncodingForm, ByteOrder>> encode_one(code_point u, state& s, ErrorHandler) {
+        static detail::encoded_character<encoding_scheme<EncodingForm, ByteOrder>> encode_one(code_point u, state& s, ErrorHandler) {
             std::array<byte, max_width> result;
             auto encoded = EncodingForm::encode_one(u, s, ErrorHandler{});
             auto out = result.begin();

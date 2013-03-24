@@ -297,10 +297,10 @@ namespace ogonek {
 
     template <typename NormalizationForm,
               typename UnicodeSequence,
-              typename Iterator = detail::UnicodeSequenceIterator<UnicodeSequence, skip_validation_t>,
+              typename Iterator = detail::UnicodeSequenceIterator<UnicodeSequence, assume_valid_t>,
               typename NormalizingIterator = detail::normalizing_iterator<NormalizationForm, Iterator>>
     boost::iterator_range<NormalizingIterator> normalize(UnicodeSequence const& sequence) {
-        return detail::wrap_range<NormalizingIterator>(detail::as_code_point_range(sequence, skip_validation));
+        return detail::wrap_range<NormalizingIterator>(detail::as_code_point_range(sequence, assume_valid));
     }
 
     struct canonical_equivalence {
@@ -356,7 +356,7 @@ namespace ogonek {
     template <typename NormalForm, typename UnicodeSequence,
               typename Result = decltype(NormalForm::quick_check(0))>
     Result is_normalized_quick(UnicodeSequence const& sequence) {
-        for(auto u : detail::as_code_point_range(sequence, skip_validation)) {
+        for(auto u : detail::as_code_point_range(sequence, assume_valid)) {
             auto quick_check = NormalForm::quick_check(u);
             if(quick_check) continue; // this looks weird, but consider boost::indeterminate
             else return quick_check;
@@ -367,7 +367,7 @@ namespace ogonek {
     // TODO unify with UnicodeSequence concept
     template <typename NormalForm, typename UnicodeSequence>
     bool is_normalized(UnicodeSequence const& sequence) {
-        auto&& range = detail::as_code_point_range(sequence, skip_validation);
+        auto&& range = detail::as_code_point_range(sequence, assume_valid);
         auto last_starter = boost::begin(range);
         for(auto it = boost::begin(range); it != boost::end(range); ++it) {
             auto quick_check = NormalForm::quick_check(*it);

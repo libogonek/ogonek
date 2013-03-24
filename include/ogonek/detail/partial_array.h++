@@ -74,11 +74,8 @@ namespace ogonek {
             std::size_t count = 0;
             std::array<T, N> array;
         };
-
-        template <typename Encoding>
-        using coded_character = partial_array<typename Encoding::code_unit, Encoding::max_width>;
     } // namespace detail
 } // namespace ogonek
 
-#endif // OGONEK_DETAIL_ARRAY_SLICE_HPP
+#endif // OGONEK_DETAIL_PARTIAL_ARRAY_HPP
 

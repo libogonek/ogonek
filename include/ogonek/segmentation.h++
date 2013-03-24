@@ -131,7 +131,7 @@ namespace ogonek {
     template <typename UnicodeSequence,
               typename Iterator = grapheme_cluster_iterator<detail::RangeConstIterator<UnicodeSequence>>>
     boost::iterator_range<Iterator> grapheme_clusters(UnicodeSequence const& sequence) {
-        return detail::wrap_range<Iterator>(detail::as_code_point_range(sequence, skip_validation));
+        return detail::wrap_range<Iterator>(detail::as_code_point_range(sequence, assume_valid));
     }
 
     namespace detail {
@@ -265,7 +265,7 @@ namespace ogonek {
     template <typename UnicodeSequence,
               typename Iterator = word_iterator<detail::RangeConstIterator<UnicodeSequence>>>
     boost::iterator_range<Iterator> words(UnicodeSequence const& sequence) {
-        return detail::wrap_range<Iterator>(detail::as_code_point_range(sequence, skip_validation));
+        return detail::wrap_range<Iterator>(detail::as_code_point_range(sequence, assume_valid));
     }
 } // namespace ogonek
 

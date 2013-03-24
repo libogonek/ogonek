@@ -64,7 +64,7 @@ namespace ogonek {
         }
 
         template <typename ErrorHandler>
-        static detail::coded_character<utf16> encode_one(code_point u, state&, ErrorHandler) {
+        static detail::encoded_character<utf16> encode_one(code_point u, state&, ErrorHandler) {
             if(u <= last_bmp_value) {
                 return { static_cast<code_unit>(u) };
             } else {
@@ -85,7 +85,7 @@ namespace ogonek {
         }
 
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state&, skip_validation_t) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state&, assume_valid_t) {
             auto first = boost::begin(r);
             auto lead = *first++;
             if(!detail::is_surrogate(lead)) {

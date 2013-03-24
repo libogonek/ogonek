@@ -156,14 +156,14 @@ namespace ogonek {
         }
         template <typename UnicodeSequence,
                   wheels::EnableIf<is_unicode_sequence<UnicodeSequence>>...>
-        UnicodeSequence&& as_code_point_range(UnicodeSequence&& sequence, skip_validation_t) {
+        UnicodeSequence&& as_code_point_range(UnicodeSequence&& sequence, assume_valid_t) {
             return std::forward<UnicodeSequence>(sequence);
         }
         template <typename ErrorHandler>
         null_terminated_utf16<ErrorHandler> as_code_point_range(char16_t const* sequence, ErrorHandler);
         template <typename ErrorHandler>
         null_terminated_utf32<ErrorHandler> as_code_point_range(char32_t const* sequence, ErrorHandler);
-        null_terminated_range<char32_t const> as_code_point_range(char32_t const* sequence, skip_validation_t);
+        null_terminated_range<char32_t const> as_code_point_range(char32_t const* sequence, assume_valid_t);
         
         template <typename UnicodeSequence, typename ErrorHandler = default_error_handler_t>
         using UnicodeSequenceIterator = decltype(boost::begin(as_code_point_range(std::declval<UnicodeSequence>(), ErrorHandler{})));

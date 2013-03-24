@@ -17,7 +17,7 @@
 #include <ogonek/encoding/iterator.h++>
 #include <ogonek/types.h++>
 #include <ogonek/error.h++>
-#include <ogonek/detail/partial_array.h++>
+#include <ogonek/detail/encoded_character.h++>
 
 #include <boost/range/iterator_range.hpp>
 #include <boost/range/sub_range.hpp>
@@ -68,12 +68,12 @@ namespace ogonek {
                     DecodingIterator { boost::end(r), boost::end(r) });
         }
 
-        static detail::coded_character<codepage_encoding<Codepage>> encode_one(code_point u, state&, skip_validation_t) {
+        static detail::encoded_character<codepage_encoding<Codepage>> encode_one(code_point u, state&, assume_valid_t) {
             return { find_codepage_entry(u)->encoded };
         }
 
         template <typename ErrorHandler>
-        static detail::coded_character<codepage_encoding<Codepage>> encode_one(code_point u, state& s, ErrorHandler) {
+        static detail::encoded_character<codepage_encoding<Codepage>> encode_one(code_point u, state& s, ErrorHandler) {
             auto it = find_codepage_entry(u);
             if(it == std::end(Codepage::from_unicode) || it->decoded != u) {
                 return ErrorHandler::template apply_encode<codepage_encoding<Codepage>>(u, s);
@@ -83,7 +83,7 @@ namespace ogonek {
         }
 
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state&, skip_validation_t) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state&, assume_valid_t) {
             auto first = boost::begin(r);
             out = Codepage::to_unicode[*first++];
             return { first, boost::end(r) };

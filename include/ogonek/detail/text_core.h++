@@ -132,7 +132,7 @@ namespace ogonek {
         template <typename ErrorHandler,
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         text(Container const& storage, ErrorHandler)
-        : text(direct{}, EncodingForm::encode(EncodingForm::decode(storage, ErrorHandler{}), skip_validation)) {}
+        : text(direct{}, EncodingForm::encode(EncodingForm::decode(storage, ErrorHandler{}), assume_valid)) {}
 
         //! Construct directly from a container, moving
         explicit text(Container&& storage) : text(std::move(storage), default_error_handler) {}
@@ -142,7 +142,7 @@ namespace ogonek {
         : detail::validated<EncodingForm>(storage, throw_error), storage_(std::move(storage)) {}
 
         //! Construct directly from a container, without validation, moving
-        text(Container&& storage, skip_validation_t)
+        text(Container&& storage, assume_valid_t)
         : storage_(std::move(storage)) {}
 
         //! Construct directly from a container, with validation, (not) moving
@@ -225,8 +225,8 @@ namespace ogonek {
 
         //** Range **
         // TODO iterator convertible to const_iterator
-        using iterator = decoding_iterator<EncodingForm, detail::Iterator<Container>, skip_validation_t>;
-        using const_iterator = decoding_iterator<EncodingForm, detail::ConstIterator<Container>, skip_validation_t>;
+        using iterator = decoding_iterator<EncodingForm, detail::Iterator<Container>, assume_valid_t>;
+        using const_iterator = decoding_iterator<EncodingForm, detail::ConstIterator<Container>, assume_valid_t>;
 
         iterator begin() { return iterator { storage_.begin(), storage_.end() }; }
         iterator end() { return iterator { storage_.end(), storage_.end() }; }

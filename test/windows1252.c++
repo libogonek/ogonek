@@ -24,7 +24,7 @@ TEST_CASE("windows1252", "Windows-1252 encoding form") {
 
     SECTION("encode", "Encoding Windows-1252") {
         auto decoded = { U'\x0041', U'\x20AC' };
-        auto range = ogonek::windows1252::encode(decoded, ogonek::skip_validation);
+        auto range = ogonek::windows1252::encode(decoded, ogonek::assume_valid);
         std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 2);
         CHECK(int(encoded[0]) == int(0x41_b));
@@ -32,7 +32,7 @@ TEST_CASE("windows1252", "Windows-1252 encoding form") {
     }
     SECTION("decode", "Decoding Windows-1252") {
         auto encoded = { 0x41_b, 0x80_b };
-        auto range = ogonek::windows1252::decode(encoded, ogonek::skip_validation);
+        auto range = ogonek::windows1252::decode(encoded, ogonek::assume_valid);
         std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
         REQUIRE(decoded.size() == 2);
         CHECK(decoded[0] == U'\x0041');

@@ -18,6 +18,7 @@
 #include <ogonek/types.h++>
 #include <ogonek/error.h++>
 #include <ogonek/detail/partial_array.h++>
+#include <ogonek/detail/encoded_character.h++>
 #include <ogonek/detail/constants.h++>
 
 #include <boost/range/sub_range.hpp>
@@ -53,11 +54,11 @@ namespace ogonek {
         }
 
         template <typename ErrorHandler>
-        static detail::coded_character<utf32> encode_one(code_point u, state&, ErrorHandler) {
+        static detail::encoded_character<utf32> encode_one(code_point u, state&, ErrorHandler) {
             return { u };
         }
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state&, skip_validation_t) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state&, assume_valid_t) {
             auto first = boost::begin(r);
             out = *first++;
             return { first, boost::end(r) };
@@ -77,7 +78,7 @@ namespace ogonek {
     };
     
     namespace detail {
-        inline null_terminated_range<char32_t const> as_code_point_range(char32_t const* sequence, skip_validation_t) {
+        inline null_terminated_range<char32_t const> as_code_point_range(char32_t const* sequence, assume_valid_t) {
             return { sequence, {} };
         }
 

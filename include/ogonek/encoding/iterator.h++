@@ -19,6 +19,7 @@
 #include <ogonek/error.h++>
 #include <ogonek/detail/constants.h++>
 #include <ogonek/detail/partial_array.h++>
+#include <ogonek/detail/encoded_character.h++>
 #include <ogonek/detail/ranges.h++>
 
 #include <boost/iterator/iterator_facade.hpp>
@@ -74,12 +75,12 @@ namespace ogonek {
             }
         }
 
-        detail::coded_character<EncodingForm> encode_validated(code_point u, skip_validation_t) {
-            return EncodingForm::encode_one(u, state, skip_validation);
+        detail::encoded_character<EncodingForm> encode_validated(code_point u, assume_valid_t) {
+            return EncodingForm::encode_one(u, state, assume_valid);
         }
 
         template <typename ErrorHandler1>
-        detail::coded_character<EncodingForm> encode_validated(code_point u, ErrorHandler1) {
+        detail::encoded_character<EncodingForm> encode_validated(code_point u, ErrorHandler1) {
             if(u > detail::last_code_point || detail::is_surrogate(u)) {
                 return ErrorHandler1::template apply_encode<EncodingForm>(u, state);
             } else {
@@ -89,7 +90,7 @@ namespace ogonek {
 
         Iterator first, last;
         EncodingState<EncodingForm> state {};
-        detail::coded_character<EncodingForm> encoded {};
+        detail::encoded_character<EncodingForm> encoded {};
         std::size_t current;
     };
 

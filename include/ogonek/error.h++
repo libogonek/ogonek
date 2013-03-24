@@ -14,107 +14,11 @@
 #ifndef OGONEK_ERROR_HPP
 #define OGONEK_ERROR_HPP
 
-#include <ogonek/traits.h++>
-#include <ogonek/detail/partial_array.h++>
-
-#include <wheels/meta.h++>
-
-#include <boost/range/sub_range.hpp>
-#include <boost/range/begin.hpp>
-#include <boost/range/end.hpp>
-
-#include <cstdint>
-#include <iterator>
-#include <type_traits>
-
-namespace ogonek {
-    //! Exception that is thrown when validation fails
-    struct unicode_error : std::exception { // TODO Boost.Exception
-        char const* what() const throw() override {
-            return "Unicode validation failed";
-        }
-    };
-    
-    struct error_handler {
-        struct is_error_handler : std::true_type {};
-    };
-        
-    namespace detail {
-        struct error_handler_tester {
-            template <typename T, typename = typename T::is_error_handler>
-            std::true_type static test(int);
-            template <typename T>
-            std::false_type static test(...);
-        };
-    } // namespace detail
-    template <typename T>
-    using is_error_handler = wheels::TraitOf<detail::error_handler_tester, T>;
-
-    //! Strategy for skipping validation
-    struct skip_validation_t : error_handler {} constexpr skip_validation = {};
-
-    //! Strategy for throwing upon discovering invalid data
-    struct throw_error_t : error_handler {
-        template <typename EncodingForm, typename Range>
-        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const&, EncodingState<EncodingForm>&, code_point&) {
-            throw unicode_error();
-        }
-        template <typename EncodingForm>
-        static detail::coded_character<EncodingForm> apply_encode(code_point, EncodingState<EncodingForm>&) {
-            throw unicode_error();
-        }
-    } constexpr throw_error = {};
-
-    namespace detail {
-        template <typename T>
-        struct sfinae_true : std::true_type {};
-        struct has_custom_replacement_character_impl {
-            template <typename EncodingForm>
-            sfinae_true<decltype(EncodingForm::replacement_character)> static test(int);
-            template <typename>
-            std::false_type static test(...);
-        };
-        template <typename EncodingForm>
-        using has_custom_replacement_character = decltype(has_custom_replacement_character_impl::test<EncodingForm>(0));
-
-        template <typename EncodingForm, bool Custom = has_custom_replacement_character<EncodingForm>::value>
-        struct replacement_character
-        : std::integral_constant<code_point, U'\xFFFD'> {};
-        template <typename EncodingForm>
-        struct replacement_character<EncodingForm, true>
-        : std::integral_constant<code_point, EncodingForm::replacement_character> {};
-    } // namespace detail
-    template <typename EncodingForm>
-    struct replacement_character : detail::replacement_character<EncodingForm> {};
-
-    //! Strategy for replacing invalid data with a replacement character
-    struct replace_errors_t : error_handler {
-        template <typename EncodingForm, typename Range>
-        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, EncodingState<EncodingForm>&, code_point& out) {
-            out = U'\xFFFD';
-            return { std::next(boost::begin(source)), boost::end(source) };
-        }
-        template <typename EncodingForm>
-        static detail::coded_character<EncodingForm> apply_encode(code_point, EncodingState<EncodingForm>& s) {
-            return EncodingForm::encode_one(replacement_character<EncodingForm>::value, s, skip_validation);
-        }
-    } constexpr replace_errors = {};
-
-    // Strategy for discarding erroneous data
-    struct discard_errors_t : error_handler {
-        template <typename EncodingForm, typename Range>
-        static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, EncodingState<EncodingForm>&, code_point&) {
-            return { std::next(boost::begin(source)), boost::end(source) };
-        }
-        template <typename EncodingForm>
-        static detail::coded_character<EncodingForm> apply_encode(code_point, EncodingState<EncodingForm>&) {
-            return {};
-        }
-    } constexpr discard_errors = {};
-
-    constexpr auto default_error_handler = throw_error;
-    using default_error_handler_t = throw_error_t;
-} // namespace ogonek
+#include <ogonek/assume_valid.h++>
+#include <ogonek/throw_error.h++>
+#include <ogonek/replace_errors.h++>
+#include <ogonek/discard_errors.h++>
+#include <ogonek/default_error_handler.h++>
 
 #endif // OGONEK_ERROR_HPP
 

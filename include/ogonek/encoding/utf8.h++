@@ -18,6 +18,7 @@
 #include <ogonek/types.h++>
 #include <ogonek/error.h++>
 #include <ogonek/detail/partial_array.h++>
+#include <ogonek/detail/encoded_character.h++>
 #include <ogonek/detail/constants.h++>
 
 #include <boost/range/iterator_range.hpp>
@@ -85,7 +86,7 @@ namespace ogonek {
         }
 
         template <typename ErrorHandler>
-        static detail::coded_character<utf8> encode_one(code_point u, state&, ErrorHandler) {
+        static detail::encoded_character<utf8> encode_one(code_point u, state&, ErrorHandler) {
             if(u <= last_1byte_value) {
                 return { static_cast<code_unit>(u) };
             } else if(u <= last_2byte_value) {
@@ -108,7 +109,7 @@ namespace ogonek {
             };
         }
         template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state&, skip_validation_t) {
+        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state&, assume_valid_t) {
             auto first = boost::begin(r);
             byte b0 = *first++;
             auto length = sequence_length(b0);
