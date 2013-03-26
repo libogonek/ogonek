@@ -9,8 +9,12 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
+// Trait classes
+
 #ifndef OGONEK_TRAITS_HPP
 #define OGONEK_TRAITS_HPP
+
+#include <wheels/meta.h++>
 
 #include <type_traits>
 
@@ -21,6 +25,40 @@ namespace ogonek {
     using EncodingState = typename EncodingForm::state;
     template <typename EncodingForm>
     using is_stateless = std::is_empty<EncodingState<EncodingForm>>;
+
+    namespace detail {
+        struct always_validated {
+            template <typename UnicodeSequence>
+            wheels::Bool<UnicodeSequence::validated> test(int);
+            template <typename UnicodeSequence>
+            wheels::Bool<false> test(...);
+        };
+    } // namespace detail
+    template <typename T>
+    using always_validated = wheels::TraitOf<detail::always_validated, T>;
+
+    namespace detail {
+        template <typename NormalForm>
+        struct always_normalized {
+            template <typename UnicodeSequence>
+            std::is_same<typename UnicodeSequence::normal_form, NormalForm> test(int);
+            template <typename UnicodeSequence>
+            wheels::Bool<false> test(...);
+        };
+    } // namespace detail
+    template <typename NormalForm, typename T>
+    using always_normalized = wheels::TraitOf<detail::always_normalized<NormalForm>, T>;
+
+    namespace detail {
+        struct always_casefolded {
+            template <typename UnicodeSequence>
+            wheels::Bool<UnicodeSequence::casefolded> test(int);
+            template <typename UnicodeSequence>
+            wheels::Bool<false> test(...);
+        };
+    } // namespace detail
+    template <typename T>
+    using always_casefolded = wheels::TraitOf<detail::always_casefolded, T>;
 } // namespace ogonek
 
 #endif // OGONEK_TRAITS_HPP
