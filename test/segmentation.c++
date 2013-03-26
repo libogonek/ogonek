@@ -43,22 +43,22 @@ namespace {
 } // namespace
 
 namespace {
-    break_test grapheme_cluster_test_data[] = {
-        #include "grapheme_cluster_test.g.inl"
+    break_test grapheme_test_data[] = {
+        #include "grapheme_test.g.inl"
     };
 
     struct {
         template <typename ForwardRange>
-        auto operator()(ForwardRange const& range) const -> decltype(ogonek::grapheme_clusters(range)) {
-            return ogonek::grapheme_clusters(range);
+        auto operator()(ForwardRange const& range) const -> decltype(ogonek::graphemes(range)) {
+            return ogonek::graphemes(range);
         }
-    } break_grapheme_clusters;
+    } break_graphemes;
 } // namespace
 
-TEST_CASE("grapheme_clusters", "Extended grapheme cluster ranges") {
-    SECTION("official", "Official grapheme cluster tests") {
-        for(auto&& test : grapheme_cluster_test_data) {
-            test_segmentation(test, break_grapheme_clusters);
+TEST_CASE("graphemes", "Extended grapheme ranges") {
+    SECTION("official", "Official grapheme tests") {
+        for(auto&& test : grapheme_test_data) {
+            test_segmentation(test, break_graphemes);
         }
     }
 }

@@ -98,7 +98,7 @@ namespace ogonek {
         template <typename Iterator, typename Range>
         boost::iterator_range<Iterator> wrap_range(Range&& range) {
             return {
-                Iterator ( boost::begin(range), boost::end(range) ),
+                Iterator { boost::begin(range), boost::end(range) },
                 Iterator { boost::end(range), boost::end(range) }
             };
         }

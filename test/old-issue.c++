@@ -16,7 +16,7 @@
 
 #include <ogonek/text.h++>
 #include <ogonek/encoding/utf8.h++>
-#include <ogonek/segmentation.h++>
+#include <ogonek/graphemes.h++>
 #include <ogonek/error.h++>
 
 TEST_CASE("old-issue", "Tests for an old issue") {
@@ -28,7 +28,7 @@ TEST_CASE("old-issue", "Tests for an old issue") {
         text8 t { s };
 
         std::vector<text8> result;
-        for(auto character : ogonek::grapheme_clusters(t)) {
+        for(auto character : ogonek::graphemes(t)) {
             result.emplace_back(character);
         }
 
