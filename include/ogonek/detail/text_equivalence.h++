@@ -15,7 +15,7 @@
 #define OGONEK_DETAIL_TEXT_EQUIVALENCE_HPP
 
 #include <ogonek/detail/text_core.h++>
-#include <ogonek/normalization.h++>
+#include <ogonek/canonical_equivalence.h++>
 
 namespace ogonek {
     template <typename Encoding1, typename Container1, typename Encoding2, typename Container2>
