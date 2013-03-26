@@ -45,7 +45,6 @@ namespace {
         
         test::utext nfd { ogonek::normalize<ogonek::nfd>(input) };
         REQUIRE(nfd.storage() == nfd_expected);
-        INFO(nfd.storage());
         REQUIRE(ogonek::is_normalized<ogonek::nfd>(nfd));
         REQUIRE(ogonek::is_normalized_quick<ogonek::nfd>(nfd));
         
@@ -61,16 +60,10 @@ namespace {
     }
 }
 
-TEST_CASE("23", "Normalization tests") {
-    test_norm(normalization_test_data[23]);
-}
 TEST_CASE("normalization", "Normalization tests") {
     SECTION("official", "official normalization tests") {
-        int i = 0;
         for(auto&& test : normalization_test_data) {
-            INFO(i);
             test_norm(test);
-            ++i;
         }
     }
     SECTION("query", "Normalization query tests") {
