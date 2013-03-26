@@ -12,6 +12,7 @@
 // Tests for <ogonek/text.h++>
 
 #include <ogonek/text.h++>
+#include <ogonek/any_text.h++>
 #include <ogonek/encoding/utf8.h++>
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf32.h++>

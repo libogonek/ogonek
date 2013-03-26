@@ -14,7 +14,8 @@
 #ifndef OGONEK_TEXT_HPP
 #define OGONEK_TEXT_HPP
 
-#include <ogonek/detail/text_core.h++>
-#include <ogonek/detail/text_equivalence.h++>
+#include <ogonek/text_core.h++>
+#include <ogonek/text_equivalence.h++>
+#include <ogonek/text_concat.h++>
 
 #endif // OGONEK_TEXT_HPP

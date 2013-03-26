@@ -18,7 +18,7 @@
 #include <ogonek/encoding/utf8.h++>
 #include <ogonek/detail/array_slice.h++>
 #include <ogonek/detail/small_vector.h++>
-#include <ogonek/detail/text_core.h++>
+#include <ogonek/text_core.h++>
 #include <ogonek/visibility.h++>
 
 #include <boost/logic/tribool.hpp>

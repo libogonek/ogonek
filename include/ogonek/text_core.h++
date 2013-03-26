@@ -9,26 +9,26 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// Unicode text string - core without normalization dependencies
+// Unicode text string core
 
-#ifndef OGONEK_DETAIL_TEXT_CORE_HPP
-#define OGONEK_DETAIL_TEXT_CORE_HPP
+#ifndef OGONEK_TEXT_CORE_HPP
+#define OGONEK_TEXT_CORE_HPP
 
 #include <ogonek/detail/ranges.h++>
-#include <ogonek/encoding/iterator.h++>
-#include <ogonek/traits.h++>
 #include <ogonek/types.h++>
-#include <ogonek/error.h++>
+#include <ogonek/traits.h++>
+#include <ogonek/error_handler.h++>
+#include <ogonek/assume_valid.h++>
+#include <ogonek/throw_error.h++>
+#include <ogonek/encoding/iterator.h++>
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf32.h++>
 
-#include <wheels/smart_ptr/unique_ptr.h++>
+#include <wheels/meta.h++>
 
-#include <boost/range/sub_range.hpp>
-#include <boost/range/value_type.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
-#include <boost/range/any_range.hpp>
 
 #include <initializer_list>
 #include <string>
@@ -68,9 +68,9 @@ namespace ogonek {
     template <typename EncodingForm, typename Container = DefaultContainer<EncodingForm>>
     struct text : private detail::validated<EncodingForm> {
     private:
-        static_assert(std::is_convertible<CodeUnit<EncodingForm>, detail::ValueType<Container>>::value,
+        static_assert(std::is_convertible<CodeUnit<EncodingForm>, detail::ValueType<Container>>(),
                       "The encoding form code units should be convertible to the container's value type");
-        static_assert(std::is_convertible<detail::ValueType<Container>, CodeUnit<EncodingForm>>::value,
+        static_assert(std::is_convertible<detail::ValueType<Container>, CodeUnit<EncodingForm>>(),
                       "The container's value type should be convertible to the encoding form code units");
 
         struct direct {};
@@ -200,6 +200,7 @@ namespace ogonek {
             assign(utf32::decode(make_range(literal), ErrorHandler{}), ErrorHandler{});
         }
 
+        // fishy
         void assign(char16_t const* literal) {
             assign(literal, default_error_handler);
         }
@@ -395,261 +396,6 @@ namespace ogonek {
         
         Container storage_;
     };
-
-    class utf8;
-    class utf16;
-    using posix_text = text<utf8, std::string>;
-    using windows_text = text<utf16, std::wstring>;
-#if defined(OGONEK_WINDOWS)
-    using native_text = windows_text;
-#elif defined(OGONEK_POSIX)
-    using native_text = posix_text;
-#endif
-
-    class narrow;
-    class wide;
-    using narrow_text = text<narrow, std::string>;
-    using wide_text = text<wide, std::wstring>;
-
-    class any_text {
-    public:
-        using iterator = boost::any_range<code_point, boost::single_pass_traversal_tag, code_point, std::ptrdiff_t>::iterator;
-        using const_iterator = iterator;
-
-    private:
-        class placeholder;
-        using handle_type = std::unique_ptr<placeholder>;
-
-        class placeholder {
-        public:
-            placeholder() = default;
-            virtual ~placeholder() = default;
-
-            virtual handle_type clone() = 0;
-
-            virtual iterator begin() = 0;
-            virtual const_iterator end() = 0;
-            virtual iterator begin() const = 0;
-            virtual const_iterator end() const = 0;
-
-            virtual void* get() = 0;
-            virtual void const* get() const = 0;
-
-            virtual bool empty() const = 0;
-            
-        protected:
-            placeholder(placeholder const&) = default;
-            placeholder(placeholder&&) = default;
-        };
-
-        template <typename EncodingForm, typename Container>
-        class holder : public placeholder {
-        public:
-            using text_type = text<EncodingForm, Container>;
-
-            holder(text_type const& t) : t(t) {}
-            holder(text_type&& t) : t(std::move(t)) {}
-
-            handle_type clone() override {
-                return handle_type { new holder(*this) }; // :( private ctor
-            }
-
-            iterator begin() override { return iterator { t.begin() }; }
-            iterator end() override { return iterator { t.end() }; }
-            const_iterator begin() const override { return const_iterator { t.begin() }; }
-            const_iterator end() const override { return const_iterator { t.end() }; }
-
-            void* get() override { return &t; }
-            void const* get() const override { return &t; }
-            
-            bool empty() const override { return t.empty(); }
-
-        private:
-            holder(holder const&) = default;
-            holder(holder&&) = default;
-
-            text_type t;
-        };
-
-    public:
-        //** Constructors **
-        any_text(any_text const& that)
-        : handle { that.handle->clone() } {}
-        any_text(any_text&&) = default;
-        any_text& operator=(any_text const& that) {
-            handle = handle_type { that.handle->clone() };
-            return *this;
-        }
-        any_text& operator=(any_text&&) = default;
-
-        template <typename EncodingForm, typename Container>
-        any_text(text<EncodingForm, Container> const& text)
-        : handle { wheels::make_unique<holder<EncodingForm, Container>>(text) } {}
-        template <typename EncodingForm, typename Container>
-        any_text(text<EncodingForm, Container>&& text)
-        : handle { wheels::make_unique<holder<EncodingForm, Container>>(std::move(text)) } {}
-
-        template <typename EncodingForm, typename Container>
-        any_text& operator=(text<EncodingForm, Container> const& text) {
-            handle = wheels::make_unique<holder<EncodingForm, Container>>(text);
-            return *this;
-        }
-        template <typename EncodingForm, typename Container>
-        any_text& operator=(text<EncodingForm, Container>&& text) {
-            handle = wheels::make_unique<holder<EncodingForm, Container>>(std::move(text));
-            return *this;
-        }
-
-        iterator begin() { return handle->begin(); }
-        iterator end() { return handle->end(); }
-        const_iterator begin() const { return handle->begin(); }
-        const_iterator end() const { return handle->end(); }
-
-        template <typename Text>
-        Text& get() { return *static_cast<Text*>(handle->get()); }
-        template <typename Text>
-        Text const& get() const { return *static_cast<Text const*>(handle->get()); }
-        
-        bool empty() const { return handle->empty(); }
-
-    private:
-        handle_type handle;
-    };
-    
-    namespace detail {
-        template <typename... T> struct list;
-        
-        template <typename Acc, typename... T>
-        struct same_encoding_impl : wheels::Not<std::is_void<Acc>> {
-            using encoding_type = Acc;
-        };
-        
-        template <typename Acc, typename Head, typename... Tail>
-        struct same_encoding_impl<Acc, Head, Tail...>
-        : same_encoding_impl<Acc, Tail...> {};
-
-        template <typename Acc, typename Container, typename... Tail>
-        struct same_encoding_impl<void, text<Acc, Container>, Tail...>
-        : same_encoding_impl<Acc, Tail...> {};
-        
-        template <typename Acc, typename Container, typename... Tail>
-        struct same_encoding_impl<Acc, text<Acc, Container>, Tail...>
-        : same_encoding_impl<Acc, Tail...> {};
-        
-        template <typename Acc, typename EncodingForm, typename Container, typename... Tail>
-        struct same_encoding_impl<Acc, text<EncodingForm, Container>, Tail...>
-        : std::false_type {
-            using container_type = void;
-        };
-
-        template <typename T>
-        struct same_encoding;
-        template <typename... T>
-        struct same_encoding<list<T...>> : same_encoding_impl<void, wheels::Unqualified<T>...> {};
-        template <typename... T>
-        using SameEncoding = typename same_encoding<T...>::encoding_type;
-
-        template <typename Acc, typename... T>
-        struct same_container_impl : wheels::Not<std::is_void<Acc>> {
-            using container_type = Acc;
-        };
-        
-        template <typename Acc, typename Head, typename... Tail>
-        struct same_container_impl<Acc, Head, Tail...>
-        : same_container_impl<Acc, Tail...> {};
-
-        template <typename Acc, typename EncodingForm, typename... Tail>
-        struct same_container_impl<void, text<EncodingForm, Acc>, Tail...>
-        : same_container_impl<Acc, Tail...> {};
-        
-        template <typename Acc, typename EncodingForm, typename... Tail>
-        struct same_container_impl<Acc, text<EncodingForm, Acc>, Tail...>
-        : same_container_impl<Acc, Tail...> {};
-        
-        template <typename Acc, typename EncodingForm, typename Container, typename... Tail>
-        struct same_container_impl<Acc, text<EncodingForm, Container>, Tail...>
-        : std::false_type {
-            using container_type = void;
-        };
-
-        template <typename T>
-        struct same_container;
-        template <typename... T>
-        struct same_container<list<T...>> : same_container_impl<void, wheels::Unqualified<T>...> {};
-        template <typename... T>
-        using SameContainer = typename same_container<T...>::container_type;
-        
-        template <typename Result, typename ErrorHandler>
-        Result concat_impl() { return Result{}; }
-        template <typename Result, typename ErrorHandler>
-        void concat_acc(Result&) {}
-        template <typename Result, typename ErrorHandler, typename Head, typename... Tail>
-        void concat_acc(Result& acc, Head&& head, Tail&&... tail) {
-            acc.append(std::forward<Head>(head), ErrorHandler{});
-            concat_acc<Result, ErrorHandler>(acc, std::forward<Tail>(tail)...);
-        }
-        template <typename Result, typename ErrorHandler, typename Head, typename... Tail>
-        Result concat_impl(Head&& head, Tail&&... tail) {
-            Result result { std::forward<Head>(head) };
-            concat_acc<Result, ErrorHandler>(result, std::forward<Tail>(tail)...);
-            return result;
-        }
-
-        template <typename EncodingForm, typename Container,
-                  typename UnicodeSequences,
-                  bool = wheels::is_deduced<EncodingForm>{},
-                  bool = wheels::is_deduced<Container>{},
-                  bool = detail::same_encoding<UnicodeSequences>{}
-                      && detail::same_container<UnicodeSequences>{}>
-        struct common_text {};
-
-        template <typename EncodingForm, typename Container,
-                  typename UnicodeSequences, bool Ignored>
-        struct common_text<EncodingForm, Container, UnicodeSequences, false, false, Ignored>
-        : wheels::identity<text<EncodingForm, Container>> {};
-        
-        template <typename EncodingForm, typename UnicodeSequences>
-        struct deduce_container
-        : std::conditional<
-            detail::same_container<UnicodeSequences>{},
-            detail::SameContainer<UnicodeSequences>,
-            DefaultContainer<EncodingForm>> {};
-        template <typename EncodingForm, typename... UnicodeSequences>
-        using DeduceContainer = wheels::Invoke<deduce_container<EncodingForm, list<UnicodeSequences...>>>;
-        
-        template <typename EncodingForm, typename Container,
-                  typename UnicodeSequences,
-                  bool Ignored>
-        struct common_text<EncodingForm, Container, UnicodeSequences, false, true, Ignored>
-        : wheels::identity<text<EncodingForm, DeduceContainer<EncodingForm, UnicodeSequences>>> {};
-
-        template <typename EncodingForm, typename Container, typename UnicodeSequences>
-        struct common_text<EncodingForm, Container, UnicodeSequences, true, true, true>
-        : wheels::identity<text<SameEncoding<UnicodeSequences>, SameContainer<UnicodeSequences>>> {};
-
-        template <typename EncodingForm, typename Container, typename... UnicodeSequences>
-        using CommonText = wheels::Invoke<common_text<EncodingForm, Container, list<UnicodeSequences...>>>;
-    } // namespace detail
-
-    // Concatenation
-    template <typename EncodingForm = wheels::deduced, typename Container = wheels::deduced,
-              typename ErrorHandler, typename... UnicodeSequences,
-              wheels::EnableIf<is_error_handler<wheels::Unqualified<ErrorHandler>>>...,
-              typename Text = detail::CommonText<EncodingForm, Container, UnicodeSequences...>>
-    Text concat(ErrorHandler&&, UnicodeSequences&&... sequences) {
-        return detail::concat_impl<Text, wheels::Unqualified<ErrorHandler>>(std::forward<UnicodeSequences>(sequences)...);
-    }
-    
-    template <typename EncodingForm, typename Container>
-    text<EncodingForm, Container> concat() { return {}; }
-    
-    template <typename EncodingForm = wheels::deduced, typename Container = wheels::deduced,
-              typename Head, typename... Tail,
-              wheels::DisableIf<is_error_handler<wheels::Unqualified<Head>>>...,
-              typename Text = detail::CommonText<EncodingForm, Container, Head, Tail...>>
-    Text concat(Head&& head, Tail&&... tail) {
-        return concat<EncodingForm, Container>(default_error_handler, std::forward<Head>(head), std::forward<Tail>(tail)...);
-    }
 } // namespace ogonek
 
-#endif // OGONEK_DETAIL_TEXT_CORE_HPP
+#endif // OGONEK_TEXT_CORE_HPP
