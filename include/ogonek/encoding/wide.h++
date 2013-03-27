@@ -20,46 +20,9 @@
 #include <type_traits>
 
 namespace ogonek {
-    struct wide {
-    private:
-        using encoding = std::conditional<sizeof(wchar_t)==2, utf16, utf32>::type;
-
-    public: 
+    struct wide : wheels::Conditional<sizeof(wchar_t)==2, utf16, utf32> {
         using code_unit = wchar_t;
-        static constexpr bool is_fixed_width = encoding::is_fixed_width;
-        static constexpr std::size_t max_width = encoding::max_width;
-        static constexpr bool is_self_synchronizing = encoding::is_self_synchronizing;
-        using state = encoding::state;
-
-        template <typename SinglePassRange, typename ErrorHandler,
-                  typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename EncodingIterator = encoding_iterator<wide, Iterator, ErrorHandler>>
-        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ErrorHandler) {
-            return boost::make_iterator_range(
-                    EncodingIterator { boost::begin(r), boost::end(r) },
-                    EncodingIterator { boost::end(r), boost::end(r) });
-        }
-
-        template <typename SinglePassRange, typename ErrorHandler,
-                  typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename DecodingIterator = decoding_iterator<wide, Iterator, ErrorHandler>>
-        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, ErrorHandler) {
-            return boost::make_iterator_range(
-                    DecodingIterator { boost::begin(r), boost::end(r) },
-                    DecodingIterator { boost::end(r), boost::end(r) });
-        }
-
-        static partial_array<code_unit, max_width> encode_one(codepoint u, state& s) {
-            return encoding::encode_one(u, s);
-        }
-
-        template <typename SinglePassRange, typename ErrorHandler>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, codepoint& out, state&, ErrorHandler) {
-            return encoding::decode_one(r, out, s, ErrorHandler{});
-        }
     };
 } // namespace ogonek
 
 #endif // OGONEK_ENCODING_WIDE_HPP
-
-

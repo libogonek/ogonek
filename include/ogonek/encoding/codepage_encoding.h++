@@ -17,6 +17,7 @@
 #include <ogonek/encoding/iterator.h++>
 #include <ogonek/types.h++>
 #include <ogonek/error.h++>
+#include <ogonek/detail/ranges.h++>
 #include <ogonek/detail/encoded_character.h++>
 
 #include <boost/range/iterator_range.hpp>
@@ -51,21 +52,24 @@ namespace ogonek {
         static constexpr code_point replacement_character = U'?';
         struct state {};
         
-        template <typename SinglePassRange, typename ErrorHandler,
-                  typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
+        template <typename Range, typename ErrorHandler,
+                  typename Iterator = typename boost::range_const_iterator<Range>::type,
                   typename EncodingIterator = encoding_iterator<codepage_encoding<Codepage>, Iterator, ErrorHandler>>
-        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ErrorHandler) {
-            return boost::make_iterator_range(
+        static boost::iterator_range<EncodingIterator> encode(Range const& r, ErrorHandler) {
+            return {
                     EncodingIterator { boost::begin(r), boost::end(r) },
-                    EncodingIterator { boost::end(r), boost::end(r) });
+                    EncodingIterator { boost::end(r), boost::end(r) }
+            };
         }
-        template <typename SinglePassRange, typename ErrorHandler,
-                  typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename DecodingIterator = decoding_iterator<codepage_encoding<Codepage>, Iterator, ErrorHandler>>
-        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, ErrorHandler) {
-            return boost::make_iterator_range(
+        template <typename Range, typename ErrorHandler,
+                  typename Iterator = typename boost::range_const_iterator<Range>::type,
+                  typename DecodingIterator = decoding_iterator<codepage_encoding<Codepage>, Iterator, ErrorHandler>,
+                  typename DecodingRange = detail::tagged_iterator_range<DecodingIterator, detail::validated_tag>>
+        static DecodingRange decode(Range const& r, ErrorHandler) {
+            return {
                     DecodingIterator { boost::begin(r), boost::end(r) },
-                    DecodingIterator { boost::end(r), boost::end(r) });
+                    DecodingIterator { boost::end(r), boost::end(r) }
+            };
         }
 
         static detail::encoded_character<codepage_encoding<Codepage>> encode_one(code_point u, state&, assume_valid_t) {
@@ -82,15 +86,15 @@ namespace ogonek {
             }
         }
 
-        template <typename SinglePassRange>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state&, assume_valid_t) {
+        template <typename Range>
+        static boost::sub_range<Range> decode_one(Range const& r, code_point& out, state&, assume_valid_t) {
             auto first = boost::begin(r);
             out = Codepage::to_unicode[*first++];
             return { first, boost::end(r) };
         }
         
-        template <typename SinglePassRange, typename ErrorHandler>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, ErrorHandler) {
+        template <typename Range, typename ErrorHandler>
+        static boost::sub_range<Range> decode_one(Range const& r, code_point& out, state& s, ErrorHandler) {
             auto first = boost::begin(r);
             auto decoded = Codepage::to_unicode[*first++];
             if(decoded == code_point(-1)) {

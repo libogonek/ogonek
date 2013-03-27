@@ -176,6 +176,24 @@ namespace ogonek {
         
         template <typename UnicodeSequence, typename ErrorHandler = default_error_handler_t>
         using UnicodeSequenceIterator = decltype(boost::begin(as_code_point_range(std::declval<UnicodeSequence>(), ErrorHandler{})));
+        
+        struct validated_tag {
+            static constexpr bool validated = true;
+        };
+        template <typename NormalForm>
+        struct normalized_tag {
+            using normal_form = NormalForm;
+        };
+        struct casefolded_tag {
+            static constexpr bool casefolded = true;
+        };
+
+        template <typename Iterator, typename... Tags>
+        struct tagged_iterator_range
+        : boost::iterator_range<Iterator>, Tags... {
+            tagged_iterator_range(Iterator first, Iterator last)
+            : boost::iterator_range<Iterator>(first, last) {}
+        };
     } // namespace detail
 } // namespace ogonek
 

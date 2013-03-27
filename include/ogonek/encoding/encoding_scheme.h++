@@ -17,6 +17,7 @@
 #include <ogonek/encoding/iterator.h++>
 #include <ogonek/byte_order.h++>
 #include <ogonek/types.h++>
+#include <ogonek/detail/ranges.h++>
 #include <ogonek/detail/partial_array.h++>
 #include <ogonek/detail/encoded_character.h++>
 
@@ -71,12 +72,12 @@ namespace ogonek {
             Iterator it;
         };
 
-        template <typename ByteOrder, typename Integer, typename SinglePassRange>
+        template <typename ByteOrder, typename Integer, typename Range>
         using byte_ordered_range = boost::iterator_range<
                                        byte_ordered_iterator<
                                            ByteOrder,
                                            Integer,
-                                           typename boost::range_iterator<SinglePassRange>::type>>;
+                                           typename boost::range_iterator<Range>::type>>;
     } // namespace detail
 
     template <typename EncodingForm, typename ByteOrder>
@@ -86,22 +87,25 @@ namespace ogonek {
         using state = typename EncodingForm::state;
         using code_unit = ogonek::byte;
 
-        template <typename SinglePassRange, typename ErrorHandler,
-                  typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
+        template <typename Range, typename ErrorHandler,
+                  typename Iterator = typename boost::range_const_iterator<Range>::type,
                   typename EncodingIterator = encoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, Iterator, ErrorHandler>>
-        static boost::iterator_range<EncodingIterator> encode(SinglePassRange const& r, ErrorHandler) {
-            return boost::make_iterator_range(
+        static boost::iterator_range<EncodingIterator> encode(Range const& r, ErrorHandler) {
+            return {
                     EncodingIterator { boost::begin(r), boost::end(r) },
-                    EncodingIterator { boost::end(r), boost::end(r) });
+                    EncodingIterator { boost::end(r), boost::end(r) }
+            };
         }
 
-        template <typename SinglePassRange, typename ErrorHandler,
-                  typename Iterator = typename boost::range_const_iterator<SinglePassRange>::type,
-                  typename DecodingIterator = decoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, Iterator, ErrorHandler>>
-        static boost::iterator_range<DecodingIterator> decode(SinglePassRange const& r, ErrorHandler) {
-            return boost::make_iterator_range(
+        template <typename Range, typename ErrorHandler,
+                  typename Iterator = typename boost::range_const_iterator<Range>::type,
+                  typename DecodingIterator = decoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, Iterator, ErrorHandler>,
+                  typename DecodingRange = detail::tagged_iterator_range<DecodingIterator, detail::validated_tag>>
+        static DecodingRange decode(Range const& r, ErrorHandler) {
+            return {
                     DecodingIterator { boost::begin(r), boost::end(r) },
-                    DecodingIterator { boost::end(r), boost::end(r) });
+                    DecodingIterator { boost::end(r), boost::end(r) }
+            };
         }
 
         template <typename ErrorHandler>
@@ -115,9 +119,9 @@ namespace ogonek {
             }
             return { result, std::size_t(out - result.begin()) };
         }
-        template <typename SinglePassRange, typename ErrorHandler>
-        static boost::sub_range<SinglePassRange> decode_one(SinglePassRange const& r, code_point& out, state& s, ErrorHandler) {
-            using code_unit_range = detail::byte_ordered_range<ByteOrder, typename EncodingForm::code_unit, SinglePassRange>;
+        template <typename Range, typename ErrorHandler>
+        static boost::sub_range<Range> decode_one(Range const& r, code_point& out, state& s, ErrorHandler) {
+            using code_unit_range = detail::byte_ordered_range<ByteOrder, typename EncodingForm::code_unit, Range>;
             using iterator = typename boost::range_iterator<code_unit_range>::type;
             code_unit_range range {
                 iterator { boost::begin(r) }, iterator { boost::end(r) }
