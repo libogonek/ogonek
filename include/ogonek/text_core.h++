@@ -76,6 +76,8 @@ namespace ogonek {
         struct direct {};
 
     public:
+        static constexpr bool validated = true;
+
         //** Constructors **
         // -- basic
         //! Empty string

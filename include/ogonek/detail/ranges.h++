@@ -15,6 +15,7 @@
 #define OGONEK_DETAIL_RANGES_HPP
 
 #include <ogonek/types.h++>
+#include <ogonek/traits.h++>
 #include <ogonek/error.h++>
 
 #include <wheels/meta.h++>
@@ -149,6 +150,14 @@ namespace ogonek {
         
         template <typename UnicodeSequence, typename ErrorHandler,
                   wheels::EnableIf<is_unicode_sequence<UnicodeSequence>>...,
+                  wheels::EnableIf<always_validated<UnicodeSequence>>...,
+                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
+        UnicodeSequence&& as_code_point_range(UnicodeSequence&& sequence, ErrorHandler) {
+            return std::forward<UnicodeSequence>(sequence);
+        }
+        template <typename UnicodeSequence, typename ErrorHandler,
+                  wheels::EnableIf<is_unicode_sequence<UnicodeSequence>>...,
+                  wheels::DisableIf<always_validated<ErrorHandler>>...,
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...,
                   typename Iterator = decoding_iterator<utf32, RangeIterator<wheels::RemoveReference<UnicodeSequence>>, ErrorHandler>>
         boost::iterator_range<Iterator> as_code_point_range(UnicodeSequence&& sequence, ErrorHandler) {
