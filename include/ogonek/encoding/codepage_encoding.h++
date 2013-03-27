@@ -52,26 +52,6 @@ namespace ogonek {
         static constexpr code_point replacement_character = U'?';
         struct state {};
         
-        template <typename Range, typename ErrorHandler,
-                  typename Iterator = typename boost::range_const_iterator<Range>::type,
-                  typename EncodingIterator = encoding_iterator<codepage_encoding<Codepage>, Iterator, ErrorHandler>>
-        static boost::iterator_range<EncodingIterator> encode(Range const& r, ErrorHandler) {
-            return {
-                    EncodingIterator { boost::begin(r), boost::end(r) },
-                    EncodingIterator { boost::end(r), boost::end(r) }
-            };
-        }
-        template <typename Range, typename ErrorHandler,
-                  typename Iterator = typename boost::range_const_iterator<Range>::type,
-                  typename DecodingIterator = decoding_iterator<codepage_encoding<Codepage>, Iterator, ErrorHandler>,
-                  typename DecodingRange = detail::tagged_iterator_range<DecodingIterator, detail::validated_tag>>
-        static DecodingRange decode(Range const& r, ErrorHandler) {
-            return {
-                    DecodingIterator { boost::begin(r), boost::end(r) },
-                    DecodingIterator { boost::end(r), boost::end(r) }
-            };
-        }
-
         static detail::encoded_character<codepage_encoding<Codepage>> encode_one(code_point u, state&, assume_valid_t) {
             return { find_codepage_entry(u)->encoded };
         }

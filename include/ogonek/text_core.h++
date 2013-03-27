@@ -20,6 +20,7 @@
 #include <ogonek/error_handler.h++>
 #include <ogonek/assume_valid.h++>
 #include <ogonek/throw_error.h++>
+#include <ogonek/encoding.h++>
 #include <ogonek/encoding/iterator.h++>
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf32.h++>
@@ -47,7 +48,7 @@ namespace ogonek {
             validated(Range const& range) : validated(range, default_error_handler) {}
             template <typename Range, typename ErrorHandler>
             validated(Range const& range, ErrorHandler) {
-                for(auto&& _ : EncodingForm::decode(range, ErrorHandler{})) {
+                for(auto&& _ : decode<EncodingForm>(range, ErrorHandler{})) {
                     (void)_; // do nothing, just consume the input
                 }
             }
@@ -102,7 +103,7 @@ namespace ogonek {
         template <typename EncodingForm1, typename Container1, typename ErrorHandler,
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         text(text<EncodingForm1, Container1> const& that, ErrorHandler)
-        : text(direct{}, EncodingForm::encode(that, ErrorHandler{})) {}
+        : text(direct{}, encode<EncodingForm>(that, ErrorHandler{})) {}
         
         // -- ranges
         //! Construct from an initializer list
@@ -112,7 +113,7 @@ namespace ogonek {
         template <typename ErrorHandler,
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         explicit text(std::initializer_list<code_point> list, ErrorHandler)
-        : text(direct{}, EncodingForm::encode(list, ErrorHandler{})) {}
+        : text(direct{}, encode<EncodingForm>(list, ErrorHandler{})) {}
         //! Construct from a code point sequence
         template <typename UnicodeSequence,
                   wheels::EnableIf<detail::is_unicode_sequence<UnicodeSequence const&>>...>
@@ -124,7 +125,7 @@ namespace ogonek {
                   wheels::EnableIf<detail::is_unicode_sequence<UnicodeSequence>>...,
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         text(UnicodeSequence const& sequence, ErrorHandler)
-        : text(direct{}, EncodingForm::encode(detail::as_code_point_range(sequence, ErrorHandler{}), ErrorHandler{})) {}
+        : text(direct{}, encode<EncodingForm>(detail::as_code_point_range(sequence, ErrorHandler{}), ErrorHandler{})) {}
 
         // -- storage
         //! Construct directly from a container
@@ -134,7 +135,8 @@ namespace ogonek {
         template <typename ErrorHandler,
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         text(Container const& storage, ErrorHandler)
-        : text(direct{}, EncodingForm::encode(EncodingForm::decode(storage, ErrorHandler{}), assume_valid)) {}
+        : text(direct{}, encode<EncodingForm>(decode<EncodingForm>(storage, ErrorHandler{}), assume_valid)) {}
+        // TODO WTF WAS I SMOKING
 
         //! Construct directly from a container, moving
         explicit text(Container&& storage) : text(std::move(storage), default_error_handler) {}
@@ -199,7 +201,7 @@ namespace ogonek {
         template <typename ErrorHandler,
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void assign(char32_t const* literal, ErrorHandler) {
-            assign(utf32::decode(make_range(literal), ErrorHandler{}), ErrorHandler{});
+            assign(decode<utf32>(make_range(literal), ErrorHandler{}), ErrorHandler{});
         }
 
         // fishy
@@ -209,7 +211,7 @@ namespace ogonek {
         template <typename ErrorHandler,
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         void assign(char16_t const* literal, ErrorHandler) {
-            assign(utf16::decode(make_range(literal), ErrorHandler{}), ErrorHandler{});
+            assign(decode<utf16>(make_range(literal), ErrorHandler{}), ErrorHandler{});
         }
         
         template <typename UnicodeSequence,
@@ -223,7 +225,7 @@ namespace ogonek {
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...,
                   wheels::DisableIf<wheels::is_related<UnicodeSequence, text<EncodingForm, Container>>>...>
         void assign(UnicodeSequence const& that, ErrorHandler) {
-            insert_code_units(storage_.end(), EncodingForm::encode(detail::as_code_point_range(that, ErrorHandler{}), ErrorHandler{}));
+            insert_code_units(storage_.end(), encode<EncodingForm>(detail::as_code_point_range(that, ErrorHandler{}), ErrorHandler{}));
         }
 
         //** Range **
@@ -278,7 +280,7 @@ namespace ogonek {
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...,
                   wheels::DisableIf<wheels::is_related<UnicodeSequence, text<EncodingForm, Container>>>...>
         void append(UnicodeSequence const& sequence, ErrorHandler) {
-            insert_code_units(storage_.end(), EncodingForm::encode(detail::as_code_point_range(sequence, ErrorHandler{}), ErrorHandler{}));
+            insert_code_units(storage_.end(), encode<EncodingForm>(detail::as_code_point_range(sequence, ErrorHandler{}), ErrorHandler{}));
         }
         
         // -- erasure
@@ -322,7 +324,7 @@ namespace ogonek {
                   wheels::DisableIf<wheels::is_related<UnicodeSequence, text<EncodingForm, Container>>>...>
         void insert(iterator at, UnicodeSequence const& sequence, ErrorHandler) {
             insert_code_units(detail::decoding_iterator_access::first(at),
-                              EncodingForm::encode(detail::as_code_point_range(sequence, ErrorHandler{}), ErrorHandler{}));
+                              encode<EncodingForm>(detail::as_code_point_range(sequence, ErrorHandler{}), ErrorHandler{}));
         }
         
         // -- replacing
@@ -373,7 +375,7 @@ namespace ogonek {
         void replace(iterator from, iterator to, UnicodeSequence const& sequence, ErrorHandler) {
             auto it = erase(from, to);
             insert_code_units(detail::decoding_iterator_access::first(it),
-                              EncodingForm::encode(detail::as_code_point_range(sequence, ErrorHandler{}), ErrorHandler{}));
+                              encode<EncodingForm>(detail::as_code_point_range(sequence, ErrorHandler{}), ErrorHandler{}));
         }
     private:
         boost::iterator_range<char32_t const*> make_range(char32_t const* literal) {

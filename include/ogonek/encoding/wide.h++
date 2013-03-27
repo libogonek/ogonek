@@ -17,6 +17,8 @@
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf32.h++>
 
+#include <wheels/meta.h++>
+
 #include <type_traits>
 
 namespace ogonek {

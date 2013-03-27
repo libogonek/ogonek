@@ -12,6 +12,7 @@
 // Tests for <ogonek/encoding/latin1.h++>
 
 #include <ogonek/encoding/latin1.h++>
+#include <ogonek/encoding.h++>
 #include <ogonek/types.h++>
 
 #include <boost/range/begin.hpp>
@@ -24,7 +25,7 @@ TEST_CASE("latin1", "ISO-8859-1 encoding form") {
 
     SECTION("encode", "Encoding ISO-8859-1") {
         auto decoded = { U'\x0041', U'\x0082' };
-        auto range = ogonek::latin1::encode(decoded, ogonek::assume_valid);
+        auto range = ogonek::encode<ogonek::latin1>(decoded, ogonek::assume_valid);
         std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 2);
         CHECK(encoded[0] == 0x41_b);
@@ -32,7 +33,7 @@ TEST_CASE("latin1", "ISO-8859-1 encoding form") {
     }
     SECTION("decode", "Decoding ISO-8859-1") {
         auto encoded = { 0x41_b, 0x82_b };
-        auto range = ogonek::latin1::decode(encoded, ogonek::assume_valid);
+        auto range = ogonek::decode<ogonek::latin1>(encoded, ogonek::assume_valid);
         std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
         REQUIRE(decoded.size() == 2);
         CHECK(decoded[0] == U'\x0041');
@@ -40,7 +41,7 @@ TEST_CASE("latin1", "ISO-8859-1 encoding form") {
     }
     SECTION("validation", "Validating ISO-8859-1") {
         auto encoded = { 0x41_b, 0x82_b, 0xFF_b };
-        auto range = ogonek::latin1::decode(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::latin1>(encoded, ogonek::replace_errors);
         std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
         REQUIRE(decoded.size() == 3);
         CHECK(decoded[0] == U'\x0041');
@@ -49,7 +50,7 @@ TEST_CASE("latin1", "ISO-8859-1 encoding form") {
     }
     SECTION("replacement", "ISO-8859-1's custom replacement character (?)") {
         auto decoded = { U'\x0041', U'\x0032', U'\x1F4A9' };
-        auto range = ogonek::latin1::encode(decoded, ogonek::replace_errors);
+        auto range = ogonek::encode<ogonek::latin1>(decoded, ogonek::replace_errors);
         std::vector<ogonek::latin1::code_unit> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 3);
         CHECK(encoded[0] == 0x41_b);

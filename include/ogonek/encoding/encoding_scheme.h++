@@ -87,27 +87,6 @@ namespace ogonek {
         using state = typename EncodingForm::state;
         using code_unit = ogonek::byte;
 
-        template <typename Range, typename ErrorHandler,
-                  typename Iterator = typename boost::range_const_iterator<Range>::type,
-                  typename EncodingIterator = encoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, Iterator, ErrorHandler>>
-        static boost::iterator_range<EncodingIterator> encode(Range const& r, ErrorHandler) {
-            return {
-                    EncodingIterator { boost::begin(r), boost::end(r) },
-                    EncodingIterator { boost::end(r), boost::end(r) }
-            };
-        }
-
-        template <typename Range, typename ErrorHandler,
-                  typename Iterator = typename boost::range_const_iterator<Range>::type,
-                  typename DecodingIterator = decoding_iterator<encoding_scheme<EncodingForm, ByteOrder>, Iterator, ErrorHandler>,
-                  typename DecodingRange = detail::tagged_iterator_range<DecodingIterator, detail::validated_tag>>
-        static DecodingRange decode(Range const& r, ErrorHandler) {
-            return {
-                    DecodingIterator { boost::begin(r), boost::end(r) },
-                    DecodingIterator { boost::end(r), boost::end(r) }
-            };
-        }
-
         template <typename ErrorHandler>
         static detail::encoded_character<encoding_scheme<EncodingForm, ByteOrder>> encode_one(code_point u, state& s, ErrorHandler) {
             std::array<byte, max_width> result;

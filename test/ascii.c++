@@ -12,6 +12,7 @@
 // Tests for <ogonek/encoding/ascii.h++>
 
 #include <ogonek/encoding/ascii.h++>
+#include <ogonek/encoding.h++>
 #include <ogonek/types.h++>
 
 #include <boost/range/begin.hpp>
@@ -24,7 +25,7 @@ TEST_CASE("ascii", "ASCII encoding form") {
 
     SECTION("encode", "Encoding ASCII") {
         auto decoded = { U'\x0041', U'\x0032' };
-        auto range = ogonek::ascii::encode(decoded, ogonek::assume_valid);
+        auto range = ogonek::encode<ogonek::ascii>(decoded, ogonek::assume_valid);
         std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 2);
         CHECK(encoded[0] == 0x41_b);
@@ -32,7 +33,7 @@ TEST_CASE("ascii", "ASCII encoding form") {
     }
     SECTION("decode", "Decoding ASCII") {
         auto encoded = { 0x41_b, 0x32_b };
-        auto range = ogonek::ascii::decode(encoded, ogonek::assume_valid);
+        auto range = ogonek::decode<ogonek::ascii>(encoded, ogonek::assume_valid);
         std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
         REQUIRE(decoded.size() == 2);
         CHECK(decoded[0] == U'\x0041');
@@ -40,7 +41,7 @@ TEST_CASE("ascii", "ASCII encoding form") {
     }
     SECTION("validation", "Validating ASCII") {
         auto encoded = { 0x41_b, 0x32_b, 0x80_b };
-        auto range = ogonek::ascii::decode(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::ascii>(encoded, ogonek::replace_errors);
         std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
         REQUIRE(decoded.size() == 3);
         CHECK(decoded[0] == U'\x0041');
@@ -49,7 +50,7 @@ TEST_CASE("ascii", "ASCII encoding form") {
     }
     SECTION("replacement", "ASCII's custom replacement character (?)") {
         auto decoded = { U'\x41', U'\x32', U'\x80' };
-        auto range = ogonek::ascii::encode(decoded, ogonek::replace_errors);
+        auto range = ogonek::encode<ogonek::ascii>(decoded, ogonek::replace_errors);
         std::vector<ogonek::ascii::code_unit> encoded(boost::begin(range), boost::end(range));
         REQUIRE(encoded.size() == 3);
         CHECK(encoded[0] == 0x41_b);

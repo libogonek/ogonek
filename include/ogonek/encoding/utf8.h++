@@ -69,26 +69,6 @@ namespace ogonek {
         static constexpr bool is_self_synchronizing = true;
         struct state {};
 
-        template <typename Range, typename ErrorHandler,
-                  typename Iterator = typename boost::range_const_iterator<Range>::type,
-                  typename EncodingIterator = encoding_iterator<utf8, Iterator, ErrorHandler>>
-        static boost::iterator_range<EncodingIterator> encode(Range const& r, ErrorHandler) {
-            return {
-                    EncodingIterator { boost::begin(r), boost::end(r) },
-                    EncodingIterator { boost::end(r), boost::end(r) }
-            };
-        }
-        template <typename Range, typename ErrorHandler,
-                  typename Iterator = typename boost::range_const_iterator<Range>::type,
-                  typename DecodingIterator = decoding_iterator<utf8, Iterator, ErrorHandler>,
-                  typename DecodingRange = detail::tagged_iterator_range<DecodingIterator, detail::validated_tag>>
-        static DecodingRange decode(Range const& r, ErrorHandler) {
-            return {
-                    DecodingIterator { boost::begin(r), boost::end(r) },
-                    DecodingIterator { boost::end(r), boost::end(r) }
-            };
-        }
-
         template <typename ErrorHandler>
         static detail::encoded_character<utf8> encode_one(code_point u, state&, ErrorHandler) {
             if(u <= last_1byte_value) {

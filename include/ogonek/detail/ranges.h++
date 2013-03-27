@@ -194,6 +194,15 @@ namespace ogonek {
             tagged_iterator_range(Iterator first, Iterator last)
             : boost::iterator_range<Iterator>(first, last) {}
         };
+
+        template <typename Iterator, typename... Tags, typename Range>
+        tagged_iterator_range<Iterator, Tags...> wrap_tagged_range(Range&& range) {
+            return {
+                Iterator { boost::begin(range), boost::end(range) },
+                Iterator { boost::end(range), boost::end(range) }
+            };
+        }
+        
     } // namespace detail
 } // namespace ogonek
 

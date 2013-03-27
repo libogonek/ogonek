@@ -20,11 +20,13 @@
 #include <boost/range/iterator_range.hpp>
 
 namespace ogonek {
-    template <typename NormalizationForm,
+    template <typename NormalForm,
               typename UnicodeSequence,
               typename Iterator = detail::UnicodeSequenceIterator<UnicodeSequence, assume_valid_t>,
-              typename NormalizingIterator = detail::normalizing_iterator<NormalizationForm, Iterator>>
-    boost::iterator_range<NormalizingIterator> normalize(UnicodeSequence const& sequence) {
+              typename NormalizingIterator = detail::normalizing_iterator<NormalForm, Iterator>,
+              typename NormalizingRange = boost::iterator_range<NormalizingIterator>>
+              //typename NormalizingRange = detail::tagged_iterator_range<NormalizingIterator, detail::normalized_tag<NormalForm>>>
+    NormalizingRange normalize(UnicodeSequence const& sequence) {
         return detail::wrap_range<NormalizingIterator>(detail::as_code_point_range(sequence, assume_valid));
     }
 } // namespace ogonek
