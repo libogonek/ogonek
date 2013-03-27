@@ -1,11 +1,48 @@
 import os
 import sys
 
-# Set up command line variables
+# Metadata
+project_name = 'ogonek'
+macro_prefix = project_name.upper()
+lib_name = 'ogonek_data'
+
+# Command line variables
+variables = [ EnumVariable('lib', 'kind of library to build', 'static', allowed_values=('static', 'shared'))
+            ]
+
+ignored_warnings = [ 'mismatched-tags' ]
+
+info_files = ['README.md', 'COPYING.txt', 'ogonek.png']
+
+# Standard variables
+variables += [ BoolVariable('fatal', 'stop on first error', True)
+             , ('test', 'test cases to run', 'all')
+             ]
+
+# Build-transparent flags: changing these does not require rebuilds
+norebuild = [ '-Wfatal-errors'
+            ]
+
+# ---- Mostly behaviour from here ----
+
+# Hack to avoid rebuild on changing -Wfatal-errors
+import SCons
+import types
+SCons.Action.ActionBase.get_contents_orig = SCons.Action.ActionBase.get_contents
+def get_contents(self, *args, **kw):
+    cnt = self.get_contents_orig(*args, **kw).split()
+    cnt_norebuild = " ".join(i for i in cnt if i not in norebuild)
+    return cnt_norebuild
+SCons.Action.ActionBase.get_contents = types.MethodType(
+        get_contents, None, SCons.Action.ActionBase)
+
+# Set up variables
 vars = Variables()
-vars.Add(EnumVariable('lib', 'Select the kind of library to build', 'static', allowed_values=('static', 'shared')))
-vars.Add(BoolVariable('fatal', 'Stop on first error', True))
-vars.Add('test', 'Named of test case to run (use "none" for none)', 'all')
+for var in variables:
+    if isinstance(var, tuple):
+        vars.Add(*var)
+    else:
+        vars.Add(var)
 
 # Create a base environment
 if sys.platform == 'win32':
@@ -16,24 +53,30 @@ else:
 Help(vars.GenerateHelpText(env))
 
 # Default flags
-env.MergeFlags([ '-Wall' , '-Wextra', '-pedantic-errors', '-Werror' # all warnings as errors
-               , '-Wno-mismatched-tags'                             # ignored warnings
-               , '-std=c++11'                                       # C++11 of course!
-               , '-Iinclude', '-isystemdeps'                        # header paths
-               ])
+compile_flags = [ '-Wall' , '-Wextra', '-pedantic-errors', '-Werror' # all warnings as errors
+                , '-std=c++11'                                       # C++11 of course!
+                , '-isystemdeps'                                     # system header paths
+                ]
+for warning in ignored_warnings:
+    compile_flags += ['-Wno-' + warning]
+
+env.MergeFlags(compile_flags)
 
 # Stop on first error?
 if env['fatal']:
     env.MergeFlags(['-Wfatal-errors'])
+
+# Search paths
+env.Append(CPPPATH = ['include'])
 
 # Common library dependencies
 env.Append(LIBS = [])
 
 # Define platform macros
 if env['PLATFORM'] == 'win32':
-    env.MergeFlags(['-DOGONEK_WINDOWS'])
+    env.Append(CPPDEFINES = [macro_prefix + '_WINDOWS'])
 else:
-    env.MergeFlags(['-DOGONEK_POSIX'])
+    env.Append(CPPDEFINES = [macro_prefix + '_POSIX'])
 
 # Utils
 def stringify(list):
@@ -45,20 +88,23 @@ def prefix(p, list):
 sources = stringify(Glob('src/*.c++') + Glob('src/*/*.c++'))
 test_sources = stringify(Glob('test/*.c++'))
 
-# Define visibility flags for shared libs
+# Define visibility macros for shared libs
 if env['lib'] == 'static':
-    lib_flags = ['-DOGONEK_BUILD']
+    lib_defines = [macro_prefix + '_BUILD']
 if env['lib'] == 'shared':
-    lib_flags = ['-DOGONEK_BUILD', '-DOGONEK_SHARED']
+    lib_defines = [macro_prefix + '_BUILD', macro_prefix + '_SHARED']
+lib_flags = []
 
 # Setup the debug target
 debug_builddir = 'obj/debug/'
-debug_target = 'bin/debug/ogonek_data'
-debug_flags = lib_flags + ['-g', '-D_GLIBCXX_DEBUG']
+debug_target = 'bin/debug/' + lib_name
+debug_defines = lib_defines + ['_GLIBCXX_DEBUG']
+debug_flags = lib_flags + ['-g']
 debug_libs = []
 
 debug = env.Clone()
 debug.MergeFlags(debug_flags)
+debug.Append(CPPDEFINES = debug_defines)
 debug.Append(LIBS = debug_libs)
 debug.VariantDir(debug_builddir, '.', duplicate=0)
 if env['lib'] == 'static':
@@ -69,12 +115,14 @@ debug.Alias('debug', debug_lib)
 
 # Setup the release target
 release_builddir = 'obj/release/'
-release_target = 'bin/release/ogonek_data'
-release_flags = lib_flags + ['-flto' , '-O3', '-DNDEBUG']
+release_target = 'bin/release/' + lib_name
+release_defines = lib_defines + ['NDEBUG']
+release_flags = lib_flags + ['-flto' , '-O3']
 release_libs = []
 
 release = env.Clone()
 release.MergeFlags(release_flags)
+release.Append(CPPDEFINES = release_defines)
 release.Append(LIBS = release_libs)
 release['LINKFLAGS'] += [ '-flto' ] # link-time optimization needs to be passed to the linker
 release.VariantDir(release_builddir, '.', duplicate=0)
@@ -90,14 +138,15 @@ if env['PLATFORM'] == 'win32':
     test_target = 'bin\\test\\runtest' # FFS
 else:
     test_target = 'bin/test/runtest'
-test_flags = ['-Itest']
+test_flags = []
 test_libs = []
 
 test = debug.Clone()
 test.MergeFlags(test_flags)
+test.Append(CPPPATH = ['test'])
 test.Append(LIBS = test_libs)
 test.VariantDir(test_builddir, '.', duplicate=0)
-test_program = test.Program(test_target, prefix(test_builddir, test_sources), LIBS='ogonek_data', LIBPATH='bin/debug')
+test_program = test.Program(test_target, prefix(test_builddir, test_sources), LIBS=lib_name, LIBPATH='bin/debug')
 if env['test'] == 'all':
     test_arguments = ''
 else:
@@ -105,25 +154,14 @@ else:
 test_alias = test.Alias('runtest', [test_program], test_target + test_arguments)
 test.AlwaysBuild(test_alias)
 
-# Setup the distribution targets
-info_files = ['README.md', 'COPYING.txt', 'ogonek.png']
-build_files = ['SConstruct'] + Glob('scons*.py') + Glob('scons-local-2.2.0/*')
-header_files = Glob('include/ogonek/*.h++') + Glob('include/ogonek/*/*.h++')
-source_files = sources + Glob('src/ucd/*.g.inl')
-source_zip = 'dist/ogonek-src.zip'
-Zip(source_zip, info_files)
-Zip(source_zip, build_files)
-Zip(source_zip, header_files)
-Zip(source_zip, source_files)
-srcdist_alias = Alias('distsrc', source_zip)
-
+# Setup the distribution target
 dist = release.Clone()
-# TODO remove directory before putting stuff n
-dist.Install('ogonek', ['README.md', 'COPYING.txt', 'ogonek.png'])
-dist.Install('ogonek', 'include')
-dist.Install('ogonek/lib', release_lib)
-dist.Install('ogonek/include', Glob('deps/wheels'))
-binary_zip = Zip('dist/ogonek-dist-' + env['lib'] + '.zip', 'ogonek')
+# TODO remove directory before putting stuff in
+dist.Install(project_name, info_files)
+dist.Install(project_name, 'include')
+dist.Install(project_name + '/lib', release_lib)
+dist.Install(project_name + '/include', Glob('deps/wheels'))
+binary_zip = Zip('dist/' + project_name + '-dist-' + env['lib'] + '.zip', project_name)
 dist.Alias('dist', binary_zip)
 
 if env['test'] == 'none':
