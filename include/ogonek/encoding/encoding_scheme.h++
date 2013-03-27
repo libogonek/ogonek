@@ -109,12 +109,6 @@ namespace ogonek {
             return { remaining.begin().it, r.end() };
         }
     };
-    class utf16;
-    class utf32;
-    using utf16be = encoding_scheme<utf16, big_endian>;
-    using utf16le = encoding_scheme<utf16, little_endian>;
-    using utf32be = encoding_scheme<utf32, big_endian>;
-    using utf32le = encoding_scheme<utf32, little_endian>;
 } // namespace ogonek
 
 #endif // OGONEK_ENCODING_ENCODING_SCHEME_HPP
