@@ -22,6 +22,7 @@
 #include <catch.h++>
 
 TEST_CASE("utf16le", "UTF-16LE codec") {
+    using namespace ogonek::literal;
     SECTION("encode", "Encoding UTF-16LE") {
         auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
         auto range = ogonek::encode<ogonek::utf16le>(decoded, ogonek::assume_valid);
