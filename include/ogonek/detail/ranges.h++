@@ -181,10 +181,10 @@ namespace ogonek {
             static constexpr bool validated = true;
         };
         template <typename NormalForm>
-        struct normalized_tag {
+        struct normalized_tag : validated_tag {
             using normal_form = NormalForm;
         };
-        struct casefolded_tag {
+        struct casefolded_tag : validated_tag {
             static constexpr bool casefolded = true;
         };
 
