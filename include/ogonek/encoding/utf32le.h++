@@ -16,7 +16,7 @@
 
 #include <ogonek/encoding/encoding_scheme.h++>
 #include <ogonek/encoding/utf32.h++>
-#include <ogonek/little_endian.h++>
+#include <ogonek/encoding/little_endian.h++>
 
 namespace ogonek {
     using utf32le = encoding_scheme<utf32, little_endian>;

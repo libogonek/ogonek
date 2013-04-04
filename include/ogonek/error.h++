@@ -14,11 +14,11 @@
 #ifndef OGONEK_ERROR_HPP
 #define OGONEK_ERROR_HPP
 
-#include <ogonek/assume_valid.h++>
-#include <ogonek/throw_error.h++>
-#include <ogonek/replace_errors.h++>
-#include <ogonek/discard_errors.h++>
-#include <ogonek/default_error_handler.h++>
+#include <ogonek/error/assume_valid.h++>
+#include <ogonek/error/throw_error.h++>
+#include <ogonek/error/replace_errors.h++>
+#include <ogonek/error/discard_errors.h++>
+#include <ogonek/error/default_error_handler.h++>
 
 #endif // OGONEK_ERROR_HPP
 

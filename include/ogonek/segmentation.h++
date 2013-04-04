@@ -14,7 +14,7 @@
 #ifndef OGONEK_SEGMENTATION_HPP
 #define OGONEK_SEGMENTATION_HPP
 
-#include <ogonek/graphemes.h++>
-#include <ogonek/words.h++>
+#include <ogonek/segmentation/graphemes.h++>
+#include <ogonek/segmentation/words.h++>
 
 #endif // OGONEK_SEGMENTATION_HPP

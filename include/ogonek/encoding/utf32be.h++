@@ -16,7 +16,7 @@
 
 #include <ogonek/encoding/encoding_scheme.h++>
 #include <ogonek/encoding/utf32.h++>
-#include <ogonek/big_endian.h++>
+#include <ogonek/encoding/big_endian.h++>
 
 namespace ogonek {
     using utf32be = encoding_scheme<utf32, big_endian>;

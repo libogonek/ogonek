@@ -9,14 +9,17 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// Type-erased text
+// Error handling policy for data asserted valid
 
-#ifndef OGONEK_ANY_TEXT_HPP
-#define OGONEK_ANY_TEXT_HPP
+#ifndef OGONEK_ASSUME_VALID_HPP
+#define OGONEK_ASSUME_VALID_HPP
 
-#include <ogonek/text.h++>
-#include <ogonek/any_text/any_text_core.h++>
-#include <ogonek/any_text/any_text_equivalence.h++>
+#include <ogonek/error/error_handler.h++>
 
-#endif // OGONEK_ANY_TEXT_HPP
+namespace ogonek {
+    //! Strategy for skipping validation
+    struct assume_valid_t : detail::error_handler {} constexpr assume_valid = {};
+} // namespace ogonek
+
+#endif // OGONEK_ASSUME_VALID_HPP
 

@@ -11,7 +11,8 @@
 
 // Tests for <ogonek/byte_order.h++>
 
-#include <ogonek/byte_order.h++>
+#include <ogonek/encoding/big_endian.h++>
+#include <ogonek/encoding/little_endian.h++>
 
 #include <catch.h++>
 

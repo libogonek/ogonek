@@ -9,14 +9,17 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// Type-erased text
+// Default error handlers
 
-#ifndef OGONEK_ANY_TEXT_HPP
-#define OGONEK_ANY_TEXT_HPP
+#ifndef OGONEK_DEFAULT_ERROR_HANDLER_HPP
+#define OGONEK_DEFAULT_ERROR_HANDLER_HPP
 
-#include <ogonek/text.h++>
-#include <ogonek/any_text/any_text_core.h++>
-#include <ogonek/any_text/any_text_equivalence.h++>
+#include <ogonek/error/throw_error.h++>
 
-#endif // OGONEK_ANY_TEXT_HPP
+namespace ogonek {
+    constexpr auto default_error_handler = throw_error;
+    using default_error_handler_t = throw_error_t;
+} // namespace ogonek
+
+#endif // OGONEK_DEFAULT_ERROR_HANDLER_HPP
 

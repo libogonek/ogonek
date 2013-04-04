@@ -11,7 +11,7 @@
 
 // Tests for <ogonek/ucd.h++>
 
-#include <ogonek/ucd.h++>
+#include <ogonek/data/ucd.h++>
 #include <ogonek/types.h++>
 #include <ogonek/text.h++>
 #include <ogonek/encoding/utf8.h++>

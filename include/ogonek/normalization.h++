@@ -14,13 +14,13 @@
 #ifndef OGONEK_NORMALIZATION_HPP
 #define OGONEK_NORMALIZATION_HPP
 
-#include <ogonek/normalize.h++>
-#include <ogonek/nfc.h++>
-#include <ogonek/nfd.h++>
-#include <ogonek/nfkc.h++>
-#include <ogonek/nfkd.h++>
-#include <ogonek/canonical_equivalence.h++>
-#include <ogonek/compatibility_equivalence.h++>
-#include <ogonek/is_normalized.h++>
+#include <ogonek/normalization/normalize.h++>
+#include <ogonek/normalization/nfc.h++>
+#include <ogonek/normalization/nfd.h++>
+#include <ogonek/normalization/nfkc.h++>
+#include <ogonek/normalization/nfkd.h++>
+#include <ogonek/normalization/canonical_equivalence.h++>
+#include <ogonek/normalization/compatibility_equivalence.h++>
+#include <ogonek/normalization/is_normalized.h++>
 
 #endif // OGONEK_NORMALIZATION_HPP

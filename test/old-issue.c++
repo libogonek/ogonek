@@ -16,7 +16,7 @@
 
 #include <ogonek/text.h++>
 #include <ogonek/encoding/utf8.h++>
-#include <ogonek/graphemes.h++>
+#include <ogonek/segmentation/graphemes.h++>
 #include <ogonek/error.h++>
 
 TEST_CASE("old-issue", "Tests for an old issue") {

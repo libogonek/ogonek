@@ -15,11 +15,10 @@
 #define OGONEK_ENCODING_ENCODING_SCHEME_HPP
 
 #include <ogonek/encoding/iterator.h++>
-#include <ogonek/byte_order.h++>
 #include <ogonek/types.h++>
 #include <ogonek/detail/ranges.h++>
 #include <ogonek/detail/partial_array.h++>
-#include <ogonek/detail/encoded_character.h++>
+#include <ogonek/encoding/detail/encoded_character.h++>
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>

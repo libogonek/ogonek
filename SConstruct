@@ -16,6 +16,7 @@ info_files = ['README.md', 'COPYING.txt', 'ogonek.png']
 
 # Standard variables
 variables += [ BoolVariable('fatal', 'stop on first error', True)
+             , EnumVariable('compiler', 'compiler to use', 'gcc', allowed_values=('gcc', 'clang'))
              , ('test', 'test cases to run', 'all')
              ]
 
@@ -49,6 +50,9 @@ if sys.platform == 'win32':
     env = Environment(options = vars, ENV = os.environ, tools = ['mingw'])
 else:
     env = Environment(options = vars, ENV = os.environ)
+
+if env['compiler'] == 'clang':
+    env['CXX'] = 'clang++'
 
 Help(vars.GenerateHelpText(env))
 

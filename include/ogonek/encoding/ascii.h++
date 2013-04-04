@@ -19,7 +19,7 @@
 #include <ogonek/error.h++>
 #include <ogonek/detail/ranges.h++>
 #include <ogonek/detail/partial_array.h++>
-#include <ogonek/detail/encoded_character.h++>
+#include <ogonek/encoding/detail/encoded_character.h++>
 
 #include <boost/range/iterator_range.hpp>
 #include <boost/range/sub_range.hpp>
