@@ -9,9 +9,9 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// Tests for <ogonek/detail/lookahead_window.h++>
+// Tests for <ogonek/detail/container/lookahead_window.h++>
 
-#include <ogonek/detail/lookahead_window.h++>
+#include <ogonek/detail/container/lookahead_window.h++>
 
 #include <catch.h++>
 

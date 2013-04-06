@@ -18,9 +18,8 @@
 #include <ogonek/types.h++>
 #include <ogonek/error.h++>
 #include <ogonek/detail/ranges.h++>
-#include <ogonek/detail/partial_array.h++>
 #include <ogonek/detail/constants.h++>
-#include <ogonek/detail/ranges.h++>
+#include <ogonek/detail/container/partial_array.h++>
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>

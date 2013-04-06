@@ -9,9 +9,9 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// Tests for <ogonek/detail/small_vector.h++>
+// Tests for <ogonek/detail/container/small_vector.h++>
 
-#include <ogonek/detail/small_vector.h++>
+#include <ogonek/detail/container/small_vector.h++>
 
 #include <catch.h++>
 

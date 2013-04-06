@@ -12,8 +12,8 @@
 
 // Vector like container backed by a fixed size array (fixed capacity)
 
-#ifndef OGONEK_DETAIL_PARTIAL_ARRAY_HPP
-#define OGONEK_DETAIL_PARTIAL_ARRAY_HPP
+#ifndef OGONEK_DETAIL_CONTAINER_PARTIAL_ARRAY_HPP
+#define OGONEK_DETAIL_CONTAINER_PARTIAL_ARRAY_HPP
 
 #include <algorithm>
 #include <array>
@@ -57,12 +57,12 @@ namespace ogonek {
 
             T* data() { return array.data(); }
             T const* data() const { return array.data(); }
-            
+
             std::size_t size() const { return count; }
 
             T& operator[](std::ptrdiff_t index) { return array[index]; }
             T const& operator[](std::ptrdiff_t index) const { return array[index]; }
-            
+
             iterator erase(iterator first) {
                 auto next = std::next(first);
                 std::move(next, end(), first);
@@ -77,5 +77,5 @@ namespace ogonek {
     } // namespace detail
 } // namespace ogonek
 
-#endif // OGONEK_DETAIL_PARTIAL_ARRAY_HPP
+#endif // OGONEK_DETAIL_CONTAINER_PARTIAL_ARRAY_HPP
 
