@@ -40,8 +40,8 @@ namespace ogonek {
             static_assert(std::is_same<Sequence, wheels::Decay<Sequence>>(), "sequence_iterator requires a decayed type");
 
             using iterator_category = std::forward_iterator_tag;
-            using value_type = sequence::Value<Sequence>;
-            using reference = sequence::Reference<Sequence>;
+            using value_type = seq::Value<Sequence>;
+            using reference = seq::Reference<Sequence>;
             using difference_type = std::ptrdiff_t;
             using pointer = wheels::RemoveReference<value_type>*;
 
@@ -58,14 +58,14 @@ namespace ogonek {
             //! {function}
             //! *Requires*: `!is_end()`
             //! *Returns*: the element this iterator points at.
-            reference operator*() const { return sequence::front(*seq); }
+            reference operator*() const { return seq::front(*seq); }
 
             //! {function}
             //! *Requires*: `!is_end()`
             //! *Effects*: advances this iterator to the next element.
             //! *Returns*: `*this`.
             sequence_iterator& operator++() {
-                sequence::pop_front(*seq);
+                seq::pop_front(*seq);
                 return *this;
             }
             //! {function}
@@ -92,7 +92,7 @@ namespace ogonek {
             //! {function}
             //! *Returns*: `true` if this is an end iterator.
             bool is_end() const {
-                return !seq || sequence::empty(*seq);
+                return !seq || seq::empty(*seq);
             }
 
             boost::optional<Sequence> seq;
@@ -111,7 +111,7 @@ namespace ogonek {
                   wheels::EnableIf<is_sequence<S>>...>
         sequence_iterator<wheels::Decay<S>> end(S&&) { return {}; }
     } // namespace detail
-    namespace sequence {
+    namespace seq {
         //! {function}
         //! *Requires*: `S` is a [concept:Sequence] [soft].
         //! *Returns*: an iterator to the start of `s`.
@@ -124,7 +124,7 @@ namespace ogonek {
         template <typename S,
                   wheels::EnableIf<is_sequence<S>>...>
         detail::sequence_iterator<wheels::Decay<S>> end(S&& s) { return detail::end(s); }
-    } // namespace sequence
+    } // namespace seq
 } // namespace ogonek
 
 #endif // OGONEK_SEQUENCE_BEGIN_END_HPP

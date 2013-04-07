@@ -35,30 +35,30 @@ namespace ogonek {
         // concept Sequence<S> requires Copyable<S> {
             //! {trait}
             //! The type of values in this sequence.
-            // nonmember typename sequence::Value<Sequence<S>>;
+            // nonmember typename seq::Value<Sequence<S>>;
 
             //! {trait}
             //! The type of references to this sequence.
             //! *Note*: this type may not be a reference if the sequence is not persistent.
-            // nonmember typename sequence::Reference<Sequence<S>>;
+            // nonmember typename seq::Reference<Sequence<S>>;
 
             //! {function}
             //! *Returns*: `true` if the sequence `s` has no elements.
-            // nonmember bool sequence::empty(Sequence<S> const& s);
+            // nonmember bool seq::empty(Sequence<S> const& s);
 
             //! {function}
             //! *Requires*: `!empty()`.
             //! *Returns*: the first element of the sequence `s`.
-            // nonmember reference sequence::front(Sequence<S> const &);
+            // nonmember reference seq::front(Sequence<S> const &);
 
             //! {function}
             //! *Requires*: `!empty()`.
             //! *Effects*: skips the first element in the sequence `s`.
-            // nonmember void sequence::pop_front(Sequence<S>& s);
+            // nonmember void seq::pop_front(Sequence<S>& s);
 
             //! {function}
             //! *Returns*: a sequence in the current state of the sequence `s`.
-            // nonmemberSequence<S> sequence::save(Sequence<S> const& s);
+            // nonmemberSequence<S> seq::save(Sequence<S> const& s);
         // };
 
         //! {tag}
@@ -143,7 +143,7 @@ namespace ogonek {
         struct sequence_ops : sequence_ops_impl<wheels::Unqualified<S>> {};
     } // namespace detail
 
-    namespace sequence {
+    namespace seq {
         //! {metafunction}
         //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
         //! *Returns*: the type of values in the sequence`S`.
@@ -164,12 +164,12 @@ namespace ogonek {
         struct reference {
             using type = Reference<S>;
         };
-    } // namespace sequence
+    } // namespace seq
 
     namespace detail {
         struct is_sequence_test {
             template <typename T>
-            wheels::Bool<true, sequence::Value<T>> static test(int);
+            wheels::Bool<true, seq::Value<T>> static test(int);
             template <typename...>
             std::false_type static test(...);
         };
@@ -180,7 +180,7 @@ namespace ogonek {
     namespace detail {
         struct is_sequence_of_test {
             template <typename T, typename U>
-            std::is_same<U, sequence::Value<T>> static test(int);
+            std::is_same<U, seq::Value<T>> static test(int);
             template <typename...>
             std::false_type static test(...);
         };
@@ -188,7 +188,7 @@ namespace ogonek {
     template <typename S, typename V>
     struct is_sequence_of : wheels::TraitOf<detail::is_sequence_of_test, S, V> {};
 
-    namespace sequence {
+    namespace seq {
         //! {function}
         //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
         //! *Returns*: `true` if the sequence `s` has no elements.
@@ -218,7 +218,7 @@ namespace ogonek {
         template <typename S,
                   wheels::EnableIf<is_sequence<S>>...>
         S save(S const& s) { return detail::sequence_ops<S>::save(s); }
-    } // namespace sequence
+    } // namespace seq
 } // namespace ogonek
 
 #endif // OGONEK_SEQUENCE_TRAITS_HPP

@@ -17,7 +17,7 @@
 #include <catch.h++>
 
 TEST_CASE("sequence", "sequence tests") {
-    namespace seq = ogonek::sequence;
+    namespace seq = ogonek::seq;
     auto&& str = ogonek::forward_sequence(u"\U00010000ab");
     REQUIRE(!seq::empty(str));
     REQUIRE(seq::front(str) == u'\xD800');
@@ -34,7 +34,7 @@ TEST_CASE("sequence", "sequence tests") {
     REQUIRE(seq::empty(str));
 }
 TEST_CASE("sequence_iterator", "sequence iterator tests") {
-    namespace seq = ogonek::sequence;
+    namespace seq = ogonek::seq;
     auto&& str = ogonek::forward_sequence(u"\U00010000ab");
     char16_t res[] = u"\xD800\xDC00" u"ab";
     int i = 0;
@@ -45,7 +45,7 @@ TEST_CASE("sequence_iterator", "sequence iterator tests") {
 }
 
 TEST_CASE("unicodestring", "Unicode string tests") {/*
-    namespace seq = ogonek::sequence;
+    namespace seq = ogonek::seq;
     auto&& str = ogonek::forward_sequence(u"\xD800\xDC00" u"ab");
     auto&& ustr = ogonek::forward_code_points(str, ogonek::assume_valid);
     REQUIRE(!seq::empty(ustr));

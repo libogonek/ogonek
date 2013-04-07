@@ -33,7 +33,7 @@ namespace ogonek {
                   bool = is_error_handler<E>(),
                   typename Value = wheels::Invoke<
                                     wheels::Conditional<is_sequence<S>,
-                                        sequence::value<S>,
+                                        seq::value<S>,
                                         wheels::identity<void>>>>
         struct forward_code_points_impl {};
 
