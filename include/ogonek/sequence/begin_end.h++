@@ -15,10 +15,11 @@
 #define OGONEK_SEQUENCE_BEGIN_END_HPP
 
 #include <ogonek/sequence/traits.h++>
+#include <ogonek/detail/meta/is_decayed.h++>
 
 #include <wheels/meta.h++>
 
-#include <boost/optional.hpp> // Argh, what about moves
+#include <boost/optional.hpp> // TODO Argh, what about moves
 
 #include <iterator>
 #include <type_traits>
@@ -37,7 +38,7 @@ namespace ogonek {
             //! *Invariant*: `is_end()` or `seq` contains a non-empty sequence.
 
             static_assert(is_sequence<Sequence>(), "sequence_iterator requires a Sequence");
-            static_assert(std::is_same<Sequence, wheels::Decay<Sequence>>(), "sequence_iterator requires a decayed type");
+            static_assert(detail::is_decayed<Sequence>(), "sequence_iterator requires a decayed type");
 
             using iterator_category = std::forward_iterator_tag;
             using value_type = seq::Value<Sequence>;
