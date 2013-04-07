@@ -11,12 +11,12 @@
 
 // Sequence forwarding
 
-#ifndef OGONEK_DETAIL_SEQUENCE_FORWARD_SEQUENCE_HPP
-#define OGONEK_DETAIL_SEQUENCE_FORWARD_SEQUENCE_HPP
+#ifndef OGONEK_SEQUENCE_FORWARD_SEQUENCE_HPP
+#define OGONEK_SEQUENCE_FORWARD_SEQUENCE_HPP
 
+#include <ogonek/sequence/traits.h++>
 #include <ogonek/detail/meta/character.h++>
 #include <ogonek/detail/meta/iterator.h++>
-#include <ogonek/detail/sequence/traits.h++>
 
 #include <wheels/meta.h++>
 
@@ -62,40 +62,40 @@ namespace ogonek {
             using result = Char const*;
             static result forward(Char* p) { return std::forward<result>(p); }
         };
-
-        namespace result_of {
-            //! {metafunction}
-            //! *Requires*: `T` is a model of [concept:SequenceSource] [soft].
-            //! *Effects*: computes the result type for [function:ogonek::detail::forward_sequence].
-            //! *Returns*: `T` if `T` is a [concept:Sequence] type or a reference to one;
-            //!            `U const(&)[N]` if `T` is a reference to an array of non-character type `U[N]`;
-            //!            `Char const*` if `T` is a pointer `Char*` to a possibly `const` character type,
-            //!              or a reference to an array of character type `Char[N]`.
-            template <typename T>
-            using forward_sequence = typename forward_sequence_impl<T>::result;
-        } // namespace result_of
-
-        //! {function}
-        //! *Requires*: `T` is a model of [concept:SequenceSource] [soft];
-        //!             this function was called with an lvalue [hard] TODO is it hard?;
-        //!             if `T` is a pointer type, `t` is a valid pointer to the first element of a null-terminated string [undefined].
-        //! *Effects*: forwards a sequence with the normalized interface, possibly using a wrapper.
-        template <typename T>
-        result_of::forward_sequence<T const&> forward_sequence(T const& t) {
-            return forward_sequence_impl<T const&>::forward(t);
-        }
-        //! {overload}
-        template <typename T>
-        result_of::forward_sequence<T&> forward_sequence(T& t) {
-            return forward_sequence_impl<T&>::forward(t);
-        }
-
-        //! {overload}
-        //! *Note*: this overload causes a hard error when an rvalue is passed.
-        template <typename Invalid,
-                  wheels::EnableIf<std::is_rvalue_reference<Invalid&&>>...>
-        void forward_sequence(Invalid&&) = delete;
     } // namespace detail
+
+    namespace result_of {
+        //! {metafunction}
+        //! *Requires*: `T` is a model of [concept:SequenceSource] [soft].
+        //! *Effects*: computes the result type for [function:ogonek::forward_sequence].
+        //! *Returns*: `T` if `T` is a [concept:Sequence] type or a reference to one;
+        //!            `U const(&)[N]` if `T` is a reference to an array of non-character type `U[N]`;
+        //!            `Char const*` if `T` is a pointer `Char*` to a possibly `const` character type,
+        //!              or a reference to an array of character type `Char[N]`.
+        template <typename T>
+        using forward_sequence = typename detail::forward_sequence_impl<T>::result;
+    } // namespace result_of
+
+    //! {function}
+    //! *Requires*: `T` is a model of [concept:SequenceSource] [soft];
+    //!             this function was called with an lvalue [hard] TODO is it hard?;
+    //!             if `T` is a pointer type, `t` is a valid pointer to the first element of a null-terminated string [undefined].
+    //! *Effects*: forwards a sequence with the normalized interface, possibly using a wrapper.
+    template <typename T>
+    result_of::forward_sequence<T const&> forward_sequence(T const& t) {
+        return detail::forward_sequence_impl<T const&>::forward(t);
+    }
+    //! {overload}
+    template <typename T>
+    result_of::forward_sequence<T&> forward_sequence(T& t) {
+        return detail::forward_sequence_impl<T&>::forward(t);
+    }
+
+    //! {overload}
+    //! *Note*: this overload causes a hard error when an rvalue is passed.
+    template <typename Invalid,
+                wheels::EnableIf<std::is_rvalue_reference<Invalid&&>>...>
+    void forward_sequence(Invalid&&) = delete;
 } // namespace ogonek
 
-#endif // OGONEK_DETAIL_SEQUENCE_FORWARD_SEQUENCE_HPP
+#endif // OGONEK_SEQUENCE_FORWARD_SEQUENCE_HPP

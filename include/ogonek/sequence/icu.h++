@@ -11,10 +11,10 @@
 
 // ICU interoperation
 
-#ifndef OGONEK_DETAIL_SEQUENCE_ICU_HPP
-#define OGONEK_DETAIL_SEQUENCE_ICU_HPP
+#ifndef OGONEK_SEQUENCE_ICU_HPP
+#define OGONEK_SEQUENCE_ICU_HPP
 
-#include <ogonek/detail/sequence/forward_sequence.h++>
+#include <ogonek/sequence/forward_sequence.h++>
 
 #include <unicode/unistr.h>
 
@@ -22,7 +22,7 @@ namespace ogonek {
     namespace detail {
         template <>
         struct forward_sequence_impl<icu::UnicodeString, false, false, false> {
-            struct result : sequence_tag {
+            struct result : simple_sequence {
             public:
                 result(icu::UnicodeString const& u) : u(&u) {}
 
@@ -47,4 +47,4 @@ namespace ogonek {
     } // namespace ogonek
 } // namespace ogonek
 
-#endif // OGONEK_DETAIL_UNICODE_STRING_ICU_HPP
+#endif // OGONEK_SEQUENCE_ICU_HPP

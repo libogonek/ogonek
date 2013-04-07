@@ -11,15 +11,15 @@
 
 // Forwarding sequences of code points
 
-#ifndef OGONEK_DETAIL_UNICODE_STRING_FORWARD_CODE_POINTS_HPP
-#define OGONEK_DETAIL_UNICODE_STRING_FORWARD_CODE_POINTS_HPP
+#ifndef OGONEK_SEQUENCE_FORWARD_CODE_POINTS_HPP
+#define OGONEK_SEQUENCE_FORWARD_CODE_POINTS_HPP
 
-#include <ogonek/error/assume_valid.h++>
 #include <ogonek/encoding.h++>
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf32.h++>
-#include <ogonek/detail/sequence/traits.h++>
-#include <ogonek/detail/sequence/forward_sequence.h++>
+#include <ogonek/sequence/traits.h++>
+#include <ogonek/sequence/forward_sequence.h++>
+#include <ogonek/error/assume_valid.h++>
 #include <ogonek/error/error_handler.h++>
 
 #include <wheels/meta.h++>
@@ -51,28 +51,28 @@ namespace ogonek {
                 return decode<utf16>(s, std::forward<E>(e));
             }
         };
-
-        namespace result_of {
-            //! {metafunction}
-            //! *Requires*: `S` is a model of [concept:SequenceSource] [soft]; and
-            //!             `E` is a model of [concept:ErrorHandler] [soft].
-            //! *Effects*: computes the result type for [function:ogonek::detail::forward_code_points].
-            //! *Returns*: a [concept:Sequence] type that lazily decodes `S` according to `E`.
-            //! *Remarks*: the result type is statically known well-formed.
-            template <typename S, typename E>
-            using forward_code_points =
-                typename forward_code_points_impl<wheels::Unqualified<forward_sequence<S>>, E>::result;
-        } // namespace result_of
-
-        //! {function}
-        //! *Requires*: `S` is a model of [concept:SequenceSource].
-        //! *Returns*: a [concept:Sequence] of code points from `s`.
-        //! *Remarks*: the result is statically known well-formed.
-        template <typename S, typename E>
-        result_of::forward_code_points<S const&, E> forward_code_points(S const& s, E&& e) {
-            return forward_code_points_impl<S const&, E>::forward(s, std::forward<E>(e));
-        }
     } // namespace detail
+
+    namespace result_of {
+        //! {metafunction}
+        //! *Requires*: `S` is a model of [concept:SequenceSource] [soft]; and
+        //!             `E` is a model of [concept:ErrorHandler] [soft].
+        //! *Effects*: computes the result type for [function:ogonek::detail::forward_code_points].
+        //! *Returns*: a [concept:Sequence] type that lazily decodes `S` according to `E`.
+        //! *Remarks*: the result type is statically known well-formed.
+        template <typename S, typename E>
+        using forward_code_points =
+            typename detail::forward_code_points_impl<wheels::Unqualified<forward_sequence<S>>, E>::result;
+    } // namespace result_of
+
+    //! {function}
+    //! *Requires*: `S` is a model of [concept:SequenceSource].
+    //! *Returns*: a [concept:Sequence] of code points from `s`.
+    //! *Remarks*: the result is statically known well-formed.
+    template <typename S, typename E>
+    result_of::forward_code_points<S const&, E> forward_code_points(S const& s, E&& e) {
+        return detail::forward_code_points_impl<S const&, E>::forward(s, std::forward<E>(e));
+    }
 } // namespace ogonek
 
-#endif // OGONEK_DETAIL_UNICODE_STRING_FORWARD_CODE_POINTS_HPP
+#endif // OGONEK_SEQUENCE_FORWARD_CODE_POINTS_HPP

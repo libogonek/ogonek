@@ -11,11 +11,12 @@
 
 // Smart sequences
 
-#ifndef OGONEK_DETAIL_SEQUENCE_TRAITS_HPP
-#define OGONEK_DETAIL_SEQUENCE_TRAITS_HPP
+#ifndef OGONEK_SEQUENCE_TRAITS_HPP
+#define OGONEK_SEQUENCE_TRAITS_HPP
 
 #include <wheels/meta.h++>
 
+#include <iterator>
 #include <type_traits>
 #include <cstddef>
 
@@ -140,74 +141,84 @@ namespace ogonek {
         //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
         template <typename S>
         struct sequence_ops : sequence_ops_impl<wheels::Unqualified<S>> {};
+    } // namespace detail
 
-        namespace sequence {
-            //! {metafunction}
-            //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
-            //! *Returns*: the type of values in the sequence`S`.
-            template <typename S>
-            using Value = typename sequence_ops<S>::value_type;
-            template <typename S>
-            struct value {
-                using type = Value<S>;
-            };
+    namespace sequence {
+        //! {metafunction}
+        //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
+        //! *Returns*: the type of values in the sequence`S`.
+        template <typename S>
+        using Value = typename detail::sequence_ops<S>::value_type;
+        template <typename S>
+        struct value {
+            using type = Value<S>;
+        };
 
-            //! {trait}
-            //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
-            //! *Returns*: The type of references to the sequence `S`.
-            //! *Note*: this type may not be a reference if the sequence `S` is not persistent.
-            template <typename S>
-            using Reference = typename sequence_ops<S>::reference;
-            template <typename S>
-            struct reference {
-                using type = Reference<S>;
-            };
+        //! {trait}
+        //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
+        //! *Returns*: The type of references to the sequence `S`.
+        //! *Note*: this type may not be a reference if the sequence `S` is not persistent.
+        template <typename S>
+        using Reference = typename detail::sequence_ops<S>::reference;
+        template <typename S>
+        struct reference {
+            using type = Reference<S>;
+        };
+    } // namespace sequence
 
-            //! {function}
-            //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
-            //! *Returns*: `true` if the sequence `s` has no elements.
-            template <typename S>
-            bool empty(S const& s) { return sequence_ops<S>::empty(s); }
-
-            //! {function}
-            //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft]; and
-            //!             `!empty(s)`.
-            //! *Returns*: the first element of the sequence `s`.
-            template <typename S>
-            Reference<S> front(S const& s) { return sequence_ops<S>::front(s); }
-
-            //! {function}
-            //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft]; and
-            //!             `!empty(s)`.
-            //! *Effects*: skips the first element in the sequence `s`.
-            template <typename S>
-            void pop_front(S& s) { return sequence_ops<S>::pop_front(s); }
-
-            //! {function}
-            //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
-            //! *Returns*: a sequence in the current state of `s`.
-            template <typename S>
-            S save(S const& s) { return sequence_ops<S>::save(s); }
-        } // namespace sequence
-
+    namespace detail {
         struct is_sequence_test {
             template <typename T>
             wheels::Bool<true, sequence::Value<T>> static test(int);
             template <typename...>
             std::false_type static test(...);
         };
-        template <typename S>
-        struct is_sequence : wheels::TraitOf<is_sequence_test, S> {};
+    } // namespace detail
+    template <typename S>
+    struct is_sequence : wheels::TraitOf<detail::is_sequence_test, S> {};
 
+    namespace detail {
         struct is_sequence_of_test {
             template <typename T, typename U>
             std::is_same<U, sequence::Value<T>> static test(int);
             template <typename...>
             std::false_type static test(...);
         };
-        template <typename S, typename V>
-        struct is_sequence_of : wheels::TraitOf<is_sequence_of_test, S, V> {};
     } // namespace detail
+    template <typename S, typename V>
+    struct is_sequence_of : wheels::TraitOf<detail::is_sequence_of_test, S, V> {};
+
+    namespace sequence {
+        //! {function}
+        //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
+        //! *Returns*: `true` if the sequence `s` has no elements.
+        template <typename S,
+                  wheels::EnableIf<is_sequence<S>>...>
+        bool empty(S const& s) { return detail::sequence_ops<S>::empty(s); }
+
+        //! {function}
+        //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft]; and
+        //!             `!empty(s)`.
+        //! *Returns*: the first element of the sequence `s`.
+        template <typename S,
+                  wheels::EnableIf<is_sequence<S>>...>
+        Reference<S> front(S const& s) { return detail::sequence_ops<S>::front(s); }
+
+        //! {function}
+        //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft]; and
+        //!             `!empty(s)`.
+        //! *Effects*: skips the first element in the sequence `s`.
+        template <typename S,
+                  wheels::EnableIf<is_sequence<S>>...>
+        void pop_front(S& s) { return detail::sequence_ops<S>::pop_front(s); }
+
+        //! {function}
+        //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
+        //! *Returns*: a sequence in the current state of `s`.
+        template <typename S,
+                  wheels::EnableIf<is_sequence<S>>...>
+        S save(S const& s) { return detail::sequence_ops<S>::save(s); }
+    } // namespace sequence
 } // namespace ogonek
 
-#endif // OGONEK_DETAIL_SEQUENCE_TRAITS_HPP
+#endif // OGONEK_SEQUENCE_TRAITS_HPP
