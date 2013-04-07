@@ -182,6 +182,15 @@ namespace ogonek {
         };
         template <typename S>
         struct is_sequence : wheels::TraitOf<is_sequence_test, S> {};
+
+        struct is_sequence_of_test {
+            template <typename T, typename U>
+            std::is_same<U, sequence::Value<T>> static test(int);
+            template <typename...>
+            std::false_type static test(...);
+        };
+        template <typename S, typename V>
+        struct is_sequence_of : wheels::TraitOf<is_sequence_of_test, S, V> {};
     } // namespace detail
 } // namespace ogonek
 
