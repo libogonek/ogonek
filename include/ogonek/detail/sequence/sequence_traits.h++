@@ -11,8 +11,8 @@
 
 // Smart sequences
 
-#ifndef OGONEK_DETAIL_SEQUENCE_SMART_SEQUENCE_HPP
-#define OGONEK_DETAIL_SEQUENCE_SMART_SEQUENCE_HPP
+#ifndef OGONEK_DETAIL_SEQUENCE_SEQUENCE_HPP
+#define OGONEK_DETAIL_SEQUENCE_SEQUENCE_HPP
 
 #include <wheels/meta.h++>
 
@@ -23,7 +23,7 @@ namespace ogonek {
     namespace detail {
         //! {concept}
         //! A sequence with a smart interface based on Andrei Alexandrescu's ideas.
-        // concept SmartSequence : std::smart_sequence
+        // concept Sequence : ogonek::sequence_tag
         // requires Copyable {
             //! {trait}
             //! The type of values in this sequence.
@@ -50,18 +50,18 @@ namespace ogonek {
 
             //! {function}
             //! *Returns*: a sequence in the current state of this sequence.
-            // SmartSequence save() const;
+            // Sequence save() const;
         // };
 
         //! {tag}
-        //! *Effects*: marks a derived type as a [concept:SmartSequence].
-        struct smart_sequence {};
+        //! *Effects*: marks a derived type as a [concept:Sequence].
+        struct sequence_tag {};
 
         //! {trait}
-        //! *Returns*: `true` if `S` is a [concept:SmartSequence]; `false` otherwise.
+        //! *Returns*: `true` if `S` is a [concept:Sequence]; `false` otherwise.
         template <typename S>
-        struct is_smart_sequence : std::is_base_of<smart_sequence, wheels::Unqualified<S>> {};
+        struct is_sequence : std::is_base_of<sequence_tag, wheels::Unqualified<S>> {};
     } // namespace detail
 } // namespace ogonek
 
-#endif // OGONEK_DETAIL_SEQUENCE_SMART_SEQUENCE_HPP
+#endif // OGONEK_DETAIL_SEQUENCE_SEQUENCE_HPP

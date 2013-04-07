@@ -16,7 +16,7 @@
 
 #include <ogonek/detail/meta/character.h++>
 #include <ogonek/detail/meta/iterator.h++>
-#include <ogonek/detail/sequence/smart_sequence.h++>
+#include <ogonek/detail/sequence/sequence_traits.h++>
 
 #include <wheels/meta.h++>
 
@@ -31,8 +31,8 @@ namespace ogonek {
         //! *Note*: implementation backend for [function:forward_as_sequence]
         //          and [metafunction:result_of::forward_as_sequence].
         template <typename T,
-                    bool = is_smart_sequence<wheels::Unqualified<T>>(),
-                    bool = wheels::All<has_begin_end<T>(),
+                    bool = is_sequence<wheels::Unqualified<T>>(),
+                    bool = has_begin_end<T, std::forward_iterator_tag>(),
                     bool = is_null_terminated_string<wheels::Unqualified<T>>()>
         struct forward_as_sequence_impl {};
 
@@ -65,9 +65,9 @@ namespace ogonek {
 
         namespace result_of {
             //! {metafunction}
-            //! *Requires*: `T` is a model of [concept:Sequence] [soft].
+            //! *Requires*: `T` is a model of [concept:SequenceSource] [soft].
             //! *Effects*: computes the result type for [function:ogonek::detail::forward_as_sequence].
-            //! *Returns*: `T` if `T` is a [concept:SmartSequence] type or a reference to one;
+            //! *Returns*: `T` if `T` is a [concept:Sequence] type or a reference to one;
             //!            `U const(&)[N]` if `T` is a reference to an array of non-character type `U[N]`;
             //!            `Char const*` if `T` is a pointer `Char*` to a possibly `const` character type,
             //!              or a reference to an array of character type `Char[N]`.
@@ -77,7 +77,7 @@ namespace ogonek {
         } // namespace result_of
 
         //! {function}
-        //! *Requires*: `T` is a model of [concept:Sequence] [soft];
+        //! *Requires*: `T` is a model of [concept:SequenceSource] [soft];
         //!             this function was called with an lvalue [hard] TODO is it hard?;
         //!             if `T` is a pointer type, `t` is a valid pointer to the first element of a null-terminated string [undefined].
         //! *Effects*: forwards a sequence with the normalized interface, possibly using a wrapper.
