@@ -16,8 +16,8 @@
 
 #include <ogonek/error/error_handler.h++>
 #include <ogonek/types.h++>
-#include <ogonek/traits.h++>
-#include <ogonek/encoding/detail/encoded_character.h++>
+#include <ogonek/encoding/traits.h++>
+#include <ogonek/detail/container/encoded_character.h++>
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>
@@ -26,8 +26,9 @@
 #include <iterator>
 
 namespace ogonek {
-    // Strategy for discarding erroneous data
-    struct discard_errors_t : detail::error_handler {
+    //! {callable}
+    //! Error handler that discards erroneous data.
+    struct discard_errors_t : error_handler {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, EncodingState<EncodingForm>&, code_point&) {
             return { std::next(boost::begin(source)), boost::end(source) };
@@ -36,7 +37,10 @@ namespace ogonek {
         static detail::encoded_character<EncodingForm> apply_encode(code_point, EncodingState<EncodingForm>&) {
             return {};
         }
-    } constexpr discard_errors = {};
+    };
+    //! {object}
+    //! A default instance of [function:discard_errors_t].
+    constexpr discard_errors_t discard_errors = {};
 } // namespace ogonek
 
 #endif // OGONEK_DISCARD_ERRORS_HPP

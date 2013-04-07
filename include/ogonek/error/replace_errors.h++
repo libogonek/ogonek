@@ -16,7 +16,8 @@
 
 #include <ogonek/error/error_handler.h++>
 #include <ogonek/types.h++>
-#include <ogonek/encoding/detail/encoded_character.h++>
+#include <ogonek/encoding/traits.h++>
+#include <ogonek/detail/container/encoded_character.h++>
 
 #include <wheels/meta.h++>
 
@@ -28,26 +29,9 @@
 #include <type_traits>
 
 namespace ogonek {
-    namespace detail {
-        struct has_custom_replacement_character_impl {
-            template <typename EncodingForm>
-            wheels::Bool<true, decltype(EncodingForm::replacement_character)> static test(int);
-            template <typename>
-            std::false_type static test(...);
-        };
-        template <typename EncodingForm>
-        using has_custom_replacement_character = wheels::TraitOf<has_custom_replacement_character_impl, EncodingForm>;
-
-        template <typename EncodingForm, bool Custom = has_custom_replacement_character<EncodingForm>::value>
-        struct replacement_character
-        : std::integral_constant<code_point, U'\xFFFD'> {};
-        template <typename EncodingForm>
-        struct replacement_character<EncodingForm, true>
-        : std::integral_constant<code_point, EncodingForm::replacement_character> {};
-    } // namespace detail
-
-    //! Strategy for replacing invalid data with a replacement character
-    struct replace_errors_t : detail::error_handler {
+    //! {callable}
+    //! Error handler that replaces invalid data with a replacement character
+    struct replace_errors_t : error_handler {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, EncodingState<EncodingForm>&, code_point& out) {
             out = U'\xFFFD';
@@ -55,9 +39,12 @@ namespace ogonek {
         }
         template <typename EncodingForm>
         static detail::encoded_character<EncodingForm> apply_encode(code_point, EncodingState<EncodingForm>& s) {
-            return EncodingForm::encode_one(detail::replacement_character<EncodingForm>(), s, assume_valid);
+            return EncodingForm::encode_one(replacement_character<EncodingForm>(), s, assume_valid);
         }
-    } constexpr replace_errors = {};
+    };
+    //! {object}
+    //! A default instance of [function:replace_errors_t].
+    constexpr replace_errors_t replace_errors = {};
 } // namespace ogonek
 
 #endif // OGONEK_REPLACE_ERRORS_HPP

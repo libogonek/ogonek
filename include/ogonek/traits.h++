@@ -19,13 +19,6 @@
 #include <type_traits>
 
 namespace ogonek {
-    template <typename EncodingForm>
-    using CodeUnit = typename EncodingForm::code_unit;
-    template <typename EncodingForm>
-    using EncodingState = typename EncodingForm::state;
-    template <typename EncodingForm>
-    using is_stateless = std::is_empty<EncodingState<EncodingForm>>;
-
     namespace detail {
         struct always_validated_tester {
             template <typename UnicodeSequence>

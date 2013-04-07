@@ -18,7 +18,7 @@
 #include <ogonek/types.h++>
 #include <ogonek/detail/ranges.h++>
 #include <ogonek/detail/container/partial_array.h++>
-#include <ogonek/encoding/detail/encoded_character.h++>
+#include <ogonek/detail/container/encoded_character.h++>
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>

@@ -19,11 +19,20 @@
 #include <type_traits>
 
 namespace ogonek {
-    namespace detail {
-        struct error_handler {
-            struct is_error_handler : std::true_type {};
-        };
+    //! {concept}
+    //! An error handler strategy for encoding/decoding.
+    // concept ErrorHandler : ogonek::error_handler
+    // requires Movable {
+        //! {function}
+        //! TODO handles encoding error
+        // ?? apply_decode(??) const;
 
+        //! {function}
+        //! TODO handles decoding error
+        // ?? apply_encode(??) const;
+    // };
+
+    namespace detail {
         struct error_handler_test {
             template <typename T>
             typename wheels::Unqualified<T>::is_error_handler static test(int);
@@ -31,8 +40,17 @@ namespace ogonek {
             std::false_type static test(...);
         };
     } // namespace detail
+
+    //! {trait}
+    //! *Returns*: `true` is `T` is a model of [concept:ErrorHandler].
     template <typename T>
     using is_error_handler = wheels::TraitOf<detail::error_handler_test, T>;
+
+    //! {tag}
+    //! A tag type to mark error handlers.
+    struct error_handler {
+        struct is_error_handler : std::true_type {};
+    };
 } // namespace ogonek
 
 #endif // OGONEK_ERROR_HANDLER_HPP

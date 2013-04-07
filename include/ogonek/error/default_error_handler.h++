@@ -17,8 +17,13 @@
 #include <ogonek/error/throw_error.h++>
 
 namespace ogonek {
-    constexpr auto default_error_handler = throw_error;
+    //! {callable}
+    //! Default error handling policy.
     using default_error_handler_t = throw_error_t;
+
+    //! {object}
+    //! A default instance of [function:default_error_handler_t].
+    constexpr default_error_handler_t default_error_handler = {};
 } // namespace ogonek
 
 #endif // OGONEK_DEFAULT_ERROR_HANDLER_HPP

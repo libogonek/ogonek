@@ -16,23 +16,25 @@
 
 #include <ogonek/error/error_handler.h++>
 #include <ogonek/types.h++>
-#include <ogonek/traits.h++>
-#include <ogonek/encoding/detail/encoded_character.h++>
+#include <ogonek/encoding/traits.h++>
+#include <ogonek/detail/container/encoded_character.h++>
 
 #include <boost/range/sub_range.hpp>
 
 #include <stdexcept>
 
 namespace ogonek {
-    //! Exception that is thrown when validation fails
+    //! {exception}
+    //! *Thrown*: when validation fails during an encoding/decoding operation
     struct unicode_error : std::exception { // TODO Boost.Exception
         char const* what() const throw() override {
             return "Unicode validation failed";
         }
     };
 
-    //! Strategy for throwing upon discovering invalid data
-    struct throw_error_t : detail::error_handler {
+    //! {callable}
+    //! Error handler that throws upon discovering invalid data
+    struct throw_error_t : error_handler {
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const&, EncodingState<EncodingForm>&, code_point&) {
             throw unicode_error();
@@ -41,7 +43,10 @@ namespace ogonek {
         static detail::encoded_character<EncodingForm> apply_encode(code_point, EncodingState<EncodingForm>&) {
             throw unicode_error();
         }
-    } constexpr throw_error = {};
+    };
+    //! {object}
+    //! A default instance of [function:throw_error_t].
+    constexpr throw_error_t throw_error = {};
 } // namespace ogonek
 
 #endif // OGONEK_THROW_ERROR_HPP

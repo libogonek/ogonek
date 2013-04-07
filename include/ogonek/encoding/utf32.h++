@@ -20,7 +20,7 @@
 #include <ogonek/detail/ranges.h++>
 #include <ogonek/detail/constants.h++>
 #include <ogonek/detail/container/partial_array.h++>
-#include <ogonek/encoding/detail/encoded_character.h++>
+#include <ogonek/detail/container/encoded_character.h++>
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>

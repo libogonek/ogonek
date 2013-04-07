@@ -17,8 +17,13 @@
 #include <ogonek/error/error_handler.h++>
 
 namespace ogonek {
-    //! Strategy for skipping validation
-    struct assume_valid_t : detail::error_handler {} constexpr assume_valid = {};
+    //! {tag}
+    //! Marker type for skipping validation.
+    struct assume_valid_t : error_handler {};
+
+    //! {object}
+    //! A default instance of [function:assume_valid_t].
+    constexpr assume_valid_t assume_valid = {};
 } // namespace ogonek
 
 #endif // OGONEK_ASSUME_VALID_HPP
