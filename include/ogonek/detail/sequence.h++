@@ -14,7 +14,7 @@
 #ifndef OGONEK_DETAIL_SEQUENCE_HPP
 #define OGONEK_DETAIL_SEQUENCE_HPP
 
-#include <ogonek/detail/sequence/forward_as_sequence.h++>
+#include <ogonek/detail/sequence/forward_sequence.h++>
 #include <ogonek/detail/sequence/sequence_ops.h++>
 
 #endif // OGONEK_DETAIL_SEQUENCE_HPP

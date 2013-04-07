@@ -11,8 +11,8 @@
 
 // Sequence forwarding
 
-#ifndef OGONEK_DETAIL_SEQUENCE_FORWARD_AS_SEQUENCE_HPP
-#define OGONEK_DETAIL_SEQUENCE_FORWARD_AS_SEQUENCE_HPP
+#ifndef OGONEK_DETAIL_SEQUENCE_FORWARD_SEQUENCE_HPP
+#define OGONEK_DETAIL_SEQUENCE_FORWARD_SEQUENCE_HPP
 
 #include <ogonek/detail/meta/character.h++>
 #include <ogonek/detail/meta/iterator.h++>
@@ -28,22 +28,22 @@
 namespace ogonek {
     namespace detail {
         //! {traits}
-        //! *Note*: implementation backend for [function:forward_as_sequence]
-        //          and [metafunction:result_of::forward_as_sequence].
+        //! *Note*: implementation backend for [function:forward_sequence]
+        //          and [metafunction:result_of::forward_sequence].
         template <typename T,
                     bool = is_sequence<wheels::Unqualified<T>>(),
                     bool = has_begin_end<T, std::forward_iterator_tag>(),
                     bool = is_null_terminated_string<wheels::Unqualified<T>>()>
-        struct forward_as_sequence_impl {};
+        struct forward_sequence_impl {};
 
         template <typename S, bool Ignore0, bool Ignore1>
-        struct forward_as_sequence_impl<S, true, Ignore0, Ignore1> {
+        struct forward_sequence_impl<S, true, Ignore0, Ignore1> {
             using result = S;
             static result forward(S&& s) { return std::forward<result>(s); }
         };
 
         template <typename Range, bool Ignore>
-        struct forward_as_sequence_impl<Range, false, true, Ignore> {
+        struct forward_sequence_impl<Range, false, true, Ignore> {
         private:
             using iterator = ConstIteratorOf<Range>;
         public:
@@ -52,13 +52,13 @@ namespace ogonek {
         };
 
         template <typename Char, std::size_t N>
-        struct forward_as_sequence_impl<Char(&)[N], false, true, true> : forward_as_sequence_impl<Char*> {};
+        struct forward_sequence_impl<Char(&)[N], false, true, true> : forward_sequence_impl<Char*> {};
         template <typename Ptr>
-        struct forward_as_sequence_impl<Ptr const&, false, false, true> : forward_as_sequence_impl<Ptr> {};
+        struct forward_sequence_impl<Ptr const&, false, false, true> : forward_sequence_impl<Ptr> {};
         template <typename Ptr>
-        struct forward_as_sequence_impl<Ptr&, false, false, true> : forward_as_sequence_impl<Ptr> {};
+        struct forward_sequence_impl<Ptr&, false, false, true> : forward_sequence_impl<Ptr> {};
         template <typename Char>
-        struct forward_as_sequence_impl<Char*, false, false, true> {
+        struct forward_sequence_impl<Char*, false, false, true> {
             using result = Char const*;
             static result forward(Char* p) { return std::forward<result>(p); }
         };
@@ -66,14 +66,14 @@ namespace ogonek {
         namespace result_of {
             //! {metafunction}
             //! *Requires*: `T` is a model of [concept:SequenceSource] [soft].
-            //! *Effects*: computes the result type for [function:ogonek::detail::forward_as_sequence].
+            //! *Effects*: computes the result type for [function:ogonek::detail::forward_sequence].
             //! *Returns*: `T` if `T` is a [concept:Sequence] type or a reference to one;
             //!            `U const(&)[N]` if `T` is a reference to an array of non-character type `U[N]`;
             //!            `Char const*` if `T` is a pointer `Char*` to a possibly `const` character type,
             //!              or a reference to an array of character type `Char[N]`.
             //! TODO: add support for containers and pairs of iterators and everything range-for-able.
             template <typename T>
-            using forward_as_sequence = typename forward_as_sequence_impl<T>::result;
+            using forward_sequence = typename forward_sequence_impl<T>::result;
         } // namespace result_of
 
         //! {function}
@@ -82,25 +82,25 @@ namespace ogonek {
         //!             if `T` is a pointer type, `t` is a valid pointer to the first element of a null-terminated string [undefined].
         //! *Effects*: forwards a sequence with the normalized interface, possibly using a wrapper.
         template <typename T>
-        result_of::forward_as_sequence<T const&> forward_as_sequence(T const& t) {
-            return forward_as_sequence_impl<T const&>::forward(t);
+        result_of::forward_sequence<T const&> forward_sequence(T const& t) {
+            return forward_sequence_impl<T const&>::forward(t);
         }
         //! {overload}
         template <typename T>
-        result_of::forward_as_sequence<T&> forward_as_sequence(T& t) {
-            return forward_as_sequence_impl<T&>::forward(t);
+        result_of::forward_sequence<T&> forward_sequence(T& t) {
+            return forward_sequence_impl<T&>::forward(t);
         }
 
         //! {overload}
         //! *Note*: this overload causes a hard error when an rvalue is passed.
         template <typename Invalid,
                   wheels::EnableIf<std::is_rvalue_reference<Invalid&&>>...>
-        void forward_as_sequence(Invalid&&) = delete;
+        void forward_sequence(Invalid&&) = delete;
 
         //! {overload}
         //! *Note*: this overload causes a hard error when no overload is valid.
-        void forward_as_sequence(...) = delete;
+        void forward_sequence(...) = delete;
     } // namespace detail
 } // namespace ogonek
 
-#endif // OGONEK_DETAIL_SEQUENCE_FORWARD_AS_SEQUENCE_HPP
+#endif // OGONEK_DETAIL_SEQUENCE_FORWARD_SEQUENCE_HPP
