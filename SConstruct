@@ -8,7 +8,12 @@ lib_name = 'ogonek_data'
 
 # Command line variables
 variables = [ EnumVariable('lib', 'kind of library to build', 'static', allowed_values=('static', 'shared'))
+            , BoolVariable('icu', 'include ICU interop', False)
             ]
+
+def apply_variables(env):
+    if env['icu']:
+        env.Append(CPPDEFINES = [ macro_prefix + '_ICU' ])
 
 ignored_warnings = [ 'mismatched-tags' ]
 
@@ -111,6 +116,8 @@ if env['lib'] == 'shared':
     lib_defines = [macro_prefix + '_BUILD', macro_prefix + '_SHARED']
 lib_flags = []
 
+apply_variables(env)
+
 # Setup the debug target
 debug_builddir = 'obj/debug/'
 debug_target = 'bin/debug/' + lib_name
@@ -155,14 +162,18 @@ if env['PLATFORM'] == 'win32':
 else:
     test_target = 'bin/test/runtest'
 test_flags = []
-test_libs = []
+if env['icu']:
+    test_libs = [ lib_name, 'icuuc', 'icudata' ]
+else:
+    test_libs = [ lib_name ]
 
 test = debug.Clone()
 test.MergeFlags(test_flags)
 test.Append(CPPPATH = ['test'])
 test.Append(LIBS = test_libs)
+test.Append(LIBPATH = 'bin/debug')
 test.VariantDir(test_builddir, '.', duplicate=0)
-test_program = test.Program(test_target, prefix(test_builddir, test_sources), LIBS=lib_name, LIBPATH='bin/debug')
+test_program = test.Program(test_target, prefix(test_builddir, test_sources))
 if env['test'] == 'all':
     test_arguments = ''
 else:

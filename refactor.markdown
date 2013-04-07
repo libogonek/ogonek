@@ -10,15 +10,13 @@ units with a known encoding.
 
 The following are models of UnicodeString:
 
- - any Range with a value type of `code_point`;
- - null-terminated `char32_t` strings;
- - null-terminated `char16_t` strings;
- - ranges of `char16_t` code units;
+ - any Sequence of `char32_t` code units;
+ - any Sequence of `char16_t` code units;
  - instances of `icu::UnicodeString`;
 
 ## Operations
 
 Given an lvalue `u` of a model of UnicodeString `U`, the expression
-`ogonek::forward_as_code_points(u)` is valid and returns a Range with a value
+`ogonek::forward_code_points(u)` is valid and returns a Sequence with a value
 type of `code_point`.
 

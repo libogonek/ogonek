@@ -16,7 +16,7 @@
 
 #include <ogonek/detail/meta/character.h++>
 #include <ogonek/detail/meta/iterator.h++>
-#include <ogonek/detail/sequence/sequence_traits.h++>
+#include <ogonek/detail/sequence/traits.h++>
 
 #include <wheels/meta.h++>
 
@@ -71,7 +71,6 @@ namespace ogonek {
             //!            `U const(&)[N]` if `T` is a reference to an array of non-character type `U[N]`;
             //!            `Char const*` if `T` is a pointer `Char*` to a possibly `const` character type,
             //!              or a reference to an array of character type `Char[N]`.
-            //! TODO: add support for containers and pairs of iterators and everything range-for-able.
             template <typename T>
             using forward_sequence = typename forward_sequence_impl<T>::result;
         } // namespace result_of
@@ -96,10 +95,6 @@ namespace ogonek {
         template <typename Invalid,
                   wheels::EnableIf<std::is_rvalue_reference<Invalid&&>>...>
         void forward_sequence(Invalid&&) = delete;
-
-        //! {overload}
-        //! *Note*: this overload causes a hard error when no overload is valid.
-        void forward_sequence(...) = delete;
     } // namespace detail
 } // namespace ogonek
 

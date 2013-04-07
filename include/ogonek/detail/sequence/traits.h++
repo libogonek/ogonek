@@ -139,6 +139,10 @@ namespace ogonek {
             //! *Returns*: the type of values in the sequence`S`.
             template <typename S>
             using Value = typename sequence_ops<S>::value_type;
+            template <typename S>
+            struct value {
+                using type = Value<S>;
+            };
 
             //! {trait}
             //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
@@ -146,6 +150,10 @@ namespace ogonek {
             //! *Note*: this type may not be a reference if the sequence `S` is not persistent.
             template <typename S>
             using Reference = typename sequence_ops<S>::reference;
+            template <typename S>
+            struct reference {
+                using type = Reference<S>;
+            };
 
             //! {function}
             //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].

@@ -9,12 +9,16 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// Sequence concept tools
+// UnicodeString concept tools
 
-#ifndef OGONEK_DETAIL_SEQUENCE_HPP
-#define OGONEK_DETAIL_SEQUENCE_HPP
+#ifndef OGONEK_DETAIL_UNICODE_STRING_HPP
+#define OGONEK_DETAIL_UNICODE_STRING_HPP
 
-#include <ogonek/detail/sequence/forward_sequence.h++>
-#include <ogonek/detail/sequence/traits.h++>
+#include <ogonek/detail/unicode_string/forward_code_points.h++>
 
-#endif // OGONEK_DETAIL_SEQUENCE_HPP
+#ifdef OGONEK_ICU
+#include <ogonek/detail/sequence/icu.h++>
+#endif // OGONEK_ICU
+
+#endif // OGONEK_DETAIL_UNICODE_STRING_HPP
+
