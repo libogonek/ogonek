@@ -11,8 +11,8 @@
 
 // Default error handlers
 
-#ifndef OGONEK_DEFAULT_ERROR_HANDLER_HPP
-#define OGONEK_DEFAULT_ERROR_HANDLER_HPP
+#ifndef OGONEK_ERROR_DEFAULT_ERROR_HANDLER_HPP
+#define OGONEK_ERROR_DEFAULT_ERROR_HANDLER_HPP
 
 #include <ogonek/error/throw_error.h++>
 
@@ -26,5 +26,4 @@ namespace ogonek {
     constexpr default_error_handler_t default_error_handler = {};
 } // namespace ogonek
 
-#endif // OGONEK_DEFAULT_ERROR_HANDLER_HPP
-
+#endif // OGONEK_ERROR_DEFAULT_ERROR_HANDLER_HPP

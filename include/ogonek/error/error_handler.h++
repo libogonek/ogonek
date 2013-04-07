@@ -11,8 +11,8 @@
 
 // Base error handler marker
 
-#ifndef OGONEK_ERROR_HANDLER_HPP
-#define OGONEK_ERROR_HANDLER_HPP
+#ifndef OGONEK_ERROR_ERROR_HANDLER_HPP
+#define OGONEK_ERROR_ERROR_HANDLER_HPP
 
 #include <wheels/meta.h++>
 
@@ -53,5 +53,4 @@ namespace ogonek {
     };
 } // namespace ogonek
 
-#endif // OGONEK_ERROR_HANDLER_HPP
-
+#endif // OGONEK_ERROR_ERROR_HANDLER_HPP

@@ -11,8 +11,8 @@
 
 // Error handler that discards bad data
 
-#ifndef OGONEK_DISCARD_ERRORS_HPP
-#define OGONEK_DISCARD_ERRORS_HPP
+#ifndef OGONEK_ERROR_DISCARD_ERRORS_HPP
+#define OGONEK_ERROR_DISCARD_ERRORS_HPP
 
 #include <ogonek/error/error_handler.h++>
 #include <ogonek/types.h++>
@@ -43,5 +43,4 @@ namespace ogonek {
     constexpr discard_errors_t discard_errors = {};
 } // namespace ogonek
 
-#endif // OGONEK_DISCARD_ERRORS_HPP
-
+#endif // OGONEK_ERROR_DISCARD_ERRORS_HPP

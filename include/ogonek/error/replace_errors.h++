@@ -11,8 +11,8 @@
 
 // Error handler that uses a replacement character
 
-#ifndef OGONEK_REPLACE_ERRORS_HPP
-#define OGONEK_REPLACE_ERRORS_HPP
+#ifndef OGONEK_ERROR_REPLACE_ERRORS_HPP
+#define OGONEK_ERROR_REPLACE_ERRORS_HPP
 
 #include <ogonek/error/error_handler.h++>
 #include <ogonek/types.h++>
@@ -47,5 +47,4 @@ namespace ogonek {
     constexpr replace_errors_t replace_errors = {};
 } // namespace ogonek
 
-#endif // OGONEK_REPLACE_ERRORS_HPP
-
+#endif // OGONEK_ERROR_REPLACE_ERRORS_HPP

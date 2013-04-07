@@ -9,11 +9,14 @@ lib_name = 'ogonek_data'
 # Command line variables
 variables = [ EnumVariable('lib', 'kind of library to build', 'static', allowed_values=('static', 'shared'))
             , BoolVariable('icu', 'include ICU interop', False)
+            , BoolVariable('boost_exception', 'include Boost.Exception support', True)
             ]
 
 def apply_variables(env):
     if env['icu']:
         env.Append(CPPDEFINES = [ macro_prefix + '_ICU' ])
+    if env['boost_exception']:
+        env.Append(CPPDEFINES = [ macro_prefix + '_BOOST_EXCEPTION' ])
 
 ignored_warnings = [ 'mismatched-tags' ]
 
@@ -162,10 +165,11 @@ if env['PLATFORM'] == 'win32':
 else:
     test_target = 'bin/test/runtest'
 test_flags = []
+test_libs = [ lib_name ]
 if env['icu']:
-    test_libs = [ lib_name, 'icuuc', 'icudata' ]
-else:
-    test_libs = [ lib_name ]
+    test_libs += [ 'icuuc', 'icudata' ]
+if env['boost_exception']:
+    test_libs += [ 'boost_exception' ]
 
 test = debug.Clone()
 test.MergeFlags(test_flags)

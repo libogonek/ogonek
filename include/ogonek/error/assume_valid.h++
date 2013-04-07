@@ -11,8 +11,8 @@
 
 // Error handling policy for data asserted valid
 
-#ifndef OGONEK_ASSUME_VALID_HPP
-#define OGONEK_ASSUME_VALID_HPP
+#ifndef OGONEK_ERROR_ASSUME_VALID_HPP
+#define OGONEK_ERROR_ASSUME_VALID_HPP
 
 #include <ogonek/error/error_handler.h++>
 
@@ -26,5 +26,4 @@ namespace ogonek {
     constexpr assume_valid_t assume_valid = {};
 } // namespace ogonek
 
-#endif // OGONEK_ASSUME_VALID_HPP
-
+#endif // OGONEK_ERROR_ASSUME_VALID_HPP
