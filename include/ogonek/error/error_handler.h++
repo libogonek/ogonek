@@ -25,14 +25,14 @@ namespace ogonek {
         };
         
         struct error_handler_tester {
-            template <typename T, typename = typename T::is_error_handler>
-            std::true_type static test(int);
             template <typename T>
+            typename T::is_error_handler static test(int);
+            template <typename...>
             std::false_type static test(...);
         };
     } // namespace detail
     template <typename T>
-    using is_error_handler = wheels::TraitOf<detail::error_handler_tester, T>;
+    using is_error_handler = wheels::TraitOf<detail::error_handler_tester, wheels::Unqualified<T>>;
 } // namespace ogonek
 
 #endif // OGONEK_ERROR_HANDLER_HPP

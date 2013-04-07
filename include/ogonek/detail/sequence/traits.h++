@@ -62,13 +62,21 @@ namespace ogonek {
 
         //! {tag}
         //! *Effects*: marks a derived type as a [concept:Sequence] with native operations.
-        struct sequence_tag {};
+        struct simple_sequence {
+            struct is_simple_sequence : std::true_type {};
+        };
 
+        struct simple_sequence_test {
+            template <typename T>
+            typename wheels::Unqualified<T>::is_simple_sequence static test(int);
+            template <typename...>
+            std::false_type static test(...);
+        };
         //! {trait}
         //! *Returns*: `true` if `S` is a [concept:Sequence] with native operations;
         //             `false` otherwise.
-        template <typename S>
-        struct is_simple_sequence : std::is_base_of<sequence_tag, wheels::Unqualified<S>> {};
+        template <typename T>
+        using is_simple_sequence = wheels::TraitOf<detail::simple_sequence_test, T>;
 
         //! {traits}
         //! *Note*: implementation backend for [traits:sequence_ops].
