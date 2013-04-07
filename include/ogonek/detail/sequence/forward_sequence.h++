@@ -31,7 +31,7 @@ namespace ogonek {
         //! *Note*: implementation backend for [function:forward_sequence]
         //          and [metafunction:result_of::forward_sequence].
         template <typename T,
-                    bool = is_sequence<wheels::Unqualified<T>>(),
+                    bool = is_simple_sequence<wheels::Unqualified<T>>(),
                     bool = has_begin_end<T, std::forward_iterator_tag>(),
                     bool = is_null_terminated_string<wheels::Unqualified<T>>()>
         struct forward_sequence_impl {};
