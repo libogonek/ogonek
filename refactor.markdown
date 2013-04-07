@@ -8,7 +8,7 @@ units with a known encoding.
 
 ## Models
 
-The following are models of UnicodeString in ogonek:
+The following are models of UnicodeString:
 
  - any Range with a value type of `code_point`;
  - null-terminated `char32_t` strings;
@@ -22,5 +22,14 @@ Given an lvalue `u` of a model of UnicodeString `U`, the expression
 `ogonek::forward_as_code_points(u)` is valid and returns a Range with a value
 type of `code_point`.
 
+# Sequence
+
+## Description
+
+Sequence is like a range.
+
+## Models
+
+## Operations
 
 

@@ -14,23 +14,7 @@
 #ifndef OGONEK_DETAIL_SEQUENCE_HPP
 #define OGONEK_DETAIL_SEQUENCE_HPP
 
-namespace ogonek {
-    namespace detail {
-        template <typename S>
-        struct sequence_traits {
-            using value_type = SequenceValueType<S>;
-            using reference = SequenceReferenceType<S>;
-
-            static bool empty(S const&);
-            static reference front(S const&);
-            static void pop_front(S&);
-            static std::size_t size(S const&);
-            static reference back(S const&);
-            static void pop_back(S&);
-            static reference operator[](S const&, std::ptrdiff_t);
-            static S slice(S const&, std::ptrdiff_t, std::ptrdiff_t);
-        };
-    } // namespace detail
-} // namespace ogonek
+#include <ogonek/detail/sequence/forward_as_sequence.h++>
+#include <ogonek/detail/sequence/sequence_ops.h++>
 
 #endif // OGONEK_DETAIL_SEQUENCE_HPP
