@@ -22,14 +22,3 @@ Given an lvalue `u` of a model of UnicodeString `U`, the expression
 `ogonek::forward_as_code_points(u)` is valid and returns a Range with a value
 type of `code_point`.
 
-# Sequence
-
-## Description
-
-Sequence is like a range.
-
-## Models
-
-## Operations
-
-
