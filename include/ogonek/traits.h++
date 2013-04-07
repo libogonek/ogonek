@@ -35,7 +35,7 @@ namespace ogonek {
         };
     } // namespace detail
     template <typename T>
-    using always_validated = wheels::TraitOf<detail::always_validated_tester, T>;
+    using always_validated = wheels::TraitOf<detail::always_validated_tester, wheels::Unqualified<T>>;
 
     namespace detail {
         template <typename NormalForm>
@@ -47,7 +47,7 @@ namespace ogonek {
         };
     } // namespace detail
     template <typename NormalForm, typename T>
-    using always_normalized = wheels::TraitOf<detail::always_normalized_tester<NormalForm>, T>;
+    using always_normalized = wheels::TraitOf<detail::always_normalized_tester<NormalForm>, wheels::Unqualified<T>>;
 
     namespace detail {
         struct always_casefolded_tester {
@@ -58,7 +58,7 @@ namespace ogonek {
         };
     } // namespace detail
     template <typename T>
-    using always_casefolded = wheels::TraitOf<detail::always_casefolded_tester, T>;
+    using always_casefolded = wheels::TraitOf<detail::always_casefolded_tester, wheels::Unqualified<T>>;
 } // namespace ogonek
 
 #endif // OGONEK_TRAITS_HPP
