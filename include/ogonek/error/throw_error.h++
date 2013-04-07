@@ -19,6 +19,7 @@
 #include <ogonek/types.h++>
 #include <ogonek/encoding/traits.h++>
 #include <ogonek/detail/container/encoded_character.h++>
+#include <ogonek/detail/container/optional.h++>
 
 #include <boost/range/sub_range.hpp>
 
@@ -26,6 +27,16 @@ namespace ogonek {
     //! {callable}
     //! Error handler that throws upon discovering invalid data
     struct throw_error_t : error_handler {
+        template <typename Sequence, typename EncodingForm>
+        decode_correction<Sequence> handle(decode_error<Sequence, EncodingForm> const& error) {
+            throw error;
+        }
+
+        template <typename Sequence, typename EncodingForm>
+        encode_correction<Sequence, EncodingForm> handle(encode_error<Sequence, EncodingForm> const& error) {
+            throw error;
+        }
+
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const&, EncodingState<EncodingForm>&, code_point&) {
             throw unicode_error();

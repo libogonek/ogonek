@@ -17,7 +17,6 @@
 #include <ogonek/error/error_handler.h++>
 #include <ogonek/types.h++>
 #include <ogonek/encoding/traits.h++>
-#include <ogonek/detail/container/encoded_character.h++>
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>
@@ -29,6 +28,17 @@ namespace ogonek {
     //! {callable}
     //! Error handler that discards erroneous data.
     struct discard_errors_t : error_handler {
+        template <typename Sequence, typename EncodingForm>
+        decode_correction<Sequence> handle(decode_error<Sequence, EncodingForm> const& error) {
+            error.source.pop_front();
+            return { error.source, {} };
+        }
+
+        template <typename Sequence, typename EncodingForm>
+        encode_correction<Sequence, EncodingForm> handle(encode_error<Sequence, EncodingForm> const& error) {
+            return { error.source, {} };
+        }
+
         template <typename EncodingForm, typename Range>
         static boost::sub_range<Range> apply_decode(boost::sub_range<Range> const& source, EncodingState<EncodingForm>&, code_point&) {
             return { std::next(boost::begin(source)), boost::end(source) };

@@ -16,10 +16,9 @@
 
 #include <ogonek/sequence/traits.h++>
 #include <ogonek/detail/meta/is_decayed.h++>
+#include <ogonek/detail/container/optional.h++>
 
 #include <wheels/meta.h++>
-
-#include <boost/optional.hpp> // TODO Argh, what about moves
 
 #include <iterator>
 #include <type_traits>
@@ -96,7 +95,7 @@ namespace ogonek {
                 return !seq || seq::empty(*seq);
             }
 
-            boost::optional<Sequence> seq;
+            detail::optional<Sequence> seq;
         };
 
         //! {function}
