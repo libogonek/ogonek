@@ -24,7 +24,7 @@ namespace ogonek {
               typename Range, typename ErrorHandler,
               typename Iterator = detail::RangeConstIterator<Range>,
               typename EncodingIterator = encoding_iterator<EncodingForm, Iterator, ErrorHandler>>
-    static boost::iterator_range<EncodingIterator> encode(Range const& r, ErrorHandler) {
+    boost::iterator_range<EncodingIterator> encode(Range const& r, ErrorHandler) {
         return detail::wrap_range<EncodingIterator>(r);
     }
     template <typename EncodingForm,
@@ -32,7 +32,7 @@ namespace ogonek {
               typename Iterator = detail::RangeConstIterator<Range>,
               typename DecodingIterator = decoding_iterator<EncodingForm, Iterator, ErrorHandler>,
               typename DecodingRange = detail::tagged_iterator_range<DecodingIterator, detail::validated_tag>>
-    static DecodingRange decode(Range const& r, ErrorHandler) {
+    DecodingRange decode(Range const& r, ErrorHandler) {
         return detail::wrap_tagged_range<DecodingIterator, detail::validated_tag>(r);
     }
 
