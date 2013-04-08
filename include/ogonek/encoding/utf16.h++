@@ -17,9 +17,11 @@
 #include <ogonek/encoding/iterator.h++>
 #include <ogonek/types.h++>
 #include <ogonek/error.h++>
+#include <ogonek/error/unicode_error.h++>
 #include <ogonek/detail/ranges.h++>
 #include <ogonek/detail/constants.h++>
 #include <ogonek/detail/container/partial_array.h++>
+#include <ogonek/sequence/traits.h++>
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>
@@ -98,6 +100,45 @@ namespace ogonek {
 
             out = combine_surrogates(lead, trail);
             return { first, boost::end(r) };
+        }
+        template <typename Sequence>
+        static std::pair<Sequence, code_point> decode_one_ex(Sequence s, state&, assume_valid_t) {
+            auto lead = seq::front(s);
+            seq::pop_front(s);
+
+            if(!detail::is_surrogate(lead)) {
+                return { s, lead };
+            }
+            auto trail = seq::front(s);
+            seq::pop_front(s);
+
+            return { s, combine_surrogates(lead, trail) };
+        }
+        template <typename Sequence, typename ErrorHandler>
+        static std::pair<Sequence, code_point> decode_one_ex(Sequence s, state& state, ErrorHandler handler) {
+            auto lead = seq::front(s);
+            seq::pop_front(s);
+
+            if(!detail::is_surrogate(lead)) {
+                return { s, lead };
+            }
+            if(!detail::is_lead_surrogate(lead)) {
+                decode_error<Sequence, utf16> error { s, state };
+                detail::optional<code_point> u;
+                std::tie(s, u) = handler.handle(error);
+                return { s, *u };
+            }
+
+            auto trail = seq::front(s);
+            seq::pop_front(s);
+            if(!detail::is_trail_surrogate(trail)) {
+                decode_error<Sequence, utf16> error { s, state };
+                detail::optional<code_point> u;
+                std::tie(s, u) = handler.handle(error);
+                return { s, *u };
+            }
+
+            return { s, combine_surrogates(lead, trail) };
         }
     };
     

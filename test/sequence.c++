@@ -51,17 +51,35 @@ TEST_CASE("encode", "Encoding sequence") {
     auto str = ogonek::forward_sequence(U"\U00010000ab");
 
     auto e = ogonek::encode_ex<ogonek::utf16>(str, ogonek::assume_valid);
-    char16_t res[] = u"\U00010000ab";
+    char16_t res16[] = u"\U00010000ab";
+    for(int i = 0; !seq::empty(e); seq::pop_front(e), ++i) {
+        auto&& x = seq::front(e);
+        REQUIRE(x == res16[i]);
+    }
+
+    auto f = ogonek::encode_ex<ogonek::utf8>(str, ogonek::assume_valid);
+    char res8[] = u8"\U00010000ab";
+    for(int i = 0; !seq::empty(f); seq::pop_front(f), ++i) {
+        auto&& x = seq::front(f);
+        REQUIRE(x == res8[i]);
+    }
+}
+TEST_CASE("decode", "Decoding sequence") {
+    namespace seq = ogonek::seq;
+    char32_t res[] = U"\U00010000ab";
+
+    auto str16 = ogonek::forward_sequence(u"\U00010000ab");
+    auto e = ogonek::decode_ex<ogonek::utf16>(str16, ogonek::assume_valid);
     for(int i = 0; !seq::empty(e); seq::pop_front(e), ++i) {
         auto&& x = seq::front(e);
         REQUIRE(x == res[i]);
     }
 
-    auto f = ogonek::encode_ex<ogonek::utf8>(str, ogonek::assume_valid);
-    char res2[] = u8"\U00010000ab";
+    auto str8 = ogonek::forward_sequence(u8"\U00010000ab");
+    auto f = ogonek::decode_ex<ogonek::utf8>(str8, ogonek::assume_valid);
     for(int i = 0; !seq::empty(f); seq::pop_front(f), ++i) {
         auto&& x = seq::front(f);
-        REQUIRE(x == res2[i]);
+        REQUIRE(x == res[i]);
     }
 }
 

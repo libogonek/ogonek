@@ -88,51 +88,37 @@ namespace ogonek {
         return { s, h };
     }
 
-    /*
-    template <typename EncodingForm, typename Iterator, typename ErrorHandler>
-    struct decoding_iterator
-    : boost::iterator_facade<
-        decoding_iterator<EncodingForm, Iterator, ErrorHandler>,
-        code_point,
-        std::input_iterator_tag, // TODO
-        code_point
-      > {
-    public:
-        decoding_iterator(Iterator first, Iterator last)
-        : first(std::move(first)), last(std::move(last)) {}
+    template <typename Sequence, typename EncodingForm, typename ErrorHandler>
+    struct decoding_sequence : detail::simple_sequence {
+        static_assert(detail::is_decayed<Sequence>(), "Sequence must be a decayed type");
 
-        code_point dereference() const {
+        using value_type = code_point;
+        using reference = value_type;
+
+        decoding_sequence(Sequence s, ErrorHandler handler)
+        : s(std::move(s)), handler(std::move(handler)) {}
+
+        bool empty() const { return seq::empty(s); }
+        reference front() const {
             code_point u;
-            auto s = state;
-            EncodingForm::decode_one(boost::sub_range<range>(first, last), u, s, ErrorHandler{});
+            auto st = state;
+            std::tie(std::ignore, u) = EncodingForm::decode_one_ex(seq::save(s), st, handler);
             return u;
         }
-        bool equal(decoding_iterator const& that) const {
-            return first == that.first || (first == last && that.first == that.last);
-        }
-        void increment() {
-            code_point dummy;
-            first = EncodingForm::decode_one(boost::sub_range<range>(first, last), dummy, state, ErrorHandler{}).begin();
+        void pop_front() {
+            std::tie(s, std::ignore) = EncodingForm::decode_one_ex(seq::save(s), state, handler);
         }
 
-    private:
-        using range = boost::iterator_range<Iterator>;
-
-        friend class detail::decoding_iterator_access;
-        
-        Iterator first, last;
+        Sequence s;
         EncodingState<EncodingForm> state {};
+        ErrorHandler handler;
     };
 
     template <typename EncodingForm,
-              typename Range, typename ErrorHandler,
-              typename Iterator = detail::RangeConstIterator<Range>,
-              typename DecodingIterator = decoding_iterator<EncodingForm, Iterator, ErrorHandler>,
-              typename DecodingRange = detail::tagged_iterator_range<DecodingIterator, detail::validated_tag>>
-    static DecodingRange decode(Range const& r, ErrorHandler) {
-        return detail::wrap_tagged_range<DecodingIterator, detail::validated_tag>(r);
+              typename Sequence, typename ErrorHandler>
+    decoding_sequence<Sequence, EncodingForm, ErrorHandler> decode_ex(Sequence s, ErrorHandler h) {
+        return { s, h };
     }
-    */
 } // namespace ogonek
 
 #endif // OGONEK_ENCODING_ITERATOR_HPP

@@ -17,10 +17,12 @@
 #include <ogonek/encoding/iterator.h++>
 #include <ogonek/types.h++>
 #include <ogonek/error.h++>
+#include <ogonek/error/unicode_error.h++>
 #include <ogonek/detail/ranges.h++>
 #include <ogonek/detail/constants.h++>
 #include <ogonek/detail/container/partial_array.h++>
 #include <ogonek/detail/container/encoded_character.h++>
+#include <ogonek/sequence/traits.h++>
 
 #include <boost/range/iterator_range.hpp>
 #include <boost/range/sub_range.hpp>
@@ -163,6 +165,95 @@ namespace ogonek {
                 return ErrorHandler::template apply_decode<utf8>(r, s, out);
             }
             return { first, boost::end(r) };
+        }
+        template <typename Sequence>
+        static std::pair<Sequence, code_point> decode_one_ex(Sequence s, state&, assume_valid_t) {
+            byte b0 = seq::front(s);
+            seq::pop_front(s);
+            auto length = sequence_length(b0);
+
+            if(length == 1) {
+                return { s, b0 };
+            }
+
+            std::array<byte, 4> b = {{ b0, }};
+            for(int i = 1; i < length; ++i) {
+                b[i] = seq::front(s);
+                seq::pop_front(s);
+            }
+
+            code_point decoded;
+            if(length == 2) {
+                decoded = decode(b[0], b[1]);
+            } else if(length == 3) {
+                decoded = decode(b[0], b[1], b[2]);
+            } else {
+                decoded = decode(b[0], b[1], b[2], b[3]);
+            }
+
+            return { s, decoded };
+        }
+        template <typename Sequence, typename ErrorHandler>
+        static std::pair<Sequence, code_point> decode_one_ex(Sequence s, state& state, ErrorHandler handler) {
+            byte b0 = seq::front(s);
+            seq::pop_front(s);
+            auto length = sequence_length(b0);
+
+            if(length == 1) {
+                return { s, b0 };
+            }
+
+            auto is_invalid = [](byte b) { return b == 0xC0 || b == 0xC1 || b > 0xF4; };
+            auto is_continuation = [](byte b) {
+                return (b & continuation_mask) == continuation_signature;
+            };
+
+            if(is_invalid(b0) || is_continuation(b0)) {
+                decode_error<Sequence, utf8> error { s, state };
+                detail::optional<code_point> u;
+                std::tie(s, u) = handler.handle(error);
+                return { s, u };
+            }
+
+            std::array<byte, 4> b = {{ b0, }};
+            for(int i = 1; i < length; ++i) {
+                b[i] = seq::front(s);
+                seq::pop_front(s);
+                if(!is_continuation(b[i])) {
+                    decode_error<Sequence, utf8> error { s, state };
+                    detail::optional<code_point> u;
+                    std::tie(s, u) = handler.handle(error);
+                    return { s, u };
+                }
+            }
+
+            code_point decoded;
+            if(length == 2) {
+                decoded = decode(b[0], b[1]);
+            } else if(length == 3) {
+                decoded = decode(b[0], b[1], b[2]);
+            } else {
+                decoded = decode(b[0], b[1], b[2], b[3]);
+            }
+
+            auto is_overlong = [](code_point u, int bytes) {
+                return u <= last_1byte_value
+                    || (u <= last_2byte_value && bytes > 2)
+                    || (u <= last_3byte_value && bytes > 3);
+            };
+            if(is_overlong(decoded, length)) {
+                decode_error<Sequence, utf8> error { s, state };
+                detail::optional<code_point> u;
+                std::tie(s, u) = handler.handle(error);
+                return { s, u };
+            }
+            if(detail::is_surrogate(decoded) || decoded > detail::last_code_point) {
+                decode_error<Sequence, utf8> error { s, state };
+                detail::optional<code_point> u;
+                std::tie(s, u) = handler.handle(error);
+                return { s, u };
+            }
+            return { s, decoded };
         }
     };
 } // namespace ogonek
