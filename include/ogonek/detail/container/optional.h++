@@ -52,14 +52,14 @@ namespace ogonek {
             }
 
             optional& operator=(optional const& that) {
-                if(present && that.present) **this == *that;
+                if(present && that.present) **this = *that;
                 else if(present) destroy();
                 else if(that.present) place(*that);
                 else present = false;
                 return *this;
             }
             optional& operator=(optional&& that) {
-                if(present && that.present) **this == std::move(*that);
+                if(present && that.present) **this = std::move(*that);
                 else if(present) destroy();
                 else if(that.present) place(std::move(*that));
                 else present = false;
@@ -100,7 +100,7 @@ namespace ogonek {
                 return *static_cast<T const*>(static_cast<void const*>(&storage));
             }
 
-            bool present;
+            bool present = false;
             storage_type storage;
         };
     } // namespace detail

@@ -40,12 +40,18 @@ namespace ogonek {
 
     template <typename Sequence, typename EncodingForm>
     struct encode_error : virtual unicode_error {
+        encode_error(Sequence source, EncodingState<EncodingForm> state)
+        : source(std::move(source)), state(state) {}
+
         Sequence source;
         EncodingState<EncodingForm> state;
     };
 
     template <typename Sequence, typename EncodingForm>
     struct decode_error : virtual unicode_error {
+        decode_error(Sequence source, EncodingState<EncodingForm> state)
+        : source(std::move(source)), state(state) {}
+
         Sequence source;
         EncodingState<EncodingForm> state;
     };

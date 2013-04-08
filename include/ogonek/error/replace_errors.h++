@@ -18,6 +18,7 @@
 #include <ogonek/error/assume_valid.h++>
 #include <ogonek/types.h++>
 #include <ogonek/encoding/traits.h++>
+#include <ogonek/sequence/traits.h++>
 
 #include <wheels/meta.h++>
 
@@ -34,8 +35,9 @@ namespace ogonek {
     struct replace_errors_t : error_handler {
         template <typename Sequence, typename EncodingForm>
         decode_correction<Sequence> handle(decode_error<Sequence, EncodingForm> const& error) {
-            error.source.pop_front();
-            return { error.source, U'\xFFFD' };
+            auto s = seq::save(error.source);
+            seq::pop_front(s);
+            return { s, U'\xFFFD' };
         }
 
         template <typename Sequence, typename EncodingForm>

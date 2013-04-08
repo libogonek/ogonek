@@ -212,7 +212,7 @@ namespace ogonek {
                 decode_error<Sequence, utf8> error { s, state };
                 detail::optional<code_point> u;
                 std::tie(s, u) = handler.handle(error);
-                return { s, u };
+                return { s, *u };
             }
 
             std::array<byte, 4> b = {{ b0, }};
@@ -223,7 +223,7 @@ namespace ogonek {
                     decode_error<Sequence, utf8> error { s, state };
                     detail::optional<code_point> u;
                     std::tie(s, u) = handler.handle(error);
-                    return { s, u };
+                    return { s, *u };
                 }
             }
 
@@ -245,13 +245,13 @@ namespace ogonek {
                 decode_error<Sequence, utf8> error { s, state };
                 detail::optional<code_point> u;
                 std::tie(s, u) = handler.handle(error);
-                return { s, u };
+                return { s, *u };
             }
             if(detail::is_surrogate(decoded) || decoded > detail::last_code_point) {
                 decode_error<Sequence, utf8> error { s, state };
                 detail::optional<code_point> u;
                 std::tie(s, u) = handler.handle(error);
-                return { s, u };
+                return { s, *u };
             }
             return { s, decoded };
         }

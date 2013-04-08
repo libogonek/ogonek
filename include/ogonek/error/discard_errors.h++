@@ -30,8 +30,9 @@ namespace ogonek {
     struct discard_errors_t : error_handler {
         template <typename Sequence, typename EncodingForm>
         decode_correction<Sequence> handle(decode_error<Sequence, EncodingForm> const& error) {
-            error.source.pop_front();
-            return { error.source, {} };
+            auto s = seq::save(error.source);
+            seq::pop_front(s);
+            return { s, {} };
         }
 
         template <typename Sequence, typename EncodingForm>
