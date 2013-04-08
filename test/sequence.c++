@@ -44,6 +44,27 @@ TEST_CASE("sequence_iterator", "sequence iterator tests") {
     }
 }
 
+#include <ogonek/encoding/sequence.h++>
+#include <ogonek/encoding/utf8.h++>
+TEST_CASE("encode", "Encoding sequence") {
+    namespace seq = ogonek::seq;
+    auto str = ogonek::forward_sequence(U"\U00010000ab");
+
+    auto e = ogonek::encode_ex<ogonek::utf16>(str, ogonek::assume_valid);
+    char16_t res[] = u"\U00010000ab";
+    for(int i = 0; !seq::empty(e); seq::pop_front(e), ++i) {
+        auto&& x = seq::front(e);
+        REQUIRE(x == res[i]);
+    }
+
+    auto f = ogonek::encode_ex<ogonek::utf8>(str, ogonek::assume_valid);
+    char res2[] = u8"\U00010000ab";
+    for(int i = 0; !seq::empty(f); seq::pop_front(f), ++i) {
+        auto&& x = seq::front(f);
+        REQUIRE(x == res2[i]);
+    }
+}
+
 TEST_CASE("unicodestring", "Unicode string tests") {/*
     namespace seq = ogonek::seq;
     auto&& str = ogonek::forward_sequence(u"\xD800\xDC00" u"ab");
