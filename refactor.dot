@@ -1,0 +1,63 @@
+digraph ogonek {
+    graph [layout=dot rankdir=LR]
+    node [fontname=Sans]
+    edge [fontname=Monospace]
+
+    // sequence sources
+    cstring [label="string literal"]
+    iterable [label="iterable"]
+    icu [label="icu::UnicodeString",fontname=Monospace]
+    seq [label="sequence"]
+
+    // making sequences
+    { edge [label="as_sequence"]
+        {cstring iterable icu} -> seq
+        seq -> seq
+    }
+
+    // Sequences
+    seq -> {seq16 seq32 seqn} [style=dotted,arrowhead=none]
+
+    // Unicode sources
+    seq16 [label="seq char16"]
+    seq32 [label="seq char32"]
+    uni [label="well-formed"]
+
+    // Making Unicode strings
+    { edge [label="as_unicode"]
+        {seq16 seq32} -> uni
+        uni -> uni
+    }
+
+    // Encoded strings
+    seqn [label="seq code units E"]
+    seqv [label="encoded<E>"]
+
+    // Decoding strings
+    { edge [label="decode<E>"]
+        seqn -> uni
+        seqv -> uni
+    }
+
+    // Encoding strings
+    uni -> seqv [label="encode<E>"]
+
+    // Normalizing
+    norm [label="normalized<N>"]
+    uni -> norm [label="normalize<N>"]
+
+    // Casefolding
+    fold [label="casefolded"]
+    uni -> fold [label="casefold"]
+
+    // Built-ins
+    { node [label="...", shape=none, fontname=Monospace]
+        etc1
+        etc2
+    }
+    // Hashing
+    norm -> etc1 [label="hash<N>, op==, op<"]
+
+    // Comparing
+    fold -> etc2 [label="caseless op== and op<", fontname=Sans]
+}
