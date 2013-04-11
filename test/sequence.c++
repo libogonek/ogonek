@@ -120,3 +120,5 @@ TEST_CASE("icu", "ICU interop tests") {
     REQUIRE(seq::empty(ustr));
 }
 
+#include <ogonek/sequence/properties.h++>
+
