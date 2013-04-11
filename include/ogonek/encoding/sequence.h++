@@ -17,6 +17,7 @@
 #include <ogonek/sequence/traits.h++>
 #include <ogonek/sequence/properties.h++>
 #include <ogonek/encoding/traits.h++>
+#include <ogonek/encoding/utf32.h++>
 #include <ogonek/detail/constants.h++>
 #include <ogonek/detail/meta/is_decayed.h++>
 #include <ogonek/detail/container/encoded_character.h++>
@@ -87,15 +88,22 @@ namespace ogonek {
     template <typename Sequence, typename EncodingForm, typename ErrorHandler>
     using encoding_sequence = detail::encoding_sequence_impl<wheels::Decay<Sequence>, EncodingForm, wheels::Decay<ErrorHandler>>;
 
-    namespace result_of {
-        template <typename EncodingForm, typename Sequence, typename ErrorHandler>
-        using encode_ex = encoding_sequence<Sequence, EncodingForm, ErrorHandler>;
-    } // namespace result_of
     template <typename EncodingForm,
-              typename Sequence, typename ErrorHandler>
-    result_of::encode_ex<EncodingForm, Sequence, ErrorHandler> encode_ex(Sequence&& s, ErrorHandler&& h) {
+              typename Sequence, typename ErrorHandler,
+              wheels::DisableIf<detail::is_well_formed<Sequence>>...>
+    encoding_sequence<Sequence, EncodingForm, ErrorHandler> encode_ex(Sequence&& s, ErrorHandler&& h) {
         return { std::forward<Sequence>(s), std::forward<ErrorHandler>(h) };
     }
+    template <typename EncodingForm,
+              typename Sequence, typename ErrorHandler,
+              wheels::EnableIf<detail::is_well_formed<Sequence>>...>
+    Sequence encode_ex(Sequence&& s, ErrorHandler&&) {
+        return std::forward<Sequence>(s);
+    }
+    namespace result_of {
+        template <typename EncodingForm, typename Sequence, typename ErrorHandler>
+        using encode_ex = decltype(ogonek::encode_ex<EncodingForm>(std::declval<Sequence>(), std::declval<ErrorHandler>()));
+    } // namespace result_of
 
     namespace detail {
         template <typename Sequence, typename EncodingForm, typename ErrorHandler>
@@ -128,16 +136,22 @@ namespace ogonek {
     template <typename Sequence, typename EncodingForm, typename ErrorHandler>
     using decoding_sequence = detail::decoding_sequence_impl<wheels::Decay<Sequence>, EncodingForm, wheels::Decay<ErrorHandler>>;
 
-
-    namespace result_of {
-        template <typename EncodingForm, typename Sequence, typename ErrorHandler>
-        using decode_ex = decoding_sequence<Sequence, EncodingForm, ErrorHandler>;
-    } // namespace result_of
     template <typename EncodingForm,
-              typename Sequence, typename ErrorHandler>
-    result_of::decode_ex<EncodingForm, Sequence, ErrorHandler> decode_ex(Sequence s, ErrorHandler h) {
+              typename Sequence, typename ErrorHandler,
+              wheels::DisableIf<detail::is_well_formed<Sequence>>...>
+    decoding_sequence<Sequence, EncodingForm, ErrorHandler> decode_ex(Sequence&& s, ErrorHandler&& h) {
         return { std::forward<Sequence>(s), std::forward<ErrorHandler>(h) };
     }
+    template <typename EncodingForm,
+              typename Sequence, typename ErrorHandler,
+              wheels::EnableIf<detail::is_well_formed<Sequence>>...>
+    Sequence decode_ex(Sequence&& s, ErrorHandler&&) {
+        return std::forward<Sequence>(s);
+    }
+    namespace result_of {
+        template <typename EncodingForm, typename Sequence, typename ErrorHandler>
+        using decode_ex = decltype(ogonek::decode_ex<EncodingForm>(std::declval<Sequence>(), std::declval<ErrorHandler>()));
+    } // namespace result_of
 } // namespace ogonek
 
 #endif // OGONEK_ENCODING_ITERATOR_HPP
