@@ -14,6 +14,8 @@
 #ifndef OGONEK_SEQUENCE_TRAITS_HPP
 #define OGONEK_SEQUENCE_TRAITS_HPP
 
+#include <ogonek/sequence/properties.h++>
+
 #include <wheels/meta.h++>
 
 #include <iterator>
@@ -65,8 +67,10 @@ namespace ogonek {
 
         //! {tag}
         //! *Effects*: marks a derived type as a [concept:Sequence] with native operations.
+        template <typename... Props>
         struct native_sequence {
             struct is_native_sequence : std::true_type {};
+            using sequence_properties = MakeProperties<Props...>;
         };
 
         struct native_sequence_test {

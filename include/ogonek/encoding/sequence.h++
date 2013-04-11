@@ -15,6 +15,7 @@
 #define OGONEK_ENCODING_SEQUENCE_HPP
 
 #include <ogonek/sequence/traits.h++>
+#include <ogonek/sequence/properties.h++>
 #include <ogonek/encoding/traits.h++>
 #include <ogonek/detail/constants.h++>
 #include <ogonek/detail/meta/is_decayed.h++>
@@ -28,7 +29,7 @@
 namespace ogonek {
     namespace detail {
         template <typename Sequence, typename EncodingForm, typename ErrorHandler>
-        struct encoding_sequence_impl : detail::native_sequence {
+        struct encoding_sequence_impl : detail::native_sequence<detail::well_formed> {
             using value_type = CodeUnit<EncodingForm>;
             using reference = value_type;
 
@@ -98,7 +99,7 @@ namespace ogonek {
 
     namespace detail {
         template <typename Sequence, typename EncodingForm, typename ErrorHandler>
-        struct decoding_sequence_impl : detail::native_sequence {
+        struct decoding_sequence_impl : detail::native_sequence<detail::well_formed> {
             using value_type = code_point;
             using reference = value_type;
 

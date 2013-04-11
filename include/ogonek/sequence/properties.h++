@@ -28,11 +28,11 @@ namespace ogonek {
         struct properties {
             using type = properties<WellFormed, Tail...>;
 
-            using is_well_formed = WellFormed;
+            using has_well_formed = WellFormed;
         };
 
         template <typename Props>
-        struct is_well_formed : Props::is_well_formed {};
+        struct has_well_formed : wheels::Unqualified<Props>::has_well_formed {};
 
         template <typename Props, typename P>
         struct set_property;
@@ -40,7 +40,7 @@ namespace ogonek {
         using SetProperty = typename set_property<P, Props>::type;
 
         template <typename Old, typename... T>
-        struct set_property<well_formed, properties<Old, T...>> {
+        struct set_property<properties<Old, T...>, well_formed> {
             using type = properties<well_formed, T...>;
         };
 
@@ -51,6 +51,9 @@ namespace ogonek {
         template <typename Props, typename... New>
         using SetProperties = typename set_properties<Props, New...>::type;
 
+        template <typename... Props>
+        using MakeProperties = SetProperties<properties<>, Props...>;
+
         struct sequence_properties_impl {
             template <typename T>
             typename T::sequence_properties static test(int);
@@ -58,10 +61,13 @@ namespace ogonek {
             properties<> static test(...);
         };
         template <typename T>
-        struct sequence_properties : wheels::TraitOf<sequence_properties_impl, T> {};
+        struct sequence_properties : wheels::TraitOf<sequence_properties_impl, wheels::Unqualified<T>> {};
 
         template <typename T>
         using SequenceProperties = wheels::Invoke<sequence_properties<T>>;
+
+        template <typename Sequence>
+        struct is_well_formed : has_well_formed<SequenceProperties<Sequence>> {};
     } // namespace detail
 } // namespace ogonek
 
