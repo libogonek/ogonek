@@ -11,12 +11,13 @@
 
 // Forwarding sequences of code points
 
-#ifndef OGONEK_SEQUENCE_FORWARD_CODE_POINTS_HPP
-#define OGONEK_SEQUENCE_FORWARD_CODE_POINTS_HPP
+#ifndef OGONEK_SEQUENCE_AS_UNICODE_HPP
+#define OGONEK_SEQUENCE_AS_UNICODE_HPP
 
 #include <ogonek/encoding.h++>
 #include <ogonek/encoding/utf16.h++>
-#include <ogonek/encoding/utf32.h++>
+#include <ogonek/encoding/utf16.h++>
+#include <ogonek/encoding/sequence.h++>
 #include <ogonek/sequence/traits.h++>
 #include <ogonek/sequence/as_sequence.h++>
 #include <ogonek/error/assume_valid.h++>
@@ -27,28 +28,28 @@
 namespace ogonek {
     namespace detail {
         //! {traits}
-        //! *Note*: implementation backend for [function:forward_code_points]
-        //          and [metafunction:result_of::forward_code_points].
+        //! *Note*: implementation backend for [function:as_unicode]
+        //          and [metafunction:result_of::as_unicode].
         template <typename S, typename E,
                   bool = is_error_handler<E>(),
                   typename Value = wheels::Invoke<
                                     wheels::Conditional<is_sequence<S>,
                                         seq::value<S>,
                                         wheels::identity<void>>>>
-        struct forward_code_points_impl {};
+        struct as_unicode_impl {};
 
         template <typename U32, typename E>
-        struct forward_code_points_impl<U32, E, true, char32_t> {
-            using result = ogonek::result_of::decode<utf32, U32 const&, E>;
+        struct as_unicode_impl<U32, E, true, char32_t> {
+            using result = ogonek::result_of::decode_ex<utf32, U32 const&, E>;
             static result forward(U32 const& s, E&& e) {
-                return decode<utf32>(s, std::forward<E>(e));
+                return decode_ex<utf32>(s, std::forward<E>(e));
             }
         };
         template <typename U16, typename E>
-        struct forward_code_points_impl<U16, E, true, char16_t> {
-            using result = ogonek::result_of::decode<utf16, U16 const&, E>;
+        struct as_unicode_impl<U16, E, true, char16_t> {
+            using result = ogonek::result_of::decode_ex<utf16, U16 const&, E>;
             static result forward(U16 const& s, E&& e) {
-                return decode<utf16>(s, std::forward<E>(e));
+                return decode_ex<utf16>(s, std::forward<E>(e));
             }
         };
     } // namespace detail
@@ -57,22 +58,21 @@ namespace ogonek {
         //! {metafunction}
         //! *Requires*: `S` is a model of [concept:SequenceSource] [soft]; and
         //!             `E` is a model of [concept:ErrorHandler] [soft].
-        //! *Effects*: computes the result type for [function:ogonek::detail::forward_code_points].
-        //! *Returns*: a [concept:Sequence] type that lazily decodes `S` according to `E`.
+        //! *Effects*: computes the result type for [function:ogonek::detail::as_unicode].
+        //! *Returns*: a [concept:Sequence] type for lazily decoding `S` according to `E`.
         //! *Remarks*: the result type is statically known well-formed.
         template <typename S, typename E>
-        using forward_code_points =
-            typename detail::forward_code_points_impl<wheels::Unqualified<as_sequence<S>>, E>::result;
+        using as_unicode = typename detail::as_unicode_impl<wheels::Unqualified<as_sequence<S>>, E>::result;
     } // namespace result_of
 
     //! {function}
-    //! *Requires*: `S` is a model of [concept:SequenceSource].
+    //! *Requires*: `S` is a model of [concept:SequenceSource] [soft].
     //! *Returns*: a [concept:Sequence] of code points from `s`.
     //! *Remarks*: the result is statically known well-formed.
     template <typename S, typename E>
-    result_of::forward_code_points<S const&, E> forward_code_points(S const& s, E&& e) {
-        return detail::forward_code_points_impl<S const&, E>::forward(s, std::forward<E>(e));
+    result_of::as_unicode<S, E> as_unicode(S&& s, E&& e) {
+        return detail::as_unicode_impl<S, E>::forward(s, std::forward<E>(e));
     }
 } // namespace ogonek
 
-#endif // OGONEK_SEQUENCE_FORWARD_CODE_POINTS_HPP
+#endif // OGONEK_SEQUENCE_AS_UNICODE_HPP

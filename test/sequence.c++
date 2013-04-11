@@ -83,10 +83,10 @@ TEST_CASE("decode", "Decoding sequence") {
     }
 }
 
-TEST_CASE("unicodestring", "Unicode string tests") {/*
+TEST_CASE("unicodestring", "Unicode string tests") {
     namespace seq = ogonek::seq;
-    auto&& str = ogonek::forward_sequence(u"\xD800\xDC00" u"ab");
-    auto&& ustr = ogonek::forward_code_points(str, ogonek::assume_valid);
+    auto&& str = ogonek::as_sequence(u"\xD800\xDC00" u"ab");
+    auto&& ustr = ogonek::as_unicode(str, ogonek::assume_valid);
     REQUIRE(!seq::empty(ustr));
     REQUIRE(seq::front(ustr) == U'\x10000');
     seq::pop_front(ustr);
@@ -97,5 +97,5 @@ TEST_CASE("unicodestring", "Unicode string tests") {/*
     REQUIRE(seq::front(ustr) == U'b');
     seq::pop_front(ustr);
     REQUIRE(seq::empty(ustr));
-*/}
+}
 
