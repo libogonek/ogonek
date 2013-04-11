@@ -99,3 +99,24 @@ TEST_CASE("unicodestring", "Unicode string tests") {
     REQUIRE(seq::empty(ustr));
 }
 
+#ifndef U_CHARSET_IS_UTF8
+#define U_CHARSET_IS_UTF8
+#endif // U_CHARSET_IS_UTF8
+#include <unicode/unistr.h>
+TEST_CASE("icu", "ICU interop tests") {
+    namespace seq = ogonek::seq;
+    icu::UnicodeString u(u8"\U00010000ab");
+    auto&& str = ogonek::as_sequence(u);
+    auto&& ustr = ogonek::as_unicode(str, ogonek::assume_valid);
+    REQUIRE(!seq::empty(ustr));
+    REQUIRE(seq::front(ustr) == U'\x10000');
+    seq::pop_front(ustr);
+    REQUIRE(!seq::empty(ustr));
+    REQUIRE(seq::front(ustr) == U'a');
+    seq::pop_front(ustr);
+    REQUIRE(!seq::empty(ustr));
+    REQUIRE(seq::front(ustr) == U'b');
+    seq::pop_front(ustr);
+    REQUIRE(seq::empty(ustr));
+}
+

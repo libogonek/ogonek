@@ -14,14 +14,14 @@
 #ifndef OGONEK_SEQUENCE_ICU_HPP
 #define OGONEK_SEQUENCE_ICU_HPP
 
-#include <ogonek/sequence/forward_sequence.h++>
+#include <ogonek/sequence/as_sequence.h++>
 
 #include <unicode/unistr.h>
 
 namespace ogonek {
     namespace detail {
         template <>
-        struct forward_sequence_impl<icu::UnicodeString, false, false, false> {
+        struct as_sequence_impl<icu::UnicodeString, false, false, false> {
             struct result : native_sequence {
             public:
                 result(icu::UnicodeString const& u) : u(&u) {}
@@ -41,9 +41,9 @@ namespace ogonek {
             static result forward(icu::UnicodeString const& u) { return std::forward<result>(u); }
         };
         template <>
-        struct forward_sequence_impl<icu::UnicodeString const&, false, false, false> : forward_sequence_impl<icu::UnicodeString> {};
+        struct as_sequence_impl<icu::UnicodeString const&, false, false, false> : as_sequence_impl<icu::UnicodeString> {};
         template <>
-        struct forward_sequence_impl<icu::UnicodeString&, false, false, false> : forward_sequence_impl<icu::UnicodeString> {};
+        struct as_sequence_impl<icu::UnicodeString&, false, false, false> : as_sequence_impl<icu::UnicodeString> {};
     } // namespace ogonek
 } // namespace ogonek
 
