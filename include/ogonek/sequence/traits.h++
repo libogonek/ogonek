@@ -20,6 +20,8 @@
 #include <type_traits>
 #include <cstddef>
 
+#include <cassert>
+
 namespace ogonek {
     namespace detail {
         //! {concept}
@@ -27,7 +29,7 @@ namespace ogonek {
         // concept SequenceSource<S> {
             //! {function}
             //! *Returns*: a [concept:Sequence] with elements from `s`.
-            // nonmember Sequence<Seq> forward_as_sequence(SequenceSource<S> const& s);
+            // nonmember Sequence<Seq> as_sequence(SequenceSource<S> const& s);
         // };
 
         //! {concept}
@@ -63,13 +65,13 @@ namespace ogonek {
 
         //! {tag}
         //! *Effects*: marks a derived type as a [concept:Sequence] with native operations.
-        struct simple_sequence {
-            struct is_simple_sequence : std::true_type {};
+        struct native_sequence {
+            struct is_native_sequence : std::true_type {};
         };
 
-        struct simple_sequence_test {
+        struct native_sequence_test {
             template <typename T>
-            typename wheels::Unqualified<T>::is_simple_sequence static test(int);
+            typename wheels::Unqualified<T>::is_native_sequence static test(int);
             template <typename...>
             std::false_type static test(...);
         };
@@ -77,12 +79,12 @@ namespace ogonek {
         //! *Returns*: `true` if `S` is a [concept:Sequence] with native operations;
         //             `false` otherwise.
         template <typename T>
-        using is_simple_sequence = wheels::TraitOf<detail::simple_sequence_test, T>;
+        using is_native_sequence = wheels::TraitOf<detail::native_sequence_test, T>;
 
         //! {traits}
         //! *Note*: implementation backend for [traits:sequence_ops].
         template <typename S,
-                  bool = is_simple_sequence<S>()>
+                  bool = is_native_sequence<S>()>
         struct sequence_ops_impl {};
 
         //! {specialization:1}
@@ -138,14 +140,14 @@ namespace ogonek {
 
         //! {traits}
         //! Provides a unified interface for using models of [concept:SequenceSource].
-        //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
+        //! *Requires*: `S` is a type returned from [function:as_sequence] [soft].
         template <typename S>
         struct sequence_ops : sequence_ops_impl<wheels::Unqualified<S>> {};
     } // namespace detail
 
     namespace seq {
         //! {metafunction}
-        //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
+        //! *Requires*: `S` is a [concept:Sequence] [soft].
         //! *Returns*: the type of values in the sequence`S`.
         template <typename S>
         using Value = typename detail::sequence_ops<S>::value_type;
@@ -155,7 +157,7 @@ namespace ogonek {
         };
 
         //! {trait}
-        //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
+        //! *Requires*: `S` is a [concept:Sequence] [soft].
         //! *Returns*: The type of references to the sequence `S`.
         //! *Note*: this type may not be a reference if the sequence `S` is not persistent.
         template <typename S>
@@ -174,6 +176,8 @@ namespace ogonek {
             std::false_type static test(...);
         };
     } // namespace detail
+    //! {trait}
+    //! *Returns*: `true` if `S` is a [concept:Sequence]; `false` otherwise.
     template <typename S>
     struct is_sequence : wheels::TraitOf<detail::is_sequence_test, S> {};
 
@@ -185,35 +189,41 @@ namespace ogonek {
             std::false_type static test(...);
         };
     } // namespace detail
+    //! {trait}
+    //! *Returns*: `true` if `S` is a [concept:Sequence] with value `V`; `false` otherwise.
     template <typename S, typename V>
     struct is_sequence_of : wheels::TraitOf<detail::is_sequence_of_test, S, V> {};
 
     namespace seq {
         //! {function}
-        //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
-        //! *Returns*: `true` if the sequence `s` has no elements.
+        //! *Requires*: `S` is a [concept:Sequence] [soft].
+        //! *Returns*: `true` if the sequence `s` has no elements; `false` otherwise.
         template <typename S,
                   wheels::EnableIf<is_sequence<S>>...>
         bool empty(S const& s) { return detail::sequence_ops<S>::empty(s); }
 
         //! {function}
-        //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft]; and
-        //!             `!empty(s)`.
+        //! *Requires*: `S` is a [concept:Sequence] [soft]; and `!empty(s)`.
         //! *Returns*: the first element of the sequence `s`.
         template <typename S,
                   wheels::EnableIf<is_sequence<S>>...>
-        Reference<S> front(S const& s) { return detail::sequence_ops<S>::front(s); }
+        Reference<S> front(S const& s) {
+            assert(!empty(s));
+            return detail::sequence_ops<S>::front(s);
+        }
 
         //! {function}
-        //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft]; and
-        //!             `!empty(s)`.
+        //! *Requires*: `S` is a [concept:Sequence] [soft]; and `!empty(s)`.
         //! *Effects*: skips the first element in the sequence `s`.
         template <typename S,
                   wheels::EnableIf<is_sequence<S>>...>
-        void pop_front(S& s) { return detail::sequence_ops<S>::pop_front(s); }
+        void pop_front(S& s) {
+            assert(!empty(s));
+            return detail::sequence_ops<S>::pop_front(s);
+        }
 
         //! {function}
-        //! *Requires*: `S` is a type returned from [function:forward_as_sequence] [soft].
+        //! *Requires*: `S` is a [concept:Sequence] [soft].
         //! *Returns*: a sequence in the current state of `s`.
         template <typename S,
                   wheels::EnableIf<is_sequence<S>>...>

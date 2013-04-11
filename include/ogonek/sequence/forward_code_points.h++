@@ -18,7 +18,7 @@
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf32.h++>
 #include <ogonek/sequence/traits.h++>
-#include <ogonek/sequence/forward_sequence.h++>
+#include <ogonek/sequence/as_sequence.h++>
 #include <ogonek/error/assume_valid.h++>
 #include <ogonek/error/error_handler.h++>
 
@@ -62,7 +62,7 @@ namespace ogonek {
         //! *Remarks*: the result type is statically known well-formed.
         template <typename S, typename E>
         using forward_code_points =
-            typename detail::forward_code_points_impl<wheels::Unqualified<forward_sequence<S>>, E>::result;
+            typename detail::forward_code_points_impl<wheels::Unqualified<as_sequence<S>>, E>::result;
     } // namespace result_of
 
     //! {function}

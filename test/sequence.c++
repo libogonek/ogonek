@@ -18,7 +18,7 @@
 
 TEST_CASE("sequence", "sequence tests") {
     namespace seq = ogonek::seq;
-    auto&& str = ogonek::forward_sequence(u"\U00010000ab");
+    auto&& str = ogonek::as_sequence(u"\U00010000ab");
     REQUIRE(!seq::empty(str));
     REQUIRE(seq::front(str) == u'\xD800');
     seq::pop_front(str);
@@ -35,7 +35,7 @@ TEST_CASE("sequence", "sequence tests") {
 }
 TEST_CASE("sequence_iterator", "sequence iterator tests") {
     namespace seq = ogonek::seq;
-    auto&& str = ogonek::forward_sequence(u"\U00010000ab");
+    auto&& str = ogonek::as_sequence(u"\U00010000ab");
     char16_t res[] = u"\xD800\xDC00" u"ab";
     int i = 0;
     for(auto it = seq::begin(str); it != seq::end(str); ++it) {
@@ -48,7 +48,7 @@ TEST_CASE("sequence_iterator", "sequence iterator tests") {
 #include <ogonek/encoding/utf8.h++>
 TEST_CASE("encode", "Encoding sequence") {
     namespace seq = ogonek::seq;
-    auto str = ogonek::forward_sequence(U"\U00010000ab");
+    auto str = ogonek::as_sequence(U"\U00010000ab");
 
     auto e = ogonek::encode_ex<ogonek::utf16>(str, ogonek::assume_valid);
     char16_t res16[] = u"\U00010000ab";
@@ -68,14 +68,14 @@ TEST_CASE("decode", "Decoding sequence") {
     namespace seq = ogonek::seq;
     char32_t res[] = U"\U00010000ab";
 
-    auto str16 = ogonek::forward_sequence(u"\U00010000ab");
+    auto str16 = ogonek::as_sequence(u"\U00010000ab");
     auto e = ogonek::decode_ex<ogonek::utf16>(str16, ogonek::assume_valid);
     for(int i = 0; !seq::empty(e); seq::pop_front(e), ++i) {
         auto&& x = seq::front(e);
         REQUIRE(x == res[i]);
     }
 
-    auto str8 = ogonek::forward_sequence(u8"\U00010000ab");
+    auto str8 = ogonek::as_sequence(u8"\U00010000ab");
     auto f = ogonek::decode_ex<ogonek::utf8>(str8, ogonek::assume_valid);
     for(int i = 0; !seq::empty(f); seq::pop_front(f), ++i) {
         auto&& x = seq::front(f);

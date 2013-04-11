@@ -22,7 +22,7 @@ namespace ogonek {
     namespace detail {
         template <>
         struct forward_sequence_impl<icu::UnicodeString, false, false, false> {
-            struct result : simple_sequence {
+            struct result : native_sequence {
             public:
                 result(icu::UnicodeString const& u) : u(&u) {}
 

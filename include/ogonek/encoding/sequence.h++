@@ -29,7 +29,7 @@ namespace ogonek {
     //! {class}
     //! A sequence wrapper that lazily encodes the underlying sequence
     template <typename Sequence, typename EncodingForm, typename ErrorHandler>
-    struct encoding_sequence : detail::simple_sequence {
+    struct encoding_sequence : detail::native_sequence {
         static_assert(detail::is_decayed<Sequence>(), "Sequence must be a decayed type");
 
         using value_type = CodeUnit<EncodingForm>;
@@ -89,7 +89,7 @@ namespace ogonek {
     }
 
     template <typename Sequence, typename EncodingForm, typename ErrorHandler>
-    struct decoding_sequence : detail::simple_sequence {
+    struct decoding_sequence : detail::native_sequence {
         static_assert(detail::is_decayed<Sequence>(), "Sequence must be a decayed type");
 
         using value_type = code_point;
