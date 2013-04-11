@@ -54,13 +54,9 @@ namespace ogonek {
         template <typename Char, std::size_t N>
         struct as_sequence_impl<Char(&)[N], false, true, true> : as_sequence_impl<Char*> {};
         template <typename Ptr>
-        struct as_sequence_impl<Ptr const&, false, false, true> : as_sequence_impl<Ptr> {};
-        template <typename Ptr>
-        struct as_sequence_impl<Ptr&, false, false, true> : as_sequence_impl<Ptr> {};
-        template <typename Char>
-        struct as_sequence_impl<Char*, false, false, true> {
-            using result = Char const*;
-            static result forward(Char* p) { return std::forward<result>(p); }
+        struct as_sequence_impl<Ptr, false, false, true> {
+            using result = Ptr;
+            static result forward(Ptr p) { return std::forward<result>(p); }
         };
     } // namespace detail
 

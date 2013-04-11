@@ -41,15 +41,15 @@ namespace ogonek {
         template <typename U32, typename E>
         struct as_unicode_impl<U32, E, true, char32_t> {
             using result = ogonek::result_of::decode_ex<utf32, U32 const&, E>;
-            static result forward(U32 const& s, E&& e) {
-                return decode_ex<utf32>(s, std::forward<E>(e));
+            static result forward(U32&& s, E&& e) {
+                return decode_ex<utf32>(std::forward<U32>(s), std::forward<E>(e));
             }
         };
         template <typename U16, typename E>
         struct as_unicode_impl<U16, E, true, char16_t> {
             using result = ogonek::result_of::decode_ex<utf16, U16 const&, E>;
-            static result forward(U16 const& s, E&& e) {
-                return decode_ex<utf16>(s, std::forward<E>(e));
+            static result forward(U16&& s, E&& e) {
+                return decode_ex<utf16>(std::forward<U16>(s), std::forward<E>(e));
             }
         };
     } // namespace detail
@@ -62,7 +62,7 @@ namespace ogonek {
         //! *Returns*: a [concept:Sequence] type for lazily decoding `S` according to `E`.
         //! *Remarks*: the result type is statically known well-formed.
         template <typename S, typename E>
-        using as_unicode = typename detail::as_unicode_impl<wheels::Unqualified<as_sequence<S>>, E>::result;
+        using as_unicode = typename detail::as_unicode_impl<as_sequence<S>, E>::result;
     } // namespace result_of
 
     //! {function}
@@ -71,7 +71,7 @@ namespace ogonek {
     //! *Remarks*: the result is statically known well-formed.
     template <typename S, typename E>
     result_of::as_unicode<S, E> as_unicode(S&& s, E&& e) {
-        return detail::as_unicode_impl<S, E>::forward(s, std::forward<E>(e));
+        return detail::as_unicode_impl<S, E>::forward(as_sequence(s), std::forward<E>(e));
     }
 } // namespace ogonek
 

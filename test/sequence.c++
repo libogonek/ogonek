@@ -109,8 +109,6 @@ TEST_CASE("icu", "ICU interop tests") {
     auto&& str = ogonek::as_sequence(u);
     auto&& ustr = ogonek::as_unicode(str, ogonek::assume_valid);
     REQUIRE(!seq::empty(ustr));
-
-    static_assert(ogonek::detail::is_well_formed<decltype(ustr)>::value, "");
     REQUIRE(seq::front(ustr) == U'\x10000');
     seq::pop_front(ustr);
     REQUIRE(!seq::empty(ustr));
