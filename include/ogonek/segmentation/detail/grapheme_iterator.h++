@@ -15,7 +15,7 @@
 #define OGONEK_DETAIL_GRAPHEME_ITERATOR_HPP
 
 #include <ogonek/types.h++>
-#include <ogonek/data/ucd.h++>
+#include <ogonek/character/ucd.h++>
 
 #include <wheels/enums.h++>
 

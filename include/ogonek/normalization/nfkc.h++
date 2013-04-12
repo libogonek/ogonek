@@ -15,7 +15,7 @@
 #define OGONEK_NFKC_HPP
 
 #include <ogonek/types.h++>
-#include <ogonek/data/ucd.h++>
+#include <ogonek/character/ucd.h++>
 #include <ogonek/normalization/detail/composing_iterator.h++>
 
 namespace ogonek {

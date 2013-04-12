@@ -11,8 +11,8 @@
 
 // Unicode character database data structures
 
-#ifndef OGONEK_UCD_HPP
-#define OGONEK_UCD_HPP
+#ifndef OGONEK_CHARACTER_UCD_HPP
+#define OGONEK_CHARACTER_UCD_HPP
 
 #include <ogonek/types.h++>
 #include <ogonek/encoding/utf8.h++>
@@ -879,5 +879,4 @@ namespace ogonek {
     } //namespace ucd
 } // namespace ogonek
 
-#endif // OGONEK_UCD_HPP
-
+#endif // OGONEK_CHARACTER_UCD_HPP

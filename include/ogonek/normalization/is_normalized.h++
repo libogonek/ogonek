@@ -14,7 +14,7 @@
 #ifndef OGONEK_IS_NORMALIZED_HPP
 #define OGONEK_IS_NORMALIZED_HPP
 
-#include <ogonek/data/ucd.h++>
+#include <ogonek/character/ucd.h++>
 #include <ogonek/detail/ranges.h++>
 
 #include <boost/logic/tribool.hpp>

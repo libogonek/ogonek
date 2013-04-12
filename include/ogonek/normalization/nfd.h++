@@ -15,7 +15,7 @@
 #define OGONEK_NFD_HPP
 
 #include <ogonek/types.h++>
-#include <ogonek/data/ucd.h++>
+#include <ogonek/character/ucd.h++>
 #include <ogonek/normalization/detail/ordered_decomposing_iterator.h++>
 #include <ogonek/normalization/detail/normalizing_iterator.h++>
 

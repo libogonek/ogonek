@@ -11,7 +11,7 @@
 
 // Tests for <ogonek/properties.h++>
 
-#include <ogonek/data/properties.h++>
+#include <ogonek/character/properties.h++>
 
 #include "utils.h++"
 #include <catch.h++>

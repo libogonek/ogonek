@@ -15,7 +15,7 @@
 #define OGONEK_DETAIL_WORD_ITERATOR_HPP
 
 #include <ogonek/types.h++>
-#include <ogonek/data/ucd.h++>
+#include <ogonek/character/ucd.h++>
 #include <ogonek/detail/container/lookahead_window.h++>
 
 #include <wheels/enums.h++>

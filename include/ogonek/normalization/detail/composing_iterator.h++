@@ -14,7 +14,7 @@
 #ifndef OGONEK_DETAIL_COMPOSING_ITERATOR_HPP
 #define OGONEK_DETAIL_COMPOSING_ITERATOR_HPP
 
-#include <ogonek/data/ucd.h++>
+#include <ogonek/character/ucd.h++>
 #include <ogonek/types.h++>
 #include <ogonek/normalization/detail/ordered_decomposing_iterator.h++>
 

@@ -11,12 +11,12 @@
 
 // Unicode character property queries
 
-#ifndef OGONEK_PROPERTIES_HPP
-#define OGONEK_PROPERTIES_HPP
+#ifndef OGONEK_CHARACTER_PROPERTIES_HPP
+#define OGONEK_CHARACTER_PROPERTIES_HPP
 
 #include <ogonek/text.h++>
 #include <ogonek/encoding/utf8.h++>
-#include <ogonek/data/ucd.h++>
+#include <ogonek/character/ucd.h++>
 
 #include <wheels/enums.h++>
 
@@ -116,4 +116,4 @@ namespace ogonek {
     } 
 } // namespace ogonek
 
-#endif // OGONEK_PROPERTIES_HPP
+#endif // OGONEK_CHARACTER_PROPERTIES_HPP
