@@ -17,7 +17,9 @@
 #include <wheels/meta.h++>
 
 #include <iterator>
+#include <tuple>
 #include <type_traits>
+#include <utility>
 
 namespace ogonek {
     namespace detail {
@@ -61,6 +63,15 @@ namespace ogonek {
         //             `false` otherwise.
         template <typename T, typename Cat = std::input_iterator_tag>
         struct has_begin_end : wheels::TraitOf<has_begin_end_test, T, Cat> {};
+
+        template <typename T, typename Cat>
+        struct is_iterator_pair_impl : std::false_type {};
+
+        template <typename I, typename Cat>
+        struct is_iterator_pair_impl<std::pair<I, I>, Cat> : is_iterator<I, Cat> {};
+
+        template <typename T, typename Cat = std::input_iterator_tag>
+        struct is_iterator_pair : is_iterator_pair_impl<wheels::Unqualified<T>, Cat> {};
 
         //! {metafunction}
         //! *Requires*: `std::begin` can be called with `T&` [soft].

@@ -20,43 +20,78 @@
 
 #include <wheels/meta.h++>
 
-#include <type_traits>
 #include <iterator>
+#include <string>
+#include <type_traits>
 #include <utility>
 #include <cstddef>
 
 namespace ogonek {
     namespace detail {
+        struct native_sequence_tag { using type = native_sequence_tag; };
+        struct iterable_tag { using type = iterable_tag; };
+        struct iterator_pair_tag { using type = iterator_pair_tag; };
+        struct null_terminated_tag { using type = null_terminated_tag; };
+        template <typename T,
+                  bool = is_native_sequence<wheels::Unqualified<T>>(),
+                  bool = has_begin_end<T, std::forward_iterator_tag>(),
+                  bool = is_iterator_pair<T>(),
+                  bool = is_null_terminated_string<wheels::Unqualified<T>>()>
+        struct source_type_of : wheels::identity<void> {};
+        template <typename T>
+        using SourceTypeOf = wheels::Invoke<source_type_of<T>>;
+
+        template <typename T, bool I, bool P, bool Z>
+        struct source_type_of<T, true, I, P, Z> : native_sequence_tag {};
+        template <typename T, bool P>
+        struct source_type_of<T, false, true, P, true> : null_terminated_tag {};
+        template <typename T, bool P>
+        struct source_type_of<T, false, true, P, false> : iterable_tag {};
+        template <typename T, bool Z>
+        struct source_type_of<T, false, false, true, Z> : iterator_pair_tag {};
+        template <typename T>
+        struct source_type_of<T, false, false, false, true> : null_terminated_tag {};
+
         //! {traits}
         //! *Note*: implementation backend for [function:as_sequence]
         //          and [metafunction:result_of::as_sequence].
         template <typename T,
-                    bool = is_native_sequence<wheels::Unqualified<T>>(),
-                    bool = has_begin_end<T, std::forward_iterator_tag>(),
-                    bool = is_null_terminated_string<wheels::Unqualified<T>>()>
+                  typename Type = SourceTypeOf<T>>
         struct as_sequence_impl {};
 
-        template <typename S, bool Ignore0, bool Ignore1>
-        struct as_sequence_impl<S, true, Ignore0, Ignore1> {
+        template <typename S>
+        struct as_sequence_impl<S, native_sequence_tag> {
             using result = S;
             static result forward(S&& s) { return std::forward<result>(s); }
         };
 
-        template <typename Range, bool Ignore>
-        struct as_sequence_impl<Range, false, true, Ignore> {
+        template <typename Iterable>
+        struct as_sequence_impl<Iterable, iterable_tag> {
         private:
-            using iterator = ConstIteratorOf<Range>;
+            using iterator = ConstIteratorOf<Iterable>;
         public:
             using result = std::pair<iterator, iterator>;
-            static result forward(Range const& r) { return { std::begin(r), std::end(r) }; }
+            static result forward(Iterable const& r) { return { std::begin(r), std::end(r) }; }
+        };
+
+        template <typename Pair>
+        struct as_sequence_impl<Pair, iterator_pair_tag> {
+            using result = Pair;
+            static result forward(Pair&& p) { return std::forward<Pair>(p); }
         };
 
         template <typename Char, std::size_t N>
-        struct as_sequence_impl<Char(&)[N], false, true, true> : as_sequence_impl<Char*> {};
-        template <typename Ptr>
-        struct as_sequence_impl<Ptr, false, false, true> {
-            using result = Ptr;
-            static result forward(Ptr p) { return std::forward<result>(p); }
+        struct as_sequence_impl<Char(&)[N], null_terminated_tag> {
+            using result = std::pair<Char const*, Char const*>;
+            static result forward(Char(&str)[N]) { return { str, str+N }; }
+        };
+        template <typename Char>
+        struct as_sequence_impl<Char*, null_terminated_tag> {
+        private:
+            using char_type = wheels::Unqualified<Char>;
+        public:
+            using result = std::pair<Char const*, Char const*>;
+            static result forward(Char* p) { return { p, p + std::char_traits<char_type>::length(p) }; }
         };
     } // namespace detail
 

@@ -116,35 +116,29 @@ namespace ogonek {
             //! {function}
             //! *Returns*: a sequence in the current state of `s`.
             static S save(S const& s) { return s.save(); }
+            //! {function}
+            static S before(S const& whole, S const& part) { return whole.before(part); }
         };
 
         //! {specialization}
         template <typename Iterator>
         struct sequence_ops_impl<std::pair<Iterator, Iterator>, false> {
+        private:
+            using sequence_type = std::pair<Iterator, Iterator>;
+        public:
             using value_type = typename std::iterator_traits<Iterator>::value_type;
             using reference = typename std::iterator_traits<Iterator>::reference;
 
-            static bool empty(std::pair<Iterator, Iterator> const& its) { return its.first == its.second; }
-            static reference front(std::pair<Iterator, Iterator> const& its) { return *its.first; }
-            static void pop_front(std::pair<Iterator, Iterator>& its) { ++its.first; }
-            static std::pair<Iterator, Iterator> save(std::pair<Iterator, Iterator> const& its) { return its; }
-        };
-
-        //! {specialization}
-        template <typename Char>
-        struct sequence_ops_impl<Char const*, false> {
-            using value_type = Char;
-            using reference = Char const&;
-
-            static bool empty(Char const* p) { return *p == 0; }
-            static reference front(Char const* p) { return *p; }
-            static void pop_front(Char const*& p) { ++p; }
-            static Char const* save(Char const* p) { return p; }
+            static bool empty(sequence_type const& its) { return its.first == its.second; }
+            static reference front(sequence_type const& its) { return *its.first; }
+            static void pop_front(sequence_type& its) { ++its.first; }
+            static sequence_type save(sequence_type const& its) { return its; }
+            static sequence_type before(sequence_type const& whole, sequence_type const& part) { return { whole.first, part.first }; }
         };
 
         //! {traits}
         //! Provides a unified interface for using models of [concept:SequenceSource].
-        //! *Requires*: `S` is a type returned from [function:as_sequence] [soft].
+        //! *Requires*: `S` is a [concept:Sequence] [soft].
         template <typename S>
         struct sequence_ops : sequence_ops_impl<wheels::Unqualified<S>> {};
     } // namespace detail
@@ -232,6 +226,13 @@ namespace ogonek {
         template <typename S,
                   wheels::EnableIf<is_sequence<S>>...>
         S save(S const& s) { return detail::sequence_ops<S>::save(s); }
+
+        //! {function}
+        //! *Requires*: `S` is a [concept:Sequence] [soft].
+        //! *Returns*: a sequence with the elements of `whole` that are before the elements of `part`.
+        template <typename S,
+                  wheels::EnableIf<is_sequence<S>>...>
+        S before(S const& whole, S const& part) { detail::sequence_ops<S>::before(whole, part); }
     } // namespace seq
 } // namespace ogonek
 
