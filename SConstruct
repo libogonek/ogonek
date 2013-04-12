@@ -59,6 +59,9 @@ if sys.platform == 'win32':
 else:
     env = Environment(options = vars, ENV = os.environ)
 
+# Pass termcaps along for colours and fancies
+env['ENV']['TERM'] = os.environ['TERM']
+
 if env['compiler'] == 'clang':
     env['CXX'] = 'clang++'
 

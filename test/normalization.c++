@@ -80,7 +80,6 @@ TEST_CASE("normalization", "Normalization tests") {
         REQUIRE_FALSE(ogonek::is_normalized_quick<ogonek::nfkd>(b));
     }
     SECTION("madness", "crazy test with ten thousand umlauts") {
-        using test_text = ogonek::text<ogonek::utf32>;
         test::ustring input = U"2";
         input.reserve(10004);
         for(int i = 0; i < 10000; ++i) {
