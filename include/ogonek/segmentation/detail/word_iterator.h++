@@ -117,7 +117,7 @@ namespace ogonek {
         : boost::iterator_facade<
             word_iterator<CodePointIterator>,
             boost::iterator_range<CodePointIterator>,
-            std::input_iterator_tag, // TODO
+            std::forward_iterator_tag, // TODO
             boost::iterator_range<CodePointIterator>>
         {
         public:

@@ -51,7 +51,7 @@ namespace ogonek {
         : boost::iterator_facade<
             byte_ordered_iterator<ByteOrder, Integer, Iterator>,
             Integer,
-            std::input_iterator_tag,
+            std::forward_iterator_tag,
             Integer
         > {
             byte_ordered_iterator(Iterator it) : it(it) {}
