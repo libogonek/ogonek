@@ -83,7 +83,7 @@ namespace ogonek {
         template <typename Char, std::size_t N>
         struct as_sequence_impl<Char(&)[N], null_terminated_tag> {
             using result = std::pair<Char const*, Char const*>;
-            static result forward(Char(&str)[N]) { return { str, str+N }; }
+            static result forward(Char(&str)[N]) { return { str, str+N-1 }; }
         };
         template <typename Char>
         struct as_sequence_impl<Char*, null_terminated_tag> {
