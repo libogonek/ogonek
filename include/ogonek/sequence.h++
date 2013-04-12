@@ -18,6 +18,7 @@
 #include <ogonek/sequence/as_sequence.h++>
 #include <ogonek/sequence/as_unicode.h++>
 #include <ogonek/sequence/interop.h++>
+#include <ogonek/sequence/properties.h++>
 
 #ifdef OGONEK_ICU
 #include <ogonek/sequence/icu.h++>
