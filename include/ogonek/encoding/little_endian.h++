@@ -11,8 +11,8 @@
 
 // Little endian order
 
-#ifndef OGONEK_LITTLE_ENDIAN_HPP
-#define OGONEK_LITTLE_ENDIAN_HPP
+#ifndef OGONEK_ENCODING_LITTLE_ENDIAN_HPP
+#define OGONEK_ENCODING_LITTLE_ENDIAN_HPP
 
 #include <ogonek/types.h++>
 
@@ -78,5 +78,5 @@ namespace ogonek {
     };
 }
 
-#endif // OGONEK_LITTLE_ENDIAN_HPP
+#endif // OGONEK_ENCODING_LITTLE_ENDIAN_HPP
 

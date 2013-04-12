@@ -14,10 +14,10 @@
 #ifndef OGONEK_DETAIL_SEQUENCE_HPP
 #define OGONEK_DETAIL_SEQUENCE_HPP
 
-#include <ogonek/sequence/traits.h++>
+#include <ogonek/sequence/seq.h++>
 #include <ogonek/sequence/as_sequence.h++>
 #include <ogonek/sequence/as_unicode.h++>
-#include <ogonek/sequence/begin_end.h++>
+#include <ogonek/sequence/interop.h++>
 
 #ifdef OGONEK_ICU
 #include <ogonek/sequence/icu.h++>

@@ -44,7 +44,7 @@ TEST_CASE("sequence_iterator", "sequence iterator tests") {
     }
 }
 
-#include <ogonek/encoding/sequence.h++>
+#include <ogonek/encoding/encode.h++>
 #include <ogonek/encoding/utf8.h++>
 TEST_CASE("encode", "Encoding sequence") {
     namespace seq = ogonek::seq;
@@ -64,6 +64,7 @@ TEST_CASE("encode", "Encoding sequence") {
         REQUIRE(x == res8[i]);
     }
 }
+#include <ogonek/encoding/decode.h++>
 TEST_CASE("decode", "Decoding sequence") {
     namespace seq = ogonek::seq;
     char32_t res[] = U"\U00010000ab";

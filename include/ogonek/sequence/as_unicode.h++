@@ -17,8 +17,8 @@
 #include <ogonek/encoding.h++>
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf16.h++>
-#include <ogonek/encoding/sequence.h++>
-#include <ogonek/sequence/traits.h++>
+#include <ogonek/encoding/decode.h++>
+#include <ogonek/sequence/seq.h++>
 #include <ogonek/sequence/as_sequence.h++>
 #include <ogonek/error/assume_valid.h++>
 #include <ogonek/error/error_handler.h++>

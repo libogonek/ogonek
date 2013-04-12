@@ -1,0 +1,81 @@
+// Ogonek
+//
+// Written in 2013 by Martinho Fernandes <martinho.fernandes@gmail.com>
+//
+// To the extent possible under law, the author(s) have dedicated all copyright and related
+// and neighboring rights to this software to the public domain worldwide. This software is
+// distributed without any warranty.
+//
+// You should have received a copy of the CC0 Public Domain Dedication along with this software.
+// If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
+
+// Decoding sequences
+
+#ifndef OGONEK_ENCODING_DECODE_HPP
+#define OGONEK_ENCODING_DECODE_HPP
+
+#include <ogonek/sequence/seq.h++>
+#include <ogonek/sequence/properties.h++>
+#include <ogonek/encoding/traits.h++>
+#include <ogonek/encoding/utf32.h++>
+#include <ogonek/detail/constants.h++>
+#include <ogonek/detail/meta/is_decayed.h++>
+#include <ogonek/detail/container/encoded_character.h++>
+
+#include <wheels/meta.h++>
+
+#include <type_traits>
+#include <tuple>
+#include <utility>
+
+namespace ogonek {
+    namespace detail {
+        template <typename Sequence, typename EncodingForm, typename ErrorHandler>
+        struct decoding_sequence_impl : detail::native_sequence<detail::well_formed> {
+            using value_type = code_point;
+            using reference = value_type;
+
+            template <typename SequenceF, typename ErrorHandlerF>
+            decoding_sequence_impl(SequenceF&& s, ErrorHandlerF&& handler)
+            : s(std::forward<SequenceF>(s)), handler(std::forward<ErrorHandlerF>(handler)) {}
+
+            bool empty() const { return seq::empty(s); }
+            reference front() const {
+                code_point u;
+                auto st = state;
+                std::tie(std::ignore, u) = EncodingForm::decode_one_ex(seq::save(s), st, handler);
+                return u;
+            }
+            void pop_front() {
+                std::tie(s, std::ignore) = EncodingForm::decode_one_ex(seq::save(s), state, handler);
+            }
+
+            Sequence s;
+            EncodingState<EncodingForm> state {};
+            ErrorHandler handler;
+        };
+    } // namespace detail
+    //! {class}
+    //! A sequence wrapper that lazily decodes the underlying sequence
+    template <typename Sequence, typename EncodingForm, typename ErrorHandler>
+    using decoding_sequence = detail::decoding_sequence_impl<wheels::Decay<Sequence>, EncodingForm, wheels::Decay<ErrorHandler>>;
+
+    template <typename EncodingForm,
+              typename Sequence, typename ErrorHandler,
+              wheels::DisableIf<detail::is_well_formed<Sequence>>...>
+    decoding_sequence<Sequence, EncodingForm, ErrorHandler> decode_ex(Sequence&& s, ErrorHandler&& h) {
+        return { std::forward<Sequence>(s), std::forward<ErrorHandler>(h) };
+    }
+    template <typename EncodingForm,
+              typename Sequence, typename ErrorHandler,
+              wheels::EnableIf<detail::is_well_formed<Sequence>>...>
+    Sequence decode_ex(Sequence&& s, ErrorHandler&&) {
+        return std::forward<Sequence>(s);
+    }
+    namespace result_of {
+        template <typename EncodingForm, typename Sequence, typename ErrorHandler>
+        using decode_ex = decltype((decode_ex<EncodingForm>)(std::declval<Sequence>(), std::declval<ErrorHandler>()));
+    } // namespace result_of
+} // namespace ogonek
+
+#endif // OGONEK_ENCODING_DECODE_HPP

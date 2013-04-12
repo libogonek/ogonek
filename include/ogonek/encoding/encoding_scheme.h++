@@ -111,4 +111,3 @@ namespace ogonek {
 } // namespace ogonek
 
 #endif // OGONEK_ENCODING_ENCODING_SCHEME_HPP
-

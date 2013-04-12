@@ -22,6 +22,7 @@
 #include <type_traits>
 
 namespace ogonek {
+    //! *Note*: this assumes wchar_t is always one of UTF-16 or UTF-32
     struct wide : wheels::Conditional<sizeof(wchar_t)==2, utf16, utf32> {
         using code_unit = wchar_t;
     };

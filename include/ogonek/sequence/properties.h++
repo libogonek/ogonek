@@ -9,10 +9,10 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// Static sequence property set
+// Static sequence properties
 
-#ifndef OGONEK_SEQUENCE_PROPERTY_SET_HPP
-#define OGONEK_SEQUENCE_PROPERTY_SET_HPP
+#ifndef OGONEK_SEQUENCE_PROPERTIES_HPP
+#define OGONEK_SEQUENCE_PROPERTIES_HPP
 
 #include <wheels/meta.h++>
 
@@ -71,4 +71,4 @@ namespace ogonek {
     } // namespace detail
 } // namespace ogonek
 
-#endif // OGONEK_SEQUENCE_PROPERTY_SET_HPP
+#endif // OGONEK_SEQUENCE_PROPERTIES_HPP

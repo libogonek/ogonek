@@ -9,12 +9,12 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// begin() and end() for ogonek's simple sequences
+// Interoperation with iterators and containers
 
-#ifndef OGONEK_SEQUENCE_BEGIN_END_HPP
-#define OGONEK_SEQUENCE_BEGIN_END_HPP
+#ifndef OGONEK_SEQUENCE_INTEROP_HPP
+#define OGONEK_SEQUENCE_INTEROP_HPP
 
-#include <ogonek/sequence/traits.h++>
+#include <ogonek/sequence/seq.h++>
 #include <ogonek/detail/meta/is_decayed.h++>
 #include <ogonek/detail/container/optional.h++>
 
@@ -124,8 +124,27 @@ namespace ogonek {
         template <typename S,
                   wheels::EnableIf<is_sequence<S>>...>
         detail::sequence_iterator<wheels::Decay<S>> end(S&& s) { return detail::end(s); }
+
+        //! {function}
+        //! *Requires*: `S` is a [concept:Sequence] [soft];
+        //!             `C` is a [concept:Container].
+        //! *Returns*: a sequence in the current state 
+        template <typename C, typename S,
+                  wheels::EnableIf<is_sequence<S>>...>
+        C materialize(S&& s) {
+            return C(seq::begin(s), seq::end(s));
+        }
+
+        //! {function}
+        //! *Requires*: `S` is a [concept:Sequence] [soft];
+        //!             `C<seq::Value<S>>` is a [concept:Container].
+        //! *Returns*: a sequence in the current state 
+        template <template <typename...> class C, typename S,
+                  wheels::EnableIf<is_sequence<S>>...>
+        C<Value<S>> materialize(S&& s) {
+            return materialize<C<Value<S>>>(std::forward<S>(s));
+        }
     } // namespace seq
 } // namespace ogonek
 
-#endif // OGONEK_SEQUENCE_BEGIN_END_HPP
-
+#endif // OGONEK_SEQUENCE_INTEROP_HPP

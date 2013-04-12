@@ -14,7 +14,7 @@
 #ifndef OGONEK_SEQUENCE_AS_SEQUENCE_HPP
 #define OGONEK_SEQUENCE_AS_SEQUENCE_HPP
 
-#include <ogonek/sequence/traits.h++>
+#include <ogonek/sequence/seq.h++>
 #include <ogonek/detail/meta/character.h++>
 #include <ogonek/detail/meta/iterator.h++>
 
@@ -74,7 +74,6 @@ namespace ogonek {
 
     //! {function}
     //! *Requires*: `T` is a model of [concept:SequenceSource] [soft];
-    //!             this function was called with an lvalue [hard] TODO is it hard?;
     //!             if `T` is a pointer type, `t` is a valid pointer to the first element of a null-terminated string [undefined].
     //! *Effects*: forwards a sequence with the normalized interface, possibly using a wrapper.
     template <typename T>

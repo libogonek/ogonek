@@ -11,8 +11,8 @@
 
 // Big endian order
 
-#ifndef OGONEK_BIG_ENDIAN_HPP
-#define OGONEK_BIG_ENDIAN_HPP
+#ifndef OGONEK_ENCODING_BIG_ENDIAN_HPP
+#define OGONEK_ENCODING_BIG_ENDIAN_HPP
 
 #include <ogonek/types.h++>
 
@@ -78,5 +78,4 @@ namespace ogonek {
     };
 }
 
-#endif // OGONEK_BIG_ENDIAN_HPP
-
+#endif // OGONEK_ENCODING_BIG_ENDIAN_HPP

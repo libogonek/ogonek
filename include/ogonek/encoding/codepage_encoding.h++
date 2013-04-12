@@ -11,8 +11,8 @@
 
 // Generic codepage encoding
 
-#ifndef OGONEK_CODEPAGE_ENCODING_HPP
-#define OGONEK_CODEPAGE_ENCODING_HPP
+#ifndef OGONEK_ENCODING_CODEPAGE_ENCODING_HPP
+#define OGONEK_ENCODING_CODEPAGE_ENCODING_HPP
 
 #include <ogonek/encoding/iterator.h++>
 #include <ogonek/types.h++>
@@ -87,5 +87,4 @@ namespace ogonek {
     };
 } // namespace ogonek
 
-#endif // OGONEK_CODEPAGE_ENCODING_HPP
-
+#endif // OGONEK_ENCODING_CODEPAGE_ENCODING_HPP

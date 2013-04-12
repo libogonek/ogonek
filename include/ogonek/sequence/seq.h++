@@ -9,10 +9,10 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// Smart sequences
+// Core sequence operations
 
-#ifndef OGONEK_SEQUENCE_TRAITS_HPP
-#define OGONEK_SEQUENCE_TRAITS_HPP
+#ifndef OGONEK_SEQUENCE_SEQ_HPP
+#define OGONEK_SEQUENCE_SEQ_HPP
 
 #include <ogonek/sequence/properties.h++>
 
@@ -235,4 +235,4 @@ namespace ogonek {
     } // namespace seq
 } // namespace ogonek
 
-#endif // OGONEK_SEQUENCE_TRAITS_HPP
+#endif // OGONEK_SEQUENCE_SEQ_HPP
