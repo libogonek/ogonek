@@ -18,9 +18,10 @@ file in the dist/ directory with both the headers and the library files
 necessary to use ogonek. By default, a static library is built. To build a
 shared library (DLL), add `lib=shared` to the command-line when building.
 
-Note that as of this writing only compilation with GCC 4.7.2 and clang 3.2 has
-been tested. MSVC will only be considered as a target after the big C++11
-update to VS 2012.
+Note that as of this writing only compilation with GCC 4.7.2 and 4.8.0 has been
+tested with successful results. Clang 3.2 can compile the code, but causes some
+tests to fail. MSVC will only be considered as a target after the big C++11
+update to VS 2012, depending on which features are added.
 
 # Helping out
 
