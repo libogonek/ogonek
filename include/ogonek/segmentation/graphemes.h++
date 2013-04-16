@@ -11,11 +11,69 @@
 
 // Grapheme segmentation
 
-#ifndef OGONEK_GRAPHEMES_HPP
-#define OGONEK_GRAPHEMES_HPP
+#ifndef OGONEK_SEGMENTATION_GRAPHEMES_HPP
+#define OGONEK_SEGMENTATION_GRAPHEMES_HPP
 
-#include <ogonek/segmentation/detail/grapheme_iterator.h++>
+#include <ogonek/sequence/seq.h++>
 #include <ogonek/error/assume_valid.h++>
+#include <ogonek/segmentation/detail/grapheme_iterator.h++> // TODO uncrapify this one
+
+#include <wheels/meta.h++>
+
+#include <utility>
+
+namespace ogonek {
+    namespace detail {
+        template <typename Sequence>
+        struct grapheme_sequence_impl : detail::native_sequence<> {
+        public:
+            template <typename SequenceF,
+                      wheels::DisableIf<wheels::is_related<grapheme_sequence_impl<Sequence>, SequenceF>>...>
+            explicit grapheme_sequence_impl(SequenceF&& s) : s(std::forward<SequenceF>(s)) {}
+
+            using value_type = Sequence;
+            using reference = value_type;
+
+            bool empty() const { return seq::empty(s); }
+            reference front() const {
+                return seq::before(s, skip_grapheme());
+            }
+            void pop_front() {
+                s = skip_grapheme();
+            }
+            grapheme_sequence_impl save() const { return *this; }
+            grapheme_sequence_impl before(grapheme_sequence_impl const& that) const { return { s.before(that.s) }; }
+
+        private:
+            Sequence s;
+
+            Sequence skip_grapheme() const {
+                auto remaining = seq::save(s);
+                auto before = seq::front(remaining);
+                seq::pop_front(remaining);
+                do {
+                    auto after = seq::front(remaining);
+                if(detail::is_grapheme_boundary(before, after)) break;
+                    seq::pop_front(remaining);
+                    before = after;
+                } while(!seq::empty(remaining));
+                return remaining;
+            }
+        };
+        static_assert(is_native_sequence<grapheme_sequence_impl<std::pair<char const*, char const*>>>(), "");
+    } // namespace detail
+
+    template <typename Sequence>
+    using grapheme_sequence = detail::grapheme_sequence_impl<wheels::Decay<Sequence>>;
+
+    template <typename Sequence,
+              wheels::EnableIf<detail::is_well_formed<Sequence>>...>
+    grapheme_sequence<Sequence> graphemes_ex(Sequence&& s) {
+        return grapheme_sequence<Sequence>(std::forward<Sequence>(s));
+    }
+} // namespace ogonek
+
+// ---- CRAP BELOW THIS LINE
 #include <ogonek/detail/ranges.h++>
 
 #include <boost/range/iterator_range.hpp>
@@ -28,4 +86,4 @@ namespace ogonek {
     }
 } // namespace ogonek
 
-#endif // OGONEK_GRAPHEMES_HPP
+#endif // OGONEK_SEGMENTATION_GRAPHEMES_HPP
