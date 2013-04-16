@@ -16,6 +16,8 @@
 
 #include <ogonek/types.h++>
 
+#include <wheels/meta.h++>
+
 #include <type_traits>
 
 namespace ogonek {

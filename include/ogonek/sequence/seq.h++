@@ -75,7 +75,14 @@ namespace ogonek {
 
         struct native_sequence_test {
             template <typename T>
-            typename wheels::Unqualified<T>::is_native_sequence static test(int);
+            wheels::All<
+                typename wheels::Unqualified<T>::is_native_sequence,
+                std::is_convertible<decltype(std::declval<T>().empty()), bool>,
+                std::is_convertible<decltype(std::declval<T>().front()), typename T::reference>,
+                std::is_void<decltype(std::declval<T>().pop_front())>,
+                std::is_same<decltype(std::declval<T>().save()), T>,
+                std::is_same<decltype(std::declval<T>().before(std::declval<T>())), T>
+            > static test(int);
             template <typename...>
             std::false_type static test(...);
         };
@@ -94,8 +101,7 @@ namespace ogonek {
         //! {specialization:1}
         template <typename S>
         struct sequence_ops_impl<S, true> {
-            //! {trait}
-            //! The type of values in the sequence `S`.
+            //! The type of values in the sequence `S`.jjjjjjjjj
             using value_type = typename S::value_type;
             //! {trait}
             //! The type of references to the sequence `S`.
@@ -232,7 +238,7 @@ namespace ogonek {
         //! *Returns*: a sequence with the elements of `whole` that are before the elements of `part`.
         template <typename S,
                   wheels::EnableIf<is_sequence<S>>...>
-        S before(S const& whole, S const& part) { detail::sequence_ops<S>::before(whole, part); }
+        S before(S const& whole, S const& part) { return detail::sequence_ops<S>::before(whole, part); }
     } // namespace seq
 } // namespace ogonek
 

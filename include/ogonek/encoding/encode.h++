@@ -44,6 +44,10 @@ namespace ogonek {
             bool empty() const { return seq::empty(s) && is_depleted(); }
             reference front() const { return encoded[current]; }
             void pop_front() { if(++current == encoded.size()) encode_next(); }
+            encoding_sequence_impl save() const { return *this; }
+            encoding_sequence_impl before(encoding_sequence_impl const& other) const {
+                return *this; // ahahah
+            }
 
         private:
             Sequence s;
@@ -82,6 +86,7 @@ namespace ogonek {
                 }
             }
         };
+        static_assert(is_native_sequence<encoding_sequence_impl<std::pair<char const*, char const*>, utf32, int>>(), "encoding sequence is a native sequence");
     } // namespace detail
 
     //! {class}

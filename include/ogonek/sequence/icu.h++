@@ -38,6 +38,7 @@ namespace ogonek {
                 int32_t i = 0;
                 icu::UnicodeString const* u;
             };
+            static_assert(is_native_sequence<result>(), "result is a native sequence");
             static result forward(icu::UnicodeString const& u) { return std::forward<result>(u); }
         };
         template <>

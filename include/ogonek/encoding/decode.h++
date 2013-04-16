@@ -46,14 +46,26 @@ namespace ogonek {
                 std::tie(std::ignore, u) = EncodingForm::decode_one_ex(seq::save(s), st, handler);
                 return u;
             }
+            decoding_sequence_impl save() const {
+                return *this;
+            }
             void pop_front() {
                 std::tie(s, std::ignore) = EncodingForm::decode_one_ex(seq::save(s), state, handler);
             }
+            decoding_sequence_impl before(decoding_sequence_impl const& other) const {
+                return { seq::before(s, other.s), state, handler };
+            }
+
+        private:
+            template <typename SequenceF, typename ErrorHandlerF>
+            decoding_sequence_impl(SequenceF&& s, EncodingState<EncodingForm> state, ErrorHandlerF&& handler)
+            : s(std::forward<SequenceF>(s)), state(state), handler(std::forward<ErrorHandlerF>(handler)) {}
 
             Sequence s;
             EncodingState<EncodingForm> state {};
             ErrorHandler handler;
         };
+        static_assert(is_native_sequence<decoding_sequence_impl<std::pair<char const*, char const*>, utf32, int>>(), "decoding sequence is a native sequence");
     } // namespace detail
     //! {class}
     //! A sequence wrapper that lazily decodes the underlying sequence

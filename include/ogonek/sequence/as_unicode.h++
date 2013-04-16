@@ -71,7 +71,7 @@ namespace ogonek {
     //! *Remarks*: the result is statically known well-formed.
     template <typename S, typename E>
     result_of::as_unicode<S, E> as_unicode(S&& s, E&& e) {
-        return detail::as_unicode_impl<S, E>::forward(as_sequence(std::forward<S>(s)), std::forward<E>(e));
+        return detail::as_unicode_impl<result_of::as_sequence<S>, E>::forward(as_sequence(std::forward<S>(s)), std::forward<E>(e));
     }
 } // namespace ogonek
 
