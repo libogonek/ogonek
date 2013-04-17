@@ -212,7 +212,7 @@ namespace ogonek {
         template <typename S,
                   wheels::EnableIf<is_sequence<S>>...>
         Reference<S> front(S const& s) {
-            assert(!empty(s));
+            assert(!seq::empty(s));
             return detail::sequence_ops<S>::front(s);
         }
 
@@ -222,7 +222,7 @@ namespace ogonek {
         template <typename S,
                   wheels::EnableIf<is_sequence<S>>...>
         void pop_front(S& s) {
-            assert(!empty(s));
+            assert(!seq::empty(s));
             return detail::sequence_ops<S>::pop_front(s);
         }
 

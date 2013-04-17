@@ -62,7 +62,7 @@ namespace ogonek {
         template <typename S>
         struct as_sequence_impl<S, native_sequence_tag> {
             using result = S;
-            static result forward(S&& s) { return std::forward<result>(s); }
+            static result forward(S&& s) { return std::forward<S>(s); }
         };
 
         template <typename Iterable>
@@ -81,10 +81,13 @@ namespace ogonek {
         };
 
         template <typename Char, std::size_t N>
-        struct as_sequence_impl<Char(&)[N], null_terminated_tag> {
+        struct as_sequence_impl<Char[N], null_terminated_tag> {
             using result = std::pair<Char const*, Char const*>;
             static result forward(Char(&str)[N]) { return { str, str+N-1 }; }
         };
+        template <typename Char, std::size_t N>
+        struct as_sequence_impl<Char(&)[N], null_terminated_tag>
+        : as_sequence_impl<Char[N], null_terminated_tag> {};
         template <typename Char>
         struct as_sequence_impl<Char*, null_terminated_tag> {
         private:
@@ -93,6 +96,9 @@ namespace ogonek {
             using result = std::pair<Char const*, Char const*>;
             static result forward(Char* p) { return { p, p + std::char_traits<char_type>::length(p) }; }
         };
+        template <typename Char>
+        struct as_sequence_impl<Char, null_terminated_tag>
+        : as_sequence_impl<wheels::Unqualified<Char>, null_terminated_tag> {};
     } // namespace detail
 
     namespace result_of {
@@ -113,7 +119,7 @@ namespace ogonek {
     //! *Effects*: forwards a sequence with the normalized interface, possibly using a wrapper.
     template <typename T>
     result_of::as_sequence<T> as_sequence(T&& t) {
-        return detail::as_sequence_impl<T>::forward(t);
+        return detail::as_sequence_impl<T>::forward(std::forward<T>(t));
     }
 } // namespace ogonek
 

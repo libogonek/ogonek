@@ -17,6 +17,7 @@
 #include <ogonek/encoding/iterator.h++>
 #include <ogonek/types.h++>
 #include <ogonek/error.h++>
+#include <ogonek/error/error_handler.h++>
 #include <ogonek/detail/ranges.h++>
 #include <ogonek/detail/constants.h++>
 #include <ogonek/detail/container/partial_array.h++>
@@ -39,6 +40,25 @@ namespace ogonek {
         template <typename ErrorHandler>
         static detail::encoded_character<utf32> encode_one(code_point u, state&, ErrorHandler) {
             return { u };
+        }
+        template <typename Sequence>
+        static std::pair<Sequence, code_point> decode_one_ex(Sequence s, state&, assume_valid_t) {
+            auto u = seq::front(s);
+            seq::pop_front(s);
+            return { s, u };
+        }
+        template <typename Sequence, typename ErrorHandler>
+        static std::pair<Sequence, code_point> decode_one_ex(Sequence s, state& state, ErrorHandler handler) {
+            auto u = seq::front(s);
+            seq::pop_front(s);
+
+            if(u > detail::last_code_point || detail::is_surrogate(u)) {
+                decode_error<Sequence, utf32> error { s, state };
+                detail::optional<code_point> u;
+                std::tie(s, state, u) = handler.handle(error);
+                return { s, *u };
+            }
+            return { s, u };
         }
         template <typename Range>
         static boost::sub_range<Range> decode_one(Range const& r, code_point& out, state&, assume_valid_t) {

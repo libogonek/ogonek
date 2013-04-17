@@ -11,22 +11,27 @@
 
 // Tests for <ogonek/encoding/latin1.h++>
 
-#include <ogonek/encoding/latin1.h++>
 #include <ogonek/encoding.h++>
 #include <ogonek/types.h++>
 
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 
+#include <ogonek/encoding/latin1.h++>
+#include <ogonek/encoding/encode.h++>
+#include <ogonek/sequence/interop.h++>
+#include <vector>
+
 #include <catch.h++>
 
 TEST_CASE("latin1", "ISO-8859-1 encoding form") {
     using namespace ogonek::literal;
+    namespace seq = ogonek::seq;
 
     SECTION("encode", "Encoding ISO-8859-1") {
         auto decoded = { U'\x0041', U'\x0082' };
         auto range = ogonek::encode<ogonek::latin1>(decoded, ogonek::assume_valid);
-        std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
+        auto encoded = seq::materialize<std::vector<ogonek::byte>>(range);
         REQUIRE(encoded.size() == 2);
         CHECK(encoded[0] == 0x41_b);
         CHECK(encoded[1] == 0x82_b);
@@ -51,7 +56,7 @@ TEST_CASE("latin1", "ISO-8859-1 encoding form") {
     SECTION("replacement", "ISO-8859-1's custom replacement character (?)") {
         auto decoded = { U'\x0041', U'\x0032', U'\x1F4A9' };
         auto range = ogonek::encode<ogonek::latin1>(decoded, ogonek::replace_errors);
-        std::vector<ogonek::latin1::code_unit> encoded(boost::begin(range), boost::end(range));
+        auto encoded = seq::materialize<std::vector>(range);
         REQUIRE(encoded.size() == 3);
         CHECK(encoded[0] == 0x41_b);
         CHECK(encoded[1] == 0x32_b);

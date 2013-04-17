@@ -23,25 +23,11 @@ namespace ogonek {
     template <typename EncodingForm,
               typename Range, typename ErrorHandler,
               typename Iterator = detail::RangeConstIterator<Range>,
-              typename EncodingIterator = encoding_iterator<EncodingForm, Iterator, ErrorHandler>>
-    boost::iterator_range<EncodingIterator> encode(Range const& r, ErrorHandler) {
-        return detail::wrap_range<EncodingIterator>(r);
-    }
-    template <typename EncodingForm,
-              typename Range, typename ErrorHandler,
-              typename Iterator = detail::RangeConstIterator<Range>,
               typename DecodingIterator = decoding_iterator<EncodingForm, Iterator, ErrorHandler>,
               typename DecodingRange = detail::tagged_iterator_range<DecodingIterator, detail::validated_tag>>
     DecodingRange decode(Range const& r, ErrorHandler) {
         return detail::wrap_tagged_range<DecodingIterator, detail::validated_tag>(r);
     }
-
-    namespace result_of {
-        template <typename EncodingForm, typename Range, typename ErrorHandler>
-        using encode = decltype(ogonek::encode<EncodingForm>(std::declval<Range>(), std::declval<ErrorHandler>()));
-        template <typename EncodingForm, typename Range, typename ErrorHandler>
-        using decode = decltype(ogonek::decode<EncodingForm>(std::declval<Range>(), std::declval<ErrorHandler>()));
-    } // namespace result_of
 } // namespace ogonek
 
 #endif // OGONEK_ENCODING_HPP

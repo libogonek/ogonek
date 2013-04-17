@@ -50,14 +50,14 @@ TEST_CASE("encode", "Encoding sequence") {
     namespace seq = ogonek::seq;
     auto str = ogonek::as_sequence(U"\U00010000ab");
 
-    auto e = ogonek::encode_ex<ogonek::utf16>(str, ogonek::assume_valid);
+    auto e = ogonek::encode<ogonek::utf16>(str, ogonek::assume_valid);
     char16_t res16[] = u"\U00010000ab";
     for(int i = 0; !seq::empty(e); seq::pop_front(e), ++i) {
         auto&& x = seq::front(e);
         REQUIRE(x == res16[i]);
     }
 
-    auto f = ogonek::encode_ex<ogonek::utf8>(str, ogonek::assume_valid);
+    auto f = ogonek::encode<ogonek::utf8>(str, ogonek::assume_valid);
     char res8[] = u8"\U00010000ab";
     for(int i = 0; !seq::empty(f); seq::pop_front(f), ++i) {
         auto&& x = seq::front(f);

@@ -11,7 +11,6 @@
 
 // Tests for <ogonek/encoding/ascii.h++>
 
-#include <ogonek/encoding/ascii.h++>
 #include <ogonek/encoding.h++>
 #include <ogonek/types.h++>
 
@@ -20,13 +19,22 @@
 
 #include <catch.h++>
 
+#include <ogonek/encoding/ascii.h++>
+#include <ogonek/encoding/encode.h++>
+#include <ogonek/sequence/interop.h++>
+#include <ogonek/sequence/as_sequence.h++>
+
+#include <vector>
+
 TEST_CASE("ascii", "ASCII encoding form") {
     using namespace ogonek::literal;
+    namespace seq = ogonek::seq;
 
     SECTION("encode", "Encoding ASCII") {
         auto decoded = { U'\x0041', U'\x0032' };
+        static_assert(ogonek::is_sequence<decltype(ogonek::as_sequence(decoded))>(), "");
         auto range = ogonek::encode<ogonek::ascii>(decoded, ogonek::assume_valid);
-        std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
+        auto encoded = seq::materialize<std::vector>(range);
         REQUIRE(encoded.size() == 2);
         CHECK(encoded[0] == 0x41_b);
         CHECK(encoded[1] == 0x32_b);
@@ -51,7 +59,7 @@ TEST_CASE("ascii", "ASCII encoding form") {
     SECTION("replacement", "ASCII's custom replacement character (?)") {
         auto decoded = { U'\x41', U'\x32', U'\x80' };
         auto range = ogonek::encode<ogonek::ascii>(decoded, ogonek::replace_errors);
-        std::vector<ogonek::ascii::code_unit> encoded(boost::begin(range), boost::end(range));
+        auto encoded = seq::materialize<std::vector>(range);
         REQUIRE(encoded.size() == 3);
         CHECK(encoded[0] == 0x41_b);
         CHECK(encoded[1] == 0x32_b);

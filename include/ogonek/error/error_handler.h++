@@ -21,6 +21,7 @@
 #include <wheels/meta.h++>
 
 #include <type_traits>
+#include <tuple>
 
 namespace ogonek {
     //! {concept}
@@ -38,10 +39,10 @@ namespace ogonek {
         // encode_correction<EncodingForm, Sequence> handle(encode_error<Sequence, EncodingForm> const& error);
     // };
 
-    template <typename Sequence>
-    using decode_correction = std::pair<Sequence, detail::optional<code_point>>;
     template <typename Sequence, typename EncodingForm>
-    using encode_correction = std::pair<Sequence, detail::encoded_character<EncodingForm>>;
+    using decode_correction = std::tuple<Sequence, EncodingState<EncodingForm>, detail::optional<code_point>>;
+    template <typename Sequence, typename EncodingForm>
+    using encode_correction = std::tuple<Sequence, EncodingState<EncodingForm>, detail::encoded_character<EncodingForm>>;
 
     namespace detail {
         struct error_handler_test {
@@ -55,7 +56,7 @@ namespace ogonek {
     //! {trait}
     //! *Returns*: `true` is `T` is a model of [concept:ErrorHandler].
     template <typename T>
-    using is_error_handler = wheels::TraitOf<detail::error_handler_test, T>;
+    struct is_error_handler : wheels::TraitOf<detail::error_handler_test, T> {};
 
     //! {tag}
     //! A tag type to mark error handlers.

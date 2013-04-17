@@ -735,8 +735,10 @@ namespace ogonek {
             auto& prop = detail::find_property_group(script_data, script_data_size, u);
             return { prop.first_script_extension, prop.first_script_extension + prop.script_extension_count };
         }
+        template<typename>struct show{};
         //[[deprecated("since 6.0.0")]]
         inline text_type get_iso_comment(code_point u) {
+            //struct{}_= show<ogonek::result_of::as_unicode<const char32_t* const&, const throw_error_t&>>();
             return text_type { detail::find_property_group(iso_comment_data, iso_comment_data_size, u).data };
         }
         inline hangul_syllable_type get_hangul_syllable_type(code_point u) {

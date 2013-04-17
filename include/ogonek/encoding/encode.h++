@@ -16,8 +16,10 @@
 
 #include <ogonek/sequence/seq.h++>
 #include <ogonek/sequence/properties.h++>
+#include <ogonek/sequence/as_sequence.h++>
 #include <ogonek/encoding/traits.h++>
 #include <ogonek/encoding/utf32.h++>
+#include <ogonek/error/default_error_handler.h++>
 #include <ogonek/detail/constants.h++>
 #include <ogonek/detail/meta/is_decayed.h++>
 #include <ogonek/detail/container/encoded_character.h++>
@@ -30,7 +32,7 @@
 
 namespace ogonek {
     namespace detail {
-        template <typename Sequence, typename EncodingForm, typename ErrorHandler>
+        template <typename EncodingForm, typename Sequence, typename ErrorHandler>
         struct encoding_sequence_impl : detail::native_sequence<detail::well_formed> {
             using value_type = CodeUnit<EncodingForm>;
             using reference = value_type;
@@ -46,7 +48,7 @@ namespace ogonek {
             void pop_front() { if(++current == encoded.size()) encode_next(); }
             encoding_sequence_impl save() const { return *this; }
             encoding_sequence_impl before(encoding_sequence_impl const& other) const {
-                return *this; // ahahah
+                return *this; // TODO ahahah
             }
 
         private:
@@ -79,37 +81,38 @@ namespace ogonek {
                 if(u > detail::last_code_point || detail::is_surrogate(u)) {
                     encode_error<Sequence, EncodingForm> error { s, state };
                     detail::encoded_character<EncodingForm> result;
-                    std::tie(s, result) = handler.handle(error);
+                    std::tie(s, state, result) = handler.handle(error);
                     return result;
                 } else {
                     return EncodingForm::encode_one(u, state, ErrorHandler1{});
                 }
             }
         };
-        static_assert(is_native_sequence<encoding_sequence_impl<std::pair<char const*, char const*>, utf32, int>>(), "encoding sequence is a native sequence");
+        static_assert(is_native_sequence<encoding_sequence_impl<utf32, std::pair<char const*, char const*>, int>>(), "encoding sequence is a native sequence");
     } // namespace detail
 
     //! {class}
     //! A sequence wrapper that lazily encodes the underlying sequence
-    template <typename Sequence, typename EncodingForm, typename ErrorHandler>
-    using encoding_sequence = detail::encoding_sequence_impl<wheels::Decay<Sequence>, EncodingForm, wheels::Decay<ErrorHandler>>;
+    template <typename EncodingForm, typename Sequence, typename ErrorHandler>
+    using encoding_sequence = detail::encoding_sequence_impl<EncodingForm, wheels::Decay<Sequence>, wheels::Decay<ErrorHandler>>;
+
+    namespace result_of {
+        template <typename EncodingForm, typename Source, typename ErrorHandler = default_error_handler_t>
+        using encode = encoding_sequence<EncodingForm, result_of::as_sequence<Source>, ErrorHandler>;
+    } // namespace result_of
+
+    // TODO optimisations
+    template <typename EncodingForm,
+              typename Source, typename ErrorHandler>
+    result_of::encode<EncodingForm, Source, ErrorHandler> encode(Source&& s, ErrorHandler&& h) {
+        return { (as_sequence)(std::forward<Source>(s)), std::forward<ErrorHandler>(h) };
+    }
 
     template <typename EncodingForm,
-              typename Sequence, typename ErrorHandler,
-              wheels::DisableIf<detail::is_well_formed<Sequence>>...>
-    encoding_sequence<Sequence, EncodingForm, ErrorHandler> encode_ex(Sequence&& s, ErrorHandler&& h) {
-        return { std::forward<Sequence>(s), std::forward<ErrorHandler>(h) };
+              typename Source>
+    result_of::encode<EncodingForm, Source> encode(Source&& s) {
+        return (encode<EncodingForm>)(std::forward<Source>(s), default_error_handler);
     }
-    template <typename EncodingForm,
-              typename Sequence, typename ErrorHandler,
-              wheels::EnableIf<detail::is_well_formed<Sequence>>...>
-    Sequence encode_ex(Sequence&& s, ErrorHandler&&) {
-        return std::forward<Sequence>(s);
-    }
-    namespace result_of {
-        template <typename EncodingForm, typename Sequence, typename ErrorHandler>
-        using encode_ex = decltype((encode_ex<EncodingForm>)(std::declval<Sequence>(), std::declval<ErrorHandler>()));
-    } // namespace result_of
 } // namespace ogonek
 
 #endif // OGONEK_ENCODING_ENCODE_HPP

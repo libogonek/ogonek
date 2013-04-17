@@ -25,6 +25,8 @@
 
 #include <wheels/meta.h++>
 
+#include <type_traits>
+
 namespace ogonek {
     namespace detail {
         //! {traits}
@@ -65,14 +67,27 @@ namespace ogonek {
         using as_unicode = typename detail::as_unicode_impl<as_sequence<S>, E>::result;
     } // namespace result_of
 
+    namespace detail {
+        struct is_unicode_source_test {
+            template <typename T, typename E>
+            wheels::Bool<true, ogonek::result_of::as_unicode<T, E>> static test(int);
+            template <typename...>
+            std::false_type static test(...);
+        };
+    } // namespace detail
+    template <typename T, typename E = default_error_handler_t>
+    struct is_unicode_source : wheels::TraitOf<detail::is_unicode_source_test, wheels::Unqualified<T>, E> {};
+
     //! {function}
     //! *Requires*: `S` is a model of [concept:SequenceSource] [soft].
     //! *Returns*: a [concept:Sequence] of code points from `s`.
     //! *Remarks*: the result is statically known well-formed.
-    template <typename S, typename E>
+    template <typename S, typename E,
+              wheels::EnableIf<is_unicode_source<S, E>>...>
     result_of::as_unicode<S, E> as_unicode(S&& s, E&& e) {
         return detail::as_unicode_impl<result_of::as_sequence<S>, E>::forward(as_sequence(std::forward<S>(s)), std::forward<E>(e));
     }
+    // TODO single argument version
 } // namespace ogonek
 
 #endif // OGONEK_SEQUENCE_AS_UNICODE_HPP

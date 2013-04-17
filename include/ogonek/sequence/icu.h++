@@ -24,19 +24,23 @@ namespace ogonek {
         struct as_sequence_impl<icu::UnicodeString, void> {
             struct result : native_sequence<> {
             public:
-                result(icu::UnicodeString const& u) : u(&u) {}
+                result(icu::UnicodeString const& u)
+                : u(&u), l(0), r(u.length()) {}
 
                 using value_type = char16_t;
                 using reference = value_type;
 
-                bool empty() const { return i == u->length(); }
-                reference front() const { return u->charAt(i); }
-                void pop_front() { ++i; }
+                bool empty() const { return l == r; }
+                reference front() const { return u->charAt(l); }
+                void pop_front() { ++l; }
                 result save() const { return *this; }
+                result before(result const& that) const { return { u, l, that.l }; }
 
             private:
-                int32_t i = 0;
+                result(icu::UnicodeString const* u, int32_t l, int32_t r) : u(u), l(l), r(r) {}
+
                 icu::UnicodeString const* u;
+                int32_t l, r;
             };
             static_assert(is_native_sequence<result>(), "result is a native sequence");
             static result forward(icu::UnicodeString const& u) { return std::forward<result>(u); }

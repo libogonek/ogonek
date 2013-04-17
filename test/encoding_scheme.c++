@@ -11,22 +11,29 @@
 
 // Tests for <ogonek/encoding/encoding_scheme.h++>
 
+#include <ogonek/encoding.h++>
+#include <ogonek/types.h++>
+#include <ogonek/error.h++>
+
 #include <ogonek/encoding/utf16le.h++>
 #include <ogonek/encoding/utf16be.h++>
 #include <ogonek/encoding/utf32le.h++>
 #include <ogonek/encoding/utf32be.h++>
-#include <ogonek/encoding.h++>
-#include <ogonek/types.h++>
-#include <ogonek/error.h++>
+#include <ogonek/encoding/encode.h++>
+#include <ogonek/sequence/interop.h++>
+
+#include <vector>
 
 #include <catch.h++>
 
 TEST_CASE("utf16le", "UTF-16LE codec") {
     using namespace ogonek::literal;
+    namespace seq = ogonek::seq;
+
     SECTION("encode", "Encoding UTF-16LE") {
         auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
         auto range = ogonek::encode<ogonek::utf16le>(decoded, ogonek::assume_valid);
-        std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
+        auto encoded = seq::materialize<std::vector>(range);
         REQUIRE(encoded.size() == 10);
         CHECK(encoded[0] == 0x41_b);
         CHECK(encoded[1] == 0x00_b);
@@ -54,11 +61,12 @@ TEST_CASE("utf16le", "UTF-16LE codec") {
 
 TEST_CASE("utf16be", "UTF-16BE codec") {
     using namespace ogonek::literal;
+    namespace seq = ogonek::seq;
 
     SECTION("encode", "Encoding UTF-16BE") {
         auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
         auto range = ogonek::encode<ogonek::utf16be>(decoded, ogonek::assume_valid);
-        std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
+        auto encoded = seq::materialize<std::vector>(range);
         REQUIRE(encoded.size() == 10);
         CHECK(encoded[0] == 0x00_b);
         CHECK(encoded[1] == 0x41_b);
@@ -86,11 +94,12 @@ TEST_CASE("utf16be", "UTF-16BE codec") {
 
 TEST_CASE("utf32le", "UTF-32LE codec") {
     using namespace ogonek::literal;
+    namespace seq = ogonek::seq;
 
     SECTION("encode", "Encoding UTF-32LE") {
         auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
         auto range = ogonek::encode<ogonek::utf32le>(decoded, ogonek::assume_valid);
-        std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
+        auto encoded = seq::materialize<std::vector>(range);
         REQUIRE(encoded.size() == 16);
         CHECK(encoded[0] == 0x41_b);
         CHECK(encoded[1] == 0x00_b);
@@ -127,11 +136,12 @@ TEST_CASE("utf32le", "UTF-32LE codec") {
 
 TEST_CASE("utf32be", "UTF-32BE codec") {
     using namespace ogonek::literal;
+    namespace seq = ogonek::seq;
 
     SECTION("encode", "Encoding UTF-32BE") {
         auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
         auto range = ogonek::encode<ogonek::utf32be>(decoded, ogonek::assume_valid);
-        std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
+        auto encoded = seq::materialize<std::vector>(range);
         REQUIRE(encoded.size() == 16);
         CHECK(encoded[0] == 0x00_b);
         CHECK(encoded[1] == 0x00_b);

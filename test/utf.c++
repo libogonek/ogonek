@@ -11,24 +11,30 @@
 
 // Tests for <ogonek/encoding/utf?.h++>
 
-#include <ogonek/encoding/utf8.h++>
-#include <ogonek/encoding/utf16.h++>
-#include <ogonek/encoding/utf32.h++>
 #include <ogonek/encoding.h++>
 #include <ogonek/types.h++>
 
 #include <boost/range/begin.hpp>
 #include <boost/range/end.hpp>
 
+#include <ogonek/encoding/utf8.h++>
+#include <ogonek/encoding/utf16.h++>
+#include <ogonek/encoding/utf32.h++>
+#include <ogonek/encoding/encode.h++>
+#include <ogonek/sequence/interop.h++>
+
+#include <vector>
+
 #include <catch.h++>
 
 TEST_CASE("utf8", "UTF-8 encoding form") {
     using namespace ogonek::literal;
+    namespace seq = ogonek::seq;
 
     SECTION("encode", "Encoding UTF-8") {
         auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
         auto range = ogonek::encode<ogonek::utf8>(decoded, ogonek::assume_valid);
-        std::vector<ogonek::byte> encoded(boost::begin(range), boost::end(range));
+        auto encoded = seq::materialize<std::vector<ogonek::byte>>(range);
         REQUIRE(encoded.size() == 10);
         CHECK(encoded[0] == 0x41_b);
         CHECK(encoded[1] == 0xC3_b);
@@ -56,11 +62,12 @@ TEST_CASE("utf8", "UTF-8 encoding form") {
 
 TEST_CASE("utf16", "UTF-16 encoding form") {
     using namespace ogonek::literal;
+    namespace seq = ogonek::seq;
 
     SECTION("encode", "Encoding UTF-16") {
         auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
         auto range = ogonek::encode<ogonek::utf16>(decoded, ogonek::assume_valid);
-        std::vector<char16_t> encoded(boost::begin(range), boost::end(range));
+        auto encoded = seq::materialize<std::vector>(range);
         REQUIRE(encoded.size() == 5);
         CHECK(encoded[0] == u'\x0041');
         CHECK(encoded[1] == u'\x00C5');
@@ -82,11 +89,12 @@ TEST_CASE("utf16", "UTF-16 encoding form") {
 
 TEST_CASE("utf32", "UTF-32 encoding form") {
     using namespace ogonek::literal;
+    namespace seq = ogonek::seq;
 
     SECTION("encode", "Encoding UTF-32") {
         auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
         auto range = ogonek::encode<ogonek::utf32>(decoded, ogonek::assume_valid);
-        std::vector<char32_t> encoded(boost::begin(range), boost::end(range));
+        auto encoded = seq::materialize<std::vector>(range);
         REQUIRE(encoded.size() == 4);
         CHECK(encoded[0] == 0x0041);
         CHECK(encoded[1] == 0x00C5);
