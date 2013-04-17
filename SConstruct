@@ -16,7 +16,6 @@ info_files = ['README.md', 'COPYING.txt', 'ogonek.png']
 
 # Standard variables
 variables += [ BoolVariable('fatal', 'stop on first error', True)
-             , EnumVariable('compiler', 'compiler to use', 'gcc', allowed_values=('gcc', 'clang'))
              , ('test', 'test cases to run', 'all')
              ]
 
@@ -51,8 +50,9 @@ if sys.platform == 'win32':
 else:
     env = Environment(options = vars, ENV = os.environ)
 
-if env['compiler'] == 'clang':
-    env['CXX'] = 'clang++'
+# Set compiler from environment
+if 'CXX' in os.environ:
+    env['CXX'] = os.environ['CXX']
 
 Help(vars.GenerateHelpText(env))
 
@@ -163,6 +163,7 @@ test.Append(CPPPATH = ['test'])
 test.Append(LIBS = test_libs)
 test.VariantDir(test_builddir, '.', duplicate=0)
 test_program = test.Program(test_target, prefix(test_builddir, test_sources), LIBS=lib_name, LIBPATH='bin/debug')
+test.Alias('buildtest', test_program)
 if env['test'] == 'all':
     test_arguments = ''
 else:
