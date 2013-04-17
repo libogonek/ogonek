@@ -1,6 +1,12 @@
 language: cpp
 compiler:
     - gcc
+
+branches:
+    only:
+        - master
+        - iterators-must-go
+
 before_install:
     - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
     - sudo add-apt-repository --yes ppa:apokluda/boost1.53
