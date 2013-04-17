@@ -41,7 +41,7 @@ namespace ogonek {
     : boost::iterator_facade<
         encoding_iterator<EncodingForm, Iterator, ErrorHandler>,
         CodeUnit<EncodingForm>,
-        std::input_iterator_tag, // TODO
+        std::forward_iterator_tag, // TODO
         CodeUnit<EncodingForm>
       > {
     public:
@@ -99,7 +99,7 @@ namespace ogonek {
     : boost::iterator_facade<
         decoding_iterator<EncodingForm, Iterator, ErrorHandler>,
         code_point,
-        std::input_iterator_tag, // TODO
+        std::forward_iterator_tag, // TODO
         code_point
       > {
     public:

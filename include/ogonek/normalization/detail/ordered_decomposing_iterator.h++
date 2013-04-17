@@ -34,7 +34,7 @@ namespace ogonek {
         : boost::iterator_facade<
             ordered_decomposing_iterator<Iterator, Compatibility>,
             code_point,
-            std::input_iterator_tag, // TODO
+            std::forward_iterator_tag, // TODO
             code_point
           > {
         public:
