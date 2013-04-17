@@ -1,3 +1,5 @@
+# Ogonek
+
 Ogonek is mostly the result of me playing around with Unicode. Currently the
 library is still in alpha stages, so I don't recommend using it for anything
 serious, mainly because not all APIs are stabilised. You are welcome to play
@@ -5,7 +7,17 @@ around with it for any non-serious purposes, though.
 
 Check out the [documentation] for more detailed information.
 
-# Setup
+ [documentation]: http://flamingdangerzone.com/ogonek
+
+## Status
+
+[![Build Status](https://travis-ci.org/rmartinho/ogonek.png?branch=master)](https://travis-ci.org/rmartinho/ogonek)
+
+The latest version, 0.5.0, implements most of the important stuff. The next
+version, 0.6.0, will be a thorough refactoring of the code in order to enable
+more type-safety and faster development.
+
+## Setup
 
 Ogonek is mostly header-only. The only part that needs compilation is the data
 in the Unicode Character Database. Currently I am translating the database to
@@ -18,12 +30,12 @@ file in the dist/ directory with both the headers and the library files
 necessary to use ogonek. By default, a static library is built. To build a
 shared library (DLL), add `lib=shared` to the command-line when building.
 
-Note that as of this writing only compilation with GCC 4.7.2 and 4.8.0 has been
-tested with successful results. Clang 3.2 can compile the code, but causes some
-tests to fail. MSVC will only be considered as a target after the big C++11
-update to VS 2012, depending on which features are added.
+Currently only compilation with 4.8.0 is being supported, but support for both
+GCC 4.7.2 and Clang 3.2 is planned. Visual Studio 2012 may become a supported
+target, depending on the quality of C++11 support when the previously announced
+update is released.
 
-# Helping out
+## Helping out
 
 Any feedback is appreciated. I am still designing and fleshing out some parts of
 the APIs, so I appreciate any bug reports or design suggestions.
@@ -34,7 +46,6 @@ free to join me there.
 Pull requests are welcome too! There is a list of tasks I want done for 1.0.0 in
 the [issue tracker]. Feel free to pick one to tackle!
 
- [documentation]: http://flamingdangerzone.com/ogonek
  [lounge]: http://chat.stackoverflow.com/rooms/10/loungec
  [issue tracker]: https://github.com/rmartinho/ogonek/issues?state=open
 
