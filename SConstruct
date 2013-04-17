@@ -168,12 +168,8 @@ test.Append(CPPPATH = ['test'])
 test.Append(LIBS = test_libs)
 test.Append(LIBPATH = 'bin/debug')
 test.VariantDir(test_builddir, '.', duplicate=0)
-<<<<<<< HEAD
 test_program = test.Program(test_target, prefix(test_builddir, test_sources))
-=======
-test_program = test.Program(test_target, prefix(test_builddir, test_sources), LIBS=lib_name, LIBPATH='bin/debug')
 test.Alias('buildtest', test_program)
->>>>>>> master
 if env['test'] == 'all':
     test_arguments = ''
 else:
