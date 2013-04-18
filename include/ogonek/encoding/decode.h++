@@ -75,7 +75,7 @@ namespace ogonek {
 
     namespace result_of {
         template <typename EncodingForm, typename Sequence, typename ErrorHandler>
-        using decode_ex = wheels::Conditional<detail::is_well_formed<Sequence>,
+        using decode = wheels::Conditional<detail::is_well_formed<Sequence>,
                             Sequence,
                             decoding_sequence<EncodingForm, result_of::as_sequence<Sequence>, ErrorHandler>
                           >;
@@ -84,13 +84,13 @@ namespace ogonek {
     template <typename EncodingForm,
               typename Sequence, typename ErrorHandler,
               wheels::DisableIf<detail::is_well_formed<Sequence>>...>
-    result_of::decode_ex<EncodingForm, Sequence, ErrorHandler> decode_ex(Sequence&& s, ErrorHandler&& h) {
+    result_of::decode<EncodingForm, Sequence, ErrorHandler> decode(Sequence&& s, ErrorHandler&& h) {
         return { (as_sequence)(std::forward<Sequence>(s)), std::forward<ErrorHandler>(h) };
     }
     template <typename EncodingForm,
               typename Sequence, typename ErrorHandler,
               wheels::EnableIf<detail::is_well_formed<Sequence>>...>
-    Sequence decode_ex(Sequence&& s, ErrorHandler&&) {
+    Sequence decode(Sequence&& s, ErrorHandler&&) {
         return std::forward<Sequence>(s);
     }
 } // namespace ogonek

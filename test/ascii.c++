@@ -42,7 +42,7 @@ TEST_CASE("ascii", "ASCII encoding form") {
     }
     SECTION("decode", "Decoding ASCII") {
         auto encoded = { 0x41_b, 0x32_b };
-        auto range = ogonek::decode_ex<ogonek::ascii>(encoded, ogonek::assume_valid);
+        auto range = ogonek::decode<ogonek::ascii>(encoded, ogonek::assume_valid);
         auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 2);
         CHECK(decoded[0] == U'\x0041');
@@ -50,7 +50,7 @@ TEST_CASE("ascii", "ASCII encoding form") {
     }
     SECTION("validation", "Validating ASCII") {
         auto encoded = { 0x41_b, 0x32_b, 0x80_b };
-        auto range = ogonek::decode_ex<ogonek::ascii>(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::ascii>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 3);
         CHECK(decoded[0] == U'\x0041');

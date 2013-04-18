@@ -70,14 +70,14 @@ TEST_CASE("decode", "Decoding sequence") {
     char32_t res[] = U"\U00010000ab";
 
     auto str16 = ogonek::as_sequence(u"\U00010000ab");
-    auto e = ogonek::decode_ex<ogonek::utf16>(str16, ogonek::assume_valid);
+    auto e = ogonek::decode<ogonek::utf16>(str16, ogonek::assume_valid);
     for(int i = 0; !seq::empty(e); seq::pop_front(e), ++i) {
         auto&& x = seq::front(e);
         REQUIRE(x == res[i]);
     }
 
     auto str8 = ogonek::as_sequence(u8"\U00010000ab");
-    auto f = ogonek::decode_ex<ogonek::utf8>(str8, ogonek::assume_valid);
+    auto f = ogonek::decode<ogonek::utf8>(str8, ogonek::assume_valid);
     for(int i = 0; !seq::empty(f); seq::pop_front(f), ++i) {
         auto&& x = seq::front(f);
         REQUIRE(x == res[i]);

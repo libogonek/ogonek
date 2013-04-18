@@ -52,7 +52,7 @@ namespace ogonek {
             validated(Range const& range) : validated(range, default_error_handler) {}
             template <typename Range, typename ErrorHandler>
             validated(Range const& range, ErrorHandler const& handler) {
-                for(auto s = decode_ex<EncodingForm>(range, handler);
+                for(auto s = decode<EncodingForm>(range, handler);
                     !seq::empty(s);
                     seq::pop_front(s)) {}
                     // do nothing, just consume the input
@@ -129,7 +129,7 @@ namespace ogonek {
                   wheels::EnableIf<is_error_handler<ErrorHandler>>...>
         text(Container const& storage, ErrorHandler&& handler)
         : storage_(seq::materialize<Container>(
-                    encode<EncodingForm>(decode_ex<EncodingForm>(storage, std::forward<ErrorHandler>(handler)))
+                    encode<EncodingForm>(decode<EncodingForm>(storage, std::forward<ErrorHandler>(handler)))
                    )) {} // NOTE recoding is necessary because the data needs to be valid and may change
                          // NOTE once static wellformedness is properly in, the inefficiencies can be optimized away
 

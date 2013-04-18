@@ -28,7 +28,7 @@ TEST_CASE("utf8-validation", "Validation of UTF-8") {
     SECTION("valid", "Accepting valid bytes") {
         std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC3_b, 0x85_b, 0xE1_b, 0xBA_b,
                                                         0xA0_b, 0xF0_b, 0x9F_b, 0x92_b, 0xA9_b };
-        auto range = ogonek::decode_ex<ogonek::utf8>(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::utf8>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
@@ -39,7 +39,7 @@ TEST_CASE("utf8-validation", "Validation of UTF-8") {
     SECTION("invalid", "Rejecting invalid bytes") {
         std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC0_b, 0xC3_b, 0x85_b, 0xC1_b, 0xF5_b };
 
-        auto range = ogonek::decode_ex<ogonek::utf8>(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::utf8>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 5);
         CHECK(decoded[0] == U'\x0041');
@@ -51,7 +51,7 @@ TEST_CASE("utf8-validation", "Validation of UTF-8") {
     SECTION("unexpected continuation", "Rejecting unexpected continuation bytes") {
         std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC3_b, 0x85_b, 0x84_b, 0x42_b };
 
-        auto range = ogonek::decode_ex<ogonek::utf8>(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::utf8>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
@@ -62,7 +62,7 @@ TEST_CASE("utf8-validation", "Validation of UTF-8") {
     SECTION("not enough continuation", "Rejecting start bytes not followed by enough continuation bytes") {
         std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xF3_b, 0x85_b, 0xC3_b, 0x85_b, 0x42_b,  };
 
-        auto range = ogonek::decode_ex<ogonek::utf8>(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::utf8>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
@@ -73,7 +73,7 @@ TEST_CASE("utf8-validation", "Validation of UTF-8") {
     SECTION("overlong", "Rejecting overlong forms") {
         std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC0_b, 0x80_b, 0xC3_b, 0x85_b, 0x42_b,  };
 
-        auto range = ogonek::decode_ex<ogonek::utf8>(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::utf8>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 5);
         CHECK(decoded[0] == U'\x0041');
@@ -86,7 +86,7 @@ TEST_CASE("utf8-validation", "Validation of UTF-8") {
         std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xF4_b, 0x90_b, 0x80_b, 0x80_b, 0x42_b,
                                                         0xED_b, 0xA0_b, 0x80_b };
 
-        auto range = ogonek::decode_ex<ogonek::utf8>(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::utf8>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
@@ -103,7 +103,7 @@ TEST_CASE("utf16-validation", "Validation of UTF-16") {
     SECTION("valid", "Accepting valid sequences") {
         std::initializer_list<char16_t> encoded = { 0x0041, 0x00C5, 0x1EA0, 0xD83D, 0xDCA9 };
 
-        auto range = ogonek::decode_ex<ogonek::utf16>(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::utf16>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
@@ -114,7 +114,7 @@ TEST_CASE("utf16-validation", "Validation of UTF-16") {
     SECTION("unpaired surrogates", "Rejecting unpaired surrogates") {
         std::initializer_list<char16_t> encoded = { u'\x0041', u'\xD83D', u'\x00C5', u'\xDCA9', u'\x1EA0', };
 
-        auto range = ogonek::decode_ex<ogonek::utf16>(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::utf16>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 5);
         CHECK(decoded[0] == U'\x0041');
@@ -126,7 +126,7 @@ TEST_CASE("utf16-validation", "Validation of UTF-16") {
     SECTION("inverted surrogates", "Rejecting inverted surrogates") {
         std::initializer_list<char16_t> encoded = { u'\x0041', u'\x00C5', u'\xDCA9', u'\xD83D', u'\x1EA0', };
 
-        auto range = ogonek::decode_ex<ogonek::utf16>(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::utf16>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 5);
         CHECK(decoded[0] == U'\x0041');
@@ -144,7 +144,7 @@ TEST_CASE("utf32-validation", "Validation of UTF-32") {
     SECTION("valid", "Accepting valid sequences") {
         std::initializer_list<char32_t> encoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9', };
 
-        auto range = ogonek::decode_ex<ogonek::utf32>(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::utf32>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
@@ -155,7 +155,7 @@ TEST_CASE("utf32-validation", "Validation of UTF-32") {
     SECTION("invalid", "Rejecting code_points above U+10FFFF") {
         std::initializer_list<char32_t> encoded = { U'\x0041', U'\x00C5', U'\x21F4A9', };
 
-        auto range = ogonek::decode_ex<ogonek::utf32>(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::utf32>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 3);
         CHECK(decoded[0] == U'\x0041');
@@ -165,7 +165,7 @@ TEST_CASE("utf32-validation", "Validation of UTF-32") {
     SECTION("surrogates", "Rejecting surrogates") {
         std::initializer_list<char32_t> encoded = { U'\x0041', U'\x00C5', U'\xD932', U'\xDC43', };
 
-        auto range = ogonek::decode_ex<ogonek::utf32>(encoded, ogonek::replace_errors);
+        auto range = ogonek::decode<ogonek::utf32>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
