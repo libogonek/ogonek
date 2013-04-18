@@ -64,12 +64,11 @@ TEST_CASE("utf8-validation", "Validation of UTF-8") {
 
         auto range = ogonek::decode_ex<ogonek::utf8>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
-        REQUIRE(decoded.size() == 5);
+        REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\xFFFD');
-        CHECK(decoded[2] == U'\xFFFD');
-        CHECK(decoded[3] == U'\x00C5');
-        CHECK(decoded[4] == U'\x0042');
+        CHECK(decoded[2] == U'\x00C5');
+        CHECK(decoded[3] == U'\x0042');
     }
     SECTION("overlong", "Rejecting overlong forms") {
         std::initializer_list<ogonek::byte> encoded = { 0x41_b, 0xC0_b, 0x80_b, 0xC3_b, 0x85_b, 0x42_b,  };
@@ -89,16 +88,11 @@ TEST_CASE("utf8-validation", "Validation of UTF-8") {
 
         auto range = ogonek::decode_ex<ogonek::utf8>(encoded, ogonek::replace_errors);
         auto decoded = seq::materialize<std::vector>(range);
-        REQUIRE(decoded.size() == 9);
+        REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\xFFFD');
-        CHECK(decoded[2] == U'\xFFFD');
+        CHECK(decoded[2] == U'\x0042');
         CHECK(decoded[3] == U'\xFFFD');
-        CHECK(decoded[4] == U'\xFFFD');
-        CHECK(decoded[5] == U'\x0042');
-        CHECK(decoded[6] == U'\xFFFD');
-        CHECK(decoded[7] == U'\xFFFD');
-        CHECK(decoded[8] == U'\xFFFD');
     }
 }
 

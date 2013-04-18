@@ -130,13 +130,13 @@ namespace ogonek {
             }
 
             auto trail = seq::front(s);
-            seq::pop_front(s);
             if(!detail::is_trail_surrogate(trail)) {
                 decode_error<Sequence, utf16> error { s, state };
                 detail::optional<code_point> u;
                 std::tie(s, state, u) = handler.handle(error);
                 return { s, *u };
             }
+            seq::pop_front(s);
 
             return { s, combine_surrogates(lead, trail) };
         }

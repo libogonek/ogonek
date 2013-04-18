@@ -218,13 +218,13 @@ namespace ogonek {
             std::array<byte, 4> b = {{ b0, }};
             for(int i = 1; i < length; ++i) {
                 b[i] = seq::front(s);
-                seq::pop_front(s);
                 if(!is_continuation(b[i])) {
                     decode_error<Sequence, utf8> error { s, state };
                     detail::optional<code_point> u;
                     std::tie(s, state, u) = handler.handle(error);
                     return { s, *u };
                 }
+                seq::pop_front(s);
             }
 
             code_point decoded;
