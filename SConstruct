@@ -59,7 +59,8 @@ else:
     env = Environment(options = vars, ENV = os.environ)
 
 # Pass termcaps along for colours and fancies
-env['ENV']['TERM'] = os.environ['TERM']
+if 'TERM' in os.environ:
+    env['ENV']['TERM'] = os.environ['TERM']
 
 # Set compiler from environment
 if 'CXX' in os.environ:
