@@ -18,7 +18,7 @@ before_script:
     - export CXX="g++-4.8"
 env:
     matrix:
-        USE_ICU=yes
-        USE_ICU=no
+        - USE_ICU=yes
+        - USE_ICU=no
 script: scons fatal=no icu=$USE_ICU buildtest runtest
 
