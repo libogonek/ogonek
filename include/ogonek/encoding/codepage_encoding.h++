@@ -51,7 +51,7 @@ namespace ogonek {
         static constexpr bool is_self_synchronizing = true;
         static constexpr code_point replacement_character = U'?';
         struct state {};
-        
+
         static detail::encoded_character<codepage_encoding<Codepage>> encode_one(code_point u, state&, assume_valid_t) {
             return { find_codepage_entry(u)->encoded };
         }
@@ -72,16 +72,24 @@ namespace ogonek {
             out = Codepage::to_unicode[*first++];
             return { first, boost::end(r) };
         }
-        
-        template <typename Range, typename ErrorHandler>
-        static boost::sub_range<Range> decode_one(Range const& r, code_point& out, state& s, ErrorHandler) {
-            auto first = boost::begin(r);
-            auto decoded = Codepage::to_unicode[*first++];
+
+        template <typename Sequence>
+        static std::pair<Sequence, code_point> decode_one_ex(Sequence s, state&, assume_valid_t) {
+            auto decoded = Codepage::to_unicode[seq::front(s)];
+            seq::pop_front(s);
+            return { s, decoded };
+        }
+        template <typename Sequence, typename ErrorHandler>
+        static std::pair<Sequence, code_point> decode_one_ex(Sequence s, state& state, ErrorHandler&& handler) {
+            auto decoded = Codepage::to_unicode[seq::front(s)];
+            seq::pop_front(s);
             if(decoded == code_point(-1)) {
-                return ErrorHandler::template apply_decode<codepage_encoding<Codepage>>(r, s, out);
+                decode_error<Sequence, codepage_encoding<Codepage>> error { s, state };
+                detail::optional<code_point> u;
+                std::tie(s, state, u) = handler.handle(error);
+                return { s, *u };
             } else {
-                out = decoded;
-                return { first, boost::end(r) };
+                return { s, decoded };
             }
         }
     };

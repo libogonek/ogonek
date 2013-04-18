@@ -21,6 +21,7 @@
 
 #include <ogonek/encoding/ascii.h++>
 #include <ogonek/encoding/encode.h++>
+#include <ogonek/encoding/decode.h++>
 #include <ogonek/sequence/interop.h++>
 #include <ogonek/sequence/as_sequence.h++>
 
@@ -41,16 +42,16 @@ TEST_CASE("ascii", "ASCII encoding form") {
     }
     SECTION("decode", "Decoding ASCII") {
         auto encoded = { 0x41_b, 0x32_b };
-        auto range = ogonek::decode<ogonek::ascii>(encoded, ogonek::assume_valid);
-        std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
+        auto range = ogonek::decode_ex<ogonek::ascii>(encoded, ogonek::assume_valid);
+        auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 2);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x0032');
     }
     SECTION("validation", "Validating ASCII") {
         auto encoded = { 0x41_b, 0x32_b, 0x80_b };
-        auto range = ogonek::decode<ogonek::ascii>(encoded, ogonek::replace_errors);
-        std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
+        auto range = ogonek::decode_ex<ogonek::ascii>(encoded, ogonek::replace_errors);
+        auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 3);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x0032');

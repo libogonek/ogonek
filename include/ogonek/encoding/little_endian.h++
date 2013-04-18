@@ -15,6 +15,7 @@
 #define OGONEK_ENCODING_LITTLE_ENDIAN_HPP
 
 #include <ogonek/types.h++>
+#include <ogonek/sequence/seq.h++>
 
 #include <cstdint>
 #include <array>
@@ -45,34 +46,40 @@ namespace ogonek {
         struct reader;
 
     public:
-        template <typename InputIterator, typename Integer>
-        static InputIterator unmap(InputIterator it, Integer& out) {
+        template <typename Sequence, typename Integer>
+        static Sequence unmap(Sequence s, Integer& out) {
             static_assert(std::is_integral<Integer>::value, "Unmapped type must be integral");
             static_assert(sizeof(Integer) == 2 || sizeof(Integer) == 4, "Unmapped type must be have 2 or 4 bytes");
-            out = reader<sizeof(Integer)>::read(it);
-            return it;
+            out = reader<sizeof(Integer)>::read(s);
+            return s;
         }
     };
 
     template <>
     struct little_endian::reader<2> {
         using type = std::uint16_t;
-        template <typename InputIterator>
-        static type read(InputIterator& it) {
-            type b0 = *it++;
-            type b1 = *it++;
+        template <typename Sequence>
+        static type read(Sequence& s) {
+            type b0 = seq::front(s);
+            seq::pop_front(s);
+            type b1 = seq::front(s);
+            seq::pop_front(s);
             return (b1 << 8) | b0;
         }
     };
     template <>
     struct little_endian::reader<4> {
         using type = std::uint32_t;
-        template <typename InputIterator>
-        static type read(InputIterator& it) {
-            type b0 = *it++;
-            type b1 = *it++;
-            type b2 = *it++;
-            type b3 = *it++;
+        template <typename Sequence>
+        static type read(Sequence& s) {
+            type b0 = seq::front(s);
+            seq::pop_front(s);
+            type b1 = seq::front(s);
+            seq::pop_front(s);
+            type b2 = seq::front(s);
+            seq::pop_front(s);
+            type b3 = seq::front(s);
+            seq::pop_front(s);
             return (b3 << 24) | (b2 << 16) | (b1 << 8) | b0;
         }
     };

@@ -35,12 +35,12 @@ namespace ogonek {
     //! Error handler that replaces invalid data with a replacement character
     struct replace_errors_t : error_handler {
         template <typename Sequence, typename EncodingForm>
-        decode_correction<Sequence, EncodingForm> handle(decode_error<Sequence, EncodingForm> const& error) {
+        decode_correction<Sequence, EncodingForm> handle(decode_error<Sequence, EncodingForm> const& error) const {
             return std::make_tuple(error.source, error.state, U'\xFFFD');
         }
 
         template <typename Sequence, typename EncodingForm>
-        encode_correction<Sequence, EncodingForm> handle(encode_error<Sequence, EncodingForm> const& error) {
+        encode_correction<Sequence, EncodingForm> handle(encode_error<Sequence, EncodingForm> const& error) const {
             auto state = error.state;
             auto replacement = EncodingForm::encode_one(replacement_character<EncodingForm>(), state, assume_valid);
             return std::make_tuple(error.source, state, replacement);

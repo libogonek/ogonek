@@ -32,6 +32,7 @@
 #include <type_traits>
 
 namespace ogonek {
+        class little_endian;
     namespace detail {
         template <typename T, std::size_t N = sizeof(T)>
         struct uint;
@@ -46,37 +47,33 @@ namespace ogonek {
         template <typename T>
         using Uint = typename uint<T>::type;
 
-        template <typename ByteOrder, typename Integer, typename Iterator>
-        struct byte_ordered_iterator // TODO: support input iterators
-        : boost::iterator_facade<
-            byte_ordered_iterator<ByteOrder, Integer, Iterator>,
-            Integer,
-            std::forward_iterator_tag,
-            Integer
-        > {
-            byte_ordered_iterator(Iterator it) : it(it) {}
-            Integer dereference() const {
+        template <typename ByteOrder, typename Integer, typename Sequence>
+        struct ordered_byte_sequence : native_sequence<> {
+            using value_type = Integer;
+            using reference = value_type;
+
+            bool empty() const { return seq::empty(inner); };
+            Integer front() const {
                 Integer i;
-                ByteOrder::unmap(it, i);
+                ByteOrder::unmap(inner, i);
                 return i;
             }
-            bool equal(byte_ordered_iterator const& that) const {
-                return it == that.it;
-            }
-            void increment() {
+            void pop_front() {
                 Integer dummy;
-                it = ByteOrder::unmap(it, dummy);
+                inner = ByteOrder::unmap(inner, dummy);
+            }
+            ordered_byte_sequence before(ordered_byte_sequence const& that) const {
+                return inner.before(that.inner);
             }
 
-            Iterator it;
-        };
+            ordered_byte_sequence save() const { return *this; }
 
-        template <typename ByteOrder, typename Integer, typename Range>
-        using byte_ordered_range = boost::iterator_range<
-                                       byte_ordered_iterator<
-                                           ByteOrder,
-                                           Integer,
-                                           typename boost::range_iterator<Range>::type>>;
+            ordered_byte_sequence(Sequence const& seq) : inner(seq) {}
+            ordered_byte_sequence(Sequence&& seq) : inner(std::move(seq)) {}
+
+            Sequence inner;
+        };
+        static_assert(is_native_sequence<ordered_byte_sequence<little_endian, unsigned, std::pair<char const*, char const*>>>(), "");
     } // namespace detail
 
     template <typename EncodingForm, typename ByteOrder>
@@ -97,15 +94,12 @@ namespace ogonek {
             }
             return { result, std::size_t(out - result.begin()) };
         }
-        template <typename Range, typename ErrorHandler>
-        static boost::sub_range<Range> decode_one(Range const& r, code_point& out, state& s, ErrorHandler) {
-            using code_unit_range = detail::byte_ordered_range<ByteOrder, typename EncodingForm::code_unit, Range>;
-            using iterator = typename boost::range_iterator<code_unit_range>::type;
-            code_unit_range range {
-                iterator { boost::begin(r) }, iterator { boost::end(r) }
-            };
-            auto remaining = EncodingForm::decode_one(range, out, s, ErrorHandler{});
-            return { remaining.begin().it, r.end() };
+        template <typename Sequence, typename ErrorHandler>
+        static std::pair<Sequence, code_point> decode_one_ex(Sequence s, state& state, ErrorHandler&& handler) {
+            using code_unit_sequence = detail::ordered_byte_sequence<ByteOrder, CodeUnit<EncodingForm>, Sequence>;
+            code_unit_sequence seq { s };
+            auto result = EncodingForm::decode_one_ex(seq, state, std::forward<ErrorHandler>(handler));
+            return { result.first.inner, result.second };
         }
     };
 } // namespace ogonek

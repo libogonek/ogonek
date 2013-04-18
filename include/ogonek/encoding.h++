@@ -17,17 +17,4 @@
 #include <ogonek/encoding/iterator.h++>
 #include <ogonek/detail/ranges.h++>
 
-#include <boost/range/iterator_range.hpp>
-
-namespace ogonek {
-    template <typename EncodingForm,
-              typename Range, typename ErrorHandler,
-              typename Iterator = detail::RangeConstIterator<Range>,
-              typename DecodingIterator = decoding_iterator<EncodingForm, Iterator, ErrorHandler>,
-              typename DecodingRange = detail::tagged_iterator_range<DecodingIterator, detail::validated_tag>>
-    DecodingRange decode(Range const& r, ErrorHandler) {
-        return detail::wrap_tagged_range<DecodingIterator, detail::validated_tag>(r);
-    }
-} // namespace ogonek
-
 #endif // OGONEK_ENCODING_HPP

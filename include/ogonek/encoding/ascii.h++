@@ -72,6 +72,24 @@ namespace ogonek {
             out = b;
             return { first, boost::end(r) };
         }
+        template <typename Sequence>
+        static std::pair<Sequence, code_point> decode_one_ex(Sequence s, state&, assume_valid_t) {
+            auto u = seq::front(s);
+            seq::pop_front(s);
+            return { s, u };
+        }
+        template <typename Sequence, typename ErrorHandler>
+        static std::pair<Sequence, code_point> decode_one_ex(Sequence s, state& state, ErrorHandler&& handler) {
+            byte b = seq::front(s);
+            seq::pop_front(s);
+            if(b > last_ascii_value) {
+                decode_error<Sequence, ascii> error { s, state };
+                detail::optional<code_point> u;
+                std::tie(s, state, u) = handler.handle(error);
+                return { s, *u };
+            }
+            return { s, b };
+        }
     };
 } // namespace ogonek
 

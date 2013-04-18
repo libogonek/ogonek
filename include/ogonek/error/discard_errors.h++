@@ -29,12 +29,12 @@ namespace ogonek {
     //! Error handler that discards erroneous data.
     struct discard_errors_t : error_handler {
         template <typename Sequence, typename EncodingForm>
-        decode_correction<Sequence, EncodingForm> handle(decode_error<Sequence, EncodingForm> const& error) {
+        decode_correction<Sequence, EncodingForm> handle(decode_error<Sequence, EncodingForm> const& error) const {
             return { error.source, {} };
         }
 
         template <typename Sequence, typename EncodingForm>
-        encode_correction<Sequence, EncodingForm> handle(encode_error<Sequence, EncodingForm> const& error) {
+        encode_correction<Sequence, EncodingForm> handle(encode_error<Sequence, EncodingForm> const& error) const {
             return { error.source, {} };
         }
 

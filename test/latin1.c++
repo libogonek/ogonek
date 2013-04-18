@@ -19,6 +19,7 @@
 
 #include <ogonek/encoding/latin1.h++>
 #include <ogonek/encoding/encode.h++>
+#include <ogonek/encoding/decode.h++>
 #include <ogonek/sequence/interop.h++>
 #include <vector>
 
@@ -38,16 +39,16 @@ TEST_CASE("latin1", "ISO-8859-1 encoding form") {
     }
     SECTION("decode", "Decoding ISO-8859-1") {
         auto encoded = { 0x41_b, 0x82_b };
-        auto range = ogonek::decode<ogonek::latin1>(encoded, ogonek::assume_valid);
-        std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
+        auto range = ogonek::decode_ex<ogonek::latin1>(encoded, ogonek::assume_valid);
+        auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 2);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x0082');
     }
     SECTION("validation", "Validating ISO-8859-1") {
         auto encoded = { 0x41_b, 0x82_b, 0xFF_b };
-        auto range = ogonek::decode<ogonek::latin1>(encoded, ogonek::replace_errors);
-        std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
+        auto range = ogonek::decode_ex<ogonek::latin1>(encoded, ogonek::replace_errors);
+        auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 3);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x0082');

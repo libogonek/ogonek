@@ -20,6 +20,7 @@
 #include <ogonek/encoding/utf32le.h++>
 #include <ogonek/encoding/utf32be.h++>
 #include <ogonek/encoding/encode.h++>
+#include <ogonek/encoding/decode.h++>
 #include <ogonek/sequence/interop.h++>
 
 #include <vector>
@@ -49,8 +50,8 @@ TEST_CASE("utf16le", "UTF-16LE codec") {
     SECTION("decode", "Decoding UTF-16LE") {
         auto encoded = { 0x41_b, 0x00_b, 0xC5_b, 0x00_b, 0xA0_b,
                          0x1E_b, 0x3D_b, 0xD8_b, 0xA9_b, 0xDC_b };
-        auto range = ogonek::decode<ogonek::utf16le>(encoded, ogonek::assume_valid);
-        std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
+        auto range = ogonek::decode_ex<ogonek::utf16le>(encoded, ogonek::assume_valid);
+        auto decoded = seq::materialize<std::vector>(range);
         CHECK(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x00C5');
@@ -82,8 +83,8 @@ TEST_CASE("utf16be", "UTF-16BE codec") {
     SECTION("decode", "Decoding UTF-16BE") {
         auto encoded = { 0x00_b, 0x41_b, 0x00_b, 0xC5_b, 0x1E_b,
                          0xA0_b, 0xD8_b, 0x3D_b, 0xDC_b, 0xA9_b };
-        auto range = ogonek::decode<ogonek::utf16be>(encoded, ogonek::assume_valid);
-        std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
+        auto range = ogonek::decode_ex<ogonek::utf16be>(encoded, ogonek::assume_valid);
+        auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x00C5');
@@ -123,8 +124,8 @@ TEST_CASE("utf32le", "UTF-32LE codec") {
                          0xC5_b, 0x00_b, 0x00_b, 0x00_b,
                          0xA0_b, 0x1E_b, 0x00_b, 0x00_b,
                          0xA9_b, 0xF4_b, 0x01_b, 0x00_b };
-        auto range = ogonek::decode<ogonek::utf32le>(encoded, ogonek::assume_valid);
-        std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
+        auto range = ogonek::decode_ex<ogonek::utf32le>(encoded, ogonek::assume_valid);
+        auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x00C5');
@@ -165,8 +166,8 @@ TEST_CASE("utf32be", "UTF-32BE codec") {
                          0x00_b, 0x00_b, 0x00_b, 0xC5_b,
                          0x00_b, 0x00_b, 0x1E_b, 0xA0_b,
                          0x00_b, 0x01_b, 0xF4_b, 0xA9_b };
-        auto range = ogonek::decode<ogonek::utf32be>(encoded, ogonek::assume_valid);
-        std::vector<ogonek::code_point> decoded(boost::begin(range), boost::end(range));
+        auto range = ogonek::decode_ex<ogonek::utf32be>(encoded, ogonek::assume_valid);
+        auto decoded = seq::materialize<std::vector>(range);
         REQUIRE(decoded.size() == 4);
         CHECK(decoded[0] == U'\x0041');
         CHECK(decoded[1] == U'\x00C5');

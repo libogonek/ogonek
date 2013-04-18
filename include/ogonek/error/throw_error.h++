@@ -28,12 +28,12 @@ namespace ogonek {
     //! Error handler that throws upon discovering invalid data
     struct throw_error_t : error_handler {
         template <typename Sequence, typename EncodingForm>
-        decode_correction<Sequence, EncodingForm> handle(decode_error<Sequence, EncodingForm> const& error) {
+        decode_correction<Sequence, EncodingForm> handle(decode_error<Sequence, EncodingForm> const& error) const {
             throw error;
         }
 
         template <typename Sequence, typename EncodingForm>
-        encode_correction<Sequence, EncodingForm> handle(encode_error<Sequence, EncodingForm> const& error) {
+        encode_correction<Sequence, EncodingForm> handle(encode_error<Sequence, EncodingForm> const& error) const {
             throw error;
         }
 
