@@ -11,168 +11,80 @@
 
 // Tests for <ogonek/encoding/encoding_scheme.h++>
 
-#include <ogonek/encoding.h++>
-#include <ogonek/types.h++>
-#include <ogonek/error.h++>
-
+#include <ogonek/encoding/encoding_scheme.h++>
 #include <ogonek/encoding/utf16le.h++>
 #include <ogonek/encoding/utf16be.h++>
 #include <ogonek/encoding/utf32le.h++>
 #include <ogonek/encoding/utf32be.h++>
+
+#include <ogonek/error/assume_valid.h++>
 #include <ogonek/encoding/encode.h++>
 #include <ogonek/encoding/decode.h++>
 #include <ogonek/sequence/interop.h++>
 
-#include <vector>
-
+#include "utils.h++"
 #include <catch.h++>
 
-TEST_CASE("utf16le", "UTF-16LE codec") {
-    using namespace ogonek::literal;
-    namespace seq = ogonek::seq;
+namespace seq = ogonek::seq;
+using namespace test::literal;
 
+TEST_CASE("utf16le", "UTF-16LE codec") {
     SECTION("encode", "Encoding UTF-16LE") {
-        auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
+        auto decoded = U"\u0041\u00C5\u1EA0\U0001F4A9"_u;
         auto range = ogonek::encode<ogonek::utf16le>(decoded, ogonek::assume_valid);
-        auto encoded = seq::materialize<std::vector>(range);
-        REQUIRE(encoded.size() == 10);
-        CHECK(encoded[0] == 0x41_b);
-        CHECK(encoded[1] == 0x00_b);
-        CHECK(encoded[2] == 0xC5_b);
-        CHECK(encoded[3] == 0x00_b);
-        CHECK(encoded[4] == 0xA0_b);
-        CHECK(encoded[5] == 0x1E_b);
-        CHECK(encoded[6] == 0x3D_b);
-        CHECK(encoded[7] == 0xD8_b);
-        CHECK(encoded[8] == 0xA9_b);
-        CHECK(encoded[9] == 0xDC_b);
+        auto encoded = seq::materialize<test::byte_string>(range);
+        REQUIRE(encoded == "\x41\x00\xC5\x00\xA0\x1E\x3D\xD8\xA9\xDC"_b);
     }
     SECTION("decode", "Decoding UTF-16LE") {
-        auto encoded = { 0x41_b, 0x00_b, 0xC5_b, 0x00_b, 0xA0_b,
-                         0x1E_b, 0x3D_b, 0xD8_b, 0xA9_b, 0xDC_b };
+        auto encoded = "\x41\x00\xC5\x00\xA0\x1E\x3D\xD8\xA9\xDC"_b;
         auto range = ogonek::decode<ogonek::utf16le>(encoded, ogonek::assume_valid);
-        auto decoded = seq::materialize<std::vector>(range);
-        CHECK(decoded.size() == 4);
-        CHECK(decoded[0] == U'\x0041');
-        CHECK(decoded[1] == U'\x00C5');
-        CHECK(decoded[2] == U'\x1EA0');
-        CHECK(decoded[3] == U'\x1F4A9');
+        auto decoded = seq::materialize<test::ustring>(range);
+        REQUIRE(decoded == U"\u0041\u00C5\u1EA0\U0001F4A9"_u);
     }
 }
 
 TEST_CASE("utf16be", "UTF-16BE codec") {
-    using namespace ogonek::literal;
-    namespace seq = ogonek::seq;
-
     SECTION("encode", "Encoding UTF-16BE") {
-        auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
+        auto decoded = U"\u0041\u00C5\u1EA0\U0001F4A9"_u;
         auto range = ogonek::encode<ogonek::utf16be>(decoded, ogonek::assume_valid);
-        auto encoded = seq::materialize<std::vector>(range);
-        REQUIRE(encoded.size() == 10);
-        CHECK(encoded[0] == 0x00_b);
-        CHECK(encoded[1] == 0x41_b);
-        CHECK(encoded[2] == 0x00_b);
-        CHECK(encoded[3] == 0xC5_b);
-        CHECK(encoded[4] == 0x1E_b);
-        CHECK(encoded[5] == 0xA0_b);
-        CHECK(encoded[6] == 0xD8_b);
-        CHECK(encoded[7] == 0x3D_b);
-        CHECK(encoded[8] == 0xDC_b);
-        CHECK(encoded[9] == 0xA9_b);
+        auto encoded = seq::materialize<test::byte_string>(range);
+        REQUIRE(encoded == "\x00\x41\x00\xC5\x1E\xA0\xD8\x3D\xDC\xA9"_b);
     }
     SECTION("decode", "Decoding UTF-16BE") {
-        auto encoded = { 0x00_b, 0x41_b, 0x00_b, 0xC5_b, 0x1E_b,
-                         0xA0_b, 0xD8_b, 0x3D_b, 0xDC_b, 0xA9_b };
+        auto encoded = "\x00\x41\x00\xC5\x1E\xA0\xD8\x3D\xDC\xA9"_b;
         auto range = ogonek::decode<ogonek::utf16be>(encoded, ogonek::assume_valid);
-        auto decoded = seq::materialize<std::vector>(range);
-        REQUIRE(decoded.size() == 4);
-        CHECK(decoded[0] == U'\x0041');
-        CHECK(decoded[1] == U'\x00C5');
-        CHECK(decoded[2] == U'\x1EA0');
-        CHECK(decoded[3] == U'\x1F4A9');
+        auto decoded = seq::materialize<test::ustring>(range);
+        REQUIRE(decoded == U"\u0041\u00C5\u1EA0\U0001F4A9"_u);
     }
 }
 
 TEST_CASE("utf32le", "UTF-32LE codec") {
-    using namespace ogonek::literal;
-    namespace seq = ogonek::seq;
-
     SECTION("encode", "Encoding UTF-32LE") {
-        auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
+        auto decoded = U"\u0041\u00C5\u1EA0\U0001F4A9"_u;
         auto range = ogonek::encode<ogonek::utf32le>(decoded, ogonek::assume_valid);
-        auto encoded = seq::materialize<std::vector>(range);
-        REQUIRE(encoded.size() == 16);
-        CHECK(encoded[0] == 0x41_b);
-        CHECK(encoded[1] == 0x00_b);
-        CHECK(encoded[2] == 0x00_b);
-        CHECK(encoded[3] == 0x00_b);
-        CHECK(encoded[4] == 0xC5_b);
-        CHECK(encoded[5] == 0x00_b);
-        CHECK(encoded[6] == 0x00_b);
-        CHECK(encoded[7] == 0x00_b);
-        CHECK(encoded[8] == 0xA0_b);
-        CHECK(encoded[9] == 0x1E_b);
-        CHECK(encoded[10] == 0x00_b);
-        CHECK(encoded[11] == 0x00_b);
-        CHECK(encoded[12] == 0xA9_b);
-        CHECK(encoded[13] == 0xF4_b);
-        CHECK(encoded[14] == 0x01_b);
-        CHECK(encoded[15] == 0x00_b);
+        auto encoded = seq::materialize<test::byte_string>(range);
+        REQUIRE(encoded == "\x41\x00\x00\x00\xC5\x00\x00\x00\xA0\x1E\x00\x00\xA9\xF4\x01\x00"_b);
     }
     SECTION("decode", "Decoding UTF-32LE") {
-        auto encoded = { 0x41_b, 0x00_b, 0x00_b, 0x00_b,
-                         0xC5_b, 0x00_b, 0x00_b, 0x00_b,
-                         0xA0_b, 0x1E_b, 0x00_b, 0x00_b,
-                         0xA9_b, 0xF4_b, 0x01_b, 0x00_b };
+        auto encoded = "\x41\x00\x00\x00\xC5\x00\x00\x00\xA0\x1E\x00\x00\xA9\xF4\x01\x00"_b;
         auto range = ogonek::decode<ogonek::utf32le>(encoded, ogonek::assume_valid);
-        auto decoded = seq::materialize<std::vector>(range);
-        REQUIRE(decoded.size() == 4);
-        CHECK(decoded[0] == U'\x0041');
-        CHECK(decoded[1] == U'\x00C5');
-        CHECK(decoded[2] == U'\x1EA0');
-        CHECK(decoded[3] == U'\x1F4A9');
+        auto decoded = seq::materialize<test::ustring>(range);
+        REQUIRE(decoded == U"\u0041\u00C5\u1EA0\U0001F4A9"_u);
     }
 }
 
-
 TEST_CASE("utf32be", "UTF-32BE codec") {
-    using namespace ogonek::literal;
-    namespace seq = ogonek::seq;
-
     SECTION("encode", "Encoding UTF-32BE") {
-        auto decoded = { U'\x0041', U'\x00C5', U'\x1EA0', U'\x1F4A9' };
+        auto decoded = U"\u0041\u00C5\u1EA0\U0001F4A9"_u;
         auto range = ogonek::encode<ogonek::utf32be>(decoded, ogonek::assume_valid);
-        auto encoded = seq::materialize<std::vector>(range);
-        REQUIRE(encoded.size() == 16);
-        CHECK(encoded[0] == 0x00_b);
-        CHECK(encoded[1] == 0x00_b);
-        CHECK(encoded[2] == 0x00_b);
-        CHECK(encoded[3] == 0x41_b);
-        CHECK(encoded[4] == 0x00_b);
-        CHECK(encoded[5] == 0x00_b);
-        CHECK(encoded[6] == 0x00_b);
-        CHECK(encoded[7] == 0xC5_b);
-        CHECK(encoded[8] == 0x00_b);
-        CHECK(encoded[9] == 0x00_b);
-        CHECK(encoded[10] == 0x1E_b);
-        CHECK(encoded[11] == 0xA0_b);
-        CHECK(encoded[12] == 0x00_b);
-        CHECK(encoded[13] == 0x01_b);
-        CHECK(encoded[14] == 0xF4_b);
-        CHECK(encoded[15] == 0xA9_b);
+        auto encoded = seq::materialize<test::byte_string>(range);
+        REQUIRE(encoded == "\x00\x00\x00\x41\x00\x00\x00\xC5\x00\x00\x1E\xA0\x00\x01\xF4\xA9"_b);
     }
     SECTION("decode", "Decoding UTF-32BE") {
-        auto encoded = { 0x00_b, 0x00_b, 0x00_b, 0x41_b,
-                         0x00_b, 0x00_b, 0x00_b, 0xC5_b,
-                         0x00_b, 0x00_b, 0x1E_b, 0xA0_b,
-                         0x00_b, 0x01_b, 0xF4_b, 0xA9_b };
+        auto encoded = "\x00\x00\x00\x41\x00\x00\x00\xC5\x00\x00\x1E\xA0\x00\x01\xF4\xA9"_b;
         auto range = ogonek::decode<ogonek::utf32be>(encoded, ogonek::assume_valid);
-        auto decoded = seq::materialize<std::vector>(range);
-        REQUIRE(decoded.size() == 4);
-        CHECK(decoded[0] == U'\x0041');
-        CHECK(decoded[1] == U'\x00C5');
-        CHECK(decoded[2] == U'\x1EA0');
-        CHECK(decoded[3] == U'\x1F4A9');
+        auto decoded = seq::materialize<test::ustring>(range);
+        REQUIRE(decoded == U"\u0041\u00C5\u1EA0\U0001F4A9"_u);
     }
 }
 

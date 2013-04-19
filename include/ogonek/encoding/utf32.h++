@@ -79,7 +79,7 @@ namespace ogonek {
             return { first, boost::begin(r) };
         }
     };
-    
+
     namespace detail {
         inline null_terminated_range<char32_t const> as_code_point_range(char32_t const* sequence, assume_valid_t) {
             return { sequence, {} };

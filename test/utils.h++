@@ -24,13 +24,19 @@
 #include <string>
 #include <ostream>
 #include <sstream>
+#include <cstddef>
 
 namespace test {
     struct code_point_output_traits : std::char_traits<ogonek::code_point> {};
-    
+
     using ustring = std::basic_string<ogonek::code_point, code_point_output_traits>;
     using utext = ogonek::text<ogonek::utf32, ustring>;
-    
+    namespace literal {
+        inline ustring operator"" _u(char32_t const* literal, std::size_t size) {
+            return { literal, size };
+        }
+    } // namespace literal
+
     inline std::ostream& operator<<(std::ostream& os, ustring const& str) {
         auto format_code_point = [](ogonek::code_point u) -> std::string {
             std::stringstream ss;
@@ -50,26 +56,26 @@ namespace test {
         os << '>';
         return os;
     }
-    
+
     template <typename Encoding>
     struct code_unit_output_traits : std::char_traits<ogonek::CodeUnit<Encoding>> {};
-    
+
     template <typename Encoding>
     using string = std::basic_string<ogonek::CodeUnit<Encoding>, code_unit_output_traits<Encoding>>;
     template <typename Encoding>
     using text = ogonek::text<Encoding, string<Encoding>>;
-    
+
+    template <typename CodeUnit>
+    std::string format_code_unit(CodeUnit c) {
+        std::stringstream ss;
+        ss.width(2*sizeof(CodeUnit));
+        ss.fill('0');
+        ss << std::hex << std::uppercase
+            << static_cast<unsigned long long>(static_cast<wheels::MakeUnsigned<CodeUnit>>(c));
+        return ss.str();
+    }
     template <typename Encoding>
     inline std::ostream& operator<<(std::ostream& os, string<Encoding> const& str) {
-        using code_unit = ogonek::CodeUnit<Encoding>;
-        auto format_code_unit = [](code_unit c) -> std::string {
-            std::stringstream ss;
-            ss.width(2*sizeof(code_unit));
-            ss.fill('0');
-            ss << std::hex << std::uppercase
-               << static_cast<unsigned long long>(static_cast<wheels::MakeUnsigned<code_unit>>(c));
-            return ss.str();
-        };
         bool is_first = true;
         os << '[';
         for(auto c : str) {
@@ -80,10 +86,30 @@ namespace test {
         os << ']';
         return os;
     }
-    
+
     template <typename Encoding, typename Container>
     inline std::ostream& operator<<(std::ostream& os, ogonek::text<Encoding, Container> const& t) {
         return os << t.storage();
+    }
+
+    struct byte_output_traits : std::char_traits<ogonek::byte> {};
+    using byte_string = std::basic_string<ogonek::byte, byte_output_traits>;
+    namespace literal {
+        inline byte_string operator"" _b(char const* literal, std::size_t size) {
+            return { reinterpret_cast<unsigned char const*>(literal), size };
+        }
+    } // namespace literal
+
+    inline std::ostream& operator<<(std::ostream& os, byte_string const& str) {
+        bool is_first = true;
+        os << '[';
+        for(auto c : str) {
+            if(!is_first) os << ' ';
+            os << format_code_unit(c);
+            is_first = false;
+        }
+        os << ']';
+        return os;
     }
 } // namespace test
 

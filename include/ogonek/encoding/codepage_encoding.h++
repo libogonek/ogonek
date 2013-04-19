@@ -35,7 +35,7 @@ namespace ogonek {
         char encoded;
         code_point decoded;
     };
-    
+
     template <typename Codepage>
     struct codepage_encoding {
     private:
@@ -66,22 +66,15 @@ namespace ogonek {
             }
         }
 
-        template <typename Range>
-        static boost::sub_range<Range> decode_one(Range const& r, code_point& out, state&, assume_valid_t) {
-            auto first = boost::begin(r);
-            out = Codepage::to_unicode[*first++];
-            return { first, boost::end(r) };
-        }
-
         template <typename Sequence>
         static std::pair<Sequence, code_point> decode_one_ex(Sequence s, state&, assume_valid_t) {
-            auto decoded = Codepage::to_unicode[seq::front(s)];
+            auto decoded = Codepage::to_unicode[static_cast<unsigned char>(seq::front(s))];
             seq::pop_front(s);
             return { s, decoded };
         }
         template <typename Sequence, typename ErrorHandler>
         static std::pair<Sequence, code_point> decode_one_ex(Sequence s, state& state, ErrorHandler&& handler) {
-            auto decoded = Codepage::to_unicode[seq::front(s)];
+            auto decoded = Codepage::to_unicode[static_cast<unsigned char>(seq::front(s))];
             seq::pop_front(s);
             if(decoded == code_point(-1)) {
                 decode_error<Sequence, codepage_encoding<Codepage>> error { s, state };

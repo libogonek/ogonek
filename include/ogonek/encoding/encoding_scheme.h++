@@ -32,7 +32,7 @@
 #include <type_traits>
 
 namespace ogonek {
-        class little_endian;
+    class little_endian;
     namespace detail {
         template <typename T, std::size_t N = sizeof(T)>
         struct uint;

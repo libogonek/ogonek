@@ -11,57 +11,46 @@
 
 // Tests for <ogonek/encoding/windows1252.h++>
 
-#include <ogonek/encoding.h++>
-#include <ogonek/types.h++>
-
-#include <boost/range/begin.hpp>
-#include <boost/range/end.hpp>
-
 #include <ogonek/encoding/windows1252.h++>
+
 #include <ogonek/encoding/encode.h++>
 #include <ogonek/encoding/decode.h++>
 #include <ogonek/sequence/interop.h++>
 
-#include <vector>
-
+#include "utils.h++"
 #include <catch.h++>
 
-TEST_CASE("windows1252", "Windows-1252 encoding form") {
-    using namespace ogonek::literal;
-    namespace seq = ogonek::seq;
+namespace seq = ogonek::seq;
+using namespace test::literal;
+using windows1252_string = test::string<ogonek::windows1252>;
 
+namespace {
+    windows1252_string operator"" _s(char const* literal, std::size_t size) { return { literal, size }; }
+} // namespace
+
+TEST_CASE("windows1252", "Windows-1252 encoding form") {
     SECTION("encode", "Encoding Windows-1252") {
-        auto decoded = { U'\x0041', U'\x20AC' };
+        auto decoded = U"\u0041\u20AC"_u;
         auto range = ogonek::encode<ogonek::windows1252>(decoded, ogonek::assume_valid);
-        auto encoded = seq::materialize<std::vector<ogonek::byte>>(range);
-        REQUIRE(encoded.size() == 2);
-        CHECK(int(encoded[0]) == int(0x41_b));
-        CHECK(int(encoded[1]) == int(0x80_b));
+        auto encoded = seq::materialize<windows1252_string>(range);
+        REQUIRE(encoded == "\x41\x80"_s);
     }
     SECTION("decode", "Decoding Windows-1252") {
-        auto encoded = { 0x41_b, 0x80_b };
+        auto encoded = "\x41\x80"_s;
         auto range = ogonek::decode<ogonek::windows1252>(encoded, ogonek::assume_valid);
-        auto decoded = seq::materialize<std::vector>(range);
-        REQUIRE(decoded.size() == 2);
-        CHECK(decoded[0] == U'\x0041');
-        CHECK(decoded[1] == U'\x20AC');
+        auto decoded = seq::materialize<test::ustring>(range);
+        REQUIRE(decoded == U"\u0041\u20AC"_u);
     }
     SECTION("validation", "Validating Windows-1252") {
-        auto encoded = { 0x41_b, 0x80_b, 0x81_b };
+        auto encoded = "\x41\x80\x81"_s;
         auto range = ogonek::decode<ogonek::windows1252>(encoded, ogonek::replace_errors);
-        auto decoded = seq::materialize<std::vector>(range);
-        REQUIRE(decoded.size() == 3);
-        CHECK(decoded[0] == U'\x0041');
-        CHECK(decoded[1] == U'\x20AC');
-        CHECK(decoded[2] == U'\xFFFD');
+        auto decoded = seq::materialize<test::ustring>(range);
+        REQUIRE(decoded == U"\u0041\u20AC\uFFFD"_u);
     }
     SECTION("replacement", "Windows-1252's custom replacement character (?)") {
-        auto decoded = { U'\x0041', U'\x20AC', U'\x1F4A9' };
+        auto decoded = U"\u0041\u20AC\U0001F4A9"_u;
         auto range = ogonek::encode<ogonek::windows1252>(decoded, ogonek::replace_errors);
-        auto encoded = seq::materialize<std::vector>(range);
-        REQUIRE(encoded.size() == 3);
-        CHECK(encoded[0] == 0x41_b);
-        CHECK(ogonek::byte(encoded[1]) == 0x80_b);
-        CHECK(encoded[2] == '?');
+        auto encoded = seq::materialize<windows1252_string>(range);
+        REQUIRE(encoded == "\x41\x80\x3F"_s);
     }
 }

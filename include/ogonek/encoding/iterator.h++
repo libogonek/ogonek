@@ -35,7 +35,7 @@ namespace ogonek {
     namespace detail {
         class decoding_iterator_access;
     } // namespace detail
-    
+
     template <typename EncodingForm, typename Iterator, typename ErrorHandler>
     struct encoding_iterator
     : boost::iterator_facade<
@@ -124,7 +124,7 @@ namespace ogonek {
         using range = boost::iterator_range<Iterator>;
 
         friend class detail::decoding_iterator_access;
-        
+
         Iterator first, last;
         EncodingState<EncodingForm> state {};
     };

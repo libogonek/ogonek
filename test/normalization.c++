@@ -27,7 +27,7 @@ namespace {
         ogonek::code_point const* nfkc;
         ogonek::code_point const* nfkd;
     };
-    
+
     normalization_test normalization_test_data[] = {
         #include "normalization_test.g.inl"
     };
@@ -37,22 +37,22 @@ namespace {
         test::ustring nfd_expected { test.nfd };
         test::ustring nfkc_expected { test.nfkc };
         test::ustring nfkd_expected { test.nfkd };
-        
+
         test::utext nfc { ogonek::normalize<ogonek::nfc>(input) };
         REQUIRE(nfc.storage() == nfc_expected);
         REQUIRE(ogonek::is_normalized<ogonek::nfc>(nfc));
         REQUIRE_FALSE(bool(!ogonek::is_normalized_quick<ogonek::nfc>(nfc)));
-        
+
         test::utext nfd { ogonek::normalize<ogonek::nfd>(input) };
         REQUIRE(nfd.storage() == nfd_expected);
         REQUIRE(ogonek::is_normalized<ogonek::nfd>(nfd));
         REQUIRE(ogonek::is_normalized_quick<ogonek::nfd>(nfd));
-        
+
         test::utext nfkc { ogonek::normalize<ogonek::nfkc>(input) };
         REQUIRE(nfkc.storage() == nfkc_expected);
         REQUIRE(ogonek::is_normalized<ogonek::nfkc>(nfkc));
         REQUIRE_FALSE(bool(!ogonek::is_normalized_quick<ogonek::nfkc>(nfkc)));
-        
+
         test::utext nfkd { ogonek::normalize<ogonek::nfkd>(input) };
         REQUIRE(nfkd.storage() == nfkd_expected);
         REQUIRE(ogonek::is_normalized<ogonek::nfkd>(nfkd));
@@ -72,7 +72,7 @@ TEST_CASE("normalization", "Normalization tests") {
         REQUIRE_FALSE(ogonek::is_normalized<ogonek::nfkc>(a));
         REQUIRE_FALSE(bool(ogonek::is_normalized_quick<ogonek::nfc>(a)));
         REQUIRE_FALSE(bool(ogonek::is_normalized_quick<ogonek::nfkc>(a)));
-        
+
         std::u32string b = U"bl\u00e4h";
         REQUIRE_FALSE(ogonek::is_normalized<ogonek::nfd>(b));
         REQUIRE_FALSE(ogonek::is_normalized<ogonek::nfkd>(b));

@@ -11,59 +11,46 @@
 
 // Tests for <ogonek/encoding/latin1.h++>
 
-#include <ogonek/encoding.h++>
-#include <ogonek/types.h++>
-
-#include <boost/range/begin.hpp>
-#include <boost/range/end.hpp>
-
 #include <ogonek/encoding/latin1.h++>
+
 #include <ogonek/encoding/encode.h++>
 #include <ogonek/encoding/decode.h++>
 #include <ogonek/sequence/interop.h++>
-#include <vector>
 
+#include "utils.h++"
 #include <catch.h++>
 
-TEST_CASE("latin1", "ISO-8859-1 encoding form") {
-    using namespace ogonek::literal;
-    namespace seq = ogonek::seq;
+namespace seq = ogonek::seq;
+using namespace test::literal;
+using latin1_string = test::string<ogonek::latin1>;
 
+namespace {
+    latin1_string operator"" _s(char const* literal, std::size_t size) { return { literal, size }; }
+} // namespace
+
+TEST_CASE("latin1", "ISO-8859-1 encoding form") {
     SECTION("encode", "Encoding ISO-8859-1") {
-        auto decoded = { U'\x0041', U'\x0082' };
+        auto decoded = U"\u0041\u0082"_u;
         auto range = ogonek::encode<ogonek::latin1>(decoded, ogonek::assume_valid);
-        auto encoded = seq::materialize<std::vector<ogonek::byte>>(range);
-        REQUIRE(encoded.size() == 2);
-        CHECK(encoded[0] == 0x41_b);
-        CHECK(encoded[1] == 0x82_b);
+        auto encoded = seq::materialize<latin1_string>(range);
+        REQUIRE(encoded == "\x41\x82"_s);
     }
     SECTION("decode", "Decoding ISO-8859-1") {
-        auto encoded = { 0x41_b, 0x82_b };
+        auto encoded = "\x41\x82"_s;
         auto range = ogonek::decode<ogonek::latin1>(encoded, ogonek::assume_valid);
-        auto decoded = seq::materialize<std::vector>(range);
-        REQUIRE(decoded.size() == 2);
-        CHECK(decoded[0] == U'\x0041');
-        CHECK(decoded[1] == U'\x0082');
+        auto decoded = seq::materialize<test::ustring>(range);
+        REQUIRE(decoded == U"\u0041\u0082"_u);
     }
     SECTION("validation", "Validating ISO-8859-1") {
-        auto encoded = { 0x41_b, 0x82_b, 0xFF_b };
+        auto encoded = "\x41\x82\xFF"_s;
         auto range = ogonek::decode<ogonek::latin1>(encoded, ogonek::replace_errors);
-        auto decoded = seq::materialize<std::vector>(range);
-        REQUIRE(decoded.size() == 3);
-        CHECK(decoded[0] == U'\x0041');
-        CHECK(decoded[1] == U'\x0082');
-        CHECK(decoded[2] == U'\x00FF');
+        auto decoded = seq::materialize<test::ustring>(range);
+        REQUIRE(decoded == U"\u0041\u0082\u00FF"_u);
     }
     SECTION("replacement", "ISO-8859-1's custom replacement character (?)") {
-        auto decoded = { U'\x0041', U'\x0032', U'\x1F4A9' };
+        auto decoded = U"\u0041\u0032\U0001F4A9"_u;
         auto range = ogonek::encode<ogonek::latin1>(decoded, ogonek::replace_errors);
-        auto encoded = seq::materialize<std::vector>(range);
-        REQUIRE(encoded.size() == 3);
-        CHECK(encoded[0] == 0x41_b);
-        CHECK(encoded[1] == 0x32_b);
-        CHECK(encoded[2] == 0x3F_b);
+        auto encoded = seq::materialize<latin1_string>(range);
+        REQUIRE(encoded == "\x41\x32\x3F"_s);
     }
 }
-
-
-

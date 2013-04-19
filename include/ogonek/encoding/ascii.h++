@@ -56,22 +56,6 @@ namespace ogonek {
             }
         }
 
-        template <typename Range>
-        static boost::sub_range<Range> decode_one(Range const& r, code_point& out, state&, assume_valid_t) {
-            auto first = boost::begin(r);
-            out = *first++;
-            return { first, boost::end(r) };
-        }
-        template <typename Range, typename ErrorHandler>
-        static boost::sub_range<Range> decode_one(Range const& r, code_point& out, state& s, ErrorHandler) {
-            auto first = boost::begin(r);
-            byte b = *first++;
-            if(b > last_ascii_value) {
-                return  ErrorHandler::template apply_decode<ascii>(r, s, out);
-            }
-            out = b;
-            return { first, boost::end(r) };
-        }
         template <typename Sequence>
         static std::pair<Sequence, code_point> decode_one_ex(Sequence s, state&, assume_valid_t) {
             auto u = seq::front(s);

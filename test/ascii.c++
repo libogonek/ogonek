@@ -11,59 +11,50 @@
 
 // Tests for <ogonek/encoding/ascii.h++>
 
-#include <ogonek/encoding.h++>
-#include <ogonek/types.h++>
+#include <ogonek/encoding/ascii.h++>
 
-#include <boost/range/begin.hpp>
-#include <boost/range/end.hpp>
+#include <ogonek/encoding/encode.h++>
+#include <ogonek/error/assume_valid.h++>
+#include <ogonek/error/replace_errors.h++>
+#include <ogonek/sequence/seq.h++>
+#include <ogonek/sequence/interop.h++>
 
+#include <cstddef>
+
+#include "utils.h++"
 #include <catch.h++>
 
-#include <ogonek/encoding/ascii.h++>
-#include <ogonek/encoding/encode.h++>
-#include <ogonek/encoding/decode.h++>
-#include <ogonek/sequence/interop.h++>
-#include <ogonek/sequence/as_sequence.h++>
+namespace seq = ogonek::seq;
+using namespace test::literal;
+using ascii_string = test::string<ogonek::ascii>;
 
-#include <vector>
+namespace {
+    ascii_string operator"" _s(char const* literal, std::size_t size) { return { literal, size }; }
+} // namespace
 
 TEST_CASE("ascii", "ASCII encoding form") {
-    using namespace ogonek::literal;
-    namespace seq = ogonek::seq;
-
     SECTION("encode", "Encoding ASCII") {
-        auto decoded = { U'\x0041', U'\x0032' };
-        static_assert(ogonek::is_sequence<decltype(ogonek::as_sequence(decoded))>(), "");
+        auto decoded = U"\u0041\u0032"_u;
         auto range = ogonek::encode<ogonek::ascii>(decoded, ogonek::assume_valid);
-        auto encoded = seq::materialize<std::vector>(range);
-        REQUIRE(encoded.size() == 2);
-        CHECK(encoded[0] == 0x41_b);
-        CHECK(encoded[1] == 0x32_b);
+        auto encoded = seq::materialize<ascii_string>(range);
+        REQUIRE(encoded == "\x41\x32"_s);
     }
     SECTION("decode", "Decoding ASCII") {
-        auto encoded = { 0x41_b, 0x32_b };
+        auto encoded = "\x41\x32"_s;
         auto range = ogonek::decode<ogonek::ascii>(encoded, ogonek::assume_valid);
-        auto decoded = seq::materialize<std::vector>(range);
-        REQUIRE(decoded.size() == 2);
-        CHECK(decoded[0] == U'\x0041');
-        CHECK(decoded[1] == U'\x0032');
+        auto decoded = seq::materialize<test::ustring>(range);
+        REQUIRE(decoded == U"\u0041\u0032"_u);
     }
     SECTION("validation", "Validating ASCII") {
-        auto encoded = { 0x41_b, 0x32_b, 0x80_b };
+        auto encoded = "\x41\x32\x80"_s;
         auto range = ogonek::decode<ogonek::ascii>(encoded, ogonek::replace_errors);
-        auto decoded = seq::materialize<std::vector>(range);
-        REQUIRE(decoded.size() == 3);
-        CHECK(decoded[0] == U'\x0041');
-        CHECK(decoded[1] == U'\x0032');
-        CHECK(decoded[2] == U'\xFFFD');
+        auto decoded = seq::materialize<test::ustring>(range);
+        REQUIRE(decoded == U"\u0041\u0032\uFFFD"_u);
     }
     SECTION("replacement", "ASCII's custom replacement character (?)") {
-        auto decoded = { U'\x41', U'\x32', U'\x80' };
+        auto decoded = U"\u0041\u0032\u0080"_u;
         auto range = ogonek::encode<ogonek::ascii>(decoded, ogonek::replace_errors);
-        auto encoded = seq::materialize<std::vector>(range);
-        REQUIRE(encoded.size() == 3);
-        CHECK(encoded[0] == 0x41_b);
-        CHECK(encoded[1] == 0x32_b);
-        CHECK(encoded[2] == '?');
+        auto encoded = seq::materialize<ascii_string>(range);
+        REQUIRE(encoded == "\x41\x32\x3F"_s);
     }
 }
