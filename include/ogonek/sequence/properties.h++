@@ -69,7 +69,7 @@ namespace ogonek {
         using SequenceProperties = wheels::Invoke<sequence_properties<T>>;
 
         template<typename... Props>
-        struct ogonek_sequence : seq::detail::native_sequence<> { // TODO NOT detail! And no template args!
+        struct ogonek_sequence : seq::native_sequence {
             using sequence_properties = MakeProperties<Props...>;
         };
 

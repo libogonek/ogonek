@@ -48,7 +48,7 @@ namespace ogonek {
             Sequence s;
 
             Sequence skip_grapheme() const {
-                auto remaining = seq::save(s);
+                auto remaining = s;
                 auto before = seq::front(remaining);
                 seq::pop_front(remaining);
                 do {
@@ -60,7 +60,7 @@ namespace ogonek {
                 return remaining;
             }
         };
-        static_assert(seq::detail::is_native_sequence<grapheme_sequence_impl<std::pair<char const*, char const*>>>(), "");
+        static_assert(seq::is_native_sequence<grapheme_sequence_impl<std::pair<char const*, char const*>>>(), "");
     } // namespace detail
 
     template <typename Sequence>

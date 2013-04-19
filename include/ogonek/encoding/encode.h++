@@ -90,7 +90,7 @@ namespace ogonek {
                 }
             }
         };
-        static_assert(seq::detail::is_native_sequence<encoding_sequence_impl<utf32, std::pair<char const*, char const*>, int>>(), "encoding sequence is a native sequence");
+        static_assert(seq::is_native_sequence<encoding_sequence_impl<utf32, std::pair<char const*, char const*>, int>>(), "encoding sequence is a native sequence");
     } // namespace detail
 
     //! {class}
