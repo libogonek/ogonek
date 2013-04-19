@@ -18,11 +18,12 @@
 
 #include <unicode/unistr.h>
 
-namespace ogonek {
+// TODO get rid of hack!
+namespace seq {
     namespace detail {
         template <>
         struct as_sequence_impl<icu::UnicodeString, void> {
-            struct result : ogonek_sequence<> {
+            struct result : ogonek::detail::ogonek_sequence<> {
             public:
                 result(icu::UnicodeString const& u)
                 : u(&u), l(0), r(u.length()) {}
@@ -49,7 +50,7 @@ namespace ogonek {
         struct as_sequence_impl<icu::UnicodeString const&, void> : as_sequence_impl<icu::UnicodeString> {};
         template <>
         struct as_sequence_impl<icu::UnicodeString&, void> : as_sequence_impl<icu::UnicodeString> {};
-    } // namespace ogonek
-} // namespace ogonek
+    } // namespace detail
+} // namespace seq
 
 #endif // OGONEK_SEQUENCE_ICU_HPP

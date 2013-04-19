@@ -81,10 +81,8 @@ TEST_CASE("donothing", "as_unicode(well_formed)") {
 #endif // U_CHARSET_IS_UTF8
 #include <unicode/unistr.h>
 TEST_CASE("icu", "ICU interop tests") {
-    namespace seq = ogonek::seq;
     icu::UnicodeString u(u8"\U00010000ab");
-    auto&& str = ogonek::as_sequence(u);
-    auto&& ustr = ogonek::as_unicode(str, ogonek::assume_valid);
+    auto&& ustr = ogonek::as_unicode(u, ogonek::assume_valid);
     REQUIRE(!seq::empty(ustr));
     REQUIRE(seq::front(ustr) == U'\x10000');
     seq::pop_front(ustr);
