@@ -14,7 +14,7 @@
 #ifndef OGONEK_SEQUENCE_ICU_HPP
 #define OGONEK_SEQUENCE_ICU_HPP
 
-#include <ogonek/sequence/as_sequence.h++>
+#include <taussig/as_sequence.h++>
 
 #include <unicode/unistr.h>
 
@@ -22,7 +22,7 @@ namespace ogonek {
     namespace detail {
         template <>
         struct as_sequence_impl<icu::UnicodeString, void> {
-            struct result : native_sequence<> {
+            struct result : ogonek_sequence<> {
             public:
                 result(icu::UnicodeString const& u)
                 : u(&u), l(0), r(u.length()) {}

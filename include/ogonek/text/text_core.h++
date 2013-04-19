@@ -25,9 +25,10 @@
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf32.h++>
 #include <ogonek/encoding/encode.h++>
-#include <ogonek/sequence/interop.h++>
-#include <ogonek/sequence/as_sequence.h++>
 #include <ogonek/sequence/as_unicode.h++>
+
+#include <taussig/interop.h++>
+#include <taussig/as_sequence.h++>
 
 #include <wheels/meta.h++>
 
@@ -343,7 +344,7 @@ namespace ogonek {
         template <typename Source>
         void insert_code_units_ex(detail::Iterator<Container> it, Source&& source) {
             static_assert(is_stateless<EncodingForm>(), "inserting with stateful encodings is not supported");
-            auto s = as_sequence(std::forward<Source>(source));
+            auto s = seq::as_sequence(std::forward<Source>(source));
             storage_.insert(it, seq::begin(s), seq::end(s));
         }
 

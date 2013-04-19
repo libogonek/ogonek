@@ -15,6 +15,7 @@
 #define OGONEK_ENCODING_ENCODING_SCHEME_HPP
 
 #include <ogonek/encoding/iterator.h++>
+#include <ogonek/sequence/properties.h++>
 #include <ogonek/types.h++>
 #include <ogonek/detail/ranges.h++>
 #include <ogonek/detail/container/partial_array.h++>
@@ -48,7 +49,7 @@ namespace ogonek {
         using Uint = typename uint<T>::type;
 
         template <typename ByteOrder, typename Integer, typename Sequence>
-        struct ordered_byte_sequence : native_sequence<> {
+        struct ordered_byte_sequence : ogonek_sequence<> {
             using value_type = Integer;
             using reference = value_type;
 
@@ -73,7 +74,7 @@ namespace ogonek {
 
             Sequence inner;
         };
-        static_assert(is_native_sequence<ordered_byte_sequence<little_endian, unsigned, std::pair<char const*, char const*>>>(), "");
+        static_assert(seq::detail::is_native_sequence<ordered_byte_sequence<little_endian, unsigned, std::pair<char const*, char const*>>>(), "");
     } // namespace detail
 
     template <typename EncodingForm, typename ByteOrder>

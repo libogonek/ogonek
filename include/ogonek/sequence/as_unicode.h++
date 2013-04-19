@@ -18,10 +18,11 @@
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/decode.h++>
-#include <ogonek/sequence/seq.h++>
-#include <ogonek/sequence/as_sequence.h++>
 #include <ogonek/error/assume_valid.h++>
 #include <ogonek/error/error_handler.h++>
+
+#include <taussig/primitive.h++>
+#include <taussig/as_sequence.h++>
 
 #include <wheels/meta.h++>
 
@@ -35,7 +36,7 @@ namespace ogonek {
         template <typename S, typename E,
                   bool = is_error_handler<E>(),
                   typename Value = wheels::Invoke<
-                                    wheels::Conditional<is_sequence<S>,
+                                    wheels::Conditional<seq::is_sequence<S>,
                                         seq::value<S>,
                                         wheels::identity<void>>>>
         struct as_unicode_impl {};
@@ -64,7 +65,7 @@ namespace ogonek {
         //! *Returns*: a [concept:Sequence] type for lazily decoding `S` according to `E`.
         //! *Remarks*: the result type is statically known well-formed.
         template <typename S, typename E>
-        using as_unicode = typename detail::as_unicode_impl<as_sequence<S>, E>::result;
+        using as_unicode = typename detail::as_unicode_impl<seq::result_of::as_sequence<S>, E>::result;
     } // namespace result_of
 
     namespace detail {
@@ -85,7 +86,7 @@ namespace ogonek {
     template <typename S, typename E,
               wheels::EnableIf<is_unicode_source<S, E>>...>
     result_of::as_unicode<S, E> as_unicode(S&& s, E&& e) {
-        return detail::as_unicode_impl<result_of::as_sequence<S>, E>::forward(as_sequence(std::forward<S>(s)), std::forward<E>(e));
+        return detail::as_unicode_impl<seq::result_of::as_sequence<S>, E>::forward(seq::as_sequence(std::forward<S>(s)), std::forward<E>(e));
     }
     // TODO single argument version
 } // namespace ogonek

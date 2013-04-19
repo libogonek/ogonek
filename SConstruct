@@ -71,7 +71,7 @@ Help(vars.GenerateHelpText(env))
 # Default flags
 compile_flags = [ '-Wall' , '-Wextra', '-pedantic-errors', '-Werror' # all warnings as errors
                 , '-std=c++11'                                       # C++11 of course!
-                , '-isystemdeps'                                     # system header paths
+                , '-isystemdeps', '-isystemdeps/taussig/include'     # system header paths
                 ]
 for warning in ignored_warnings:
     compile_flags += ['-Wno-' + warning]

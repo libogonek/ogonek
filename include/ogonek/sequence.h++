@@ -14,10 +14,7 @@
 #ifndef OGONEK_DETAIL_SEQUENCE_HPP
 #define OGONEK_DETAIL_SEQUENCE_HPP
 
-#include <ogonek/sequence/seq.h++>
-#include <ogonek/sequence/as_sequence.h++>
 #include <ogonek/sequence/as_unicode.h++>
-#include <ogonek/sequence/interop.h++>
 #include <ogonek/sequence/properties.h++>
 
 #ifdef OGONEK_ICU

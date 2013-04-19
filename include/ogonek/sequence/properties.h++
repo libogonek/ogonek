@@ -14,6 +14,8 @@
 #ifndef OGONEK_SEQUENCE_PROPERTIES_HPP
 #define OGONEK_SEQUENCE_PROPERTIES_HPP
 
+#include <taussig/primitive.h++>
+
 #include <wheels/meta.h++>
 
 #include <type_traits>
@@ -65,6 +67,11 @@ namespace ogonek {
 
         template <typename T>
         using SequenceProperties = wheels::Invoke<sequence_properties<T>>;
+
+        template<typename... Props>
+        struct ogonek_sequence : seq::detail::native_sequence<> { // TODO NOT detail! And no template args!
+            using sequence_properties = MakeProperties<Props...>;
+        };
 
         template <typename Sequence>
         struct is_well_formed : has_well_formed<SequenceProperties<Sequence>> {};

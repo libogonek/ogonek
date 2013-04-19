@@ -1,0 +1,3 @@
+[submodule "deps/taussig"]
+	path = deps/taussig
+	url = git://github.com/rmartinho/taussig.git

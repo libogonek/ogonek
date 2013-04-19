@@ -21,7 +21,8 @@
 #include <ogonek/detail/ranges.h++>
 #include <ogonek/detail/constants.h++>
 #include <ogonek/detail/container/partial_array.h++>
-#include <ogonek/sequence/seq.h++>
+
+#include <taussig/primitive.h++>
 
 #include <boost/range/sub_range.hpp>
 #include <boost/range/begin.hpp>

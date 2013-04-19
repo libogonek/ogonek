@@ -15,12 +15,11 @@
 
 #include <ogonek/encoding/encode.h++>
 #include <ogonek/encoding/decode.h++>
-#include <ogonek/sequence/interop.h++>
+#include <taussig/interop.h++>
 
 #include "utils.h++"
 #include <catch.h++>
 
-namespace seq = ogonek::seq;
 using namespace test::literal;
 using latin1_string = test::string<ogonek::latin1>;
 

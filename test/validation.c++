@@ -16,12 +16,12 @@
 #include <ogonek/encoding/utf32.h++>
 
 #include <ogonek/encoding/decode.h++>
-#include <ogonek/sequence/interop.h++>
+
+#include <taussig/interop.h++>
 
 #include "utils.h++"
 #include <catch.h++>
 
-namespace seq = ogonek::seq;
 using namespace test::literal;
 using utf8_string = test::string<ogonek::utf8>;
 using utf16_string = test::string<ogonek::utf16>;

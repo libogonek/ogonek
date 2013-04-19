@@ -18,7 +18,8 @@
 #include <ogonek/error/assume_valid.h++>
 #include <ogonek/types.h++>
 #include <ogonek/encoding/traits.h++>
-#include <ogonek/sequence/seq.h++>
+
+#include <taussig/primitive.h++>
 
 #include <wheels/meta.h++>
 

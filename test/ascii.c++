@@ -16,15 +16,15 @@
 #include <ogonek/encoding/encode.h++>
 #include <ogonek/error/assume_valid.h++>
 #include <ogonek/error/replace_errors.h++>
-#include <ogonek/sequence/seq.h++>
-#include <ogonek/sequence/interop.h++>
+
+#include <taussig/primitive.h++>
+#include <taussig/interop.h++>
 
 #include <cstddef>
 
 #include "utils.h++"
 #include <catch.h++>
 
-namespace seq = ogonek::seq;
 using namespace test::literal;
 using ascii_string = test::string<ogonek::ascii>;
 

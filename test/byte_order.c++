@@ -14,14 +14,12 @@
 #include <ogonek/encoding/big_endian.h++>
 #include <ogonek/encoding/little_endian.h++>
 
-#include <ogonek/sequence/as_sequence.h++>
-#include <ogonek/sequence/seq.h++>
+#include <taussig/primitive.h++>
+#include <taussig/as_sequence.h++>
 
 #include <array>
 
 #include <catch.h++>
-
-namespace seq = ogonek::seq;
 
 TEST_CASE("big_endian", "Big endian byte order") {
     SECTION("write16", "Writing 16-bit values") {
@@ -41,14 +39,14 @@ TEST_CASE("big_endian", "Big endian byte order") {
     SECTION("read16", "Reading 16-bit values") {
         std::array<std::uint8_t, 2> bytes {{ 0x12, 0x34 }};
         std::uint16_t x;
-        auto remain = ogonek::big_endian::unmap(ogonek::as_sequence(bytes), x);
+        auto remain = ogonek::big_endian::unmap(seq::as_sequence(bytes), x);
         REQUIRE(seq::empty(remain));
         REQUIRE(x == 0x1234);
     }
     SECTION("read32", "Reading 32-bit values") {
         std::array<std::uint8_t, 4> bytes {{ 0x12, 0x34, 0x56, 0x78 }};
         std::uint32_t x;
-        auto remain = ogonek::big_endian::unmap(ogonek::as_sequence(bytes), x);
+        auto remain = ogonek::big_endian::unmap(seq::as_sequence(bytes), x);
         REQUIRE(seq::empty(remain));
         REQUIRE(x == 0x12345678);
     }
@@ -71,14 +69,14 @@ TEST_CASE("little_endian", "Little endian byte order") {
     SECTION("read16", "Reading 16-bit values") {
         std::array<std::uint8_t, 2> bytes {{ 0x34, 0x12 }};
         std::uint16_t x;
-        auto remain = ogonek::little_endian::unmap(ogonek::as_sequence(bytes), x);
+        auto remain = ogonek::little_endian::unmap(seq::as_sequence(bytes), x);
         REQUIRE(seq::empty(remain));
         REQUIRE(x == 0x1234);
     }
     SECTION("read32", "Reading 32-bit values") {
         std::array<std::uint8_t, 4> bytes {{ 0x78, 0x56, 0x34, 0x12 }};
         std::uint32_t x;
-        auto remain = ogonek::little_endian::unmap(ogonek::as_sequence(bytes), x);
+        auto remain = ogonek::little_endian::unmap(seq::as_sequence(bytes), x);
         REQUIRE(seq::empty(remain));
         REQUIRE(x == 0x12345678);
     }

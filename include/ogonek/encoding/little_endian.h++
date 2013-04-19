@@ -15,7 +15,8 @@
 #define OGONEK_ENCODING_LITTLE_ENDIAN_HPP
 
 #include <ogonek/types.h++>
-#include <ogonek/sequence/seq.h++>
+
+#include <taussig/primitive.h++>
 
 #include <cstdint>
 #include <array>

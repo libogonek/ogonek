@@ -14,7 +14,7 @@
 #ifndef OGONEK_SEGMENTATION_GRAPHEMES_HPP
 #define OGONEK_SEGMENTATION_GRAPHEMES_HPP
 
-#include <ogonek/sequence/seq.h++>
+#include <taussig/primitive.h++>
 #include <ogonek/error/assume_valid.h++>
 #include <ogonek/segmentation/detail/grapheme_iterator.h++> // TODO uncrapify this one
 
@@ -25,7 +25,7 @@
 namespace ogonek {
     namespace detail {
         template <typename Sequence>
-        struct grapheme_sequence_impl : detail::native_sequence<> {
+        struct grapheme_sequence_impl : detail::ogonek_sequence<> {
         public:
             template <typename SequenceF,
                       wheels::DisableIf<wheels::is_related<grapheme_sequence_impl<Sequence>, SequenceF>>...>
@@ -60,7 +60,7 @@ namespace ogonek {
                 return remaining;
             }
         };
-        static_assert(is_native_sequence<grapheme_sequence_impl<std::pair<char const*, char const*>>>(), "");
+        static_assert(seq::detail::is_native_sequence<grapheme_sequence_impl<std::pair<char const*, char const*>>>(), "");
     } // namespace detail
 
     template <typename Sequence>

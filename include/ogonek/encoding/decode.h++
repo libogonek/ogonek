@@ -14,14 +14,15 @@
 #ifndef OGONEK_ENCODING_DECODE_HPP
 #define OGONEK_ENCODING_DECODE_HPP
 
-#include <ogonek/sequence/seq.h++>
 #include <ogonek/sequence/properties.h++>
-#include <ogonek/sequence/as_sequence.h++>
 #include <ogonek/encoding/traits.h++>
 #include <ogonek/encoding/utf32.h++>
 #include <ogonek/detail/constants.h++>
 #include <ogonek/detail/meta/is_decayed.h++>
 #include <ogonek/detail/container/encoded_character.h++>
+
+#include <taussig/primitive.h++>
+#include <taussig/as_sequence.h++>
 
 #include <wheels/meta.h++>
 
@@ -32,7 +33,7 @@
 namespace ogonek {
     namespace detail {
         template <typename EncodingForm, typename Sequence, typename ErrorHandler>
-        struct decoding_sequence_impl : detail::native_sequence<detail::well_formed> {
+        struct decoding_sequence_impl : detail::ogonek_sequence<detail::well_formed> {
             using value_type = code_point;
             using reference = value_type;
 
@@ -66,7 +67,7 @@ namespace ogonek {
             EncodingState<EncodingForm> state {};
             ErrorHandler handler;
         };
-        static_assert(is_native_sequence<decoding_sequence_impl<utf32, std::pair<char const*, char const*>, int>>(), "decoding sequence is a native sequence");
+        static_assert(seq::detail::is_native_sequence<decoding_sequence_impl<utf32, std::pair<char const*, char const*>, int>>(), "decoding sequence is a native sequence");
     } // namespace detail
     //! {class}
     //! A sequence wrapper that lazily decodes the underlying sequence
@@ -77,7 +78,7 @@ namespace ogonek {
         template <typename EncodingForm, typename Sequence, typename ErrorHandler>
         using decode = wheels::Conditional<detail::is_well_formed<Sequence>,
                             Sequence,
-                            decoding_sequence<EncodingForm, result_of::as_sequence<Sequence>, ErrorHandler>
+                            decoding_sequence<EncodingForm, seq::result_of::as_sequence<Sequence>, ErrorHandler>
                           >;
     } // namespace result_of
 
@@ -85,7 +86,7 @@ namespace ogonek {
               typename Sequence, typename ErrorHandler,
               wheels::DisableIf<detail::is_well_formed<Sequence>>...>
     result_of::decode<EncodingForm, Sequence, ErrorHandler> decode(Sequence&& s, ErrorHandler&& h) {
-        return { (as_sequence)(std::forward<Sequence>(s)), std::forward<ErrorHandler>(h) };
+        return { seq::as_sequence(std::forward<Sequence>(s)), std::forward<ErrorHandler>(h) };
     }
     template <typename EncodingForm,
               typename Sequence, typename ErrorHandler,

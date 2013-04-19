@@ -20,12 +20,12 @@
 #include <ogonek/error/assume_valid.h++>
 #include <ogonek/encoding/encode.h++>
 #include <ogonek/encoding/decode.h++>
-#include <ogonek/sequence/interop.h++>
+
+#include <taussig/interop.h++>
 
 #include "utils.h++"
 #include <catch.h++>
 
-namespace seq = ogonek::seq;
 using namespace test::literal;
 
 TEST_CASE("utf16le", "UTF-16LE codec") {

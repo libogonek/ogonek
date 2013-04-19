@@ -14,9 +14,11 @@
 #ifndef OGONEK_ENCODING_ENCODE_HPP
 #define OGONEK_ENCODING_ENCODE_HPP
 
-#include <ogonek/sequence/seq.h++>
+#include <taussig/primitive.h++>
+#include <taussig/as_sequence.h++>
+
 #include <ogonek/sequence/properties.h++>
-#include <ogonek/sequence/as_sequence.h++>
+
 #include <ogonek/encoding/traits.h++>
 #include <ogonek/encoding/utf32.h++>
 #include <ogonek/error/default_error_handler.h++>
@@ -33,7 +35,7 @@
 namespace ogonek {
     namespace detail {
         template <typename EncodingForm, typename Sequence, typename ErrorHandler>
-        struct encoding_sequence_impl : detail::native_sequence<detail::well_formed> {
+        struct encoding_sequence_impl : detail::ogonek_sequence<detail::well_formed> {
             using value_type = CodeUnit<EncodingForm>;
             using reference = value_type;
 
@@ -88,7 +90,7 @@ namespace ogonek {
                 }
             }
         };
-        static_assert(is_native_sequence<encoding_sequence_impl<utf32, std::pair<char const*, char const*>, int>>(), "encoding sequence is a native sequence");
+        static_assert(seq::detail::is_native_sequence<encoding_sequence_impl<utf32, std::pair<char const*, char const*>, int>>(), "encoding sequence is a native sequence");
     } // namespace detail
 
     //! {class}
@@ -98,14 +100,14 @@ namespace ogonek {
 
     namespace result_of {
         template <typename EncodingForm, typename Source, typename ErrorHandler = default_error_handler_t>
-        using encode = encoding_sequence<EncodingForm, result_of::as_sequence<Source>, ErrorHandler>;
+        using encode = encoding_sequence<EncodingForm, seq::result_of::as_sequence<Source>, ErrorHandler>;
     } // namespace result_of
 
     // TODO optimisations
     template <typename EncodingForm,
               typename Source, typename ErrorHandler>
     result_of::encode<EncodingForm, Source, ErrorHandler> encode(Source&& s, ErrorHandler&& h) {
-        return { (as_sequence)(std::forward<Source>(s)), std::forward<ErrorHandler>(h) };
+        return { seq::as_sequence(std::forward<Source>(s)), std::forward<ErrorHandler>(h) };
     }
 
     template <typename EncodingForm,
