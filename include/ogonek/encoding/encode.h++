@@ -23,7 +23,6 @@
 #include <ogonek/encoding/utf32.h++>
 #include <ogonek/error/default_error_handler.h++>
 #include <ogonek/detail/constants.h++>
-#include <ogonek/detail/meta/is_decayed.h++>
 #include <ogonek/detail/container/encoded_character.h++>
 
 #include <wheels/meta.h++>

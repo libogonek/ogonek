@@ -18,7 +18,6 @@
 #include <ogonek/encoding/traits.h++>
 #include <ogonek/encoding/utf32.h++>
 #include <ogonek/detail/constants.h++>
-#include <ogonek/detail/meta/is_decayed.h++>
 #include <ogonek/detail/container/encoded_character.h++>
 
 #include <taussig/primitive.h++>
