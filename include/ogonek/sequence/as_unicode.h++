@@ -21,8 +21,7 @@
 #include <ogonek/error/assume_valid.h++>
 #include <ogonek/error/error_handler.h++>
 
-#include <taussig/primitive.h++>
-#include <taussig/as_sequence.h++>
+#include <taussig/primitives.h++>
 
 #include <wheels/meta.h++>
 
@@ -37,7 +36,7 @@ namespace ogonek {
                   bool = is_error_handler<E>(),
                   typename Value = wheels::Invoke<
                                     wheels::Conditional<seq::is_sequence<S>,
-                                        seq::value<S>,
+                                        seq::value_type<S>,
                                         wheels::identity<void>>>>
         struct as_unicode_impl {};
 

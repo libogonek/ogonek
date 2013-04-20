@@ -20,8 +20,7 @@
 #include <ogonek/detail/constants.h++>
 #include <ogonek/detail/container/encoded_character.h++>
 
-#include <taussig/primitive.h++>
-#include <taussig/as_sequence.h++>
+#include <taussig/primitives.h++>
 
 #include <wheels/meta.h++>
 
@@ -66,7 +65,7 @@ namespace ogonek {
             EncodingState<EncodingForm> state {};
             ErrorHandler handler;
         };
-        static_assert(seq::is_native_sequence<decoding_sequence_impl<utf32, std::pair<char const*, char const*>, int>>(), "decoding sequence is a native sequence");
+        static_assert(seq::is_true_sequence<decoding_sequence_impl<utf32, std::pair<char const*, char const*>, int>>(), "decoding sequence is a true sequence");
     } // namespace detail
     //! {class}
     //! A sequence wrapper that lazily decodes the underlying sequence

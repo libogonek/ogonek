@@ -14,9 +14,10 @@
 #ifndef OGONEK_SEGMENTATION_GRAPHEMES_HPP
 #define OGONEK_SEGMENTATION_GRAPHEMES_HPP
 
-#include <taussig/primitive.h++>
 #include <ogonek/error/assume_valid.h++>
 #include <ogonek/segmentation/detail/grapheme_iterator.h++> // TODO uncrapify this one
+
+#include <taussig/primitives.h++>
 
 #include <wheels/meta.h++>
 
@@ -60,7 +61,7 @@ namespace ogonek {
                 return remaining;
             }
         };
-        static_assert(seq::is_native_sequence<grapheme_sequence_impl<std::pair<char const*, char const*>>>(), "");
+        static_assert(seq::is_true_sequence<grapheme_sequence_impl<std::pair<char const*, char const*>>>(), "");
     } // namespace detail
 
     template <typename Sequence>

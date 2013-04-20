@@ -14,7 +14,8 @@
 #ifndef OGONEK_SEQUENCE_PROPERTIES_HPP
 #define OGONEK_SEQUENCE_PROPERTIES_HPP
 
-#include <taussig/primitive.h++>
+#include <taussig/primitives.h++>
+#include <taussig/traits.h++>
 
 #include <wheels/meta.h++>
 
@@ -69,7 +70,7 @@ namespace ogonek {
         using SequenceProperties = wheels::Invoke<sequence_properties<T>>;
 
         template<typename... Props>
-        struct ogonek_sequence : seq::native_sequence {
+        struct ogonek_sequence : seq::true_sequence {
             using sequence_properties = MakeProperties<Props...>;
         };
 

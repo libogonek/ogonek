@@ -74,7 +74,7 @@ namespace ogonek {
 
             Sequence inner;
         };
-        static_assert(seq::is_native_sequence<ordered_byte_sequence<little_endian, unsigned, std::pair<char const*, char const*>>>(), "");
+        static_assert(seq::is_true_sequence<ordered_byte_sequence<little_endian, unsigned, std::pair<char const*, char const*>>>(), "");
     } // namespace detail
 
     template <typename EncodingForm, typename ByteOrder>

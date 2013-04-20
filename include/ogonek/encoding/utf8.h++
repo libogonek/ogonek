@@ -23,7 +23,7 @@
 #include <ogonek/detail/container/partial_array.h++>
 #include <ogonek/detail/container/encoded_character.h++>
 
-#include <taussig/primitive.h++>
+#include <taussig/primitives.h++>
 
 #include <boost/range/iterator_range.hpp>
 #include <boost/range/sub_range.hpp>

@@ -14,43 +14,44 @@
 #ifndef OGONEK_SEQUENCE_ICU_HPP
 #define OGONEK_SEQUENCE_ICU_HPP
 
-#include <taussig/as_sequence.h++>
+#include <ogonek/sequence/properties.h++>
+
+#include <taussig/primitives/as_sequence.h++>
 
 #include <unicode/unistr.h>
 
-// TODO get rid of hack!
 namespace seq {
-    namespace detail {
-        template <>
-        struct as_sequence_impl<icu::UnicodeString, void> {
-            struct result : ogonek::detail::ogonek_sequence<> {
-            public:
-                result(icu::UnicodeString const& u)
-                : u(&u), l(0), r(u.length()) {}
+    template <>
+    struct sequence_source<icu::UnicodeString> {
+        struct result : ogonek::detail::ogonek_sequence<> {
+        public:
+            result(icu::UnicodeString const& u)
+            : u(&u), l(0), r(u.length()) {}
 
-                using value_type = char16_t;
-                using reference = value_type;
+            using value_type = char16_t;
+            using reference = value_type;
 
-                bool empty() const { return l == r; }
-                reference front() const { return u->charAt(l); }
-                void pop_front() { ++l; }
-                result save() const { return *this; }
-                result before(result const& that) const { return { u, l, that.l }; }
+            bool empty() const { return l == r; }
+            reference front() const { return u->charAt(l); }
+            void pop_front() { ++l; }
+            result save() const { return *this; }
+            result before(result const& that) const { return { u, l, that.l }; }
 
-            private:
-                result(icu::UnicodeString const* u, int32_t l, int32_t r) : u(u), l(l), r(r) {}
+        private:
+            result(icu::UnicodeString const* u, int32_t l, int32_t r) : u(u), l(l), r(r) {}
 
-                icu::UnicodeString const* u;
-                int32_t l, r;
-            };
-            static_assert(is_native_sequence<result>(), "result is a native sequence");
-            static result forward(icu::UnicodeString const& u) { return std::forward<result>(u); }
+            icu::UnicodeString const* u;
+            int32_t l, r;
         };
-        template <>
-        struct as_sequence_impl<icu::UnicodeString const&, void> : as_sequence_impl<icu::UnicodeString> {};
-        template <>
-        struct as_sequence_impl<icu::UnicodeString&, void> : as_sequence_impl<icu::UnicodeString> {};
-    } // namespace detail
+        static_assert(is_true_sequence<result>(), "result is a true sequence");
+        static result forward(icu::UnicodeString const& u) { return std::forward<result>(u); }
+    };
+    template <>
+    struct sequence_source<icu::UnicodeString const&> : sequence_source<icu::UnicodeString> {};
+    template <>
+    struct sequence_source<icu::UnicodeString&> : sequence_source<icu::UnicodeString> {};
+    template <>
+    struct sequence_source<icu::UnicodeString&&> : sequence_source<icu::UnicodeString> {};
 } // namespace seq
 
 #endif // OGONEK_SEQUENCE_ICU_HPP

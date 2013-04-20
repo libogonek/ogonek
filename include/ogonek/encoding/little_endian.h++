@@ -16,7 +16,7 @@
 
 #include <ogonek/types.h++>
 
-#include <taussig/primitive.h++>
+#include <taussig/primitives.h++>
 
 #include <cstdint>
 #include <array>

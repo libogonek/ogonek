@@ -17,7 +17,7 @@
 #include <ogonek/error/assume_valid.h++>
 #include <ogonek/error/replace_errors.h++>
 
-#include <taussig/primitive.h++>
+#include <taussig/primitives.h++>
 #include <taussig/interop.h++>
 
 #include <cstddef>

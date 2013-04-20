@@ -14,8 +14,7 @@
 #include <ogonek/encoding/big_endian.h++>
 #include <ogonek/encoding/little_endian.h++>
 
-#include <taussig/primitive.h++>
-#include <taussig/as_sequence.h++>
+#include <taussig/primitives.h++>
 
 #include <array>
 

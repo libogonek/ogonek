@@ -28,7 +28,7 @@
 #include <ogonek/sequence/as_unicode.h++>
 
 #include <taussig/interop.h++>
-#include <taussig/as_sequence.h++>
+#include <taussig/primitives.h++>
 
 #include <wheels/meta.h++>
 

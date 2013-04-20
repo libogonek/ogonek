@@ -19,8 +19,6 @@
 #include <ogonek/types.h++>
 #include <ogonek/encoding/traits.h++>
 
-#include <taussig/primitive.h++>
-
 #include <wheels/meta.h++>
 
 #include <boost/range/sub_range.hpp>

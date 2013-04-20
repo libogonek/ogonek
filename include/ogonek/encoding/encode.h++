@@ -14,16 +14,15 @@
 #ifndef OGONEK_ENCODING_ENCODE_HPP
 #define OGONEK_ENCODING_ENCODE_HPP
 
-#include <taussig/primitive.h++>
-#include <taussig/as_sequence.h++>
-
-#include <ogonek/sequence/properties.h++>
-
 #include <ogonek/encoding/traits.h++>
 #include <ogonek/encoding/utf32.h++>
 #include <ogonek/error/default_error_handler.h++>
+#include <ogonek/sequence/properties.h++>
 #include <ogonek/detail/constants.h++>
 #include <ogonek/detail/container/encoded_character.h++>
+
+#include <taussig/primitives.h++>
+#include <taussig/traits.h++>
 
 #include <wheels/meta.h++>
 
@@ -89,7 +88,7 @@ namespace ogonek {
                 }
             }
         };
-        static_assert(seq::is_native_sequence<encoding_sequence_impl<utf32, std::pair<char const*, char const*>, int>>(), "encoding sequence is a native sequence");
+        static_assert(seq::is_true_sequence<encoding_sequence_impl<utf32, std::pair<char const*, char const*>, int>>(), "encoding sequence is a true sequence");
     } // namespace detail
 
     //! {class}
