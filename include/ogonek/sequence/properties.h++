@@ -40,7 +40,7 @@ namespace ogonek {
         template <typename Props, typename P>
         struct set_property;
         template <typename Props, typename P>
-        using SetProperty = typename set_property<P, Props>::type;
+        using SetProperty = wheels::Invoke<set_property<Props, P>>;
 
         template <typename Old, typename... T>
         struct set_property<properties<Old, T...>, well_formed> {
@@ -50,7 +50,9 @@ namespace ogonek {
         template <typename Props, typename... New>
         struct set_properties { using type = Props; };
         template <typename Props, typename H, typename... T>
-        struct set_properties<Props, H, T...> : set_properties<SetProperty<H, Props>, T...> {};
+        struct set_properties<Props, H, T...> : set_properties<SetProperty<Props, H>, T...> {};
+        template <typename Props, typename... H, typename... T>
+        struct set_properties<Props, properties<H...>, T...> : set_properties<Props, H..., T...> {};
         template <typename Props, typename... New>
         using SetProperties = typename set_properties<Props, New...>::type;
 

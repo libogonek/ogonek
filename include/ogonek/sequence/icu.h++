@@ -44,7 +44,7 @@ namespace seq {
             int32_t l, r;
         };
         static_assert(is_true_sequence<result>(), "result is a true sequence");
-        static result forward(icu::UnicodeString const& u) { return std::forward<result>(u); }
+        static result forward(icu::UnicodeString const& u) { return result { u }; }
     };
     template <>
     struct sequence_source<icu::UnicodeString const&> : sequence_source<icu::UnicodeString> {};

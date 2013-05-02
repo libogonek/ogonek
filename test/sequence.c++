@@ -95,4 +95,16 @@ TEST_CASE("icu", "ICU interop tests") {
     REQUIRE(seq::empty(ustr));
 }
 
+#include<ogonek/text.h++>
+#include<ogonek/encoding/utf8.h++>
+#include<ogonek/error/throw_error.h++>
+#include<taussig/interop/begin_end.h++>
+#include"utils.h++"
+TEST_CASE("text_seq", "text as a sequence") {
+    test::text<ogonek::utf8> t{ u8"ffs" };
+    auto us = ogonek::as_unicode(t, ogonek::throw_error);
+    test::text<ogonek::utf16> t2 { us };
+    REQUIRE(t == t2);
+}
+
 #endif // OGONEK_ICU

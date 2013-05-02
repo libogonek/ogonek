@@ -42,14 +42,14 @@ namespace ogonek {
 
         template <typename U32, typename E>
         struct as_unicode_impl<U32, E, true, char32_t> {
-            using result = ogonek::result_of::decode<utf32, U32 const&, E>;
+            using result = ogonek::result_of::decode<utf32, U32, E>;
             static result forward(U32&& s, E&& e) {
                 return decode<utf32>(std::forward<U32>(s), std::forward<E>(e));
             }
         };
         template <typename U16, typename E>
         struct as_unicode_impl<U16, E, true, char16_t> {
-            using result = ogonek::result_of::decode<utf16, U16 const&, E>;
+            using result = ogonek::result_of::decode<utf16, U16, E>;
             static result forward(U16&& s, E&& e) {
                 return decode<utf16>(std::forward<U16>(s), std::forward<E>(e));
             }

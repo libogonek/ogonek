@@ -26,7 +26,9 @@
 #include <ogonek/encoding/utf16.h++>
 #include <ogonek/encoding/utf32.h++>
 #include <ogonek/encoding/encode.h++>
+#include <ogonek/encoding/decode.h++>
 #include <ogonek/sequence/as_unicode.h++>
+#include <ogonek/sequence/properties.h++>
 
 #include <taussig/interop.h++>
 #include <taussig/primitives.h++>
@@ -82,6 +84,8 @@ namespace ogonek {
                       "The container's value type should be convertible to the encoding form code units");
 
     public:
+        using sequence_properties = detail::MakeProperties<detail::well_formed>;
+
         //** Constructors **
         // -- basic
         //! Empty string
@@ -300,6 +304,28 @@ namespace ogonek {
 
         Container storage_;
     };
+    static_assert(detail::is_well_formed<text<utf16>>(), "text is always well-formed");
 } // namespace ogonek
+
+namespace seq {
+    template <typename EncodingForm, typename Container>
+    struct sequence_source<ogonek::text<EncodingForm, Container>> {
+    private:
+        using text_type = ogonek::text<EncodingForm, Container>;
+
+    public:
+        using result = ogonek::result_of::decode<EncodingForm, Container, ogonek::assume_valid_t>;
+        static_assert(is_true_sequence<result>(), "result is a true sequence");
+        static result forward(text_type const& t) {
+            return ogonek::decode<EncodingForm>(t.storage(), ogonek::assume_valid);
+        }
+    };
+    template <typename EncodingForm, typename Container>
+    struct sequence_source<ogonek::text<EncodingForm, Container> const&> : sequence_source<ogonek::text<EncodingForm, Container>> {};
+    template <typename EncodingForm, typename Container>
+    struct sequence_source<ogonek::text<EncodingForm, Container>&> : sequence_source<ogonek::text<EncodingForm, Container>> {};
+    template <typename EncodingForm, typename Container>
+    struct sequence_source<ogonek::text<EncodingForm, Container>&&> : sequence_source<ogonek::text<EncodingForm, Container>> {};
+} // namespace seq
 
 #endif // OGONEK_TEXT_CORE_HPP
