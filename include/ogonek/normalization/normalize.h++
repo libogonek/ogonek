@@ -14,12 +14,26 @@
 #ifndef OGONEK_NORMALIZE_HPP
 #define OGONEK_NORMALIZE_HPP
 
+#include <ogonek/sequence/properties.h++>
+//#include <ogonek/normalization/detail/decomposing_sequence.h++>
+
+#include <wheels/meta.h++>
+
 #include <ogonek/detail/ranges.h++>
 #include <ogonek/normalization/detail/normalizing_iterator.h++>
 
 #include <boost/range/iterator_range.hpp>
 
 namespace ogonek {
+    /*
+    template <typename NormalForm,
+              typename UnicodeSequence,
+              wheels::EnableIf<detail::is_well_formed<UnicodeSequence>>...>
+    detail::normalizing_range<NormalForm, UnicodeSequence> normalize_ex(UnicodeSequence const& sequence) {
+        return { sequence };
+    }
+    */
+
     template <typename NormalForm,
               typename UnicodeSequence,
               typename Iterator = detail::UnicodeSequenceIterator<UnicodeSequence, assume_valid_t>,
