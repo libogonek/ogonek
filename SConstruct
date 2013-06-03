@@ -87,18 +87,6 @@ if env['PLATFORM'] == 'win32':
 else:
     env.Append(CPPDEFINES = [macro_prefix + '_POSIX'])
 
-# Version macros
-version_file = open('VERSION', 'r')
-version_major = version_file.readline().strip()
-version_minor = version_file.readline().strip()
-version_rev = version_file.readline().strip()
-version_extra = version_file.readline().strip()
-env.Append(CPPDEFINES = { macro_prefix + '_VERSION_MAJOR' : version_major
-                        , macro_prefix + '_VERSION_MINOR' : version_minor
-                        , macro_prefix + '_VERSION_REVISION' : version_rev
-                        , macro_prefix + '_VERSION_EXTRA' : version_extra
-                        })
-
 # Utils
 def stringify(list):
     return map(str, list)
