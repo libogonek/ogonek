@@ -11,7 +11,7 @@
 
 // Tests for <ogonek/detail/lookahead_window.h++>
 
-#include <ogonek/detail/lookahead_window.h++>
+#include <ogonek/detail/container/lookahead_window.h++>
 
 #include <catch.h++>
 

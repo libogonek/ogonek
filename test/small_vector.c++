@@ -11,7 +11,7 @@
 
 // Tests for <ogonek/detail/small_vector.h++>
 
-#include <ogonek/detail/small_vector.h++>
+#include <ogonek/detail/container/small_vector.h++>
 
 #include <catch.h++>
 

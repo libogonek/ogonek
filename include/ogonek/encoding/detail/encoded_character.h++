@@ -15,7 +15,7 @@
 #ifndef OGONEK_DETAIL_ENCODED_CHARACTER_HPP
 #define OGONEK_DETAIL_ENCODED_CHARACTER_HPP
 
-#include <ogonek/detail/partial_array.h++>
+#include <ogonek/detail/container/partial_array.h++>
 
 namespace ogonek {
     namespace detail {

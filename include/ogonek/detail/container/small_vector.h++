@@ -14,7 +14,7 @@
 #ifndef OGONEK_DETAIL_SMALL_VECTOR_HPP
 #define OGONEK_DETAIL_SMALL_VECTOR_HPP
 
-#include <ogonek/detail/partial_array.h++>
+#include <ogonek/detail/container/partial_array.h++>
 
 #include <wheels/meta.h++>
 
