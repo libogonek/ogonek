@@ -25,9 +25,9 @@
 
 namespace ogonek {
     //! Exception that is thrown when validation fails
-    struct unicode_error : std::exception { // TODO Boost.Exception
+    struct unicode_error : virtual std::exception { // TODO Boost.Exception
         char const* what() const throw() override {
-            return "Unicode validation failed";
+            return u8"Unicode validation failed";
         }
     };
 
