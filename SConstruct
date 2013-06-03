@@ -8,7 +8,12 @@ lib_name = 'ogonek_data'
 
 # Command line variables
 variables = [ EnumVariable('lib', 'kind of library to build', 'static', allowed_values=('static', 'shared'))
+            , BoolVariable('boost_exception', 'include Boost.Exception support', True)
             ]
+
+def apply_variables(env):
+    if env['boost_exception']:
+        env.Append(CPPDEFINES = [ macro_prefix + '_BOOST_EXCEPTION' ])
 
 ignored_warnings = [ 'mismatched-tags' ]
 
@@ -111,6 +116,8 @@ if env['lib'] == 'shared':
     lib_defines = [macro_prefix + '_BUILD', macro_prefix + '_SHARED']
 lib_flags = []
 
+apply_variables(env)
+
 # Setup the debug target
 debug_builddir = 'obj/debug/'
 debug_target = 'bin/debug/' + lib_name
@@ -155,14 +162,16 @@ if env['PLATFORM'] == 'win32':
 else:
     test_target = 'bin/test/runtest'
 test_flags = []
-test_libs = []
+test_libs = [ lib_name ]
+if env['boost_exception']:
+    test_libs += ['boost_exception']
 
 test = debug.Clone()
 test.MergeFlags(test_flags)
 test.Append(CPPPATH = ['test'])
 test.Append(LIBS = test_libs)
 test.VariantDir(test_builddir, '.', duplicate=0)
-test_program = test.Program(test_target, prefix(test_builddir, test_sources), LIBS=lib_name, LIBPATH='bin/debug')
+test_program = test.Program(test_target, prefix(test_builddir, test_sources), LIBS=test_libs, LIBPATH='bin/debug')
 test.Alias('buildtest', test_program)
 if env['test'] == 'all':
     test_arguments = ''

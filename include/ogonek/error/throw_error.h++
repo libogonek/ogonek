@@ -21,11 +21,20 @@
 
 #include <boost/range/sub_range.hpp>
 
+#ifdef OGONEK_BOOST_EXCEPTION
+#include <boost/exception/exception.hpp>
+#endif // OGONEK_BOOST_EXCEPTION
+
 #include <stdexcept>
 
 namespace ogonek {
     //! Exception that is thrown when validation fails
-    struct unicode_error : virtual std::exception { // TODO Boost.Exception
+    struct unicode_error
+    : virtual std::exception
+#ifdef OGONEK_BOOST_EXCEPTION
+    , virtual boost::exception
+#endif // OGONEK_BOOST_EXCEPTION
+    {
         char const* what() const throw() override {
             return u8"Unicode validation failed";
         }
