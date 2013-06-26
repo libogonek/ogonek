@@ -144,7 +144,7 @@ namespace ogonek {
         private:
             using small_storage = partial_array<T, N>;
             using large_storage = std::vector<T>;
-            using storage_type = wheels::StorageFor<small_storage, large_storage>;
+            using storage_type = std::array<char, 1024>;//wheels::meta::Invoke<std::aligned_union<small_storage, large_storage>>; // TODO wheels StorageFor
             
             template <typename Container>
             static auto get_iterator(Container& container, iterator it) -> decltype(container.begin()) {

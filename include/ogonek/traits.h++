@@ -22,13 +22,13 @@ namespace ogonek {
     namespace detail {
         struct always_validated_tester {
             template <typename UnicodeSequence>
-            wheels::Bool<UnicodeSequence::validated> static test(int);
+            wheels::meta::Bool<UnicodeSequence::validated> static test(int);
             template <typename UnicodeSequence>
-            wheels::Bool<false> static test(...);
+            wheels::meta::False static test(...);
         };
     } // namespace detail
     template <typename T>
-    using always_validated = wheels::TraitOf<detail::always_validated_tester, wheels::Unqualified<T>>;
+    using always_validated = wheels::meta::TraitOf<detail::always_validated_tester, wheels::meta::Unqual<T>>;
 
     namespace detail {
         template <typename NormalForm>
@@ -36,22 +36,22 @@ namespace ogonek {
             template <typename UnicodeSequence>
             std::is_same<typename UnicodeSequence::normal_form, NormalForm> static test(int);
             template <typename UnicodeSequence>
-            wheels::Bool<false> static test(...);
+            wheels::meta::False static test(...);
         };
     } // namespace detail
     template <typename NormalForm, typename T>
-    using always_normalized = wheels::TraitOf<detail::always_normalized_tester<NormalForm>, wheels::Unqualified<T>>;
+    using always_normalized = wheels::meta::TraitOf<detail::always_normalized_tester<NormalForm>, wheels::meta::Unqual<T>>;
 
     namespace detail {
         struct always_casefolded_tester {
             template <typename UnicodeSequence>
-            wheels::Bool<UnicodeSequence::casefolded> static test(int);
+            wheels::meta::Bool<UnicodeSequence::casefolded> static test(int);
             template <typename UnicodeSequence>
-            wheels::Bool<false> static test(...);
+            wheels::meta::False static test(...);
         };
     } // namespace detail
     template <typename T>
-    using always_casefolded = wheels::TraitOf<detail::always_casefolded_tester, wheels::Unqualified<T>>;
+    using always_casefolded = wheels::meta::TraitOf<detail::always_casefolded_tester, wheels::meta::Unqual<T>>;
 } // namespace ogonek
 
 #endif // OGONEK_TRAITS_HPP

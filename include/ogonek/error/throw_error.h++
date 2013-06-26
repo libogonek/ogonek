@@ -19,7 +19,8 @@
 #include <ogonek/types.h++>
 #include <ogonek/encoding/traits.h++>
 #include <ogonek/detail/container/encoded_character.h++>
-#include <ogonek/detail/container/optional.h++>
+
+#include <wheels/optional.h++>
 
 #include <boost/range/sub_range.hpp>
 

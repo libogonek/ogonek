@@ -15,10 +15,10 @@
 #define OGONEK_ERROR_ERROR_HANDLER_HPP
 
 #include <ogonek/error/unicode_error.h++>
-#include <ogonek/detail/container/optional.h++>
 #include <ogonek/detail/container/encoded_character.h++>
 
 #include <wheels/meta.h++>
+#include <wheels/optional.h++>
 
 #include <type_traits>
 #include <tuple>
@@ -40,14 +40,14 @@ namespace ogonek {
     // };
 
     template <typename Sequence, typename EncodingForm>
-    using decode_correction = std::tuple<Sequence, EncodingState<EncodingForm>, detail::optional<code_point>>;
+    using decode_correction = std::tuple<Sequence, EncodingState<EncodingForm>, wheels::optional<code_point>>;
     template <typename Sequence, typename EncodingForm>
     using encode_correction = std::tuple<Sequence, EncodingState<EncodingForm>, detail::encoded_character<EncodingForm>>;
 
     namespace detail {
         struct error_handler_test {
             template <typename T>
-            typename wheels::Unqualified<T>::is_error_handler static test(int);
+            typename wheels::meta::Unqual<T>::is_error_handler static test(int);
             template <typename...>
             std::false_type static test(...);
         };
@@ -56,7 +56,7 @@ namespace ogonek {
     //! {trait}
     //! *Returns*: `true` is `T` is a model of [concept:ErrorHandler].
     template <typename T>
-    struct is_error_handler : wheels::TraitOf<detail::error_handler_test, T> {};
+    struct is_error_handler : wheels::meta::TraitOf<detail::error_handler_test, T> {};
 
     //! {tag}
     //! A tag type to mark error handlers.

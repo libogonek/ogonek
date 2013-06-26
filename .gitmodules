@@ -1,3 +1,6 @@
 [submodule "deps/taussig"]
 	path = deps/taussig
 	url = git://github.com/rmartinho/taussig.git
+[submodule "deps/wheels"]
+	path = deps/wheels
+	url = https://github.com/rmartinho/wheels.git

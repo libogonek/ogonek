@@ -80,7 +80,7 @@ namespace ogonek {
             seq::pop_front(s);
             if(decoded == code_point(-1)) {
                 decode_error<Sequence, codepage_encoding<Codepage>> error { s, state };
-                detail::optional<code_point> u;
+                wheels::optional<code_point> u;
                 std::tie(s, state, u) = handler.handle(error);
                 return { s, *u };
             } else {

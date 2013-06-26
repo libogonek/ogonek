@@ -54,7 +54,7 @@ namespace ogonek {
 
             if(u > detail::last_code_point || detail::is_surrogate(u)) {
                 decode_error<Sequence, utf32> error { s, state };
-                detail::optional<code_point> u;
+                wheels::optional<code_point> u;
                 std::tie(s, state, u) = handler.handle(error);
                 return { s, *u };
             }

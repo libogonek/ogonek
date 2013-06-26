@@ -125,7 +125,7 @@ namespace ogonek {
             }
             if(!detail::is_lead_surrogate(lead)) {
                 decode_error<Sequence, utf16> error { s, state };
-                detail::optional<code_point> u;
+                wheels::optional<code_point> u;
                 std::tie(s, state, u) = handler.handle(error);
                 return { s, *u };
             }
@@ -133,7 +133,7 @@ namespace ogonek {
             auto trail = seq::front(s);
             if(!detail::is_trail_surrogate(trail)) {
                 decode_error<Sequence, utf16> error { s, state };
-                detail::optional<code_point> u;
+                wheels::optional<code_point> u;
                 std::tie(s, state, u) = handler.handle(error);
                 return { s, *u };
             }

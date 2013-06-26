@@ -17,7 +17,7 @@
 #include <ogonek/text.h++>
 #include <ogonek/types.h++>
 
-#include <wheels/smart_ptr/unique_ptr.h++>
+#include <wheels/mem/unique.h++>
 
 #include <boost/range/any_range.hpp>
 #include <boost/iterator/iterator_categories.hpp>
@@ -34,7 +34,7 @@ namespace ogonek {
 
     private:
         class placeholder;
-        using handle_type = std::unique_ptr<placeholder>;
+        using handle_type = wheels::mem::unique<placeholder>;
 
         class placeholder {
         public:
@@ -100,19 +100,19 @@ namespace ogonek {
 
         template <typename EncodingForm, typename Container>
         any_text(text<EncodingForm, Container> const& text)
-        : handle { wheels::make_unique<holder<EncodingForm, Container>>(text) } {}
+        : handle { wheels::mem::make_unique<holder<EncodingForm, Container>>(text) } {}
         template <typename EncodingForm, typename Container>
         any_text(text<EncodingForm, Container>&& text)
-        : handle { wheels::make_unique<holder<EncodingForm, Container>>(std::move(text)) } {}
+        : handle { wheels::mem::make_unique<holder<EncodingForm, Container>>(std::move(text)) } {}
 
         template <typename EncodingForm, typename Container>
         any_text& operator=(text<EncodingForm, Container> const& text) {
-            handle = wheels::make_unique<holder<EncodingForm, Container>>(text);
+            handle = wheels::mem::make_unique<holder<EncodingForm, Container>>(text);
             return *this;
         }
         template <typename EncodingForm, typename Container>
         any_text& operator=(text<EncodingForm, Container>&& text) {
-            handle = wheels::make_unique<holder<EncodingForm, Container>>(std::move(text));
+            handle = wheels::mem::make_unique<holder<EncodingForm, Container>>(std::move(text));
             return *this;
         }
 

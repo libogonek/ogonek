@@ -29,7 +29,7 @@ namespace ogonek {
         struct grapheme_sequence_impl : detail::ogonek_sequence<> {
         public:
             template <typename SequenceF,
-                      wheels::DisableIf<wheels::is_related<grapheme_sequence_impl<Sequence>, SequenceF>>...>
+                      wheels::meta::DisableIf<wheels::meta::is_related<grapheme_sequence_impl<Sequence>, SequenceF>>...>
             explicit grapheme_sequence_impl(SequenceF&& s) : s(std::forward<SequenceF>(s)) {}
 
             using value_type = Sequence;
@@ -37,7 +37,9 @@ namespace ogonek {
 
             bool empty() const { return seq::empty(s); }
             reference front() const {
-                return seq::before(s, skip_grapheme());
+                //return seq::before(s, skip_grapheme());
+                // TODO fix
+                throw "";
             }
             void pop_front() {
                 s = skip_grapheme();
@@ -65,10 +67,10 @@ namespace ogonek {
     } // namespace detail
 
     template <typename Sequence>
-    using grapheme_sequence = detail::grapheme_sequence_impl<wheels::Decay<Sequence>>;
+    using grapheme_sequence = detail::grapheme_sequence_impl<wheels::meta::Decay<Sequence>>;
 
     template <typename Sequence,
-              wheels::EnableIf<detail::is_well_formed<Sequence>>...>
+              wheels::meta::EnableIf<detail::is_well_formed<Sequence>>...>
     grapheme_sequence<Sequence> graphemes_ex(Sequence&& s) {
         return grapheme_sequence<Sequence>(std::forward<Sequence>(s));
     }

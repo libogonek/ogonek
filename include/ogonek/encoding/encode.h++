@@ -94,7 +94,7 @@ namespace ogonek {
     //! {class}
     //! A sequence wrapper that lazily encodes the underlying sequence
     template <typename EncodingForm, typename Sequence, typename ErrorHandler>
-    using encoding_sequence = detail::encoding_sequence_impl<EncodingForm, wheels::Decay<Sequence>, wheels::Decay<ErrorHandler>>;
+    using encoding_sequence = detail::encoding_sequence_impl<EncodingForm, wheels::meta::Decay<Sequence>, wheels::meta::Decay<ErrorHandler>>;
 
     namespace result_of {
         template <typename EncodingForm, typename Source, typename ErrorHandler = default_error_handler_t>

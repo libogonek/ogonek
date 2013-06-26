@@ -24,8 +24,10 @@
 #include <type_traits>
 
 namespace wheels {
-    template <>
-    struct is_flags< ::ogonek::ucd::category> : std::true_type {};
+    namespace enums {
+        template <>
+        struct is_flags< ::ogonek::ucd::category> : std::true_type {};
+    } // namespace enums
 }
 
 namespace ogonek {
@@ -83,19 +85,21 @@ namespace ogonek {
     }
     
     inline bool is_graphic(code_point u) {
+        using namespace wheels::enums::operators;
         constexpr auto graphic = ucd::category::L
                                | ucd::category::M
                                | ucd::category::N
                                | ucd::category::P
                                | ucd::category::S
                                | ucd::category::Zs;
-        return wheels::has_flag(graphic, ucd::get_general_category(u));
+        return wheels::enums::has_flag_set(graphic, ucd::get_general_category(u));
     }
     inline bool is_format(code_point u) {
+        using namespace wheels::enums::operators;
         constexpr auto format = ucd::category::Cf
                               | ucd::category::Zl
                               | ucd::category::Zp;
-        return wheels::has_flag(format, ucd::get_general_category(u));
+        return wheels::enums::has_flag_set(format, ucd::get_general_category(u));
     }
     inline bool is_control(code_point u) {
         return ucd::get_general_category(u) == ucd::category::Cc;

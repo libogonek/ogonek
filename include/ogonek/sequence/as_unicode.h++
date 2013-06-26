@@ -34,10 +34,10 @@ namespace ogonek {
         //          and [metafunction:result_of::as_unicode].
         template <typename S, typename E,
                   bool = is_error_handler<E>(),
-                  typename Value = wheels::Invoke<
-                                    wheels::Conditional<seq::is_sequence<S>,
+                  typename Value = wheels::meta::Invoke<
+                                    wheels::meta::If<seq::is_sequence<S>,
                                         seq::value_type<S>,
-                                        wheels::identity<void>>>>
+                                        wheels::meta::id<void>>>>
         struct as_unicode_impl {};
 
         template <typename U32, typename E>
@@ -70,20 +70,20 @@ namespace ogonek {
     namespace detail {
         struct is_unicode_source_test {
             template <typename T, typename E>
-            wheels::Bool<true, ogonek::result_of::as_unicode<T, E>> static test(int);
+            wheels::meta::DependOn<wheels::meta::True, ogonek::result_of::as_unicode<T, E>> static test(int);
             template <typename...>
             std::false_type static test(...);
         };
     } // namespace detail
     template <typename T, typename E = default_error_handler_t>
-    struct is_unicode_source : wheels::TraitOf<detail::is_unicode_source_test, wheels::Unqualified<T>, E> {};
+    struct is_unicode_source : wheels::meta::TraitOf<detail::is_unicode_source_test, wheels::meta::Unqual<T>, E> {};
 
     //! {function}
     //! *Requires*: `S` is a model of [concept:SequenceSource] [soft].
     //! *Returns*: a [concept:Sequence] of code points from `s`.
     //! *Remarks*: the result is statically known well-formed.
     template <typename S, typename E,
-              wheels::EnableIf<is_unicode_source<S, E>>...>
+              wheels::meta::EnableIf<is_unicode_source<S, E>>...>
     result_of::as_unicode<S, E> as_unicode(S&& s, E&& e) {
         return detail::as_unicode_impl<seq::result_of::as_sequence<S>, E>::forward(seq::as_sequence(std::forward<S>(s)), std::forward<E>(e));
     }

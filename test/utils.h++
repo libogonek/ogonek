@@ -71,7 +71,7 @@ namespace test {
         ss.width(2*sizeof(CodeUnit));
         ss.fill('0');
         ss << std::hex << std::uppercase
-            << static_cast<unsigned long long>(static_cast<wheels::MakeUnsigned<CodeUnit>>(c));
+            << static_cast<unsigned long long>(static_cast<wheels::meta::MakeUnsigned<CodeUnit>>(c));
         return ss.str();
     }
     template <typename Encoding>

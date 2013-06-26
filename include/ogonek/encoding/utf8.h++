@@ -211,7 +211,7 @@ namespace ogonek {
 
             if(is_invalid(b0) || is_continuation(b0)) {
                 decode_error<Sequence, utf8> error { s, state };
-                detail::optional<code_point> u;
+                wheels::optional<code_point> u;
                 std::tie(s, state, u) = handler.handle(error);
                 return { s, *u };
             }
@@ -221,7 +221,7 @@ namespace ogonek {
                 b[i] = seq::front(s);
                 if(!is_continuation(b[i])) {
                     decode_error<Sequence, utf8> error { s, state };
-                    detail::optional<code_point> u;
+                    wheels::optional<code_point> u;
                     std::tie(s, state, u) = handler.handle(error);
                     return { s, *u };
                 }
@@ -244,13 +244,13 @@ namespace ogonek {
             };
             if(is_overlong(decoded, length)) {
                 decode_error<Sequence, utf8> error { s, state };
-                detail::optional<code_point> u;
+                wheels::optional<code_point> u;
                 std::tie(s, state, u) = handler.handle(error);
                 return { s, *u };
             }
             if(detail::is_surrogate(decoded) || decoded > detail::last_code_point) {
                 decode_error<Sequence, utf8> error { s, state };
-                detail::optional<code_point> u;
+                wheels::optional<code_point> u;
                 std::tie(s, state, u) = handler.handle(error);
                 return { s, *u };
             }

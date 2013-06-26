@@ -26,7 +26,7 @@ namespace ogonek {
         template <typename... T> struct list;
         
         template <typename Acc, typename... T>
-        struct same_encoding_impl : wheels::Not<std::is_void<Acc>> {
+        struct same_encoding_impl : wheels::meta::Not<std::is_void<Acc>> {
             using encoding_type = Acc;
         };
         
@@ -51,12 +51,12 @@ namespace ogonek {
         template <typename T>
         struct same_encoding;
         template <typename... T>
-        struct same_encoding<list<T...>> : same_encoding_impl<void, wheels::Unqualified<T>...> {};
+        struct same_encoding<list<T...>> : same_encoding_impl<void, wheels::meta::Unqual<T>...> {};
         template <typename... T>
         using SameEncoding = typename same_encoding<T...>::encoding_type;
 
         template <typename Acc, typename... T>
-        struct same_container_impl : wheels::Not<std::is_void<Acc>> {
+        struct same_container_impl : wheels::meta::Not<std::is_void<Acc>> {
             using container_type = Acc;
         };
         
@@ -81,7 +81,7 @@ namespace ogonek {
         template <typename T>
         struct same_container;
         template <typename... T>
-        struct same_container<list<T...>> : same_container_impl<void, wheels::Unqualified<T>...> {};
+        struct same_container<list<T...>> : same_container_impl<void, wheels::meta::Unqual<T>...> {};
         template <typename... T>
         using SameContainer = typename same_container<T...>::container_type;
         
@@ -103,8 +103,8 @@ namespace ogonek {
 
         template <typename EncodingForm, typename Container,
                   typename UnicodeSequences,
-                  bool = wheels::is_deduced<EncodingForm>{},
-                  bool = wheels::is_deduced<Container>{},
+                  bool = wheels::meta::is_deduced<EncodingForm>{},
+                  bool = wheels::meta::is_deduced<Container>{},
                   bool = detail::same_encoding<UnicodeSequences>{}
                       && detail::same_container<UnicodeSequences>{}>
         struct common_text {};
@@ -112,7 +112,7 @@ namespace ogonek {
         template <typename EncodingForm, typename Container,
                   typename UnicodeSequences, bool Ignored>
         struct common_text<EncodingForm, Container, UnicodeSequences, false, false, Ignored>
-        : wheels::identity<text<EncodingForm, Container>> {};
+        : wheels::meta::id<text<EncodingForm, Container>> {};
         
         template <typename EncodingForm, typename UnicodeSequences>
         struct deduce_container
@@ -121,37 +121,37 @@ namespace ogonek {
             detail::SameContainer<UnicodeSequences>,
             DefaultContainer<EncodingForm>> {};
         template <typename EncodingForm, typename... UnicodeSequences>
-        using DeduceContainer = wheels::Invoke<deduce_container<EncodingForm, list<UnicodeSequences...>>>;
+        using DeduceContainer = wheels::meta::Invoke<deduce_container<EncodingForm, list<UnicodeSequences...>>>;
         
         template <typename EncodingForm, typename Container,
                   typename UnicodeSequences,
                   bool Ignored>
         struct common_text<EncodingForm, Container, UnicodeSequences, false, true, Ignored>
-        : wheels::identity<text<EncodingForm, DeduceContainer<EncodingForm, UnicodeSequences>>> {};
+        : wheels::meta::id<text<EncodingForm, DeduceContainer<EncodingForm, UnicodeSequences>>> {};
 
         template <typename EncodingForm, typename Container, typename UnicodeSequences>
         struct common_text<EncodingForm, Container, UnicodeSequences, true, true, true>
-        : wheels::identity<text<SameEncoding<UnicodeSequences>, SameContainer<UnicodeSequences>>> {};
+        : wheels::meta::id<text<SameEncoding<UnicodeSequences>, SameContainer<UnicodeSequences>>> {};
 
         template <typename EncodingForm, typename Container, typename... UnicodeSequences>
-        using CommonText = wheels::Invoke<common_text<EncodingForm, Container, list<UnicodeSequences...>>>;
+        using CommonText = wheels::meta::Invoke<common_text<EncodingForm, Container, list<UnicodeSequences...>>>;
     } // namespace detail
 
     // Concatenation
-    template <typename EncodingForm = wheels::deduced, typename Container = wheels::deduced,
+    template <typename EncodingForm = wheels::meta::deduced, typename Container = wheels::meta::deduced,
               typename ErrorHandler, typename... UnicodeSequences,
-              wheels::EnableIf<is_error_handler<wheels::Unqualified<ErrorHandler>>>...,
+              wheels::meta::EnableIf<is_error_handler<wheels::meta::Unqual<ErrorHandler>>>...,
               typename Text = detail::CommonText<EncodingForm, Container, UnicodeSequences...>>
     Text concat(ErrorHandler&&, UnicodeSequences&&... sequences) {
-        return detail::concat_impl<Text, wheels::Unqualified<ErrorHandler>>(std::forward<UnicodeSequences>(sequences)...);
+        return detail::concat_impl<Text, wheels::meta::Unqual<ErrorHandler>>(std::forward<UnicodeSequences>(sequences)...);
     }
     
     template <typename EncodingForm, typename Container>
     text<EncodingForm, Container> concat() { return {}; }
     
-    template <typename EncodingForm = wheels::deduced, typename Container = wheels::deduced,
+    template <typename EncodingForm = wheels::meta::deduced, typename Container = wheels::meta::deduced,
               typename Head, typename... Tail,
-              wheels::DisableIf<is_error_handler<wheels::Unqualified<Head>>>...,
+              wheels::meta::DisableIf<is_error_handler<wheels::meta::Unqual<Head>>>...,
               typename Text = detail::CommonText<EncodingForm, Container, Head, Tail...>>
     Text concat(Head&& head, Tail&&... tail) {
         return concat<EncodingForm, Container>(default_error_handler, std::forward<Head>(head), std::forward<Tail>(tail)...);

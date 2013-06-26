@@ -52,9 +52,6 @@ namespace ogonek {
             void pop_front() {
                 std::tie(s, std::ignore) = EncodingForm::decode_one_ex(s, state, handler);
             }
-            decoding_sequence_impl before(decoding_sequence_impl const& other) const {
-                return { seq::before(s, other.s), state, handler };
-            }
 
         private:
             template <typename SequenceF, typename ErrorHandlerF>
@@ -70,11 +67,11 @@ namespace ogonek {
     //! {class}
     //! A sequence wrapper that lazily decodes the underlying sequence
     template <typename EncodingForm, typename Sequence, typename ErrorHandler>
-    using decoding_sequence = detail::decoding_sequence_impl<EncodingForm, wheels::Decay<Sequence>, wheels::Decay<ErrorHandler>>;
+    using decoding_sequence = detail::decoding_sequence_impl<EncodingForm, wheels::meta::Decay<Sequence>, wheels::meta::Decay<ErrorHandler>>;
 
     namespace result_of {
         template <typename EncodingForm, typename Sequence, typename ErrorHandler>
-        using decode = wheels::Conditional<detail::is_well_formed<Sequence>,
+        using decode = wheels::meta::If<detail::is_well_formed<Sequence>,
                             Sequence,
                             decoding_sequence<EncodingForm, seq::result_of::as_sequence<Sequence>, ErrorHandler>
                           >;
@@ -82,13 +79,13 @@ namespace ogonek {
 
     template <typename EncodingForm,
               typename Sequence, typename ErrorHandler,
-              wheels::DisableIf<detail::is_well_formed<Sequence>>...>
+              wheels::meta::DisableIf<detail::is_well_formed<Sequence>>...>
     result_of::decode<EncodingForm, Sequence, ErrorHandler> decode(Sequence&& s, ErrorHandler&& h) {
         return { seq::as_sequence(std::forward<Sequence>(s)), std::forward<ErrorHandler>(h) };
     }
     template <typename EncodingForm,
               typename Sequence, typename ErrorHandler,
-              wheels::EnableIf<detail::is_well_formed<Sequence>>...>
+              wheels::meta::EnableIf<detail::is_well_formed<Sequence>>...>
     Sequence decode(Sequence&& s, ErrorHandler&&) {
         return std::forward<Sequence>(s);
     }

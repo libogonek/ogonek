@@ -97,21 +97,21 @@ namespace ogonek {
         // -- safe implicit conversions
         //! Construct from a different text, same encoding
         template <typename Container1, typename ErrorHandler = default_error_handler_t const&,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...>
         text(text<EncodingForm, Container1> const& that, ErrorHandler&& = default_error_handler)
         : storage_(that.storage_.begin(), that.storage_.end()) {}
 
         //! Construct from a different text, different encoding
         template <typename EncodingForm1, typename Container1, typename ErrorHandler = default_error_handler_t const&,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...>
         text(text<EncodingForm1, Container1> const& that, ErrorHandler&& handler = default_error_handler)
         : storage_(seq::materialize<Container>(encode<EncodingForm>(that, std::forward<ErrorHandler>(handler)))) {}
 
         // -- sequences
         //! Construct from a code point sequence
         template <typename Source, typename ErrorHandler = default_error_handler_t const&,
-                  wheels::EnableIf<is_unicode_source<Source, ErrorHandler>>...,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
+                  wheels::meta::EnableIf<is_unicode_source<Source, ErrorHandler>>...,
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...>
         text(Source&& source, ErrorHandler&& handler = default_error_handler)
         : storage_(seq::materialize<Container>(encode<EncodingForm>(as_unicode(std::forward<Source>(source), std::forward<ErrorHandler>(handler))))) {}
 
@@ -121,7 +121,7 @@ namespace ogonek {
 
         //! Construct directly from a container, with validation
         template <typename ErrorHandler,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...>
         text(Container const& storage, ErrorHandler&& handler)
         : storage_(seq::materialize<Container>(
                     encode<EncodingForm>(decode<EncodingForm>(storage, std::forward<ErrorHandler>(handler)))
@@ -142,7 +142,7 @@ namespace ogonek {
 
         //! Construct directly from a container, with validation, (not) moving
         template <typename ErrorHandler,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...>
         text(Container&& storage, ErrorHandler&& handler)
         : text(storage, std::forward<ErrorHandler>(handler)) {}
 
@@ -163,23 +163,23 @@ namespace ogonek {
         }
 
         template <typename ErrorHandler = default_error_handler_t const&,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...>
         void assign(text const& that, ErrorHandler&& = default_error_handler) { operator=(that); }
 
         template <typename ErrorHandler = default_error_handler_t const&,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...>
         void assign(text&& that, ErrorHandler&& = default_error_handler) { operator=(std::move(that)); }
 
         template <typename Container1, typename ErrorHandler = default_error_handler_t const&,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...>
         void assign(text<EncodingForm, Container1> const& that, ErrorHandler&& = default_error_handler) {
             storage_.assign(that.storage_.begin(), that.storage_.end());
         }
 
         template <typename Source, typename ErrorHandler = default_error_handler_t const&,
-                  wheels::EnableIf<is_unicode_source<Source, ErrorHandler>>...,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...,
-                  wheels::DisableIf<wheels::is_related<Source, text<EncodingForm, Container>>>...>
+                  wheels::meta::EnableIf<is_unicode_source<Source, ErrorHandler>>...,
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...,
+                  wheels::meta::DisableIf<wheels::meta::is_related<Source, text<EncodingForm, Container>>>...>
         void assign(Source&& source, ErrorHandler&& handler = default_error_handler) {
             insert_code_units_ex(storage_.end(), encode<EncodingForm>(as_unicode(std::forward<Source>(source), std::forward<ErrorHandler>(handler)), std::forward<ErrorHandler>(handler)));
         }
@@ -210,14 +210,14 @@ namespace ogonek {
 
         // -- appending
         template <typename ErrorHandler = default_error_handler_t const&,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...>
         void append(text const& that, ErrorHandler&& = default_error_handler) {
             insert_code_units(storage_.end(), that.storage_);
         }
         template <typename Source, typename ErrorHandler = default_error_handler_t const&,
-                  wheels::EnableIf<is_unicode_source<Source, ErrorHandler>>...,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...,
-                  wheels::DisableIf<wheels::is_related<Source, text<EncodingForm, Container>>>...>
+                  wheels::meta::EnableIf<is_unicode_source<Source, ErrorHandler>>...,
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...,
+                  wheels::meta::DisableIf<wheels::meta::is_related<Source, text<EncodingForm, Container>>>...>
         void append(Source&& source, ErrorHandler&& handler = default_error_handler) {
             insert_code_units_ex(storage_.end(), encode<EncodingForm>(as_unicode(std::forward<Source>(source), std::forward<ErrorHandler>(handler)), std::forward<ErrorHandler>(handler)));
         }
@@ -238,15 +238,15 @@ namespace ogonek {
 
         // -- inserting
         template <typename ErrorHandler = default_error_handler_t const&,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...>
         void insert(iterator at, text const& that, ErrorHandler&& = default_error_handler) {
             // TODO Ooooh
             insert_code_units(detail::decoding_iterator_access::first(at), that.storage_);
         }
         template <typename Source, typename ErrorHandler = default_error_handler_t const&,
-                  wheels::EnableIf<is_unicode_source<Source, ErrorHandler>>...,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...,
-                  wheels::DisableIf<wheels::is_related<Source, text<EncodingForm, Container>>>...>
+                  wheels::meta::EnableIf<is_unicode_source<Source, ErrorHandler>>...,
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...,
+                  wheels::meta::DisableIf<wheels::meta::is_related<Source, text<EncodingForm, Container>>>...>
         void insert(iterator at, Source&& source, ErrorHandler&& handler = default_error_handler) {
             // TODO Ooooh
             insert_code_units_ex(detail::decoding_iterator_access::first(at),
@@ -256,23 +256,23 @@ namespace ogonek {
 
         // -- replacing
         template <typename Range, typename Source, typename ErrorHandler = default_error_handler_t const&,
-                  wheels::EnableIf<is_unicode_source<Source, ErrorHandler>>...,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
+                  wheels::meta::EnableIf<is_unicode_source<Source, ErrorHandler>>...,
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...>
         void replace(Range const& range, Source&& source, ErrorHandler&& handler = default_error_handler) {
             // TODO replace Range with sequence from text
             replace(boost::begin(range), boost::end(range), std::forward<Source>(source), std::forward<ErrorHandler>(handler));
         }
 
         template <typename ErrorHandler = default_error_handler_t const&,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...>
         void replace(iterator from, iterator to, text const& that, ErrorHandler&& = default_error_handler) {
             auto it = erase(from, to);
             insert_code_units(detail::decoding_iterator_access::first(it), that.storage_);
         }
         template <typename Source, typename ErrorHandler = default_error_handler_t const&,
-                  wheels::EnableIf<is_unicode_source<Source, ErrorHandler>>...,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...,
-                  wheels::DisableIf<wheels::is_related<Source, text<EncodingForm, Container>>>...>
+                  wheels::meta::EnableIf<is_unicode_source<Source, ErrorHandler>>...,
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...,
+                  wheels::meta::DisableIf<wheels::meta::is_related<Source, text<EncodingForm, Container>>>...>
         void replace(iterator from, iterator to, Source&& source, ErrorHandler&& handler = default_error_handler) {
             auto it = erase(from, to);
             insert_code_units_ex(detail::decoding_iterator_access::first(it),

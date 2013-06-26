@@ -70,7 +70,7 @@ namespace ogonek {
             seq::pop_front(s);
             if(b > last_ascii_value) {
                 decode_error<Sequence, ascii> error { s, state };
-                detail::optional<code_point> u;
+                wheels::optional<code_point> u;
                 std::tie(s, state, u) = handler.handle(error);
                 return { s, *u };
             }

@@ -47,9 +47,9 @@ namespace ogonek {
 
         template <typename T>
         struct range_iterator
-        : wheels::Conditional<std::is_const<T>,
-                              boost::range_const_iterator<wheels::RemoveConst<T>>,
-                              boost::range_mutable_iterator<T>> {};
+        : wheels::meta::If<std::is_const<T>,
+                           boost::range_const_iterator<wheels::meta::RemoveConst<T>>,
+                           boost::range_mutable_iterator<T>> {};
         
         template <typename Range>
         using RangeIterator = typename range_iterator<Range>::type;
@@ -73,7 +73,7 @@ namespace ogonek {
             std::false_type static test(...);
         };
         template <typename Range>
-        using has_range_value = wheels::TraitOf<range_value_tester, Range>;
+        using has_range_value = wheels::meta::TraitOf<range_value_tester, Range>;
         template <typename Range>
         using RangeValue = IteratorValue<RangeIterator<Range>>;
 
@@ -94,7 +94,7 @@ namespace ogonek {
         struct is_unicode_sequence_impl<char16_t const*> : std::true_type {};
     
         template <typename T>
-        struct is_unicode_sequence : detail::is_unicode_sequence_impl<wheels::Unqualified<T>> {};
+        struct is_unicode_sequence : detail::is_unicode_sequence_impl<wheels::meta::Unqual<T>> {};
 
         template <typename Iterator, typename Range>
         boost::iterator_range<Iterator> wrap_range(Range&& range) {
@@ -149,22 +149,22 @@ namespace ogonek {
         using null_terminated_utf32 = decoding_range<utf32, null_terminated_range<char32_t const>, ErrorHandler>;
         
         template <typename UnicodeSequence, typename ErrorHandler,
-                  wheels::EnableIf<is_unicode_sequence<UnicodeSequence>>...,
-                  wheels::EnableIf<always_validated<UnicodeSequence>>...,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...>
+                  wheels::meta::EnableIf<is_unicode_sequence<UnicodeSequence>>...,
+                  wheels::meta::EnableIf<always_validated<UnicodeSequence>>...,
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...>
         UnicodeSequence&& as_code_point_range(UnicodeSequence&& sequence, ErrorHandler) {
             return std::forward<UnicodeSequence>(sequence);
         }
         template <typename UnicodeSequence, typename ErrorHandler,
-                  wheels::EnableIf<is_unicode_sequence<UnicodeSequence>>...,
-                  wheels::DisableIf<always_validated<UnicodeSequence>>...,
-                  wheels::EnableIf<is_error_handler<ErrorHandler>>...,
-                  typename Iterator = decoding_iterator<utf32, RangeIterator<wheels::RemoveReference<UnicodeSequence>>, ErrorHandler>>
+                  wheels::meta::EnableIf<is_unicode_sequence<UnicodeSequence>>...,
+                  wheels::meta::DisableIf<always_validated<UnicodeSequence>>...,
+                  wheels::meta::EnableIf<is_error_handler<ErrorHandler>>...,
+                  typename Iterator = decoding_iterator<utf32, RangeIterator<wheels::meta::RemoveReference<UnicodeSequence>>, ErrorHandler>>
         boost::iterator_range<Iterator> as_code_point_range(UnicodeSequence&& sequence, ErrorHandler) {
             return wrap_range<Iterator>(sequence);
         }
         template <typename UnicodeSequence,
-                  wheels::EnableIf<is_unicode_sequence<UnicodeSequence>>...>
+                  wheels::meta::EnableIf<is_unicode_sequence<UnicodeSequence>>...>
         UnicodeSequence&& as_code_point_range(UnicodeSequence&& sequence, assume_valid_t) {
             return std::forward<UnicodeSequence>(sequence);
         }

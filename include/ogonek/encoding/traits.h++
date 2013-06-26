@@ -31,12 +31,12 @@ namespace ogonek {
     namespace detail {
         struct has_custom_replacement_character_impl {
             template <typename EncodingForm>
-            wheels::Bool<true, decltype(EncodingForm::replacement_character)> static test(int);
+            wheels::meta::DependOn<wheels::meta::True, decltype(EncodingForm::replacement_character)> static test(int);
             template <typename>
             std::false_type static test(...);
         };
         template <typename EncodingForm>
-        using has_custom_replacement_character = wheels::TraitOf<has_custom_replacement_character_impl, EncodingForm>;
+        using has_custom_replacement_character = wheels::meta::TraitOf<has_custom_replacement_character_impl, EncodingForm>;
     } // namespace detail
 
     template <typename EncodingForm,

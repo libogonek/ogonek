@@ -35,12 +35,12 @@ namespace ogonek {
         };
 
         template <typename Props>
-        struct has_well_formed : wheels::Unqualified<Props>::has_well_formed {};
+        struct has_well_formed : wheels::meta::Unqual<Props>::has_well_formed {};
 
         template <typename Props, typename P>
         struct set_property;
         template <typename Props, typename P>
-        using SetProperty = wheels::Invoke<set_property<Props, P>>;
+        using SetProperty = wheels::meta::Invoke<set_property<Props, P>>;
 
         template <typename Old, typename... T>
         struct set_property<properties<Old, T...>, well_formed> {
@@ -66,10 +66,10 @@ namespace ogonek {
             properties<> static test(...);
         };
         template <typename T>
-        struct sequence_properties : wheels::TraitOf<sequence_properties_impl, wheels::Unqualified<T>> {};
+        struct sequence_properties : wheels::meta::TraitOf<sequence_properties_impl, wheels::meta::Unqual<T>> {};
 
         template <typename T>
-        using SequenceProperties = wheels::Invoke<sequence_properties<T>>;
+        using SequenceProperties = wheels::meta::Invoke<sequence_properties<T>>;
 
         template<typename... Props>
         struct ogonek_sequence : seq::true_sequence {

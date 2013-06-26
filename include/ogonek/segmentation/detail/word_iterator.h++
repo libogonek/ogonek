@@ -19,6 +19,7 @@
 #include <ogonek/detail/container/lookahead_window.h++>
 
 #include <wheels/enums.h++>
+#include <wheels/meta/bool.h++>
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/range/iterator_range.hpp>
@@ -43,8 +44,10 @@ namespace ogonek {
 } // namespace ogonek
 
 namespace wheels {
-    template <>
-    struct is_flags<ogonek::detail::wb> : std::true_type {};
+    namespace enums {
+        template <>
+        struct is_flags<ogonek::detail::wb> : wheels::meta::True {};
+    } // namespace enums
 } // namespace wheels
 
 namespace ogonek {

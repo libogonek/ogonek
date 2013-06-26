@@ -40,16 +40,19 @@ namespace ogonek {
 } // namespace ogonek
 
 namespace wheels {
-    template <>
-    struct is_flags<ogonek::detail::gb> : std::true_type {};
+    namespace enums {
+        template <>
+        struct is_flags<ogonek::detail::gb> : std::true_type {};
+    } // namespace enums
 } // namespace wheels
 
 namespace ogonek {
-    namespace detail {
+    namespace detail { // TODO gb_detail
         constexpr gb gb_any = static_cast<gb>(0xFFFFFFFFu);
         constexpr grapheme_rule operator*(gb l, gb r) { return { l, false, r }; }
         constexpr grapheme_rule operator/(gb l, gb r) { return { l, true, r }; }
 
+        using namespace wheels::enums::operators;
         // TODO: switch to a pair table instead
         constexpr grapheme_rule grapheme_rules[] = {
             // Break at the start and end of text.
