@@ -49,7 +49,7 @@ namespace ogonek {
         using Uint = typename uint<T>::type;
 
         template <typename ByteOrder, typename Integer, typename Sequence>
-        struct ordered_byte_sequence : ogonek_sequence<> {
+        struct ordered_byte_sequence : ogonek_sequence_old<> {
             using value_type = Integer;
             using reference = value_type;
 

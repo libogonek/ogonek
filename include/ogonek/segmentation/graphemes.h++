@@ -26,7 +26,7 @@
 namespace ogonek {
     namespace detail {
         template <typename Sequence>
-        struct grapheme_sequence_impl : detail::ogonek_sequence<> {
+        struct grapheme_sequence_impl : detail::ogonek_sequence_old<> {
         public:
             template <typename SequenceF,
                       wheels::meta::DisableIf<wheels::meta::is_related<grapheme_sequence_impl<Sequence>, SequenceF>>...>

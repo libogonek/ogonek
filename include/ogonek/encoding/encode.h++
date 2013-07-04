@@ -33,7 +33,7 @@
 namespace ogonek {
     namespace detail {
         template <typename EncodingForm, typename Sequence, typename ErrorHandler>
-        struct encoding_sequence_impl : detail::ogonek_sequence<detail::well_formed> {
+        struct encoding_sequence_impl : detail::ogonek_sequence_old<detail::well_formed> {
             using value_type = CodeUnit<EncodingForm>;
             using reference = value_type;
 
