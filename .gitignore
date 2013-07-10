@@ -3,6 +3,7 @@ obj/
 dist/
 *~
 *.session.vim
+Session.vim
 *.swp
 .vimrc
 _site/

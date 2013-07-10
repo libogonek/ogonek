@@ -18,6 +18,7 @@
 
 #include <wheels/meta.h++>
 
+#include <iterator>
 #include <vector>
 #include <type_traits>
 #include <utility>
@@ -59,11 +60,20 @@ namespace ogonek {
                 else destroy_large();
             }
 
+            template <typename Iterator>
+            small_vector(Iterator first, Iterator last)
+            : small_vector(first, last, typename std::iterator_traits<Iterator>::iterator_category{}) {}
+
             template <typename RAIterator>
-            small_vector(RAIterator first, RAIterator last)
+            small_vector(RAIterator first, RAIterator last, std::random_access_iterator_tag)
             : is_small(last - first <= int(N)) {
                 if(is_small) place_small(first, last);
                 else place_large(first, last);
+            }
+            template <typename Iterator>
+            small_vector(Iterator first, Iterator last, std::input_iterator_tag)
+            : is_small(false) { // TODO improve this
+                place_large(first, last);
             }
             small_vector(std::initializer_list<T> list)
             : is_small(list.size() <= N) {

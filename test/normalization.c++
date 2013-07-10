@@ -100,6 +100,16 @@ TEST_CASE("normalization", "Normalization tests") {
         REQUIRE(out.storage() == normalized);
     }
 }
+TEST_CASE("whatever", "") {
+    test::ustring a = U"\x0073\x0323\x0307\x0064\x0307\x0323\x0071\x0307\x0323";
+
+    auto b = seq::as_sequence(a);
+    auto s = seq::flat_map(ogonek::detail::combining_class_order{}, seq::generate(ogonek::detail::collect_before_starter<decltype(b)>(b)));
+    test::ustring v = seq::materialize(s);
+    test::ustring expected = U"\x0073\x0323\x0307\x0064\x0323\x0307\x0071\x0323\x0307";
+
+    REQUIRE(v == expected);
+}
 
 TEST_CASE("canonical equivalence", "Canonical equivalence") {
     test::ustring a = U"\x1E69\x1E0B\x0323\x0071\x0307\x0323";
