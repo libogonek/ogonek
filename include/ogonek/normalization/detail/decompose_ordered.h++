@@ -88,12 +88,18 @@ namespace ogonek {
 
         namespace result_of {
             template <decomposition D, typename Seq>
-            using decompose_ordered = seq::result_of::flat_map<combining_class_order, seq::result_of::generate<collect_before_starter<Seq>>>;
+            using grouped_marks = seq::result_of::generate<collect_before_starter<decompose<D, Seq>>>;
+            template <decomposition D, typename Seq>
+            using decompose_ordered = seq::result_of::flat_map<combining_class_order, grouped_marks<D, Seq>>;
         } // namespace result_of
 
         template <decomposition D, typename Seq>
+        result_of::grouped_marks<D, Seq> grouped_marks(Seq&& s) {
+            return seq::generate(collect_before_starter<result_of::decompose<D, Seq>>(decompose<D>(std::forward<Seq>(s))));
+        }
+        template <decomposition D, typename Seq>
         result_of::decompose_ordered<D, Seq> decompose_ordered(Seq&& s) {
-            return seq::flat_map(combining_class_order{}, seq::generate(collect_before_starter<Seq>(std::forward<Seq>(s))));
+            return seq::flat_map(combining_class_order{}, grouped_marks<D>(std::forward<Seq>(s)));
         }
     } // namespace detail
 } // namespace ogonek

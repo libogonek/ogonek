@@ -17,7 +17,7 @@
 #include <ogonek/types.h++>
 #include <ogonek/character/ucd.h++>
 #include <ogonek/normalization/detail/decompose_ordered.h++>
-#include <ogonek/normalization/detail/normalizing_sequence.h++>
+#include <ogonek/normalization/detail/normalize_impl.h++>
 
 #include <ogonek/normalization/detail/ordered_decomposing_iterator.h++>
 #include <ogonek/normalization/detail/normalizing_iterator.h++>
@@ -34,9 +34,9 @@ namespace ogonek {
         struct normalizing_iterator_impl<nfd, Iterator> {
             using type = ordered_decomposing_iterator<Iterator>;
         };
-        template <typename Sequence>
-        struct normalizing_sequence_impl<nfd, Sequence> {
-            using type = detail::result_of::decompose_ordered<decomposition::canonical, Sequence>;
+        template <typename Seq>
+        struct normalize_impl<nfd, Seq> {
+            using type = detail::result_of::decompose_ordered<decomposition::canonical, Seq>;
         };
     } // namespace detail
 } // namespace ogonek

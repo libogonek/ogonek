@@ -18,11 +18,8 @@
 
 namespace ogonek {
     namespace detail {
-        template <typename NormalizationForm, typename Iterator>
-        class normalizing_sequence_impl;
-
-        template <typename NormalizationForm, typename Iterator>
-        using normalizing_sequence = wheels::meta::Invoke<normalizing_sequence_impl<NormalizationForm, Iterator>>;
+        template <typename NormalForm, typename Seq>
+        class normalize_impl;
     } // namespace detail
 } // namespace ogonek
 

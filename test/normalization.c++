@@ -101,10 +101,11 @@ TEST_CASE("normalization", "Normalization tests") {
     }
 }
 TEST_CASE("whatever", "") {
-    test::ustring a = U"\x0073\x0323\x0307\x0064\x0307\x0323\x0071\x0307\x0323";
+    test::ustring a = U"\x1E69\x1E0B\x0323\x0071\x0307\x0323";
 
     auto b = seq::as_sequence(a);
-    auto s = seq::flat_map(ogonek::detail::combining_class_order{}, seq::generate(ogonek::detail::collect_before_starter<decltype(b)>(b)));
+    auto constexpr canonical = ogonek::detail::decomposition::canonical;
+    auto s = ogonek::detail::decompose_ordered<canonical>(b);
     test::ustring v = seq::materialize(s);
     test::ustring expected = U"\x0073\x0323\x0307\x0064\x0323\x0307\x0071\x0323\x0307";
 

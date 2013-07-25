@@ -25,14 +25,16 @@
 #include <boost/range/iterator_range.hpp>
 
 namespace ogonek {
-    /*
+    namespace result_of {
+        template <typename NormalForm, typename Seq>
+        using normalize = wheels::meta::Invoke<detail::normalize_impl<NormalForm, Seq>>;
+    } // namespace result_of
     template <typename NormalForm,
-              typename UnicodeSequence,
-              wheels::EnableIf<detail::is_well_formed<UnicodeSequence>>...>
-    detail::normalizing_range<NormalForm, UnicodeSequence> normalize_ex(UnicodeSequence const& sequence) {
-        return { sequence };
+              typename Seq,
+              wheels::EnableIf<detail::is_well_formed<Seq>>...>
+    result_of::normalize<NormalForm, Seq> normalize_ex(Seq&& s) {
+        return detail::normalize_impl<NormalForm, Seq>::call(std::forward<Seq>(s));
     }
-    */
 
     template <typename NormalForm,
               typename UnicodeSequence,

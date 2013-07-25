@@ -77,7 +77,7 @@ namespace ogonek {
                     }
                 }
             }
-            
+
             ordered_decomposing_iterator<Iterator, Compatibility> it;
             bool exhausted;
             code_point current;
