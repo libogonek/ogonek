@@ -21,8 +21,7 @@ more type-safety and faster development.
 
 Ogonek is mostly header-only. The only part that needs compilation is the data
 in the Unicode Character Database. Currently I am translating the database to
-C++ source as static initializers (I am aware of benefits and drawbacks of this
-and other approaches and may or may not change in future versions).
+C++ source as static initializers, but I may change this in the future.
 
 You can compile that data by running `scons dist` from the command line
 (requires SCons to be installed, for obvious reasons). This will create a zip
@@ -38,14 +37,14 @@ update is released.
 ## Helping out
 
 Any feedback is appreciated. I am still designing and fleshing out some parts of
-the APIs, so I appreciate any bug reports or design suggestions.
+the APIs, so I appreciate any [bug reports][issue tracker] or design suggestions.
 
 I often discuss my design in the [C++ Lounge][lounge] on Stack Overflow. Feel
-free to join me there. 
+free to join me there.
 
 Pull requests are welcome too! There is a list of tasks I want done for 1.0.0 in
 the [issue tracker]. Feel free to pick one to tackle!
 
  [lounge]: http://chat.stackoverflow.com/rooms/10/loungec
- [issue tracker]: https://github.com/rmartinho/ogonek/issues?state=open
+ [issue tracker]: http://bugs.flamingdangerzone.com/youtrack/issues?q=project%3A+Ogonek
 
