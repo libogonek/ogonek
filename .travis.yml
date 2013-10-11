@@ -22,5 +22,5 @@ env:
     matrix:
         - LIBRARY_TYPE=shared LD_LIBRARY_PATH=bin/debug
         - LIBRARY_TYPE=static
-script: scons fatal=no icu=yes boost_exception=yes lib=$LIBRARY_TYPE buildtest runtest
+script: scons fatal=no icu=no boost_exception=yes lib=$LIBRARY_TYPE buildtest runtest
 
