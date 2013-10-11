@@ -17,7 +17,7 @@
 #include <ogonek/types.h++>
 #include <ogonek/character/ucd.h++>
 #include <ogonek/normalization/detail/decompose_ordered.h++>
-#include <ogonek/normalization/detail/normalize_impl.h++>
+#include <ogonek/normalization/detail/normalizing_sequence.h++>
 
 #include <ogonek/normalization/detail/ordered_decomposing_iterator.h++>
 #include <ogonek/normalization/detail/normalizing_iterator.h++>

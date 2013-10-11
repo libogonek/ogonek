@@ -15,7 +15,7 @@
 #define OGONEK_NORMALIZE_HPP
 
 #include <ogonek/sequence/properties.h++>
-//#include <ogonek/normalization/detail/decomposing_sequence.h++>
+#include <ogonek/normalization/detail/normalizing_sequence.h++>
 
 #include <wheels/meta.h++>
 
@@ -31,7 +31,7 @@ namespace ogonek {
     } // namespace result_of
     template <typename NormalForm,
               typename Seq,
-              wheels::EnableIf<detail::is_well_formed<Seq>>...>
+              wheels::meta::EnableIf<detail::is_well_formed<Seq>>...>
     result_of::normalize<NormalForm, Seq> normalize_ex(Seq&& s) {
         return detail::normalize_impl<NormalForm, Seq>::call(std::forward<Seq>(s));
     }
