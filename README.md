@@ -11,10 +11,6 @@ Check out the [documentation] for more detailed information.
 
 ## Status
 
-Stable: [![Build Status](https://travis-ci.org/rmartinho/ogonek.png?branch=stable)](https://travis-ci.org/rmartinho/ogonek)
-
-Development branch: [![Build Status](https://travis-ci.org/rmartinho/ogonek.png?branch=devel)](https://travis-ci.org/rmartinho/ogonek)
-
 The latest version, 0.5.0, implements most of the important stuff. The next
 version, 0.6.0, will be a thorough refactoring of the code in order to enable
 more type-safety and faster development.
