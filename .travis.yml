@@ -4,7 +4,6 @@ compiler:
 
 branches:
     only:
-        - stable
         - devel
         - iterators-must-go
 
