@@ -11,8 +11,6 @@ Check out the [documentation] for more detailed information.
 
 ## Status
 
-[![Build Status](https://travis-ci.org/rmartinho/ogonek.png?branch=master)](https://travis-ci.org/rmartinho/ogonek)
-
 The latest version, 0.5.0, implements most of the important stuff. The next
 version, 0.6.0, will be a thorough refactoring of the code in order to enable
 more type-safety and faster development.
@@ -29,10 +27,9 @@ file in the dist/ directory with both the headers and the library files
 necessary to use ogonek. By default, a static library is built. To build a
 shared library (DLL), add `lib=shared` to the command-line when building.
 
-Currently only compilation with 4.8.0 is being supported, but support for both
-GCC 4.7.2 and Clang 3.2 is planned. Visual Studio 2012 may become a supported
-target, depending on the quality of C++11 support when the previously announced
-update is released.
+Currently only compilation with 4.8.1 is being continuously tested, but support
+for both GCC 4.7.2 and Clang 3.2 is planned. Visual Studio 2013 may become a
+supported target, depending on the quality of C++11 upon release.
 
 ## Helping out
 
