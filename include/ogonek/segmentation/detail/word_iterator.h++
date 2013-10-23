@@ -65,32 +65,35 @@ namespace ogonek {
             // Break at the start and end of text.
             // * Handled specially
             // Do not break within CRLF.
-            /* WB3. */                                wb::CR * wb::LF,
-            /* WB3a. */           (wb::NL | wb::CR | wb::LF) / wb_any,
-            /* WB3b. */                               wb_any / (wb::NL | wb::CR | wb::LF),
+            /* WB3. */                                           wb::CR * wb::LF,
+            /* WB3a. */                      (wb::NL | wb::CR | wb::LF) / wb_any,
+            /* WB3b. */                                          wb_any / (wb::NL | wb::CR | wb::LF),
             // Ignore Format and Extend characters, except when they appear at the beginning of a region of text.
-            /* WB4. */           ~(wb::NL | wb::CR | wb::LF) * (wb::Extend | wb::FO),
+            /* WB4. */                      ~(wb::NL | wb::CR | wb::LF) * (wb::Extend | wb::FO),
             // Do not break between most letters.
-            /* WB5. */                                wb::LE * wb::LE,
+            /* WB5. */                                (wb::LE | wb::HL) * (wb::LE | wb::HL),
             // Do not break letters across certain punctuation.
-            /* WB6. */                                wb::LE * ((wb::ML | wb::MB) + wb::LE),
-            /* WB7. */          (wb::LE + (wb::ML | wb::MB)) * wb::LE,
+            /* WB6. */                                (wb::LE | wb::HL) * ((wb::ML | wb::MB | wb::SQ) + (wb::LE | wb::HL)),
+            /* WB7. */ ((wb::LE | wb::HL) + (wb::ML | wb::MB | wb::SQ)) * (wb::LE | wb::HL),
+            /* WB7a. */                                          wb::HL * wb::SQ,
+            /* WB7b. */                                          wb::HL * (wb::DQ + wb::HL),
+            /* WB7c. */                               (wb::HL + wb::DQ) * wb::HL,
             // Do not break within sequences of digits, or digits adjacent to letters ("3a", or "A3").
-            /* WB8. */                                wb::NU * wb::NU,
-            /* WB9. */                                wb::LE * wb::NU,
-            /* WB10. */                               wb::NU * wb::LE,
+            /* WB8. */                                           wb::NU * wb::NU,
+            /* WB9. */                                (wb::LE | wb::HL) * wb::NU,
+            /* WB10. */                                          wb::NU * (wb::LE | wb::HL),
             // Do not break within sequences, such as "3.2" or "3,456.789".
-            /* WB11. */         (wb::NU + (wb::MN | wb::MB)) * wb::NU,
-            /* WB12. */                               wb::NU * ((wb::MN | wb::MB) + wb::NU),
+            /* WB11. */           (wb::NU + (wb::MN | wb::MB | wb::SQ)) * wb::NU,
+            /* WB12. */                                          wb::NU * ((wb::MN | wb::MB | wb::SQ) + wb::NU),
             // Do not break between Katakana.
-            /* WB13. */                               wb::KA * wb::KA,
+            /* WB13. */                                          wb::KA * wb::KA,
             // Do not break from extenders.
-            /* WB13a. */ (wb::LE | wb::NU | wb::KA | wb::EX) * wb::EX,
-            /* WB13b. */                              wb::EX * (wb::LE | wb::NU | wb::KA | wb::EX),
+            /* WB13a. */   (wb::LE | wb::HL | wb::NU | wb::KA | wb::EX) * wb::EX,
+            /* WB13b. */                                         wb::EX * (wb::LE | wb::HL | wb::NU | wb::KA | wb::EX),
             // Do not break between regional indicator symbols.
-            /* WB13c. */                              wb::RI * wb::RI,
+            /* WB13c. */                                         wb::RI * wb::RI,
             // Otherwise, break everywhere (including around ideographs).
-            /* WB14. */                               wb_any / wb_any,
+            /* WB14. */                                          wb_any / wb_any,
         };
         inline bool word_rule::matches(code_point before1, code_point before0, code_point after0, code_point after1) const {
             const wb none = static_cast<wb>(0);

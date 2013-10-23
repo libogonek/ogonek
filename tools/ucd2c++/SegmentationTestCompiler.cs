@@ -37,23 +37,41 @@ namespace Ogonek.SegmentationTestCompiler
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-            if(args.Length != 3)
+            if(args.Length != 2)
             {
-                Console.WriteLine("Usage: segtest2c++ <test source> <output file> <description>");
+                Console.WriteLine("Usage: segtest2c++ <input folder> <output folder>");
                 return 1;
             }
             string source = args[0];
             string destination = args[1];
-            string kind = args[2];
 
-            var tests = GetTests(File.ReadLines(source))
+            var graphemes = GetTests(File.ReadLines(Path.Combine(source, "GraphemeBreakTest.txt")))
                             .ToList();
-            var strings = tests.Select(GetString);
-            var breaks = tests.Select(GetBreaks);
-            File.WriteAllLines(destination, new []{ string.Format(CopyrightNotice, DateTime.Now.ToUniversalTime().ToString("O"), kind) });
-            File.AppendAllLines(destination, strings.Zip(breaks, (s,b) => "{ " + s + ", { " + string.Join(", ", b) + " } },"));
+            var words = GetTests(File.ReadLines(Path.Combine(source, "WordBreakTest.txt")))
+                            .ToList();
+            var sentences = GetTests(File.ReadLines(Path.Combine(source, "SentenceBreakTest.txt")))
+                            .ToList();
+            var lines = GetTests(File.ReadLines(Path.Combine(source, "LineBreakTest.txt")))
+                            .ToList();
+
+            File.WriteAllLines(Path.Combine(destination, "segmentation.g.h++"), new []{ string.Format(CopyrightNotice, DateTime.Now.ToUniversalTime().ToString("O")) });
+            File.AppendAllLines(Path.Combine(destination, "segmentation.g.h++"), new []{ string.Format(HeaderTemplate, graphemes.Count, words.Count, sentences.Count, lines.Count) });
+
+            WriteData(Path.Combine(destination, "grapheme_test_data.g.c++"), "grapheme", "grapheme clusters", graphemes);
+            WriteData(Path.Combine(destination, "word_test_data.g.c++"), "word", "words", words);
+            WriteData(Path.Combine(destination, "sentence_test_data.g.c++"), "sentence", "sentences", sentences);
+            WriteData(Path.Combine(destination, "line_test_data.g.c++"), "line", "line break opportunities", lines);
 
             return 0;
+        }
+
+        static void WriteData(string path, string kind, string description, IEnumerable<string> tests) {
+            var strings = tests.Select(GetString);
+            var breaks = tests.Select(GetBreaks);
+
+            File.WriteAllLines(path, new []{ string.Format(CopyrightNotice, DateTime.Now.ToUniversalTime().ToString("O")) });
+            var lines = string.Join("\n        ", strings.Zip(breaks, (s,b) => "{ " + s + ", { " + string.Join(", ", b) + " } },"));
+            File.AppendAllLines(path, new []{ string.Format(ImplTemplate, kind, lines, description) });
         }
 
         static IEnumerable<string> GetTests(IEnumerable<string> lines) {
@@ -90,9 +108,42 @@ namespace Ogonek.SegmentationTestCompiler
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on {0}
+// This file was automatically generated on {0}";
 
-// Unicode segmentation test data - {1}
+        const string ImplTemplate = @"
+// Test data for {2} tests
+
+#include ""segmentation.g.h++""
+
+namespace test {{
+    break_test {0}_test_data[] = {{
+        {1}
+    }};
+}} // namespace test
 ";
+        const string HeaderTemplate = @"
+// Types for segmentation tests
+
+#ifndef OGONEK_TEST_SEGMENTATION_HPP
+#define OGONEK_TEST_SEGMENTATION_HPP
+
+#include ""utils.h++""
+#include <vector>
+
+namespace test {{
+    struct break_test {{
+        test::ustring input;
+        std::vector<int> breaks;
+    }};
+
+    extern break_test grapheme_test_data[{0}];
+    extern break_test word_test_data[{1}];
+    extern break_test sentence_test_data[{2}];
+    extern break_test line_test_data[{3}];
+}} // namespace test
+
+#endif // OGONEK_TEST_SEGMENTATION_HPP
+";
+
     }
 }

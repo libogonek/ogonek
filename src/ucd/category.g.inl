@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-03-07T12:24:54.5033650Z
+// This file was automatically generated on 2013-10-23T02:41:54.5386310Z
 
 // Unicode character database - general category data
 
@@ -667,7 +667,8 @@
 { U'\x60E', category::So },
 { U'\x610', category::Mn },
 { U'\x61B', category::Po },
-{ U'\x61C', category::Cn },
+{ U'\x61C', category::Cf },
+{ U'\x61D', category::Cn },
 { U'\x61E', category::Po },
 { U'\x620', category::Lo },
 { U'\x640', category::Lm },
@@ -1307,7 +1308,7 @@
 { U'\x1806', category::Pd },
 { U'\x1807', category::Po },
 { U'\x180B', category::Mn },
-{ U'\x180E', category::Zs },
+{ U'\x180E', category::Cf },
 { U'\x180F', category::Cn },
 { U'\x1810', category::Nd },
 { U'\x181A', category::Cn },
@@ -1354,6 +1355,7 @@
 { U'\x1A00', category::Lo },
 { U'\x1A17', category::Mn },
 { U'\x1A19', category::Mc },
+{ U'\x1A1B', category::Mn },
 { U'\x1A1C', category::Cn },
 { U'\x1A1E', category::Po },
 { U'\x1A20', category::Lo },
@@ -1803,7 +1805,7 @@
 { U'\x205F', category::Zs },
 { U'\x2060', category::Cf },
 { U'\x2065', category::Cn },
-{ U'\x206A', category::Cf },
+{ U'\x2066', category::Cf },
 { U'\x2070', category::No },
 { U'\x2071', category::Lm },
 { U'\x2072', category::Cn },
@@ -1894,7 +1896,10 @@
 { U'\x21D5', category::So },
 { U'\x21F4', category::Sm },
 { U'\x2300', category::So },
-{ U'\x2308', category::Sm },
+{ U'\x2308', category::Ps },
+{ U'\x2309', category::Pe },
+{ U'\x230A', category::Ps },
+{ U'\x230B', category::Pe },
 { U'\x230C', category::So },
 { U'\x2320', category::Sm },
 { U'\x2322', category::So },

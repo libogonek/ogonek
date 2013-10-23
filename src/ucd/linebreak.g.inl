@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-03-07T12:24:54.9139160Z
+// This file was automatically generated on 2013-10-23T02:41:54.8108020Z
 
 // Unicode character database - linebreak data
 
@@ -145,7 +145,8 @@
 { U'\x60E', linebreak::AL },
 { U'\x610', linebreak::CM },
 { U'\x61B', linebreak::EX },
-{ U'\x61C', linebreak::XX },
+{ U'\x61C', linebreak::CM },
+{ U'\x61D', linebreak::XX },
 { U'\x61E', linebreak::EX },
 { U'\x620', linebreak::AL },
 { U'\x64B', linebreak::CM },
@@ -884,7 +885,7 @@
 { U'\x2060', linebreak::WJ },
 { U'\x2061', linebreak::AL },
 { U'\x2065', linebreak::XX },
-{ U'\x206A', linebreak::CM },
+{ U'\x2066', linebreak::CM },
 { U'\x2070', linebreak::AL },
 { U'\x2072', linebreak::XX },
 { U'\x2074', linebreak::AI },
@@ -905,7 +906,6 @@
 { U'\x20A8', linebreak::PR },
 { U'\x20B6', linebreak::PO },
 { U'\x20B7', linebreak::PR },
-{ U'\x20BB', linebreak::XX },
 { U'\x20D0', linebreak::CM },
 { U'\x20F1', linebreak::XX },
 { U'\x2100', linebreak::AL },
@@ -1258,7 +1258,7 @@
 { U'\x2FD6', linebreak::XX },
 { U'\x2FF0', linebreak::ID },
 { U'\x2FFC', linebreak::XX },
-{ U'\x3000', linebreak::ID },
+{ U'\x3000', linebreak::BA },
 { U'\x3001', linebreak::CL },
 { U'\x3003', linebreak::ID },
 { U'\x3005', linebreak::NS },
@@ -1288,6 +1288,8 @@
 { U'\x3020', linebreak::ID },
 { U'\x302A', linebreak::CM },
 { U'\x3030', linebreak::ID },
+{ U'\x3035', linebreak::CM },
+{ U'\x3036', linebreak::ID },
 { U'\x303B', linebreak::NS },
 { U'\x303D', linebreak::ID },
 { U'\x3040', linebreak::XX },

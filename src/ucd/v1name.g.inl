@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-03-07T12:24:54.4153110Z
+// This file was automatically generated on 2013-10-23T02:41:54.4771960Z
 
 // Unicode character database - Unicode 1.0 name data
 
@@ -1476,7 +1476,8 @@
 { U'\x619', false, "ARABIC SMALL DAMMA" },
 { U'\x61A', false, "ARABIC SMALL KASRA" },
 { U'\x61B', false, "ARABIC SEMICOLON" },
-{ U'\x61C', false, "" },
+{ U'\x61C', false, "ARABIC LETTER MARK" },
+{ U'\x61D', false, "" },
 { U'\x61E', false, "ARABIC TRIPLE DOT PUNCTUATION MARK" },
 { U'\x61F', false, "ARABIC QUESTION MARK" },
 { U'\x620', false, "ARABIC LETTER KASHMIRI YEH" },
@@ -7326,6 +7327,10 @@
 { U'\x2063', false, "INVISIBLE SEPARATOR" },
 { U'\x2064', false, "INVISIBLE PLUS" },
 { U'\x2065', false, "" },
+{ U'\x2066', false, "LEFT-TO-RIGHT ISOLATE" },
+{ U'\x2067', false, "RIGHT-TO-LEFT ISOLATE" },
+{ U'\x2068', false, "FIRST STRONG ISOLATE" },
+{ U'\x2069', false, "POP DIRECTIONAL ISOLATE" },
 { U'\x206A', false, "INHIBIT SYMMETRIC SWAPPING" },
 { U'\x206B', false, "ACTIVATE SYMMETRIC SWAPPING" },
 { U'\x206C', false, "INHIBIT ARABIC FORM SHAPING" },

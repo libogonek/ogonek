@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-03-07T12:24:54.8970230Z
+// This file was automatically generated on 2013-10-23T02:41:54.7985400Z
 
 // Unicode character database - joining data
 
@@ -32,6 +32,8 @@
 { U'\x5C8', joining_class::U, joining_group::No_Joining_Group, false },
 { U'\x610', joining_class::T, joining_group::No_Joining_Group, false },
 { U'\x61B', joining_class::U, joining_group::No_Joining_Group, false },
+{ U'\x61C', joining_class::T, joining_group::No_Joining_Group, false },
+{ U'\x61D', joining_class::U, joining_group::No_Joining_Group, false },
 { U'\x620', joining_class::D, joining_group::Yeh, false },
 { U'\x621', joining_class::U, joining_group::No_Joining_Group, false },
 { U'\x622', joining_class::R, joining_group::Alef, false },
@@ -403,10 +405,17 @@
 { U'\x17D4', joining_class::U, joining_group::No_Joining_Group, false },
 { U'\x17DD', joining_class::T, joining_group::No_Joining_Group, false },
 { U'\x17DE', joining_class::U, joining_group::No_Joining_Group, false },
+{ U'\x1807', joining_class::D, joining_group::No_Joining_Group, false },
+{ U'\x1808', joining_class::U, joining_group::No_Joining_Group, false },
+{ U'\x180A', joining_class::C, joining_group::No_Joining_Group, false },
 { U'\x180B', joining_class::T, joining_group::No_Joining_Group, false },
 { U'\x180E', joining_class::U, joining_group::No_Joining_Group, false },
+{ U'\x1820', joining_class::D, joining_group::No_Joining_Group, false },
+{ U'\x1878', joining_class::U, joining_group::No_Joining_Group, false },
+{ U'\x1887', joining_class::D, joining_group::No_Joining_Group, false },
 { U'\x18A9', joining_class::T, joining_group::No_Joining_Group, false },
-{ U'\x18AA', joining_class::U, joining_group::No_Joining_Group, false },
+{ U'\x18AA', joining_class::D, joining_group::No_Joining_Group, false },
+{ U'\x18AB', joining_class::U, joining_group::No_Joining_Group, false },
 { U'\x1920', joining_class::T, joining_group::No_Joining_Group, false },
 { U'\x1923', joining_class::U, joining_group::No_Joining_Group, false },
 { U'\x1927', joining_class::T, joining_group::No_Joining_Group, false },
@@ -417,6 +426,8 @@
 { U'\x193C', joining_class::U, joining_group::No_Joining_Group, false },
 { U'\x1A17', joining_class::T, joining_group::No_Joining_Group, false },
 { U'\x1A19', joining_class::U, joining_group::No_Joining_Group, false },
+{ U'\x1A1B', joining_class::T, joining_group::No_Joining_Group, false },
+{ U'\x1A1C', joining_class::U, joining_group::No_Joining_Group, false },
 { U'\x1A56', joining_class::T, joining_group::No_Joining_Group, false },
 { U'\x1A57', joining_class::U, joining_group::No_Joining_Group, false },
 { U'\x1A58', joining_class::T, joining_group::No_Joining_Group, false },
@@ -516,6 +527,9 @@
 { U'\xA80C', joining_class::U, joining_group::No_Joining_Group, false },
 { U'\xA825', joining_class::T, joining_group::No_Joining_Group, false },
 { U'\xA827', joining_class::U, joining_group::No_Joining_Group, false },
+{ U'\xA840', joining_class::D, joining_group::No_Joining_Group, false },
+{ U'\xA872', joining_class::L, joining_group::No_Joining_Group, false },
+{ U'\xA873', joining_class::U, joining_group::No_Joining_Group, false },
 { U'\xA8C4', joining_class::T, joining_group::No_Joining_Group, false },
 { U'\xA8C5', joining_class::U, joining_group::No_Joining_Group, false },
 { U'\xA8E0', joining_class::T, joining_group::No_Joining_Group, false },

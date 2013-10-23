@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-03-07T12:24:54.2980930Z
+// This file was automatically generated on 2013-10-23T02:41:54.4177590Z
 
 // Unicode character database - version data
 
@@ -136,7 +136,8 @@
 { U'\x60D', version::v4_0 },
 { U'\x616', version::v5_1 },
 { U'\x61B', version::v1_1 },
-{ U'\x61C', version::unassigned },
+{ U'\x61C', version::v6_3 },
+{ U'\x61D', version::unassigned },
 { U'\x61E', version::v4_1 },
 { U'\x61F', version::v1_1 },
 { U'\x620', version::v6_0 },
@@ -800,6 +801,7 @@
 { U'\x205F', version::v3_2 },
 { U'\x2064', version::v5_1 },
 { U'\x2065', version::unassigned },
+{ U'\x2066', version::v6_3 },
 { U'\x206A', version::v1_1 },
 { U'\x2071', version::v3_2 },
 { U'\x2072', version::unassigned },
