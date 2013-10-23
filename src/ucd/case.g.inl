@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-03-07T12:24:54.9399740Z
+// This file was automatically generated on 2013-10-23T02:41:54.8295120Z
 
 // Unicode character database - case data
 
@@ -1101,6 +1101,8 @@
 { U'\x605', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, false, false, false, nullptr },
 { U'\x610', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, false, false, false, nullptr },
 { U'\x61B', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, false, false, false, nullptr },
+{ U'\x61C', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, true, false, false, U"\U00000000" },
+{ U'\x61D', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, false, false, false, nullptr },
 { U'\x640', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, false, false, false, nullptr },
 { U'\x641', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, false, false, false, nullptr },
 { U'\x64B', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, false, false, false, nullptr },
@@ -1437,7 +1439,7 @@
 { U'\x17DD', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, false, false, false, nullptr },
 { U'\x17DE', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, false, false, false, nullptr },
 { U'\x180B', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, true, false, false, U"\U00000000" },
-{ U'\x180E', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, false, false, false, nullptr },
+{ U'\x180F', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, false, false, false, nullptr },
 { U'\x1843', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, false, false, false, nullptr },
 { U'\x1844', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, false, false, false, nullptr },
 { U'\x18A9', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, false, false, false, nullptr },
@@ -1452,6 +1454,8 @@
 { U'\x193C', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, false, false, false, nullptr },
 { U'\x1A17', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, false, false, false, nullptr },
 { U'\x1A19', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, false, false, false, nullptr },
+{ U'\x1A1B', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, false, false, false, nullptr },
+{ U'\x1A1C', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, false, false, false, nullptr },
 { U'\x1A56', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, false, false, false, nullptr },
 { U'\x1A57', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, false, false, false, nullptr },
 { U'\x1A58', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, false, false, false, nullptr },
@@ -2161,7 +2165,7 @@
 { U'\x205F', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, true, false, false, U"\U00000020" },
 { U'\x2060', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, true, false, false, U"\U00000000" },
 { U'\x2065', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, true, false, false, U"\U00000000" },
-{ U'\x206A', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, true, false, false, U"\U00000000" },
+{ U'\x2066', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, false, false, false, false, true, false, false, U"\U00000000" },
 { U'\x2070', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, true, false, false, U"\U00000030" },
 { U'\x2071', false, true, false, true, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, true, true, false, false, false, true, false, false, U"\U00000069" },
 { U'\x2072', false, false, false, false, U'\xFFFFFFFF', U'\xFFFFFFFF', U'\xFFFFFFFF', nullptr, nullptr, nullptr, U'\xFFFFFFFF', nullptr, false, false, false, false, false, false, false, false, nullptr },

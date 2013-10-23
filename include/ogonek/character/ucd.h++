@@ -36,7 +36,7 @@ namespace ogonek {
                 v3_0, v3_1, v3_2,
                 v4_0, v4_1,
                 v5_0, v5_1, v5_2,
-                v6_0, v6_1, v6_2,
+                v6_0, v6_1, v6_2, v6_3,
                 unassigned = 0xFF,
             };
             enum class alias_type {
@@ -88,17 +88,10 @@ namespace ogonek {
                 Cc = 0x2000000, Cf = 0x4000000, Cs = 0x8000000, Co = 0x10000000, Cn = 0x2000000, C = 0x3E000000,
             };
             enum class bidi_category {
-                AL, AN,
-                B, BN,
-                CS,
-                EN, ES, ET,
-                L, LRE, LRO,
-                NSM,
-                ON,
-                PDF,
-                R, RLE, RLO,
-                S,
-                WS,
+                L, R, AL,
+                EN, ES, ET, AN, CS, NSM, BN,
+                B, S, WS, ON,
+                LRE, LRO, RLE, RLO, PDF, LRI, RLI, FSI, PDI,
             };
             enum class decomposition_type {
                 can, com, enc, fin, font, fra,
@@ -258,6 +251,9 @@ namespace ogonek {
                 NU     = 1u << 11,
                 XX     = 1u << 12,
                 RI     = 1u << 13,
+                HL     = 1u << 14,
+                SQ     = 1u << 15,
+                DQ     = 1u << 16,
             };
             enum class sentence_break {
                 AT, CL, CR, EX, FO, LE, LF, LO,

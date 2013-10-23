@@ -39,7 +39,7 @@ namespace Ogonek.SegmentationTestCompiler
 
             if(args.Length != 2)
             {
-                Console.WriteLine("Usage: normtest2c++ <test source> <output file>");
+                Console.WriteLine("Usage: normtest2c++ <test source> <output folder>");
                 return 1;
             }
             string source = args[0];
@@ -48,8 +48,12 @@ namespace Ogonek.SegmentationTestCompiler
             var tests = GetTests(File.ReadLines(source))
                             .ToList();
             var forms = GetForms(tests);
-            File.WriteAllLines(destination, new []{ string.Format(CopyrightNotice, DateTime.Now.ToUniversalTime().ToString("O")) });
-            File.AppendAllLines(destination, forms.Select(f => string.Format("{{ {0}, {1}, {2}, {3}, {4} }},", f)));
+            File.WriteAllLines(Path.Combine(destination, "normalization.g.h++"), new []{ string.Format(CopyrightNotice, DateTime.Now.ToUniversalTime().ToString("O")) });
+            File.AppendAllLines(Path.Combine(destination, "normalization.g.h++"), new []{ string.Format(HeaderTemplate, tests.Count) });
+
+            File.WriteAllLines(Path.Combine(destination, "normalization_test_data.g.c++"), new []{ string.Format(CopyrightNotice, DateTime.Now.ToUniversalTime().ToString("O")) });
+            var lines = string.Join("\n        ", forms.Select(f => string.Format("{{ {0}, {1}, {2}, {3}, {4} }},", f)));
+            File.AppendAllLines(Path.Combine(destination, "normalization_test_data.g.c++"), new []{ string.Format(ImplTemplate, lines) });
 
             return 0;
         }
@@ -85,7 +89,39 @@ namespace Ogonek.SegmentationTestCompiler
 
 // This file was automatically generated on {0}
 
-// Unicode normalization test data
+// Unicode normalization test data";
+
+        const string ImplTemplate = @"
+#include ""normalization.g.h++""
+
+namespace test {{
+    normalization_test normalization_test_data[] = {{
+        {0}
+    }};
+}} // namespace test
 ";
+        const string HeaderTemplate = @"
+#ifndef OGONEK_TEST_NORMALIZATION_HPP
+#define OGONEK_TEST_NORMALIZATION_HPP
+
+#include <ogonek/types.h++>
+
+#include ""utils.h++""
+
+namespace test {{
+    struct normalization_test {{
+        ogonek::code_point const* input;
+        ogonek::code_point const* nfc;
+        ogonek::code_point const* nfd;
+        ogonek::code_point const* nfkc;
+        ogonek::code_point const* nfkd;
+    }};
+
+    extern normalization_test normalization_test_data[{0}];
+}} // namespace test
+
+#endif // OGONEK_TEST_SEGMENTATION_HPP
+";
+
     }
 }

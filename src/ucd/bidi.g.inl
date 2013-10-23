@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-03-07T12:24:54.5275810Z
+// This file was automatically generated on 2013-10-23T02:41:54.5573890Z
 
 // Unicode character database - bidirectionality data
 
@@ -124,6 +124,8 @@
 { U'\x60E', bidi_category::ON, false, char32_t(-1), false },
 { U'\x610', bidi_category::NSM, false, char32_t(-1), false },
 { U'\x61B', bidi_category::AL, false, char32_t(-1), false },
+{ U'\x61C', bidi_category::AL, false, char32_t(-1), true },
+{ U'\x61D', bidi_category::AL, false, char32_t(-1), false },
 { U'\x64B', bidi_category::NSM, false, char32_t(-1), false },
 { U'\x660', bidi_category::AN, false, char32_t(-1), false },
 { U'\x66A', bidi_category::ET, false, char32_t(-1), false },
@@ -375,7 +377,7 @@
 { U'\x17FA', bidi_category::L, false, char32_t(-1), false },
 { U'\x1800', bidi_category::ON, false, char32_t(-1), false },
 { U'\x180B', bidi_category::NSM, false, char32_t(-1), false },
-{ U'\x180E', bidi_category::WS, false, char32_t(-1), false },
+{ U'\x180E', bidi_category::BN, false, char32_t(-1), false },
 { U'\x180F', bidi_category::L, false, char32_t(-1), false },
 { U'\x18A9', bidi_category::NSM, false, char32_t(-1), false },
 { U'\x18AA', bidi_category::L, false, char32_t(-1), false },
@@ -395,6 +397,8 @@
 { U'\x1A00', bidi_category::L, false, char32_t(-1), false },
 { U'\x1A17', bidi_category::NSM, false, char32_t(-1), false },
 { U'\x1A19', bidi_category::L, false, char32_t(-1), false },
+{ U'\x1A1B', bidi_category::NSM, false, char32_t(-1), false },
+{ U'\x1A1C', bidi_category::L, false, char32_t(-1), false },
 { U'\x1A56', bidi_category::NSM, false, char32_t(-1), false },
 { U'\x1A57', bidi_category::L, false, char32_t(-1), false },
 { U'\x1A58', bidi_category::NSM, false, char32_t(-1), false },
@@ -491,6 +495,11 @@
 { U'\x2047', bidi_category::ON, false, char32_t(-1), false },
 { U'\x205F', bidi_category::WS, false, char32_t(-1), false },
 { U'\x2060', bidi_category::BN, false, char32_t(-1), false },
+{ U'\x2066', bidi_category::LRI, false, char32_t(-1), true },
+{ U'\x2067', bidi_category::RLI, false, char32_t(-1), true },
+{ U'\x2068', bidi_category::FSI, false, char32_t(-1), true },
+{ U'\x2069', bidi_category::PDI, false, char32_t(-1), true },
+{ U'\x206A', bidi_category::BN, false, char32_t(-1), false },
 { U'\x2070', bidi_category::EN, false, char32_t(-1), false },
 { U'\x2071', bidi_category::L, false, char32_t(-1), false },
 { U'\x2074', bidi_category::EN, false, char32_t(-1), false },
@@ -506,7 +515,6 @@
 { U'\x208E', bidi_category::ON, true, U'\x208D', false },
 { U'\x208F', bidi_category::L, false, char32_t(-1), false },
 { U'\x20A0', bidi_category::ET, false, char32_t(-1), false },
-{ U'\x20BB', bidi_category::L, false, char32_t(-1), false },
 { U'\x20D0', bidi_category::NSM, false, char32_t(-1), false },
 { U'\x20F1', bidi_category::L, false, char32_t(-1), false },
 { U'\x2100', bidi_category::ON, false, char32_t(-1), false },

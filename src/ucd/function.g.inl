@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-03-07T12:24:55.2979660Z
+// This file was automatically generated on 2013-10-23T02:41:55.0557040Z
 
 // Unicode character database - function data
 
@@ -179,7 +179,8 @@
 { U'\x60D', false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
 { U'\x610', false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false },
 { U'\x61B', false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
-{ U'\x61C', false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
+{ U'\x61C', false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false },
+{ U'\x61D', false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
 { U'\x61F', false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false },
 { U'\x620', false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false },
 { U'\x640', false, false, false, false, false, false, true, false, true, false, false, false, false, false, false, false, false, false },
@@ -758,7 +759,6 @@
 { U'\x1809', false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false },
 { U'\x180A', false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false },
 { U'\x180B', false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false },
-{ U'\x180E', false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true },
 { U'\x180F', false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
 { U'\x1820', false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false },
 { U'\x1843', false, false, false, false, false, false, true, false, true, false, false, false, false, false, false, false, false, false },
@@ -943,7 +943,7 @@
 { U'\x2060', false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false },
 { U'\x2061', false, false, false, false, false, false, false, false, false, false, true, true, false, false, true, false, false, false },
 { U'\x2065', false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, false, false },
-{ U'\x206A', false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false },
+{ U'\x2066', false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false },
 { U'\x2070', false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
 { U'\x2071', false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false },
 { U'\x2072', false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
@@ -1038,7 +1038,7 @@
 { U'\x2212', true, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false },
 { U'\x2213', false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false },
 { U'\x2300', false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
-{ U'\x2308', false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false },
+{ U'\x2308', false, false, false, false, false, false, false, false, false, false, true, true, false, false, false, false, false, false },
 { U'\x230C', false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },
 { U'\x2320', false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false },
 { U'\x2322', false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false },

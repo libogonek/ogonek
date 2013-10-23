@@ -14,6 +14,7 @@
 #include <ogonek/segmentation.h++>
 #include <ogonek/types.h++>
 
+#include "segmentation.g.h++"
 #include "utils.h++"
 #include <catch.h++>
 
@@ -22,13 +23,8 @@
 #include <vector>
 
 namespace {
-    struct break_test {
-        test::ustring input;
-        std::vector<int> breaks;
-    };
-
     template <typename Fun>
-    void test_segmentation(break_test const& test, Fun fun) {
+    void test_segmentation(test::break_test const& test, Fun fun) {
         auto items = fun(test.input);
         auto it = items.begin();
         auto last_break = 0;
@@ -43,10 +39,6 @@ namespace {
 } // namespace
 
 namespace {
-    break_test grapheme_test_data[] = {
-        #include "grapheme_test.g.inl"
-    };
-
     struct {
         template <typename ForwardRange>
         auto operator()(ForwardRange const& range) const -> decltype(ogonek::graphemes(range)) {
@@ -57,17 +49,13 @@ namespace {
 
 TEST_CASE("graphemes", "Extended grapheme ranges") {
     SECTION("official", "Official grapheme tests") {
-        for(auto&& test : grapheme_test_data) {
+        for(auto&& test : test::grapheme_test_data) {
             test_segmentation(test, break_graphemes);
         }
     }
 }
 
 namespace {
-    break_test word_test_data[] = {
-        #include "word_test.g.inl"
-    };
-
     struct {
         template <typename ForwardRange>
         auto operator()(ForwardRange const& range) const -> decltype(ogonek::words(range)) {
@@ -78,7 +66,7 @@ namespace {
 
 TEST_CASE("words", "Word ranges") {
     SECTION("official", "Official word tests") {
-        for(auto&& test : word_test_data) {
+        for(auto&& test : test::word_test_data) {
             test_segmentation(test, break_words);
         }
     }
@@ -97,14 +85,8 @@ TEST_CASE("words", "Word ranges") {
 }
 
 namespace {
-    break_test sentence_test_data[] = {
-        #include "sentence_test.g.inl"
-    };
 } // namespace
 
 namespace {
-    break_test line_test_data[] = {
-        #include "line_test.g.inl"
-    };
 } // namespace
 

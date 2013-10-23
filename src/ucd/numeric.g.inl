@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-03-07T12:24:54.8717330Z
+// This file was automatically generated on 2013-10-23T02:41:54.7804060Z
 
 // Unicode character database - numeric data
 
@@ -1238,7 +1238,8 @@
 { U'\x12451', numeric_type::Nu, 3 },
 { U'\x12452', numeric_type::Nu, 4 },
 { U'\x12454', numeric_type::Nu, 5 },
-{ U'\x12456', numeric_type::Nu, -1 },
+{ U'\x12456', numeric_type::Nu, 2 },
+{ U'\x12457', numeric_type::Nu, 3 },
 { U'\x12458', numeric_type::Nu, 1 },
 { U'\x12459', numeric_type::Nu, 2 },
 { U'\x1245A', numeric_type::Nu, 0.333333333333333 },

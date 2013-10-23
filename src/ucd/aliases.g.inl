@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-03-07T12:24:54.4779680Z
+// This file was automatically generated on 2013-10-23T02:41:54.5280710Z
 
 // Unicode character database - name alias data
 
@@ -174,6 +174,7 @@
 { alias_type::correction, "LATIN CAPITAL LETTER GHA" },
 { alias_type::correction, "LATIN SMALL LETTER GHA" },
 { alias_type::abbreviation, "CGJ" },
+{ alias_type::abbreviation, "ALM" },
 { alias_type::correction, "SYRIAC SUBLINEAR COLON SKEWED LEFT" },
 { alias_type::correction, "KANNADA LETTER LLLA" },
 { alias_type::correction, "LAO LETTER FO FON" },
@@ -198,6 +199,10 @@
 { alias_type::abbreviation, "NNBSP" },
 { alias_type::abbreviation, "MMSP" },
 { alias_type::abbreviation, "WJ" },
+{ alias_type::abbreviation, "LRI" },
+{ alias_type::abbreviation, "RLI" },
+{ alias_type::abbreviation, "FSI" },
+{ alias_type::abbreviation, "PDI" },
 { alias_type::correction, "WEIERSTRASS ELLIPTIC FUNCTION" },
 { alias_type::correction, "MICR ON US SYMBOL" },
 { alias_type::correction, "MICR DASH SYMBOL" },
@@ -222,6 +227,8 @@
 { alias_type::abbreviation, "BOM" },
 { alias_type::alternate, "BYTE ORDER MARK" },
 { alias_type::abbreviation, "ZWNBSP" },
+{ alias_type::correction, "CUNEIFORM SIGN NU11 TENU" },
+{ alias_type::correction, "CUNEIFORM SIGN NU11 OVER NU11 BUR OVER BUR" },
 { alias_type::correction, "BYZANTINE MUSICAL SYMBOL FTHORA SKLIRON CHROMA VASIS" },
 { alias_type::abbreviation, "VS17" },
 { alias_type::abbreviation, "VS18" },

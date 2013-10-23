@@ -39,7 +39,7 @@ namespace Ogonek.UcdCompiler
         v3_0, v3_1, v3_2,
         v4_0, v4_1,
         v5_0, v5_1, v5_2,
-        v6_0, v6_1, v6_2,
+        v6_0, v6_1, v6_2, v6_3,
         Unassigned,
     }
 
@@ -47,7 +47,7 @@ namespace Ogonek.UcdCompiler
     {
         CR, EX, Extend, FO, KA, LE,
         LF, MB, ML, MN, NL, NU, XX,
-        RI,
+        RI, HL, SQ, DQ,
     }
 
     static class XmlParsingExtensions
@@ -695,6 +695,7 @@ namespace Ogonek.UcdCompiler
         R, RLE, RLO,
         S,
         WS,
+        LRI, RLI, FSI, PDI,
     }
 
     enum AliasType
@@ -722,29 +723,40 @@ namespace Ogonek.UcdCompiler
             string source = args[0];
             string destination = args[1];
 
+            Console.WriteLine("Loading XML...");
             var data = Parse(XDocument.Load(source)).ToArray();
+            Console.WriteLine("Generating compositions...");
             var compositions = GetCompositions(data);
+            Console.WriteLine("Generating decompositions...");
             Decompose(data);
 
+            Console.WriteLine("Writing ages...");
             WriteData(data, File.CreateText(Path.Combine(destination, "age.g.inl")), "version data",
                 x => x.Version,
                 x => string.Format("{{ {0}, version::{1} }}", FormatCodepoint(x.From), x.Version.ToString().ToLower()));
+            Console.WriteLine("Writing names...");
             WriteData(data, File.CreateText(Path.Combine(destination, "name.g.inl")), "name data",
                 x => x.Name,
                 x => string.Format("{{ {0}, {1}, \"{2}\" }}", FormatCodepoint(x.From), Format(x.Name.Contains("#")), x.Name));
+            Console.WriteLine("Writing old names...");
             WriteData(data, File.CreateText(Path.Combine(destination, "v1name.g.inl")), "Unicode 1.0 name data",
                 x => x.Name,
                 x => string.Format("{{ {0}, false, \"{1}\" }}", FormatCodepoint(x.From), x.Name));
+            Console.WriteLine("Writing aliases...");
             WriteAliases(data, File.CreateText(Path.Combine(destination, "aliases.g.inl")), File.CreateText(Path.Combine(destination, "alias_map.g.inl")));
+            Console.WriteLine("Writing blocks...");
             WriteData(data, File.CreateText(Path.Combine(destination, "block.g.inl")), "block data",
                 x => x.Block,
                 x => string.Format("{{ {0}, block::{1} }}", FormatCodepoint(x.From), x.Block));
+            Console.WriteLine("Writing general categories...");
             WriteData(data, File.CreateText(Path.Combine(destination, "category.g.inl")), "general category data",
                 x => x.GeneralCategory,
                 x => string.Format("{{ {0}, category::{1} }}", FormatCodepoint(x.From), x.GeneralCategory));
+            Console.WriteLine("Writing combining class data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "combining.g.inl")), "combining class data",
                 x => x.CombiningClass,
                 x => string.Format("{{ {0}, {1} }}", FormatCodepoint(x.From), x.CombiningClass));
+            Console.WriteLine("Writing bidirectionality data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "bidi.g.inl")), "bidirectionality data",
                 x => new { x.BidiCategory, x.BidiMirrored, x.BidiMirroredGlyph, x.BidiControl },
                 x => string.Format("{{ {0}, bidi_category::{1}, {2}, {3}, {4} }}",
@@ -752,7 +764,9 @@ namespace Ogonek.UcdCompiler
                                 FormatCodepoint(x.BidiMirroredGlyph),
                                 Format(x.BidiControl)));
 
+            Console.WriteLine("Writing composition data...");
             WriteCompositions(compositions, File.CreateText(Path.Combine(destination, "composition.g.inl")), "composition data");
+            Console.WriteLine("Writing decomposition data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "decomposition.g.inl")), "decomposition data",
                 x => new
                 {
@@ -781,12 +795,14 @@ namespace Ogonek.UcdCompiler
                                 Format(x.NfcQuickCheck), Format(x.NfdQuickCheck), Format(x.NfkcQuickCheck), Format(x.NfkdQuickCheck),
                                 Format(x.ExpandsOnNfc), Format(x.ExpandsOnNfd), Format(x.ExpandsOnNfkc), Format(x.ExpandsOnNfkd),
                                 FormatCodepointArray(x.FcNfkcClosure)));
+            Console.WriteLine("Writing numeric data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "numeric.g.inl")), "numeric data",
                 x => new { x.NumericType, val = x.NumericValue.ToString() /* string for NaNs */ },
                 x => string.Format("{{ {0}, numeric_type::{1}, {2} }}",
                                     FormatCodepoint(x.From),
                                     x.NumericType,
                                     Format(x.NumericValue)));
+            Console.WriteLine("Writing joining data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "joining.g.inl")), "joining data",
                 x => new { x.JoiningClass, x.JoiningGroup, x.JoinControl },
                 x => string.Format("{{ {0}, joining_class::{1}, joining_group::{2}, {3} }}",
@@ -794,12 +810,15 @@ namespace Ogonek.UcdCompiler
                                 x.JoiningClass,
                                 x.JoiningGroup,
                                 Format(x.JoinControl)));
+            Console.WriteLine("Writing linebreak data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "linebreak.g.inl")), "linebreak data",
                 x => x.Linebreak,
                 x => string.Format("{{ {0}, linebreak::{1} }}", FormatCodepoint(x.From), x.Linebreak));
+            Console.WriteLine("Writing east asian data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "east_asian.g.inl")), "east asian width data",
                 x => x.EastAsianWidth,
                 x => string.Format("{{ {0}, east_asian_width::{1} }}", FormatCodepoint(x.From), x.EastAsianWidth));
+            Console.WriteLine("Writing casing data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "case.g.inl")), "case data",
                     x => new
                     {
@@ -835,25 +854,32 @@ namespace Ogonek.UcdCompiler
                                     Format(x.ChangesWhenCasefolded), Format(x.ChangesWhenCasemapped), Format(x.ChangesWhenLowercased),
                                     Format(x.ChangesWhenNfkcCasefolded), Format(x.ChangesWhenTitlecased), Format(x.ChangesWhenUppercased),
                                     FormatCodepointArray(x.NfkcCasefold)));
+            Console.WriteLine("Writing script data...");
             WriteScripts(data, File.CreateText(Path.Combine(destination, "script_ext.g.inl")), File.CreateText(Path.Combine(destination, "script.g.inl")));
+            Console.WriteLine("Writing ISO comments...");
             WriteData(data, File.CreateText(Path.Combine(destination, "iso_comment.g.inl")), "ISO comment data",
                 x => x.IsoComment,
                 x => string.Format("{{ {0}, U\"{1}\" }}", FormatCodepoint(x.From), x.IsoComment)); // TODO escapes?
+            Console.WriteLine("Writing Hangul data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "hangul.g.inl")), "Hangul data",
                 x => new { x.HangulSyllableType, x.JamoShortName },
                 x => string.Format("{{ {0}, hangul_syllable_type::{1}, \"{2}\" }}", FormatCodepoint(x.From), x.HangulSyllableType, x.JamoShortName)); // TODO escapes?
+            Console.WriteLine("Writing Indic data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "indic.g.inl")), "Indic data",
                 x => new { x.IndicSyllableCategory, x.IndicMatraCategory },
                 x => string.Format("{{ {0}, indic_syllable_category::{1}, indic_matra_category::{2} }}", FormatCodepoint(x.From), x.IndicSyllableCategory, x.IndicMatraCategory));
+            Console.WriteLine("Writing identifier data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "identifier.g.inl")), "identifier data",
                 x => new { x.IdStart, x.OtherIdStart, x.XidStart, x.IdContinue, x.OtherIdContinue, x.XidContinue },
                 x => string.Format("{{ {0}, {1}, {2}, {3}, {4}, {5}, {6} }}",
                                 FormatCodepoint(x.From),
                                 Format(x.IdStart), Format(x.OtherIdStart), Format(x.XidStart),
                                 Format(x.IdContinue), Format(x.OtherIdContinue), Format(x.XidContinue)));
+            Console.WriteLine("Writing pattern data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "pattern.g.inl")), "pattern data",
                 x => new { x.PatternSyntax, x.PatternWhiteSpace },
                 x => string.Format("{{ {0}, {1}, {2} }}", FormatCodepoint(x.From), Format(x.PatternSyntax), Format(x.PatternWhiteSpace)));
+            Console.WriteLine("Writing function data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "function.g.inl")), "function data",
                          x => new
                          {
@@ -882,6 +908,7 @@ namespace Ogonek.UcdCompiler
                                             Format(x.Diacritic), Format(x.Extender), Format(x.SoftDotted), Format(x.Alphabetic), Format(x.OtherAlphabetic),
                                             Format(x.Math), Format(x.OtherMath), Format(x.HexDigit), Format(x.AsciiHexDigit), Format(x.DefaultIgnorable), Format(x.OtherDefaultIgnorable),
                                             Format(x.LogicalOrderException), Format(x.WhiteSpace)));
+            Console.WriteLine("Writing boundary data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "boundary.g.inl")), "boundary data",
                 x => new
                 {
@@ -897,6 +924,7 @@ namespace Ogonek.UcdCompiler
                                 FormatCodepoint(x.From),
                                 Format(x.GraphemeBase), Format(x.GraphemeExtend), Format(x.OtherGraphemeExtend), Format(x.GraphemeLink),
                                 x.GraphemeClusterBreak, x.WordBreak, x.SentenceBreak));
+            Console.WriteLine("Writing ideograph data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "ideograph.g.inl")), "ideograph data",
                 x => new { x.Ideographic, x.UnifiedIdeograph, x.IdsBinaryOperator, x.IdsTrinaryOperator, x.Radical },
                 x => string.Format("{{ {0}, {1}, {2}, {3}, {4}, {5} }}",
@@ -904,12 +932,14 @@ namespace Ogonek.UcdCompiler
                                 Format(x.Ideographic), Format(x.UnifiedIdeograph),
                                 Format(x.IdsBinaryOperator), Format(x.IdsTrinaryOperator),
                                 Format(x.Radical)));
+            Console.WriteLine("Writing miscellaneous data...");
             WriteData(data, File.CreateText(Path.Combine(destination, "misc.g.inl")), "miscellaneous data",
                 x => new { x.Deprecated, x.VariationSelector, x.Noncharacter },
                 x => string.Format("{{ {0}, {1}, {2}, {3} }}",
                                 FormatCodepoint(x.From),
                                 Format(x.Deprecated), Format(x.VariationSelector), Format(x.Noncharacter)));
 
+            Console.WriteLine("Done.");
             return 0;
         }
 
