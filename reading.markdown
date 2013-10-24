@@ -5,8 +5,8 @@ title: How to read this manual
 
 ### Unicode version
 
-Ogonek {{ site.doc_version }} follows the Unicode standard version 6.2. Any reference to an Unicode
-algorithm refers to the algorithm from version 6.2.
+Ogonek {{ site.doc_version }} follows the Unicode standard version 6.3. Any reference to an Unicode
+algorithm refers to the algorithm from version 6.3.
 
 ### Namespaces
 

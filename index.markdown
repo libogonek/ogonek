@@ -3,9 +3,9 @@ layout: default
 title: About ogonek
 ---
 
-Ogonek  is a C++11 library that implements various Unicode algorithms.
+Ogonek is a C++11 library that implements various Unicode algorithms.
 
-Ogonek version numbers use the [semantic versioning] rules 2.0.0-rc.1.
+Ogonek version numbers use the [semantic versioning] rules 2.0.0.
 
  [semantic versioning]: http://semver.org/
 

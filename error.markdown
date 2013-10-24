@@ -5,27 +5,29 @@ title: Error handling
 
 When errors are found encoding or decoding streams, there are various ways of
 dealing with the errors. Ogonek provides four different error-handling
-strategies. Functions that take a validation strategy argument can often be
-called without the strategy argument; when that happens
-`ogonek::throw_validation_error` is the default used.
+strategies. Functions that take an error handler argument can often be called
+without that argument; when that happens `ogonek::throw_error` is the default
+used.
 
-All validation strategies are objects declared in the header
+All error handlers are objects declared in the header
 `<ogonek/validation.h++>`.
 
 ---
 
-#### `throw_validation_error`
+#### `throw_error`
 
-This strategy throws a `ogonek::validation_error` whenever invalid data is
-found.
+This strategy throws a `ogonek::unicode_error` whenever invalid data is found.
 
 *Example*:
 {% highlight cpp %}
 std::string s = u8"bana\x80na";
-ogonek::text<ogonek::utf8> t { s, ogonek::throw_validation_error };
+ogonek::text<ogonek::utf8> t { s, ogonek::throw_error };
 // throws since s is not a valid UTF-8 sequence
 // (it has an unfinished multi-byte sequence)
 {% endhighlight %}
+
+`ogonek::unicode_error` derives virtually from `std::exception` and, if
+`OGONEK_BOOST_EXCEPTION` is defined, also from `boost::exception`.
 
 ---
 
@@ -44,7 +46,7 @@ ogonek::text<ogonek::utf8> t { s, ogonek::discard_errors };
 
 ---
 
-#### `use_replacement_character`
+#### `replace_errors`
 
 This strategy replaces invalid data with a replacement character. If the
 encoding of the output stream supports it, the Unicode replacement character
@@ -57,14 +59,14 @@ member) is used.
 *Example*:
 {% highlight cpp %}
 std::string s = u8"bana\x80na";
-ogonek::text<ogonek::utf8> t { s, ogonek::use_replacement_character };
+ogonek::text<ogonek::utf8> t { s, ogonek::replace_errors };
 // the unfinished multi-byte sequence is replaced with U+FFFD
 // t ends up with u8"bana\uFFFDna"
 {% endhighlight %}
 
 ---
 
-#### `skip_validation`
+#### `assume_valid`
 
 This strategy assumes the stream is valid and performs no validation. This is
 useful when the stream is known to be good, for example, if it was validated
@@ -74,7 +76,7 @@ on a stream with invalid data, the behaviour is undefined.
 *Bad Example*:
 {% highlight cpp %}
 std::string s = u8"bana\x80na";
-ogonek::text<ogonek::utf8> t { s, ogonek::skip_validation };
+ogonek::text<ogonek::utf8> t { s, ogonek::assume_valid };
 // the unfinished multi-byte sequence is ignored
 // this results in undefined behaviour
 {% endhighlight %}
@@ -82,7 +84,7 @@ ogonek::text<ogonek::utf8> t { s, ogonek::skip_validation };
 *Good Example*:
 {% highlight cpp %}
 std::string s = u8"banana"; // we know for sure that s is valid
-ogonek::text<ogonek::utf8> t { s, ogonek::skip_validation };
+ogonek::text<ogonek::utf8> t { s, ogonek::assume_valid };
 {% endhighlight %}
 
 ---

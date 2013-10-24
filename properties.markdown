@@ -4,9 +4,9 @@ title: Properties
 ---
 
 Ogonek provides ways to query character properties. The most useful properties
-are provided in the header `<ogonek/properties.h++>`; the full set of properties
+are provided in the header `<ogonek/data/properties.h++>`; the full set of properties
 in the Unicode Character Database is also provided: under namespace
-`ogonek::ucd`, in the header `<ogonek/ucd.h++>`.
+`ogonek::ucd`, in the header `<ogonek/data/ucd.h++>`.
 
 ### Classification
 
@@ -34,7 +34,7 @@ Surrogates are reserved code points for UTF-16 support (U+D800..DFFF).
 Noncharacters are an immutable set of sixty-six code points reserved for
 internal use.
 
-Reserverd are all the code points are reserved for future assignment by the
+Reserved are all the code points that are reserved for future assignment by the
 Unicode Standard.
 
 Ogonek provides functions to query these types: `is_graphic`, `is_format`,
@@ -120,7 +120,7 @@ bool is_mathematical(code_point u);
 
 ### Full UCD support
 
-The header `<ogonek/ucd.h++>` provides various direct queries to the Unicode
+The header `<ogonek/data/ucd.h++>` provides various direct queries to the Unicode
 normative propertiees in namespace `ucd`. These are intended for advanced users
 and for internal use by the algorithms provided in ogonek. This API is not
 stable yet, so it is not documented.
