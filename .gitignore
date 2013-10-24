@@ -1,6 +1,8 @@
-bin/
-obj/
-dist/
+/bin/
+/obj/
+/dist/
+/ogonek/
+/deps/
 *.g.*
 *~
 *.session.vim
@@ -8,4 +10,3 @@ dist/
 .vimrc
 _site/
 *scons*
-/ogonek/
