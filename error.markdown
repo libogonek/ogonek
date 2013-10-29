@@ -10,7 +10,7 @@ without that argument; when that happens `ogonek::throw_error` is the default
 used.
 
 All error handlers are objects declared in the header
-`<ogonek/validation.h++>`.
+`<ogonek/error.h++>`.
 
 ---
 
