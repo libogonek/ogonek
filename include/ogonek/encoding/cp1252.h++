@@ -1,6 +1,6 @@
 // Ogonek
 //
-// Written in 2012-2013 by Martinho Fernandes <martinho.fernandes@gmail.com>
+// Written in 2013 by Martinho Fernandes <martinho.fernandes@gmail.com>
 //
 // To the extent possible under law, the author(s) have dedicated all copyright and related
 // and neighboring rights to this software to the public domain worldwide. This software is
@@ -9,16 +9,23 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// CP1252 encoding form (alias for Windows-1252)
+// This file was automatically generated on 2013-11-14T13:59:13.047343Z
 
-#ifndef OGONEK_ENCODING_CP1252_HPP
-#define OGONEK_ENCODING_CP1252_HPP
+// CP-1252 encoding form
 
-#include <ogonek/encoding/windows1252.h++>
+#ifndef OGONEK_CP1252_HPP
+#define OGONEK_CP1252_HPP
+
+#include <ogonek/types.h++>
+#include <ogonek/encoding/codepage_encoding.h++>
 
 namespace ogonek {
-    using cp1252 = windows1252;
+    struct cp1252_codepage {
+        static code_point to_unicode[256];
+        static codepage_entry from_unicode[251];
+    };
+
+    using cp1252 = codepage_encoding<cp1252_codepage>;
 } // namespace ogonek
 
-#endif // OGONEK_ENCODING_CP1252_HPP
-
+#endif // OGONEK_CP1252_HPP

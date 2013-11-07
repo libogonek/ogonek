@@ -1,11 +1,19 @@
+# downloaded data
+tools/data
+
+# output folders
 bin/
 obj/
 dist/
+_site/
+
+# generated build script
+build.ninja
+
+# all sorts of garbage
 *~
-*.session.vim
-Session.vim
+*.vim
 *.swp
 .vimrc
-_site/
-*scons*
-/ogonek/
+*.pyc
+

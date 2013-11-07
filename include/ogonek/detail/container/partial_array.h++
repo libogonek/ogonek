@@ -29,18 +29,18 @@ namespace ogonek {
             partial_array() = default;
             template <typename U>
             partial_array(partial_array<U, N> const& that)
-            : count{ that.count } {
+            : count{ that.count }, array() {
                 std::copy(that.begin(), that.end(), array.begin());
             }
             partial_array(std::array<T, N> const& array, std::size_t count)
             : count{ count }, array(array) {}
             partial_array(std::initializer_list<T> list)
-            : count{ list.size() } {
+            : count{ list.size() }, array() {
                 std::copy(list.begin(), list.end(), array.begin());
             }
             template <typename Iterator>
             partial_array(Iterator first, Iterator last)
-            : count(last - first) {
+            : count(last - first), array() {
                 std::copy(first, last, array.begin());
             }
 

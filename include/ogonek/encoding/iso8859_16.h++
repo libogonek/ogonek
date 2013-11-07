@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-03-11T05:08:07.9439280Z
+// This file was automatically generated on 2013-11-14T13:59:12.984712Z
 
 // ISO-8859-16 encoding form
 
@@ -27,5 +27,5 @@ namespace ogonek {
 
     using iso8859_16 = codepage_encoding<iso8859_16_codepage>;
 } // namespace ogonek
-#endif // OGONEK_ISO8859_16_HPP
 
+#endif // OGONEK_ISO8859_16_HPP

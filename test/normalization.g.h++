@@ -9,10 +9,9 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2013-10-23T01:15:30.9726080Z
+// This file was automatically generated on 2013-11-08T13:46:42.0520590Z
 
 // Unicode normalization test data
-
 
 #ifndef OGONEK_TEST_NORMALIZATION_HPP
 #define OGONEK_TEST_NORMALIZATION_HPP
