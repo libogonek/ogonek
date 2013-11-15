@@ -6,6 +6,7 @@ import os
 import fnmatch
 import re
 import sys
+import argparse
 
 # --- util functions
 
@@ -35,6 +36,10 @@ include_flags = flags([include('include')], map(dependency_include, dependencies
 cxx_flags = flags(['-Wall', '-Wextra', '-Wfatal-errors', '-Werror', '-std=c++11', '-O3'])
 ld_flags = flags(['-flto'])
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--cxx', default='g++', metavar='executable', help='compiler name to use (default: g++)')
+args = parser.parse_args()
+
 # ---
 
 ninja = ninja_syntax.Writer(open('build.ninja', 'w'))
@@ -50,13 +55,13 @@ ninja.rule('bootstrap',
         description = 'BOOTSTRAP')
 
 ninja.rule('cxx',
-        command = 'g++ -MMD -MF $out.d -c ' + cxx_flags + ' ' + include_flags + ' $in -o $out',
+        command = args.cxx + ' -MMD -MF $out.d -c ' + cxx_flags + ' ' + include_flags + ' $in -o $out',
         deps = 'gcc',
         depfile = '$out.d',
         description = 'C++ $in')
 
 ninja.rule('link',
-        command = 'g++ ' + cxx_flags + ' ' + ld_flags + ' $in -o $out',
+        command = args.cxx + ' ' + cxx_flags + ' ' + ld_flags + ' $in -o $out',
         description = 'LINK $in')
 
 ninja.rule('lib',
