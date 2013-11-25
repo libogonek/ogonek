@@ -96,8 +96,10 @@ for fn in test_src_files:
 
 ninja.build(test_runner, 'link',
         inputs = test_obj_files + [libogonek_data])
-ninja.build('check', 'test',
+ninja.build('runtests', 'test',
         implicit = test_runner)
+ninja.build('test', 'phony',
+        inputs = 'runtests')
 ninja.build('lib', 'phony',
         inputs = libogonek_data);
 
