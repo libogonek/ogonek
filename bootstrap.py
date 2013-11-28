@@ -38,7 +38,6 @@ ld_flags = flags(['-flto'])
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--cxx', default='g++', metavar='executable', help='compiler name to use (default: g++)')
-parser.add_argument('--teamcity', action='store_true', default=False, help='prepares a build to run on TeamCity (default: no)')
 args = parser.parse_args()
 
 # ---
@@ -69,11 +68,6 @@ ninja.rule('lib',
         command = 'ar rc $out $in && ranlib $out',
         description = 'AR $in')
 
-test_runner = 'bin/test'
-ninja.rule('test',
-        command = test_runner + (' -r teamcity' if args.teamcity else ''),
-        description = 'TEST')
-
 # --- build edges
 
 ninja.build('build.ninja', 'bootstrap',
@@ -95,12 +89,11 @@ for fn in test_src_files:
     ninja.build(object_file(fn), 'cxx',
             inputs = fn)
 
+test_runner = 'bin/test'
 ninja.build(test_runner, 'link',
         inputs = test_obj_files + [libogonek_data])
-ninja.build('runtests', 'test',
-        implicit = test_runner)
 ninja.build('test', 'phony',
-        inputs = 'runtests')
+        inputs = test_runner)
 ninja.build('lib', 'phony',
         inputs = libogonek_data);
 
