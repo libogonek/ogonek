@@ -38,6 +38,7 @@ ld_flags = flags(['-flto'])
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--cxx', default='g++', metavar='executable', help='compiler name to use (default: g++)')
+parser.add_argument('--teamcity', action='store_true', default=False, help='prepares a build to run on TeamCity (default: no)')
 args = parser.parse_args()
 
 # ---
@@ -70,7 +71,7 @@ ninja.rule('lib',
 
 test_runner = 'bin/test'
 ninja.rule('test',
-        command = test_runner,
+        command = test_runner + (' -r teamcity' if args.teamcity else ''),
         description = 'TEST')
 
 # --- build edges

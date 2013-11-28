@@ -18,7 +18,7 @@
 #include <taussig/interop.h++>
 
 #include "utils.h++"
-#include <catch.h++>
+#include <catch.hpp>
 
 using namespace test::literal;
 using latin1_string = test::string<ogonek::latin1>;

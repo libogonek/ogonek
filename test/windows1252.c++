@@ -19,7 +19,7 @@
 #include <taussig/interop.h++>
 
 #include "utils.h++"
-#include <catch.h++>
+#include <catch.hpp>
 
 using namespace test::literal;
 using windows1252_string = test::string<ogonek::windows1252>;

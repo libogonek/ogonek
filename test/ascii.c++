@@ -23,7 +23,7 @@
 #include <cstddef>
 
 #include "utils.h++"
-#include <catch.h++>
+#include <catch.hpp>
 
 using namespace test::literal;
 using ascii_string = test::string<ogonek::ascii>;
