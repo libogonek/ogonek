@@ -16,7 +16,7 @@
 
 #include "segmentation.g.h++"
 #include "utils.h++"
-#include <catch.h++>
+#include <catch.hpp>
 
 #include <iterator>
 #include <string>

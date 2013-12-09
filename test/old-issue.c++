@@ -12,7 +12,7 @@
 // Tests for issue #13
 
 #include "utils.h++"
-#include <catch.h++>
+#include <catch.hpp>
 
 #include <ogonek/text.h++>
 #include <ogonek/encoding/utf8.h++>

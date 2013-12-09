@@ -22,7 +22,7 @@
 #include <unordered_map>
 
 #include "utils.h++"
-#include <catch.h++>
+#include <catch.hpp>
 
 using text8 = test::text<ogonek::utf8>;
 using text16 = test::text<ogonek::utf16>;

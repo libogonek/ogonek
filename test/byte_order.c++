@@ -18,7 +18,7 @@
 
 #include <array>
 
-#include <catch.h++>
+#include <catch.hpp>
 
 TEST_CASE("big_endian", "Big endian byte order") {
     SECTION("write16", "Writing 16-bit values") {

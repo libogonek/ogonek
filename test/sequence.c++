@@ -14,7 +14,7 @@
 #include <ogonek/sequence.h++>
 #include <ogonek/error/assume_valid.h++>
 
-#include <catch.h++>
+#include <catch.hpp>
 
 #include <ogonek/encoding/encode.h++>
 #include <ogonek/encoding/utf8.h++>

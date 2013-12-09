@@ -13,7 +13,7 @@
 
 #include <ogonek/detail/container/small_vector.h++>
 
-#include <catch.h++>
+#include <catch.hpp>
 
 #include <cstdint>
 

@@ -16,7 +16,7 @@
 #include <ogonek/text.h++>
 #include <ogonek/encoding/utf8.h++>
 
-#include <catch.h++>
+#include <catch.hpp>
 
 #include <boost/range/algorithm/equal.hpp>
 

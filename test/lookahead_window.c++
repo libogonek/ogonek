@@ -13,7 +13,7 @@
 
 #include <ogonek/detail/container/lookahead_window.h++>
 
-#include <catch.h++>
+#include <catch.hpp>
 
 #include <algorithm>
 #include <vector>

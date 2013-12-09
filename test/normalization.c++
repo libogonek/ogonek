@@ -18,7 +18,7 @@
 
 #include "utils.h++"
 #include "normalization.g.h++"
-#include <catch.h++>
+#include <catch.hpp>
 
 namespace {
     void test_norm(test::normalization_test const& test) {

@@ -14,7 +14,7 @@
 #include <ogonek/character/properties.h++>
 
 #include "utils.h++"
-#include <catch.h++>
+#include <catch.hpp>
 
 TEST_CASE("properties", "user-facing property queries") {
     SECTION("numeric", "numeric properties") {

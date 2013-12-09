@@ -12,5 +12,5 @@
 // Test runner
 
 #define CATCH_CONFIG_MAIN
-#include <catch.h++>
+#include <catch.hpp>
 #include <wheels/test/catch_teamcity.h++>
