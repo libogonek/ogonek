@@ -33,7 +33,7 @@ def object_file(fn):
 
 dependencies = ['catch', 'wheels', 'taussig']
 include_flags = flags([include('include')], map(dependency_include, dependencies))
-cxx_flags = flags(['-Wall', '-Wextra', '-Wfatal-errors', '-Werror', '-std=c++11', '-O3'])
+cxx_flags = flags(['-Wall', '-Wextra', '-Werror', '-std=c++11', '-O3'])
 ld_flags = flags(['-flto'])
 
 parser = argparse.ArgumentParser()
