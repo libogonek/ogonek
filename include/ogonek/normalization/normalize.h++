@@ -15,6 +15,7 @@
 #define OGONEK_NORMALIZE_HPP
 
 #include <ogonek/sequence/properties.h++>
+#include <ogonek/normalization/nfd.h++>
 #include <ogonek/normalization/detail/normalizing_sequence.h++>
 
 #include <wheels/meta.h++>

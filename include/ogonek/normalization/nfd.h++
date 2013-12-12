@@ -37,6 +37,9 @@ namespace ogonek {
         template <typename Seq>
         struct normalize_impl<nfd, Seq> {
             using type = detail::result_of::decompose_ordered<decomposition::canonical, Seq>;
+            static type call(Seq&& s) {
+                return detail::decompose_ordered<decomposition::canonical>(std::forward<Seq>(s));
+            }
         };
     } // namespace detail
 } // namespace ogonek

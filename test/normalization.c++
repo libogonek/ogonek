@@ -16,6 +16,8 @@
 #include <ogonek/encoding/utf32.h++>
 #include <ogonek/text.h++>
 
+#include <taussig/primitives.h++>
+
 #include "utils.h++"
 #include "normalization.g.h++"
 #include <catch.hpp>
@@ -32,8 +34,10 @@ namespace {
         REQUIRE(nfc.storage() == nfc_expected);
         REQUIRE(ogonek::is_normalized<ogonek::nfc>(nfc));
         REQUIRE_FALSE(bool(!ogonek::is_normalized_quick<ogonek::nfc>(nfc)));
-        
-        test::utext nfd { ogonek::normalize<ogonek::nfd>(input) };
+
+        auto&& x = ogonek::as_unicode(input, ogonek::assume_valid);
+        static_assert(ogonek::detail::is_well_formed<decltype(x)>(), "");
+        test::utext nfd { ogonek::normalize_ex<ogonek::nfd>(x) };
         REQUIRE(nfd.storage() == nfd_expected);
         REQUIRE(ogonek::is_normalized<ogonek::nfd>(nfd));
         REQUIRE(ogonek::is_normalized_quick<ogonek::nfd>(nfd));
