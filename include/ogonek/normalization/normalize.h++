@@ -16,6 +16,7 @@
 
 #include <ogonek/sequence/properties.h++>
 #include <ogonek/normalization/nfd.h++>
+#include <ogonek/normalization/detail/decompose_ordered.h++>
 #include <ogonek/normalization/detail/normalizing_sequence.h++>
 
 #include <wheels/meta.h++>

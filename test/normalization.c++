@@ -29,25 +29,23 @@ namespace {
         test::ustring nfd_expected { test.nfd };
         test::ustring nfkc_expected { test.nfkc };
         test::ustring nfkd_expected { test.nfkd };
-        
-        test::utext nfc { ogonek::normalize<ogonek::nfc>(input) };
+
+        test::utext nfc { ogonek::normalize_ex<ogonek::nfc>(ogonek::as_unicode(input, ogonek::assume_valid)) };
         REQUIRE(nfc.storage() == nfc_expected);
         REQUIRE(ogonek::is_normalized<ogonek::nfc>(nfc));
         REQUIRE_FALSE(bool(!ogonek::is_normalized_quick<ogonek::nfc>(nfc)));
 
-        auto&& x = ogonek::as_unicode(input, ogonek::assume_valid);
-        static_assert(ogonek::detail::is_well_formed<decltype(x)>(), "");
-        test::utext nfd { ogonek::normalize_ex<ogonek::nfd>(x) };
+        test::utext nfd { ogonek::normalize_ex<ogonek::nfd>(ogonek::as_unicode(input, ogonek::assume_valid)) };
         REQUIRE(nfd.storage() == nfd_expected);
         REQUIRE(ogonek::is_normalized<ogonek::nfd>(nfd));
         REQUIRE(ogonek::is_normalized_quick<ogonek::nfd>(nfd));
         
-        test::utext nfkc { ogonek::normalize<ogonek::nfkc>(input) };
+        test::utext nfkc { ogonek::normalize_ex<ogonek::nfkc>(ogonek::as_unicode(input, ogonek::assume_valid)) };
         REQUIRE(nfkc.storage() == nfkc_expected);
         REQUIRE(ogonek::is_normalized<ogonek::nfkc>(nfkc));
         REQUIRE_FALSE(bool(!ogonek::is_normalized_quick<ogonek::nfkc>(nfkc)));
         
-        test::utext nfkd { ogonek::normalize<ogonek::nfkd>(input) };
+        test::utext nfkd { ogonek::normalize_ex<ogonek::nfkd>(ogonek::as_unicode(input, ogonek::assume_valid)) };
         REQUIRE(nfkd.storage() == nfkd_expected);
         REQUIRE(ogonek::is_normalized<ogonek::nfkd>(nfkd));
         REQUIRE(ogonek::is_normalized_quick<ogonek::nfkd>(nfkd));

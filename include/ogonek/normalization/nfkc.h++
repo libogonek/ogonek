@@ -16,6 +16,9 @@
 
 #include <ogonek/types.h++>
 #include <ogonek/character/ucd.h++>
+#include <ogonek/normalization/detail/compose.h++>
+#include <ogonek/normalization/detail/normalizing_sequence.h++>
+
 #include <ogonek/normalization/detail/composing_iterator.h++>
 
 namespace ogonek {
@@ -29,6 +32,13 @@ namespace ogonek {
         template <typename Iterator>
         struct normalizing_iterator_impl<nfkc, Iterator> {
             using type = composing_iterator<Iterator, true>;
+        };
+        template <typename Seq>
+        struct normalize_impl<nfkc, Seq> {
+            using type = detail::result_of::compose<decomposition::compatibility, Seq>;
+            static type call(Seq&& s) {
+                return detail::compose<decomposition::compatibility>(std::forward<Seq>(s));
+            }
         };
     } // namespace detail
 } // namespace ogonek

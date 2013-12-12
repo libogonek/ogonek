@@ -30,6 +30,13 @@ namespace ogonek {
         struct normalizing_iterator_impl<nfkd, Iterator> {
             using type = ordered_decomposing_iterator<Iterator, true>;
         };
+        template <typename Seq>
+        struct normalize_impl<nfkd, Seq> {
+            using type = detail::result_of::decompose_ordered<decomposition::compatibility, Seq>;
+            static type call(Seq&& s) {
+                return detail::decompose_ordered<decomposition::compatibility>(std::forward<Seq>(s));
+            }
+        };
     } // namespace detail
 } // namespace ogonek
 

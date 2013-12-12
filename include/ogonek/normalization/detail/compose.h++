@@ -18,8 +18,8 @@
 #include <ogonek/character/ucd.h++>
 #include <ogonek/normalization/detail/decompose_ordered.h++>
 
-#include <taussig/meta/enable_if.h++>
-#include <taussig/meta/is_related.h++>
+#include <wheels/meta/enable_if.h++>
+#include <wheels/meta/is_related.h++>
 
 #include <utility> // forward
 
@@ -39,7 +39,7 @@ namespace ogonek {
                     for(auto r = std::next(l); r != v.end();) {
                         if(!is_blocked(*r, last_ccc) && ucd::can_compose(*l, *r)) {
                             *l = ucd::compose(*l, *r);
-                            r = sequence.erase(r);
+                            r = v.erase(r);
                         } else {
                             last_ccc = ucd::get_combining_class(*r);
                             ++r;
@@ -52,7 +52,7 @@ namespace ogonek {
 
         namespace result_of {
             template <decomposition D, typename Seq>
-            using compose = seq::result_of::flat_map<composer, grouped_marks<D, Seq>>>;
+            using compose = seq::result_of::flat_map<composer, grouped_marks<D, Seq>>;
         } // namespace result_of
 
         template <decomposition D, typename Seq>
