@@ -1,3 +1,6 @@
 [submodule "tools/vallus"]
 	path = tools/vallus
 	url = https://github.com/rmartinho/vallus
+[submodule "data"]
+	path = data
+	url = https://github.com/rmartinho/unicode-data.git
