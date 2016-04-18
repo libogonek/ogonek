@@ -7,10 +7,6 @@ _site/
 # generated build script
 build.ninja
 
-# generated files
-*.g.h++
-*.g.c++
-
 # all sorts of garbage
 *~
 *.vim
