@@ -16,13 +16,9 @@
 namespace ogonek {
     using code_point = char32_t;
 
-    struct fraction {
-        long num, den;
-    };
-
-    struct trinary {
-        trinary(std::nullptr_t) {}
-        trinary(bool) {}
-    };
-}
+    namespace detail {
+        struct fraction { long num, den; };
+        struct trinary { int value; };
+    } // namespace detail
+} // namespace ogonek
 

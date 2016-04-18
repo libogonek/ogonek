@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T15:56:00.219274Z
+// This file was automatically generated on 2016-04-18T17:07:59.772860Z
 
 // Unicode character database - NFC_Quick_Check property
 
@@ -28,7 +28,7 @@ namespace ogonek {
 
             struct nfc_quick_check_properties {
                 code_point start;
-                trinary value;
+                detail::trinary value;
             };
 
             extern OGONEK_PUBLIC nfc_quick_check_properties const* nfc_quick_check_data;
