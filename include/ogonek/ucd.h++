@@ -113,9 +113,13 @@ namespace ogonek {
             }
         } // namespace detail
 
-        inline version get_age(code_point u) {
-            return detail::find_property_group(age_data, age_data_size, u).value;
-        }
+#define OGONEK_UCD_GETTER(type, name) \
+        inline type get_##name(code_point u) {\
+            return detail::find_property_group(name##_data, name##_data_size, u).value;\
+        }\
+        static_assert(true, "")
+
+        OGONEK_UCD_GETTER(version, age);
         inline detail::ascii_text get_name(code_point u) {
             auto value = detail::find_property_group(name_data, name_data_size, u).value;
             if(value[0] != '<') return detail::ascii_text(value);
@@ -133,6 +137,8 @@ namespace ogonek {
             }
             return detail::ascii_text();
         }
+        OGONEK_UCD_GETTER(block, block);
+#undef OGONEK_UCD_GETTER
     } // namespace ucd
 } // namespace ogonek
 

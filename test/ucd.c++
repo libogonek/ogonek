@@ -54,5 +54,12 @@ TEST_CASE("query", "UCD property queries") {
             CHECK(ucd::get_name(U'\xD7A3').storage() == u8"HANGUL SYLLABLE HIH");
         }
     }
+    SECTION("block", "Querying block") {
+        CHECK(ucd::get_block(U'\x0041') == ucd::block::ascii);
+        CHECK(ucd::get_block(U'\x00C5') == ucd::block::latin_1_sup);
+        CHECK(ucd::get_block(U'\x1EA0') == ucd::block::latin_ext_additional);
+        CHECK(ucd::get_block(U'\x1F4A9') == ucd::block::misc_pictographs);
+        CHECK(ucd::get_block(U'\x0860') == ucd::block::no_block);
+    }
 }
 
