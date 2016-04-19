@@ -17,6 +17,12 @@
 
 TEST_CASE("query", "UCD property queries") {
     namespace ucd = ogonek::ucd;
+    SECTION("age", "Querying age") {
+        CHECK(ucd::get_age(U'\x0041') == ucd::version::v1_1);
+        CHECK(ucd::get_age(U'\x00C5') == ucd::version::v1_1);
+        CHECK(ucd::get_age(U'\x1EA0') == ucd::version::v1_1);
+        CHECK(ucd::get_age(U'\x1F4A9') == ucd::version::v6_0);
+    }
     SECTION("name", "Querying name") {
         SECTION("explicit", "some characters have explicit names") {
             CHECK(ucd::get_name(U'\x0041').storage() == u8"LATIN CAPITAL LETTER A");

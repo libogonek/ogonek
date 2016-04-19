@@ -88,6 +88,9 @@ namespace ogonek {
             }
         } // namespace detail
 
+        inline version get_age(code_point u) {
+            return detail::find_property_group(age_data, age_data_size, u).value;
+        }
         inline hangul_syllable_type get_hangul_syllable_type(code_point u) {
             return detail::find_property_group(hangul_syllable_type_data, hangul_syllable_type_data_size, u).value;
         }
