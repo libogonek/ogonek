@@ -19,9 +19,10 @@ import transforms.ucd
 v = vallus.Vallus()
 v.depend_include('catch')
 
-v.test_runner()
 v.documentation()
 v.static_library('lib', 'ogonek_data')
+v.library('ogonek_data')
+v.test_runner()
 
 def gen_ucd(tools, ninja):
     abi = 'abiv0' #TODO ABI name
@@ -39,7 +40,6 @@ def gen_ucd(tools, ninja):
             inputs = inputs,
             variables = {'abi': abi, 'ucd_dir': ucd_dir, 'inc_dir': inc_dir, 'src_dir': src_dir},
             implicit = ucd_script)
-
 
 v.bootstrap(default = 'lib', custom = gen_ucd)
 
