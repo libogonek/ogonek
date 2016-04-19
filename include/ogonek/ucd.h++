@@ -16,11 +16,10 @@
 
 #include <ogonek/ucd/ucd_all.g.h++>
 
-#include <ogonek/encoding/ascii.h++>
-#include <ogonek/text.h++>
 #include <ogonek/types.h++>
 
 #include <boost/logic/tribool.hpp>
+#include <boost/optional.hpp>
 #include <boost/rational.hpp>
 
 #include <algorithm>
@@ -44,8 +43,9 @@ namespace ogonek {
                         return t.value;
                 }
             }
-            inline boost::rational<long> to_rational(ogonek::detail::fraction f) {
-                return boost::rational<long>(f.num, f.den);
+            inline boost::optional<boost::rational<long>> to_rational(ogonek::detail::fraction f) {
+                if(f.den == 0) return boost::none;
+                else return boost::rational<long>(f.num, f.den);
             }
 
             template <typename It>
@@ -62,8 +62,6 @@ namespace ogonek {
             T const& find_property_group(T const* first, std::size_t size, code_point u) {
                 return *std::upper_bound(make_reverse(first + size), make_reverse(first), u, property_group_comparer{});
             }
-
-            using ascii_text = text<ascii, std::string>;
 
             inline void add_hex(code_point u, std::string& s) {
                 char const hex[] = "0123456789ABCDEF";
@@ -113,16 +111,32 @@ namespace ogonek {
             }
         } // namespace detail
 
-#define OGONEK_UCD_GETTER(type, name) \
-        inline type get_##name(code_point u) {\
+#define OGONEK_UCD_QUERY(type, name, query) \
+        inline type query(code_point u) {\
             return detail::find_property_group(name##_data, name##_data_size, u).value;\
+        }\
+        static_assert(true, "")
+#define OGONEK_UCD_GETTER(type, name) OGONEK_UCD_QUERY(type, name, get_##name)
+#define OGONEK_UCD_TESTER(name) OGONEK_UCD_QUERY(bool, name, is_##name)
+#define OGONEK_UCD_TESTER3(name) \
+        inline boost::tribool get_##name(code_point u) {\
+            auto value = detail::find_property_group(name##_data, name##_data_size, u).value;\
+            return detail::to_tribool(value);\
+        }\
+        static_assert(true, "")
+#define OGONEK_UCD_CODE_POINT_GETTER(name) \
+        inline code_point get_##name(code_point u) {\
+            auto value = detail::find_property_group(name##_data, name##_data_size, u).value;\
+            if(value == code_point(-1)) return u;\
+            else return value;\
         }\
         static_assert(true, "")
 
         OGONEK_UCD_GETTER(version, age);
-        inline detail::ascii_text get_name(code_point u) {
+
+        inline std::string get_name(code_point u) {
             auto value = detail::find_property_group(name_data, name_data_size, u).value;
-            if(value[0] != '<') return detail::ascii_text(value);
+            if(value[0] != '<') return value;
 
             if(std::strcmp(value, "<CJK Ideograph>") == 0
             || std::strcmp(value, "<CJK Ideograph Extension A>") == 0
@@ -130,15 +144,140 @@ namespace ogonek {
             || std::strcmp(value, "<CJK Ideograph Extension C>") == 0
             || std::strcmp(value, "<CJK Ideograph Extension D>") == 0
             || std::strcmp(value, "<CJK Ideograph Extension E>") == 0) {
-                return detail::ascii_text(detail::make_ideograph_name(u, "CJK UNIFIED IDEOGRAPH-"));
+                return detail::make_ideograph_name(u, "CJK UNIFIED IDEOGRAPH-");
             }
             if(std::strcmp(value, "<Hangul Syllable>") == 0) {
-                return detail::ascii_text(detail::make_hangul_syllable_name(u, "HANGUL SYLLABLE "));
+                return detail::make_hangul_syllable_name(u, "HANGUL SYLLABLE ");
             }
-            return detail::ascii_text();
+            return {};
         }
+
         OGONEK_UCD_GETTER(block, block);
+        OGONEK_UCD_GETTER(general_category, general_category);
+        OGONEK_UCD_GETTER(combining_class, canonical_combining_class);
+        OGONEK_UCD_GETTER(bidi_class, bidi_class);
+        OGONEK_UCD_TESTER(bidi_mirrored);
+        OGONEK_UCD_CODE_POINT_GETTER(bidi_mirroring_glyph);
+        OGONEK_UCD_TESTER(bidi_control);
+        OGONEK_UCD_CODE_POINT_GETTER(bidi_paired_bracket);
+        OGONEK_UCD_GETTER(bracket_type, bidi_paired_bracket_type);
+        OGONEK_UCD_GETTER(decomposition_type, decomposition_type);
+
+        inline std::u32string get_decomposition_mapping(code_point u) {
+            auto value = detail::find_property_group(decomposition_mapping_data, decomposition_mapping_data_size, u).value;
+            if(value) return value;
+            else return std::u32string(1, u);
+        }
+
+        OGONEK_UCD_QUERY(bool, full_composition_exclusion, is_excluded_from_composition);
+        OGONEK_UCD_TESTER3(nfc_quick_check);
+        OGONEK_UCD_GETTER(bool, nfd_quick_check);
+        OGONEK_UCD_TESTER3(nfkc_quick_check);
+        OGONEK_UCD_GETTER(bool, nfkd_quick_check);
+        OGONEK_UCD_GETTER(numeric_type, numeric_type);
+
+        inline boost::optional<boost::rational<long>> get_numeric_value(code_point u) {
+            auto value = detail::find_property_group(numeric_value_data, numeric_value_data_size, u).value;
+            return detail::to_rational(value);
+        }
+
+        OGONEK_UCD_GETTER(joining_type, joining_type);
+        OGONEK_UCD_GETTER(joining_group, joining_group);
+        OGONEK_UCD_TESTER(join_control);
+        OGONEK_UCD_GETTER(line_break, line_break);
+        OGONEK_UCD_GETTER(east_asian_width, east_asian_width);
+        OGONEK_UCD_TESTER(uppercase);
+        OGONEK_UCD_TESTER(lowercase);
+        OGONEK_UCD_CODE_POINT_GETTER(simple_uppercase_mapping);
+        OGONEK_UCD_CODE_POINT_GETTER(simple_lowercase_mapping);
+        OGONEK_UCD_CODE_POINT_GETTER(simple_titlecase_mapping);
+
+        inline std::u32string get_uppercase_mapping(code_point u) {
+            auto value = detail::find_property_group(uppercase_mapping_data, uppercase_mapping_data_size, u).value;
+            if(value) return value;
+            else return std::u32string(1, get_simple_uppercase_mapping(u));
+        }
+        inline std::u32string get_lowercase_mapping(code_point u) {
+            auto value = detail::find_property_group(lowercase_mapping_data, lowercase_mapping_data_size, u).value;
+            if(value) return value;
+            else return std::u32string(1, get_simple_lowercase_mapping(u));
+        }
+        inline std::u32string get_titlecase_mapping(code_point u) {
+            auto value = detail::find_property_group(titlecase_mapping_data, titlecase_mapping_data_size, u).value;
+            if(value) return value;
+            else return std::u32string(1, get_simple_titlecase_mapping(u));
+        }
+
+        OGONEK_UCD_CODE_POINT_GETTER(simple_case_folding);
+
+        inline std::u32string get_case_folding(code_point u) {
+            auto value = detail::find_property_group(case_folding_data, case_folding_data_size, u).value;
+            if(value) return value;
+            else return std::u32string(1, get_simple_case_folding(u));
+        }
+
+        OGONEK_UCD_TESTER(case_ignorable);
+        OGONEK_UCD_TESTER(cased);
+        OGONEK_UCD_QUERY(bool, changes_when_lowercased, changes_when_lowercased);
+        OGONEK_UCD_QUERY(bool, changes_when_uppercased, changes_when_uppercased);
+        OGONEK_UCD_QUERY(bool, changes_when_titlecased, changes_when_titlecased);
+        OGONEK_UCD_QUERY(bool, changes_when_casefolded, changes_when_casefolded);
+        OGONEK_UCD_QUERY(bool, changes_when_casemapped, changes_when_casemapped);
+        OGONEK_UCD_QUERY(bool, changes_when_nfkc_casefolded, changes_when_nfkc_casefolded);
+
+        inline std::u32string get_nfkc_casefold(code_point u) {
+            auto value = detail::find_property_group(nfkc_casefold_data, nfkc_casefold_data_size, u).value;
+            if(value) return value;
+            else return std::u32string(1, u);
+        }
+
+        OGONEK_UCD_GETTER(script, script);
+        OGONEK_UCD_GETTER(hangul_syllable_type, hangul_syllable_type);
+
+        inline std::string get_jamo_short_name(code_point u) { return detail::get_jamo_short_name(u); }
+
+        OGONEK_UCD_GETTER(indic_positional_category, indic_positional_category);
+        OGONEK_UCD_GETTER(indic_syllabic_category, indic_syllabic_category);
+
+        OGONEK_UCD_TESTER(id_start);
+        OGONEK_UCD_TESTER(id_continue);
+        OGONEK_UCD_TESTER(xid_start);
+        OGONEK_UCD_TESTER(xid_continue);
+        OGONEK_UCD_TESTER(pattern_syntax);
+        OGONEK_UCD_TESTER(pattern_white_space);
+        OGONEK_UCD_TESTER(dash);
+        OGONEK_UCD_TESTER(quotation_mark);
+        OGONEK_UCD_TESTER(terminal_punctuation);
+        OGONEK_UCD_TESTER(sterm);
+        OGONEK_UCD_TESTER(diacritic);
+        OGONEK_UCD_TESTER(extender);
+        OGONEK_UCD_TESTER(soft_dotted);
+        OGONEK_UCD_TESTER(hex_digit);
+        OGONEK_UCD_TESTER(ascii_hex_digit);
+        OGONEK_UCD_TESTER(logical_order_exception);
+        OGONEK_UCD_TESTER(white_space);
+        OGONEK_UCD_TESTER(variation_selector);
+        OGONEK_UCD_TESTER(alphabetic);
+        OGONEK_UCD_TESTER(math);
+        OGONEK_UCD_TESTER(default_ignorable_code_point);
+        OGONEK_UCD_TESTER(grapheme_base);
+        OGONEK_UCD_TESTER(grapheme_extend);
+        OGONEK_UCD_GETTER(grapheme_cluster_break, grapheme_cluster_break);
+        OGONEK_UCD_GETTER(word_break, word_break);
+        OGONEK_UCD_GETTER(sentence_break, sentence_break);
+        OGONEK_UCD_TESTER(ideographic);
+        OGONEK_UCD_TESTER(unified_ideograph);
+        OGONEK_UCD_TESTER(ids_binary_operator);
+        OGONEK_UCD_TESTER(ids_trinary_operator);
+        OGONEK_UCD_TESTER(radical);
+        OGONEK_UCD_TESTER(deprecated);
+        OGONEK_UCD_TESTER(noncharacter_code_point);
+
+#undef OGONEK_UCD_CODE_POINT_GETTER
+#undef OGONEK_UCD_TESTER3
+#undef OGONEK_UCD_TESTER
 #undef OGONEK_UCD_GETTER
+#undef OGONEK_UCD_QUERY
     } // namespace ucd
 } // namespace ogonek
 
