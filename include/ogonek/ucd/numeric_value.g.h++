@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T15:56:00.338018Z
+// This file was automatically generated on 2016-04-18T17:07:59.892960Z
 
 // Unicode character database - Numeric_Value property
 
@@ -28,7 +28,7 @@ namespace ogonek {
 
             struct numeric_value_properties {
                 code_point start;
-                fraction value;
+                detail::fraction value;
             };
 
             extern OGONEK_PUBLIC numeric_value_properties const* numeric_value_data;

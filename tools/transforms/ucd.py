@@ -165,11 +165,11 @@ class Types:
         def cpp(self, value):
             canon = self.canonical(value)
             if canon == 'Y':
-                return 'true'
+                return '{ 1 }'
             elif canon == 'N':
-                return 'false'
+                return '{ 0 }'
             else:
-                return 'nullptr'
+                return '{ -1 }'
 
         def py(self, value):
             canon = self.canonical(value)
@@ -1017,12 +1017,12 @@ output_defs = {
     'decomposition_mapping':        lambda: gen_builtin('Decomposition_Mapping',        'code_point const*'),
     'decomposition_type':           lambda: gen_enum(   'Decomposition_Type',           decomposition_type_type),
     'full_composition_exclusion':   lambda: gen_builtin('Full_Composition_Exclusion',   'bool'),
-    'nfc_quick_check':              lambda: gen_builtin('NFC_Quick_Check',              'trinary'),
+    'nfc_quick_check':              lambda: gen_builtin('NFC_Quick_Check',              'detail::trinary'),
     'nfd_quick_check':              lambda: gen_builtin('NFD_Quick_Check',              'bool'),
-    'nfkc_quick_check':             lambda: gen_builtin('NFKC_Quick_Check',             'trinary'),
+    'nfkc_quick_check':             lambda: gen_builtin('NFKC_Quick_Check',             'detail::trinary'),
     'nfkd_quick_check':             lambda: gen_builtin('NFKD_Quick_Check',             'bool'),
     'numeric_type':                 lambda: gen_enum(   'Numeric_Type',                 numeric_type_type),
-    'numeric_value':                lambda: gen_builtin('Numeric_Value',                'fraction'),
+    'numeric_value':                lambda: gen_builtin('Numeric_Value',                'detail::fraction'),
     'joining_type':                 lambda: gen_enum(   'Joining_Type',                 joining_type_type),
     'joining_group':                lambda: gen_enum(   'Joining_Group',                joining_group_type),
     'join_control':                 lambda: gen_builtin('Join_Control',                 'bool'),
