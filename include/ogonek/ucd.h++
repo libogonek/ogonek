@@ -86,27 +86,8 @@ namespace ogonek {
             inline char const* get_jamo_short_name(code_point u) {
                 return detail::find_property_group(jamo_short_name_data, jamo_short_name_data_size, u).value;
             }
-        } // namespace detail
-
-        inline version get_age(code_point u) {
-            return detail::find_property_group(age_data, age_data_size, u).value;
-        }
-        inline hangul_syllable_type get_hangul_syllable_type(code_point u) {
-            return detail::find_property_group(hangul_syllable_type_data, hangul_syllable_type_data_size, u).value;
-        }
-        inline detail::ascii_text get_name(code_point u) {
-            auto value = detail::find_property_group(name_data, name_data_size, u).value;
-            if(value[0] != '<') return detail::ascii_text(value);
-
-            if(std::strcmp(value, "<CJK Ideograph>") == 0
-            || std::strcmp(value, "<CJK Ideograph Extension A>") == 0
-            || std::strcmp(value, "<CJK Ideograph Extension B>") == 0
-            || std::strcmp(value, "<CJK Ideograph Extension C>") == 0
-            || std::strcmp(value, "<CJK Ideograph Extension D>") == 0
-            || std::strcmp(value, "<CJK Ideograph Extension E>") == 0) {
-                return detail::ascii_text(detail::make_ideograph_name(u, "CJK UNIFIED IDEOGRAPH-"));
-            }
-            if(std::strcmp(value, "<Hangul Syllable>") == 0) {
+            template <std::size_t N>
+            std::string make_hangul_syllable_name(code_point u, char const (&base)[N]) {
                 const int sbase = 0xAC00;
                 const int lbase = 0x1100;
                 const int vbase = 0x1161;
@@ -122,14 +103,33 @@ namespace ogonek {
                 auto vpart = vbase + vindex;
                 auto tpart = tbase + tindex;
 
-                char const base[] = "HANGUL SYLLABLE ";
                 std::string result;
-                result.reserve(sizeof(base) + 9);
+                result.reserve(N + 9);
                 result += base;
                 result += detail::get_jamo_short_name(lpart);
                 result += detail::get_jamo_short_name(vpart);
                 if(tindex > 0) result += detail::get_jamo_short_name(tpart);
-                return detail::ascii_text(result);
+                return result;
+            }
+        } // namespace detail
+
+        inline version get_age(code_point u) {
+            return detail::find_property_group(age_data, age_data_size, u).value;
+        }
+        inline detail::ascii_text get_name(code_point u) {
+            auto value = detail::find_property_group(name_data, name_data_size, u).value;
+            if(value[0] != '<') return detail::ascii_text(value);
+
+            if(std::strcmp(value, "<CJK Ideograph>") == 0
+            || std::strcmp(value, "<CJK Ideograph Extension A>") == 0
+            || std::strcmp(value, "<CJK Ideograph Extension B>") == 0
+            || std::strcmp(value, "<CJK Ideograph Extension C>") == 0
+            || std::strcmp(value, "<CJK Ideograph Extension D>") == 0
+            || std::strcmp(value, "<CJK Ideograph Extension E>") == 0) {
+                return detail::ascii_text(detail::make_ideograph_name(u, "CJK UNIFIED IDEOGRAPH-"));
+            }
+            if(std::strcmp(value, "<Hangul Syllable>") == 0) {
+                return detail::ascii_text(detail::make_hangul_syllable_name(u, "HANGUL SYLLABLE "));
             }
             return detail::ascii_text();
         }
