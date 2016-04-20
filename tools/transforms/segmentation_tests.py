@@ -82,12 +82,12 @@ headertmpl = string.Template('''
 #ifndef OGONEK_TEST_SEGMENTATION_HPP
 #define OGONEK_TEST_SEGMENTATION_HPP
 
-#include "utils.h++"
+#include <string>
 #include <vector>
 
 namespace test {
     struct break_test {
-        test::ustring input;
+        std::u32string input;
         std::vector<int> breaks;
     };
 

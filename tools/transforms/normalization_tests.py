@@ -58,17 +58,15 @@ headertmpl = string.Template('''
 #ifndef OGONEK_TEST_NORMALIZATION_HPP
 #define OGONEK_TEST_NORMALIZATION_HPP
 
-#include <ogonek/types.h++>
-
-#include "utils.h++"
+#include <string>
 
 namespace test {
     struct normalization_test {
-        ogonek::code_point const* input;
-        ogonek::code_point const* nfc;
-        ogonek::code_point const* nfd;
-        ogonek::code_point const* nfkc;
-        ogonek::code_point const* nfkd;
+        std::u32string input;
+        std::u32string nfc;
+        std::u32string nfd;
+        std::u32string nfkc;
+        std::u32string nfkd;
     };
 
     extern normalization_test normalization_test_data[${count}];
