@@ -2,7 +2,7 @@
 #
 # Ogonek
 #
-# Written in 2015 by Martinho Fernandes <rmf@rmf.io>
+# Written in 2016 by Martinho Fernandes <ogonek@rmf.io>
 #
 # To the extent possible under law, the author(s) have dedicated all copyright and related
 # and neighboring rights to this software to the public domain worldwide. This software is
@@ -40,7 +40,7 @@ def parsetests(lines):
 
 copyrighttmpl = string.Template('''// Ogonek
 //
-// Written in 2015 by Martinho Fernandes <martinho.fernandes@gmail.com>
+// Written in 2016 by Martinho Fernandes <ogonek@rmf.io>
 //
 // To the extent possible under law, the author(s) have dedicated all copyright and related
 // and neighboring rights to this software to the public domain worldwide. This software is
@@ -60,7 +60,7 @@ headertmpl = string.Template('''
 
 #include <ogonek/types.h++>
 
-#include ""utils.h++""
+#include "utils.h++"
 
 namespace test {
     struct normalization_test {
@@ -78,7 +78,7 @@ namespace test {
 ''')
 
 impltmpl = string.Template('''
-#include ""normalization.g.h++""
+#include "normalization.g.h++"
 
 namespace test {
     normalization_test normalization_test_data[] = {

@@ -837,7 +837,7 @@ def coalesce_props(props, defaults):
         props[p] = list(coalesce_prop(props[p], compute_default(p)))
 
 def write_file_header(f, description):
-    template = string.Template("""// Ogonek
+    template = string.Template('''// Ogonek
 //
 // Written in 2016 by Martinho Fernandes <ogonek@rmf.io>
 //
@@ -851,13 +851,13 @@ def write_file_header(f, description):
 // This file was automatically generated on ${date}
 
 // Unicode character database - ${description}
-""")
+''')
     text = template.substitute(date        = datetime.utcnow().isoformat()+'Z',
                                description = description)
     f.write(text)
 
 def write_header_file(f, name, abi, file_info):
-    template = string.Template("""
+    template = string.Template('''
 #ifndef OGONEK_UCD_${all_caps_name}_HPP
 #define OGONEK_UCD_${all_caps_name}_HPP
 
@@ -883,7 +883,7 @@ namespace ogonek {
 } // namespace ogonek
 
 #endif // OGONEK_UCD_${all_caps_name}_HPP
-""")
+''')
     write_file_header(f, file_info['description'])
     text = template.substitute(all_caps_name = name.upper(),
                                cpp_name = name,
@@ -892,7 +892,7 @@ namespace ogonek {
     f.write(text)
 
 def write_impl_file(f, name, abi, file_info):
-    template = string.Template("""
+    template = string.Template('''
 #include <ogonek/ucd/${cpp_name}.g.h++>
 #include <ogonek/detail/size.h++>
 
@@ -911,7 +911,7 @@ namespace ogonek {
         } // namespace ${abi}
     } // namespace ucd
 } // namespace ogonek
-""")
+''')
     write_file_header(f, file_info['description'])
     text = template.substitute(cpp_name = name,
                                abi = abi,
@@ -971,9 +971,9 @@ def enum_def(type):
     num_canons = len(type.canonicals())
     underlying = '' if num_flags == 0 else ' : unsigned long long'
     enumerators = indent(e + f + a)
-    type_def = indent("""enum{3} {0}{2} {{
+    type_def = indent('''enum{3} {0}{2} {{
     {1}
-}};""".format(type.typename, enumerators, underlying, ' class' if num_canons else ''), 3)
+}};'''.format(type.typename, enumerators, underlying, ' class' if num_canons else ''), 3)
     return type_def
 
 def type_field(type):
@@ -1114,14 +1114,14 @@ def generate_all(inc_dir, src_dir, abi, file_defs):
                 write_impl_file(file, f, abi, file_defs[f]())
 
 def write_master_header(f, abi, file_defs):
-    template = string.Template("""
+    template = string.Template('''
 #ifndef OGONEK_UCD_ALL_HPP
 #define OGONEK_UCD_ALL_HPP
 
 ${headers}
 
 #endif // OGONEK_UCD_ALL_HPP
-""")
+''')
     write_file_header(f, 'all UCD headers')
     headers = '\n'.join('#include <ogonek/ucd/{0}.g.h++>'.format(f) for f in file_defs)
     text = template.substitute(headers=headers)
