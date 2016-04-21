@@ -1,8 +1,9 @@
 #! /usr/bin/python
+# -*- coding: utf-8 -*-#
 #
 # Ogonek
 #
-# Written in 2015 by Martinho Fernandes <rmf@rmf.io>
+# Written in 2016 by Martinho Fernandes <ogonek@rmf.io>
 #
 # To the extent possible under law, the author(s) have dedicated all copyright and related
 # and neighboring rights to this software to the public domain worldwide. This software is
@@ -18,6 +19,7 @@ import os
 import re
 import string
 import os
+import io
 from datetime import datetime
 
 if len(sys.argv) != 3:
@@ -37,20 +39,20 @@ def parsestring(line):
             if t != '':
                 yield '\\x' + t
 
-    escapes = ''.join(''.join(makeescapes(re.split('×|÷', line))))
+    escapes = ''.join(''.join(makeescapes(re.split(u'×|÷', line))))
     return 'U"' + escapes + '"'
 
 def parsebreaks(line):
     def fn(l):
-        for i, c in enumerate(c for c in l if c == '×' or c == '÷'):
-            if c == '÷':
+        for i, c in enumerate(c for c in l if c == u'×' or c == u'÷'):
+            if c == u'÷':
                 yield i
 
     return list(fn(line))[1:]
 
 copyrighttmpl = string.Template('''// Ogonek
 //
-// Written in 2015 by Martinho Fernandes <martinho.fernandes@gmail.com>
+// Written in 2016 by Martinho Fernandes <ogonek@rmf.io>
 //
 // To the extent possible under law, the author(s) have dedicated all copyright and related
 // and neighboring rights to this software to the public domain worldwide. This software is
@@ -80,12 +82,12 @@ headertmpl = string.Template('''
 #ifndef OGONEK_TEST_SEGMENTATION_HPP
 #define OGONEK_TEST_SEGMENTATION_HPP
 
-#include "utils.h++"
+#include <string>
 #include <vector>
 
 namespace test {
     struct break_test {
-        test::ustring input;
+        std::u32string input;
         std::vector<int> breaks;
     };
 
@@ -107,13 +109,13 @@ def writedata(file, kind, description, tests):
     entries = '\n        '.join('{{ {0}, {{ {1} }} }},'.format(*t) for t in zip(strings, breakstrings))
     file.write(impltmpl.substitute(kind=kind, description=description, entries=entries))
 
-with open(os.path.join(ucd, 'auxiliary/GraphemeBreakTest.txt'), 'r') as graphemefile:
+with io.open(os.path.join(ucd, 'auxiliary/GraphemeBreakTest.txt'), 'r', encoding='utf-8') as graphemefile:
     graphemes = list(filtertests(graphemefile.readlines()))
-with open(os.path.join(ucd, 'auxiliary/GraphemeBreakTest.txt'), 'r') as wordfile:
+with io.open(os.path.join(ucd, 'auxiliary/WordBreakTest.txt'), 'r', encoding='utf-8') as wordfile:
     words = list(filtertests(wordfile.readlines()))
-with open(os.path.join(ucd, 'auxiliary/GraphemeBreakTest.txt'), 'r') as sentencefile:
+with io.open(os.path.join(ucd, 'auxiliary/SentenceBreakTest.txt'), 'r', encoding='utf-8') as sentencefile:
     sentences = list(filtertests(sentencefile.readlines()))
-with open(os.path.join(ucd, 'auxiliary/GraphemeBreakTest.txt'), 'r') as linefile:
+with io.open(os.path.join(ucd, 'auxiliary/LineBreakTest.txt'), 'r', encoding='utf-8') as linefile:
     lines = list(filtertests(linefile.readlines()))
 
 with open(os.path.join(output, 'segmentation.g.h++'), 'w') as headerfile:

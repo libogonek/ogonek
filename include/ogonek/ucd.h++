@@ -238,7 +238,6 @@ namespace ogonek {
 
         OGONEK_UCD_GETTER(indic_positional_category, indic_positional_category);
         OGONEK_UCD_GETTER(indic_syllabic_category, indic_syllabic_category);
-
         OGONEK_UCD_TESTER(id_start);
         OGONEK_UCD_TESTER(id_continue);
         OGONEK_UCD_TESTER(xid_start);
