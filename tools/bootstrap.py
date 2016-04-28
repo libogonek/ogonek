@@ -18,6 +18,7 @@ import transforms.ucd
 
 v = vallus.Vallus()
 v.depend_include('catch')
+v.depend_include('range-v3')
 
 v.documentation()
 v.static_library('lib', 'ogonek_data')

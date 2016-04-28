@@ -20,8 +20,8 @@ namespace ogonek {
     namespace detail {
         template <typename T, std::size_t N>
         constexpr std::size_t size(T(&)[N]) { return N; }
-    }
-}
+    } // namespace detail
+} // namespace ogonek
 
 #endif // OGONEK_DETAIL_SIZE_HPP
 
