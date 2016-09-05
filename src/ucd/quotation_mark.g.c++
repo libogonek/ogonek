@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.911214Z
+// This file was automatically generated on 2016-09-05T11:29:13.999815Z
 
 // Unicode character database - Quotation_Mark property
 
@@ -51,7 +51,7 @@ namespace ogonek {
                 { 0xFF64, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             quotation_mark_properties const* quotation_mark_data = quotation_mark_data_raw;
             std::size_t quotation_mark_data_size = detail::size(quotation_mark_data_raw);
         } // namespace abiv0

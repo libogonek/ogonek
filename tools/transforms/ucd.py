@@ -905,7 +905,7 @@ namespace ogonek {
                 ${entries}
             };
         } // namespace
-        namespace ${abi} {
+        inline namespace ${abi} {
             ${cpp_name}_properties const* ${cpp_name}_data = ${cpp_name}_data_raw;
             std::size_t ${cpp_name}_data_size = detail::size(${cpp_name}_data_raw);
         } // namespace ${abi}

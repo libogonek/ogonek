@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:08:00.150345Z
+// This file was automatically generated on 2016-09-05T11:29:14.301464Z
 
 // Unicode character database - White_Space property
 
@@ -45,7 +45,7 @@ namespace ogonek {
                 { 0x3001, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             white_space_properties const* white_space_data = white_space_data_raw;
             std::size_t white_space_data_size = detail::size(white_space_data_raw);
         } // namespace abiv0

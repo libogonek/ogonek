@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:58.902383Z
+// This file was automatically generated on 2016-09-05T11:29:12.871581Z
 
 // Unicode character database - Block property
 
@@ -25,6 +25,7 @@ namespace ogonek {
     namespace ucd {
         inline namespace abiv0 {
             enum class block {
+                adlam,
                 aegean_numbers,
                 ahom,
                 alchemical,
@@ -49,6 +50,7 @@ namespace ogonek {
                 bassa_vah,
                 batak,
                 bengali,
+                bhaiksuki,
                 block_elements,
                 bopomofo,
                 bopomofo_ext,
@@ -89,6 +91,7 @@ namespace ogonek {
                 cyrillic,
                 cyrillic_ext_a,
                 cyrillic_ext_b,
+                cyrillic_ext_c,
                 cyrillic_sup,
                 deseret,
                 devanagari,
@@ -117,6 +120,7 @@ namespace ogonek {
                 georgian,
                 georgian_sup,
                 glagolitic,
+                glagolitic_sup,
                 gothic,
                 grantha,
                 greek,
@@ -133,6 +137,7 @@ namespace ogonek {
                 high_surrogates,
                 hiragana,
                 idc,
+                ideographic_symbols,
                 imperial_aramaic,
                 indic_number_forms,
                 inscriptional_pahlavi,
@@ -178,6 +183,7 @@ namespace ogonek {
                 malayalam,
                 mandaic,
                 manichaean,
+                marchen,
                 math_alphanum,
                 math_operators,
                 meetei_mayek,
@@ -196,6 +202,7 @@ namespace ogonek {
                 modifier_letters,
                 modifier_tone_letters,
                 mongolian,
+                mongolian_sup,
                 mro,
                 multani,
                 music,
@@ -205,6 +212,7 @@ namespace ogonek {
                 nabataean,
                 nb,
                 new_tai_lue,
+                newa,
                 nko,
                 number_forms,
                 ocr,
@@ -219,6 +227,7 @@ namespace ogonek {
                 old_turkic,
                 oriya,
                 ornamental_dingbats,
+                osage,
                 osmanya,
                 pahawh_hmong,
                 palmyrene,
@@ -269,6 +278,8 @@ namespace ogonek {
                 tai_xuan_jing,
                 takri,
                 tamil,
+                tangut,
+                tangut_components,
                 telugu,
                 thaana,
                 thai,
@@ -319,6 +330,7 @@ namespace ogonek {
                 cuneiform_numbers_and_punctuation = cuneiform_numbers,
                 cyrillic_extended_a = cyrillic_ext_a,
                 cyrillic_extended_b = cyrillic_ext_b,
+                cyrillic_extended_c = cyrillic_ext_c,
                 cyrillic_supplement = cyrillic_sup,
                 cyrillic_supplementary = cyrillic_sup,
                 devanagari_extended = devanagari_ext,
@@ -337,6 +349,7 @@ namespace ogonek {
                 ethiopic_supplement = ethiopic_sup,
                 geometric_shapes_extended = geometric_shapes_ext,
                 georgian_supplement = georgian_sup,
+                glagolitic_supplement = glagolitic_sup,
                 greek_and_coptic = greek,
                 greek_extended = greek_ext,
                 halfwidth_and_fullwidth_forms = half_and_full_forms,
@@ -344,6 +357,7 @@ namespace ogonek {
                 hangul_syllables = hangul,
                 high_private_use_surrogates = high_pu_surrogates,
                 ideographic_description_characters = idc,
+                ideographic_symbols_and_punctuation = ideographic_symbols,
                 common_indic_number_forms = indic_number_forms,
                 ipa_extensions = ipa_ext,
                 hangul_jamo = jamo,
@@ -371,6 +385,7 @@ namespace ogonek {
                 miscellaneous_symbols = misc_symbols,
                 miscellaneous_technical = misc_technical,
                 spacing_modifier_letters = modifier_letters,
+                mongolian_supplement = mongolian_sup,
                 musical_symbols = music,
                 myanmar_extended_a = myanmar_ext_a,
                 myanmar_extended_b = myanmar_ext_b,

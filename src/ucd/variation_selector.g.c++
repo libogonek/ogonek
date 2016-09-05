@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:08:00.149785Z
+// This file was automatically generated on 2016-09-05T11:29:14.300575Z
 
 // Unicode character database - Variation_Selector property
 
@@ -31,7 +31,7 @@ namespace ogonek {
                 { 0xE01F0, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             variation_selector_properties const* variation_selector_data = variation_selector_data_raw;
             std::size_t variation_selector_data_size = detail::size(variation_selector_data_raw);
         } // namespace abiv0

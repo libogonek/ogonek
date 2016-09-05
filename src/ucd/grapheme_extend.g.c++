@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.319724Z
+// This file was automatically generated on 2016-09-05T11:29:13.325434Z
 
 // Unicode character database - Grapheme_Extend property
 
@@ -69,6 +69,8 @@ namespace ogonek {
                 { 0x82E, false },
                 { 0x859, true },
                 { 0x85C, false },
+                { 0x8D4, true },
+                { 0x8E2, false },
                 { 0x8E3, true },
                 { 0x903, false },
                 { 0x93A, true },
@@ -277,6 +279,8 @@ namespace ogonek {
                 { 0x17DE, false },
                 { 0x180B, true },
                 { 0x180E, false },
+                { 0x1885, true },
+                { 0x1887, false },
                 { 0x18A9, true },
                 { 0x18AA, false },
                 { 0x1920, true },
@@ -353,10 +357,10 @@ namespace ogonek {
                 { 0x1CFA, false },
                 { 0x1DC0, true },
                 { 0x1DF6, false },
-                { 0x1DFC, true },
+                { 0x1DFB, true },
                 { 0x1E00, false },
                 { 0x200C, true },
-                { 0x200E, false },
+                { 0x200D, false },
                 { 0x20D0, true },
                 { 0x20F1, false },
                 { 0x2CEF, true },
@@ -386,7 +390,7 @@ namespace ogonek {
                 { 0xA825, true },
                 { 0xA827, false },
                 { 0xA8C4, true },
-                { 0xA8C5, false },
+                { 0xA8C6, false },
                 { 0xA8E0, true },
                 { 0xA8F2, false },
                 { 0xA926, true },
@@ -491,6 +495,8 @@ namespace ogonek {
                 { 0x11235, false },
                 { 0x11236, true },
                 { 0x11238, false },
+                { 0x1123E, true },
+                { 0x1123F, false },
                 { 0x112DF, true },
                 { 0x112E0, false },
                 { 0x112E3, true },
@@ -509,6 +515,12 @@ namespace ogonek {
                 { 0x1136D, false },
                 { 0x11370, true },
                 { 0x11375, false },
+                { 0x11438, true },
+                { 0x11440, false },
+                { 0x11442, true },
+                { 0x11445, false },
+                { 0x11446, true },
+                { 0x11447, false },
                 { 0x114B0, true },
                 { 0x114B1, false },
                 { 0x114B3, true },
@@ -551,6 +563,20 @@ namespace ogonek {
                 { 0x11726, false },
                 { 0x11727, true },
                 { 0x1172C, false },
+                { 0x11C30, true },
+                { 0x11C37, false },
+                { 0x11C38, true },
+                { 0x11C3E, false },
+                { 0x11C3F, true },
+                { 0x11C40, false },
+                { 0x11C92, true },
+                { 0x11CA8, false },
+                { 0x11CAA, true },
+                { 0x11CB1, false },
+                { 0x11CB2, true },
+                { 0x11CB4, false },
+                { 0x11CB5, true },
+                { 0x11CB7, false },
                 { 0x16AF0, true },
                 { 0x16AF5, false },
                 { 0x16B30, true },
@@ -585,13 +611,27 @@ namespace ogonek {
                 { 0x1DAA0, false },
                 { 0x1DAA1, true },
                 { 0x1DAB0, false },
+                { 0x1E000, true },
+                { 0x1E007, false },
+                { 0x1E008, true },
+                { 0x1E019, false },
+                { 0x1E01B, true },
+                { 0x1E022, false },
+                { 0x1E023, true },
+                { 0x1E025, false },
+                { 0x1E026, true },
+                { 0x1E02B, false },
                 { 0x1E8D0, true },
                 { 0x1E8D7, false },
+                { 0x1E944, true },
+                { 0x1E94B, false },
+                { 0xE0020, true },
+                { 0xE0080, false },
                 { 0xE0100, true },
                 { 0xE01F0, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             grapheme_extend_properties const* grapheme_extend_data = grapheme_extend_data_raw;
             std::size_t grapheme_extend_data_size = detail::size(grapheme_extend_data_raw);
         } // namespace abiv0

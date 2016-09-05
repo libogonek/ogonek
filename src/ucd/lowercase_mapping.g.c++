@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.508098Z
+// This file was automatically generated on 2016-09-05T11:29:13.538326Z
 
 // Unicode character database - Lowercase_Mapping property
 
@@ -156,7 +156,7 @@ namespace ogonek {
                 { 0xFB18, nullptr },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             lowercase_mapping_properties const* lowercase_mapping_data = lowercase_mapping_data_raw;
             std::size_t lowercase_mapping_data_size = detail::size(lowercase_mapping_data_raw);
         } // namespace abiv0

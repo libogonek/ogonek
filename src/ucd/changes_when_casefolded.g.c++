@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:58.993412Z
+// This file was automatically generated on 2016-09-05T11:29:12.966083Z
 
 // Unicode character database - Changes_When_Casefolded property
 
@@ -587,6 +587,8 @@ namespace ogonek {
                 { 0x10CE, false },
                 { 0x13F8, true },
                 { 0x13FE, false },
+                { 0x1C80, true },
+                { 0x1C89, false },
                 { 0x1E00, true },
                 { 0x1E01, false },
                 { 0x1E02, true },
@@ -1204,7 +1206,7 @@ namespace ogonek {
                 { 0xA7A8, true },
                 { 0xA7A9, false },
                 { 0xA7AA, true },
-                { 0xA7AE, false },
+                { 0xA7AF, false },
                 { 0xA7B0, true },
                 { 0xA7B5, false },
                 { 0xA7B6, true },
@@ -1219,13 +1221,17 @@ namespace ogonek {
                 { 0xFF3B, false },
                 { 0x10400, true },
                 { 0x10428, false },
+                { 0x104B0, true },
+                { 0x104D4, false },
                 { 0x10C80, true },
                 { 0x10CB3, false },
                 { 0x118A0, true },
                 { 0x118C0, false },
+                { 0x1E900, true },
+                { 0x1E922, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             changes_when_casefolded_properties const* changes_when_casefolded_data = changes_when_casefolded_data_raw;
             std::size_t changes_when_casefolded_data_size = detail::size(changes_when_casefolded_data_raw);
         } // namespace abiv0

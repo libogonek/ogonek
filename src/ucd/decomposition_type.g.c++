@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.173433Z
+// This file was automatically generated on 2016-09-05T11:29:13.156149Z
 
 // Unicode character database - Decomposition_Type property
 
@@ -1188,7 +1188,7 @@ namespace ogonek {
                 { 0x1F200, decomposition_type::sqr },
                 { 0x1F203, decomposition_type::none },
                 { 0x1F210, decomposition_type::sqr },
-                { 0x1F23B, decomposition_type::none },
+                { 0x1F23C, decomposition_type::none },
                 { 0x1F240, decomposition_type::com },
                 { 0x1F249, decomposition_type::none },
                 { 0x1F250, decomposition_type::enc },
@@ -1197,7 +1197,7 @@ namespace ogonek {
                 { 0x2FA1E, decomposition_type::none },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             decomposition_type_properties const* decomposition_type_data = decomposition_type_data_raw;
             std::size_t decomposition_type_data_size = detail::size(decomposition_type_data_raw);
         } // namespace abiv0

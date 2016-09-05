@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.298953Z
+// This file was automatically generated on 2016-09-05T11:29:13.300535Z
 
 // Unicode character database - Grapheme_Cluster_Break property
 
@@ -27,7 +27,11 @@ namespace ogonek {
             enum class grapheme_cluster_break {
                 cn,
                 cr,
+                eb,
+                ebg,
+                em,
                 ex,
+                gaz,
                 l,
                 lf,
                 lv,
@@ -38,8 +42,13 @@ namespace ogonek {
                 t,
                 v,
                 xx,
+                zwj,
                 control = cn,
+                e_base = eb,
+                e_base_gaz = ebg,
+                e_modifier = em,
                 extend = ex,
+                glue_after_zwj = gaz,
                 prepend = pp,
                 regional_indicator = ri,
                 spacing_mark = sm,

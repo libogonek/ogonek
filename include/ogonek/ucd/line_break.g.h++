@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.455605Z
+// This file was automatically generated on 2016-09-05T11:29:13.479806Z
 
 // Unicode character database - Line_Break property
 
@@ -37,6 +37,8 @@ namespace ogonek {
                 cm,
                 cp,
                 cr,
+                eb,
+                em,
                 ex,
                 gl,
                 h2,
@@ -65,6 +67,7 @@ namespace ogonek {
                 wj,
                 xx,
                 zw,
+                zwj,
                 ambiguous = ai,
                 alphabetic = al,
                 break_both = b2,
@@ -77,6 +80,8 @@ namespace ogonek {
                 combining_mark = cm,
                 close_parenthesis = cp,
                 carriage_return = cr,
+                e_base = eb,
+                e_modifier = em,
                 exclamation = ex,
                 glue = gl,
                 hebrew_letter = hl,

@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.060551Z
+// This file was automatically generated on 2016-09-05T11:29:13.039465Z
 
 // Unicode character database - Changes_When_Uppercased property
 
@@ -324,8 +324,6 @@ namespace ogonek {
                 { 0x265, true },
                 { 0x267, false },
                 { 0x268, true },
-                { 0x26A, false },
-                { 0x26B, true },
                 { 0x26D, false },
                 { 0x26F, true },
                 { 0x270, false },
@@ -597,6 +595,8 @@ namespace ogonek {
                 { 0x588, false },
                 { 0x13F8, true },
                 { 0x13FE, false },
+                { 0x1C80, true },
+                { 0x1C89, false },
                 { 0x1D79, true },
                 { 0x1D7A, false },
                 { 0x1D7D, true },
@@ -1229,13 +1229,17 @@ namespace ogonek {
                 { 0xFF5B, false },
                 { 0x10428, true },
                 { 0x10450, false },
+                { 0x104D8, true },
+                { 0x104FC, false },
                 { 0x10CC0, true },
                 { 0x10CF3, false },
                 { 0x118C0, true },
                 { 0x118E0, false },
+                { 0x1E922, true },
+                { 0x1E944, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             changes_when_uppercased_properties const* changes_when_uppercased_data = changes_when_uppercased_data_raw;
             std::size_t changes_when_uppercased_data_size = detail::size(changes_when_uppercased_data_raw);
         } // namespace abiv0

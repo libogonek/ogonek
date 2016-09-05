@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.174351Z
+// This file was automatically generated on 2016-09-05T11:29:13.157144Z
 
 // Unicode character database - Default_Ignorable_Code_Point property
 
@@ -59,7 +59,7 @@ namespace ogonek {
                 { 0xE1000, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             default_ignorable_code_point_properties const* default_ignorable_code_point_data = default_ignorable_code_point_data_raw;
             std::size_t default_ignorable_code_point_data_size = detail::size(default_ignorable_code_point_data_raw);
         } // namespace abiv0

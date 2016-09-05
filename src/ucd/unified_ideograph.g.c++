@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:08:00.131031Z
+// This file was automatically generated on 2016-09-05T11:29:14.274568Z
 
 // Unicode character database - Unified_Ideograph property
 
@@ -51,7 +51,7 @@ namespace ogonek {
                 { 0x2CEA2, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             unified_ideograph_properties const* unified_ideograph_data = unified_ideograph_data_raw;
             std::size_t unified_ideograph_data_size = detail::size(unified_ideograph_data_raw);
         } // namespace abiv0

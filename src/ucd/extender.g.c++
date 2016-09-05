@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.187308Z
+// This file was automatically generated on 2016-09-05T11:29:13.174393Z
 
 // Unicode character database - Extender property
 
@@ -75,9 +75,13 @@ namespace ogonek {
                 { 0x115C9, false },
                 { 0x16B42, true },
                 { 0x16B44, false },
+                { 0x16FE0, true },
+                { 0x16FE1, false },
+                { 0x1E944, true },
+                { 0x1E947, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             extender_properties const* extender_data = extender_data_raw;
             std::size_t extender_data_size = detail::size(extender_data_raw);
         } // namespace abiv0

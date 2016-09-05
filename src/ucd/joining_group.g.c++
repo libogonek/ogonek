@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.410940Z
+// This file was automatically generated on 2016-09-05T11:29:13.428267Z
 
 // Unicode character database - Joining_Group property
 
@@ -182,6 +182,13 @@ namespace ogonek {
                 { 0x8B3, joining_group::ain },
                 { 0x8B4, joining_group::kaf },
                 { 0x8B5, joining_group::no_joining_group },
+                { 0x8B6, joining_group::beh },
+                { 0x8B9, joining_group::reh },
+                { 0x8BA, joining_group::yeh },
+                { 0x8BB, joining_group::african_feh },
+                { 0x8BC, joining_group::african_qaf },
+                { 0x8BD, joining_group::african_noon },
+                { 0x8BE, joining_group::no_joining_group },
                 { 0x10AC0, joining_group::manichaean_aleph },
                 { 0x10AC1, joining_group::manichaean_beth },
                 { 0x10AC3, joining_group::manichaean_gimel },
@@ -217,7 +224,7 @@ namespace ogonek {
                 { 0x10AF0, joining_group::no_joining_group },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             joining_group_properties const* joining_group_data = joining_group_data_raw;
             std::size_t joining_group_data_size = detail::size(joining_group_data_raw);
         } // namespace abiv0

@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.876590Z
+// This file was automatically generated on 2016-09-05T11:29:13.962519Z
 
 // Unicode character database - Numeric_Type property
 
@@ -60,9 +60,11 @@ namespace ogonek {
                 { 0xC7F, numeric_type::none },
                 { 0xCE6, numeric_type::de },
                 { 0xCF0, numeric_type::none },
+                { 0xD58, numeric_type::nu },
+                { 0xD5F, numeric_type::none },
                 { 0xD66, numeric_type::de },
                 { 0xD70, numeric_type::nu },
-                { 0xD76, numeric_type::none },
+                { 0xD79, numeric_type::none },
                 { 0xDE6, numeric_type::de },
                 { 0xDF0, numeric_type::none },
                 { 0xE50, numeric_type::de },
@@ -354,6 +356,8 @@ namespace ogonek {
                 { 0x111F5, numeric_type::none },
                 { 0x112F0, numeric_type::de },
                 { 0x112FA, numeric_type::none },
+                { 0x11450, numeric_type::de },
+                { 0x1145A, numeric_type::none },
                 { 0x114D0, numeric_type::de },
                 { 0x114DA, numeric_type::none },
                 { 0x11650, numeric_type::de },
@@ -366,6 +370,9 @@ namespace ogonek {
                 { 0x118E0, numeric_type::de },
                 { 0x118EA, numeric_type::nu },
                 { 0x118F3, numeric_type::none },
+                { 0x11C50, numeric_type::de },
+                { 0x11C5A, numeric_type::nu },
+                { 0x11C6D, numeric_type::none },
                 { 0x12400, numeric_type::nu },
                 { 0x1246F, numeric_type::none },
                 { 0x16A60, numeric_type::de },
@@ -380,6 +387,8 @@ namespace ogonek {
                 { 0x1D800, numeric_type::none },
                 { 0x1E8C7, numeric_type::nu },
                 { 0x1E8D0, numeric_type::none },
+                { 0x1E950, numeric_type::de },
+                { 0x1E95A, numeric_type::none },
                 { 0x1F100, numeric_type::di },
                 { 0x1F10B, numeric_type::nu },
                 { 0x1F10D, numeric_type::none },
@@ -417,7 +426,7 @@ namespace ogonek {
                 { 0x2F891, numeric_type::none },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             numeric_type_properties const* numeric_type_data = numeric_type_data_raw;
             std::size_t numeric_type_data_size = detail::size(numeric_type_data_raw);
         } // namespace abiv0

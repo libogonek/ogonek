@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.174867Z
+// This file was automatically generated on 2016-09-05T11:29:13.157683Z
 
 // Unicode character database - Deprecated property
 
@@ -39,11 +39,9 @@ namespace ogonek {
                 { 0x232B, false },
                 { 0xE0001, true },
                 { 0xE0002, false },
-                { 0xE007F, true },
-                { 0xE0080, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             deprecated_properties const* deprecated_data = deprecated_data_raw;
             std::size_t deprecated_data_size = detail::size(deprecated_data_raw);
         } // namespace abiv0

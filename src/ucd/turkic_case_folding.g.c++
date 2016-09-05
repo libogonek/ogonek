@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:08:00.130423Z
+// This file was automatically generated on 2016-09-05T11:29:14.273723Z
 
 // Unicode character database - $Turkic_Case_Folding property
 
@@ -29,7 +29,7 @@ namespace ogonek {
                 { 0x131, nullptr },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             turkic_case_folding_properties const* turkic_case_folding_data = turkic_case_folding_data_raw;
             std::size_t turkic_case_folding_data_size = detail::size(turkic_case_folding_data_raw);
         } // namespace abiv0

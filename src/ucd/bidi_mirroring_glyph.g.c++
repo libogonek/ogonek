@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:58.883076Z
+// This file was automatically generated on 2016-09-05T11:29:12.851131Z
 
 // Unicode character database - Bidi_Mirroring_Glyph property
 
@@ -480,7 +480,7 @@ namespace ogonek {
                 { 0xFF64, U'\xFFFFFFFF' },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             bidi_mirroring_glyph_properties const* bidi_mirroring_glyph_data = bidi_mirroring_glyph_data_raw;
             std::size_t bidi_mirroring_glyph_data_size = detail::size(bidi_mirroring_glyph_data_raw);
         } // namespace abiv0

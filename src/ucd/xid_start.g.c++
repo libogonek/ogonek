@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:08:00.210994Z
+// This file was automatically generated on 2016-09-05T11:29:14.376613Z
 
 // Unicode character database - XID_Start property
 
@@ -121,6 +121,8 @@ namespace ogonek {
                 { 0x859, false },
                 { 0x8A0, true },
                 { 0x8B5, false },
+                { 0x8B6, true },
+                { 0x8BE, false },
                 { 0x904, true },
                 { 0x93A, false },
                 { 0x93D, true },
@@ -249,6 +251,8 @@ namespace ogonek {
                 { 0xC5B, false },
                 { 0xC60, true },
                 { 0xC62, false },
+                { 0xC80, true },
+                { 0xC81, false },
                 { 0xC85, true },
                 { 0xC8D, false },
                 { 0xC8E, true },
@@ -277,6 +281,8 @@ namespace ogonek {
                 { 0xD3E, false },
                 { 0xD4E, true },
                 { 0xD4F, false },
+                { 0xD54, true },
+                { 0xD57, false },
                 { 0xD5F, true },
                 { 0xD62, false },
                 { 0xD7A, true },
@@ -471,6 +477,8 @@ namespace ogonek {
                 { 0x1C50, false },
                 { 0x1C5A, true },
                 { 0x1C7E, false },
+                { 0x1C80, true },
+                { 0x1C89, false },
                 { 0x1CE9, true },
                 { 0x1CED, false },
                 { 0x1CEE, true },
@@ -636,7 +644,7 @@ namespace ogonek {
                 { 0xA722, true },
                 { 0xA789, false },
                 { 0xA78B, true },
-                { 0xA7AE, false },
+                { 0xA7AF, false },
                 { 0xA7B0, true },
                 { 0xA7B8, false },
                 { 0xA7F7, true },
@@ -823,6 +831,10 @@ namespace ogonek {
                 { 0x103D6, false },
                 { 0x10400, true },
                 { 0x1049E, false },
+                { 0x104B0, true },
+                { 0x104D4, false },
+                { 0x104D8, true },
+                { 0x104FC, false },
                 { 0x10500, true },
                 { 0x10528, false },
                 { 0x10530, true },
@@ -945,6 +957,10 @@ namespace ogonek {
                 { 0x11351, false },
                 { 0x1135D, true },
                 { 0x11362, false },
+                { 0x11400, true },
+                { 0x11435, false },
+                { 0x11447, true },
+                { 0x1144B, false },
                 { 0x11480, true },
                 { 0x114B0, false },
                 { 0x114C4, true },
@@ -969,6 +985,14 @@ namespace ogonek {
                 { 0x11900, false },
                 { 0x11AC0, true },
                 { 0x11AF9, false },
+                { 0x11C00, true },
+                { 0x11C09, false },
+                { 0x11C0A, true },
+                { 0x11C2F, false },
+                { 0x11C40, true },
+                { 0x11C41, false },
+                { 0x11C72, true },
+                { 0x11C90, false },
                 { 0x12000, true },
                 { 0x1239A, false },
                 { 0x12400, true },
@@ -999,6 +1023,12 @@ namespace ogonek {
                 { 0x16F51, false },
                 { 0x16F93, true },
                 { 0x16FA0, false },
+                { 0x16FE0, true },
+                { 0x16FE1, false },
+                { 0x17000, true },
+                { 0x187ED, false },
+                { 0x18800, true },
+                { 0x18AF3, false },
                 { 0x1B000, true },
                 { 0x1B002, false },
                 { 0x1BC00, true },
@@ -1071,6 +1101,8 @@ namespace ogonek {
                 { 0x1D7CC, false },
                 { 0x1E800, true },
                 { 0x1E8C5, false },
+                { 0x1E900, true },
+                { 0x1E944, false },
                 { 0x1EE00, true },
                 { 0x1EE04, false },
                 { 0x1EE05, true },
@@ -1149,7 +1181,7 @@ namespace ogonek {
                 { 0x2FA1E, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             xid_start_properties const* xid_start_data = xid_start_data_raw;
             std::size_t xid_start_data_size = detail::size(xid_start_data_raw);
         } // namespace abiv0

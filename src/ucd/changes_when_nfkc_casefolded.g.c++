@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.030748Z
+// This file was automatically generated on 2016-09-05T11:29:13.006524Z
 
 // Unicode character database - Changes_When_NFKC_Casefolded property
 
@@ -665,6 +665,8 @@ namespace ogonek {
                 { 0x17B6, false },
                 { 0x180B, true },
                 { 0x180F, false },
+                { 0x1C80, true },
+                { 0x1C89, false },
                 { 0x1D2C, true },
                 { 0x1D2F, false },
                 { 0x1D30, true },
@@ -1414,7 +1416,7 @@ namespace ogonek {
                 { 0xA7A8, true },
                 { 0xA7A9, false },
                 { 0xA7AA, true },
-                { 0xA7AE, false },
+                { 0xA7AF, false },
                 { 0xA7B0, true },
                 { 0xA7B5, false },
                 { 0xA7B6, true },
@@ -1505,6 +1507,8 @@ namespace ogonek {
                 { 0xFFF9, false },
                 { 0x10400, true },
                 { 0x10428, false },
+                { 0x104B0, true },
+                { 0x104D4, false },
                 { 0x10C80, true },
                 { 0x10CB3, false },
                 { 0x118A0, true },
@@ -1559,6 +1563,8 @@ namespace ogonek {
                 { 0x1D7CC, false },
                 { 0x1D7CE, true },
                 { 0x1D800, false },
+                { 0x1E900, true },
+                { 0x1E922, false },
                 { 0x1EE00, true },
                 { 0x1EE04, false },
                 { 0x1EE05, true },
@@ -1638,7 +1644,7 @@ namespace ogonek {
                 { 0x1F200, true },
                 { 0x1F203, false },
                 { 0x1F210, true },
-                { 0x1F23B, false },
+                { 0x1F23C, false },
                 { 0x1F240, true },
                 { 0x1F249, false },
                 { 0x1F250, true },
@@ -1649,7 +1655,7 @@ namespace ogonek {
                 { 0xE1000, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             changes_when_nfkc_casefolded_properties const* changes_when_nfkc_casefolded_data = changes_when_nfkc_casefolded_data_raw;
             std::size_t changes_when_nfkc_casefolded_data_size = detail::size(changes_when_nfkc_casefolded_data_raw);
         } // namespace abiv0

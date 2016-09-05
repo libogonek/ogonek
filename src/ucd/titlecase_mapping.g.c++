@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:08:00.130049Z
+// This file was automatically generated on 2016-09-05T11:29:14.273177Z
 
 // Unicode character database - Titlecase_Mapping property
 
@@ -155,7 +155,7 @@ namespace ogonek {
                 { 0xFB18, nullptr },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             titlecase_mapping_properties const* titlecase_mapping_data = titlecase_mapping_data_raw;
             std::size_t titlecase_mapping_data_size = detail::size(titlecase_mapping_data_raw);
         } // namespace abiv0

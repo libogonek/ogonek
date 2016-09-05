@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.335232Z
+// This file was automatically generated on 2016-09-05T11:29:13.341304Z
 
 // Unicode character database - Hex_Digit property
 
@@ -37,7 +37,7 @@ namespace ogonek {
                 { 0xFF47, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             hex_digit_properties const* hex_digit_data = hex_digit_data_raw;
             std::size_t hex_digit_data_size = detail::size(hex_digit_data_raw);
         } // namespace abiv0

@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:08:00.128048Z
+// This file was automatically generated on 2016-09-05T11:29:14.271168Z
 
 // Unicode character database - Terminal_Punctuation property
 
@@ -181,6 +181,10 @@ namespace ogonek {
                 { 0x1123D, false },
                 { 0x112A9, true },
                 { 0x112AA, false },
+                { 0x1144B, true },
+                { 0x1144E, false },
+                { 0x1145B, true },
+                { 0x1145C, false },
                 { 0x115C2, true },
                 { 0x115C6, false },
                 { 0x115C9, true },
@@ -189,6 +193,10 @@ namespace ogonek {
                 { 0x11643, false },
                 { 0x1173C, true },
                 { 0x1173F, false },
+                { 0x11C41, true },
+                { 0x11C44, false },
+                { 0x11C71, true },
+                { 0x11C72, false },
                 { 0x12470, true },
                 { 0x12475, false },
                 { 0x16A6E, true },
@@ -205,7 +213,7 @@ namespace ogonek {
                 { 0x1DA8B, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             terminal_punctuation_properties const* terminal_punctuation_data = terminal_punctuation_data_raw;
             std::size_t terminal_punctuation_data_size = detail::size(terminal_punctuation_data_raw);
         } // namespace abiv0

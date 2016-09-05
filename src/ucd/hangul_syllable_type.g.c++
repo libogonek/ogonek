@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.334647Z
+// This file was automatically generated on 2016-09-05T11:29:13.340723Z
 
 // Unicode character database - Hangul_Syllable_Type property
 
@@ -834,7 +834,7 @@ namespace ogonek {
                 { 0xD7FC, hangul_syllable_type::na },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             hangul_syllable_type_properties const* hangul_syllable_type_data = hangul_syllable_type_data_raw;
             std::size_t hangul_syllable_type_data_size = detail::size(hangul_syllable_type_data_raw);
         } // namespace abiv0
