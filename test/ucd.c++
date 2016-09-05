@@ -712,7 +712,7 @@ TEST_CASE("sentence break", "Querying Sentence_Break") {
     CHECK(ucd::get_sentence_break(U'\x0041') == ucd::sentence_break::up);
     CHECK(ucd::get_sentence_break(U'\x005B') == ucd::sentence_break::cl);
     CHECK(ucd::get_sentence_break(U'\x1F4A9') == ucd::sentence_break::xx);
-    CHECK(ucd::get_sentence_break(U'\xE0030') == ucd::sentence_break::fo);
+    CHECK(ucd::get_sentence_break(U'\xE0030') == ucd::sentence_break::ex);
     CHECK(ucd::get_sentence_break(U'\xE0200') == ucd::sentence_break::xx);
 }
 TEST_CASE("ideographic", "Querying Ideographic") {

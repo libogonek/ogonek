@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:08:00.125542Z
+// This file was automatically generated on 2016-09-05T11:29:14.268222Z
 
 // Unicode character database - STerm property
 
@@ -131,6 +131,8 @@ namespace ogonek {
                 { 0x1123D, false },
                 { 0x112A9, true },
                 { 0x112AA, false },
+                { 0x1144B, true },
+                { 0x1144D, false },
                 { 0x115C2, true },
                 { 0x115C4, false },
                 { 0x115C9, true },
@@ -139,6 +141,8 @@ namespace ogonek {
                 { 0x11643, false },
                 { 0x1173C, true },
                 { 0x1173F, false },
+                { 0x11C41, true },
+                { 0x11C43, false },
                 { 0x16A6E, true },
                 { 0x16A70, false },
                 { 0x16AF5, true },
@@ -153,7 +157,7 @@ namespace ogonek {
                 { 0x1DA89, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             sterm_properties const* sterm_data = sterm_data_raw;
             std::size_t sterm_data_size = detail::size(sterm_data_raw);
         } // namespace abiv0

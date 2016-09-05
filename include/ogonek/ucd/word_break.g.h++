@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:08:00.165153Z
+// This file was automatically generated on 2016-09-05T11:29:14.322616Z
 
 // Unicode character database - Word_Break property
 
@@ -27,9 +27,13 @@ namespace ogonek {
             enum class word_break {
                 cr,
                 dq,
+                eb,
+                ebg,
+                em,
                 ex,
                 extend,
                 fo,
+                gaz,
                 hl,
                 ka,
                 le,
@@ -42,9 +46,14 @@ namespace ogonek {
                 ri,
                 sq,
                 xx,
+                zwj,
                 double_quote = dq,
+                e_base = eb,
+                e_base_gaz = ebg,
+                e_modifier = em,
                 extend_num_let = ex,
                 format = fo,
+                glue_after_zwj = gaz,
                 hebrew_letter = hl,
                 katakana = ka,
                 aletter = le,

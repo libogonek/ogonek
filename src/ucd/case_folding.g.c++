@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:58.965462Z
+// This file was automatically generated on 2016-09-05T11:29:12.935560Z
 
 // Unicode character database - Case_Folding property
 
@@ -157,7 +157,7 @@ namespace ogonek {
                 { 0xFB18, nullptr },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             case_folding_properties const* case_folding_data = case_folding_data_raw;
             std::size_t case_folding_data_size = detail::size(case_folding_data_raw);
         } // namespace abiv0

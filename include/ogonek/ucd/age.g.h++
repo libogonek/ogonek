@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:58.818534Z
+// This file was automatically generated on 2016-09-05T11:29:12.781715Z
 
 // Unicode character database - Age property
 
@@ -42,6 +42,7 @@ namespace ogonek {
                 _6_3,
                 _7_0,
                 _8_0,
+                _9_0,
                 na,
                 v1_1 = _1_1,
                 v2_0 = _2_0,
@@ -60,6 +61,7 @@ namespace ogonek {
                 v6_3 = _6_3,
                 v7_0 = _7_0,
                 v8_0 = _8_0,
+                v9_0 = _9_0,
                 unassigned = na,
             };
 

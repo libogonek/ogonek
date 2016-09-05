@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.379202Z
+// This file was automatically generated on 2016-09-05T11:29:13.392557Z
 
 // Unicode character database - Indic_Positional_Category property
 
@@ -444,6 +444,8 @@ namespace ogonek {
                 { 0x1CEE, indic_positional_category::na },
                 { 0x1CF4, indic_positional_category::top },
                 { 0x1CF5, indic_positional_category::na },
+                { 0x1DFB, indic_positional_category::top },
+                { 0x1DFC, indic_positional_category::na },
                 { 0xA806, indic_positional_category::top },
                 { 0xA807, indic_positional_category::na },
                 { 0xA80B, indic_positional_category::top },
@@ -457,7 +459,8 @@ namespace ogonek {
                 { 0xA882, indic_positional_category::na },
                 { 0xA8B4, indic_positional_category::right },
                 { 0xA8C4, indic_positional_category::bottom },
-                { 0xA8C5, indic_positional_category::na },
+                { 0xA8C5, indic_positional_category::top },
+                { 0xA8C6, indic_positional_category::na },
                 { 0xA8E0, indic_positional_category::top },
                 { 0xA8F2, indic_positional_category::na },
                 { 0xA92B, indic_positional_category::bottom },
@@ -599,6 +602,8 @@ namespace ogonek {
                 { 0x11235, indic_positional_category::right },
                 { 0x11236, indic_positional_category::top },
                 { 0x11238, indic_positional_category::na },
+                { 0x1123E, indic_positional_category::top },
+                { 0x1123F, indic_positional_category::na },
                 { 0x112DF, indic_positional_category::top },
                 { 0x112E0, indic_positional_category::right },
                 { 0x112E1, indic_positional_category::left },
@@ -627,6 +632,17 @@ namespace ogonek {
                 { 0x1136D, indic_positional_category::na },
                 { 0x11370, indic_positional_category::top },
                 { 0x11375, indic_positional_category::na },
+                { 0x11435, indic_positional_category::right },
+                { 0x11436, indic_positional_category::left },
+                { 0x11437, indic_positional_category::right },
+                { 0x11438, indic_positional_category::bottom },
+                { 0x1143E, indic_positional_category::top },
+                { 0x11440, indic_positional_category::right },
+                { 0x11442, indic_positional_category::bottom },
+                { 0x11443, indic_positional_category::top },
+                { 0x11445, indic_positional_category::right },
+                { 0x11446, indic_positional_category::bottom },
+                { 0x11447, indic_positional_category::na },
                 { 0x114B0, indic_positional_category::right },
                 { 0x114B1, indic_positional_category::left },
                 { 0x114B2, indic_positional_category::right },
@@ -686,9 +702,27 @@ namespace ogonek {
                 { 0x11728, indic_positional_category::bottom },
                 { 0x11729, indic_positional_category::top },
                 { 0x1172C, indic_positional_category::na },
+                { 0x11C2F, indic_positional_category::right },
+                { 0x11C30, indic_positional_category::top },
+                { 0x11C32, indic_positional_category::bottom },
+                { 0x11C37, indic_positional_category::na },
+                { 0x11C38, indic_positional_category::top },
+                { 0x11C3E, indic_positional_category::right },
+                { 0x11C3F, indic_positional_category::bottom },
+                { 0x11C40, indic_positional_category::na },
+                { 0x11C92, indic_positional_category::bottom },
+                { 0x11CA8, indic_positional_category::na },
+                { 0x11CA9, indic_positional_category::right },
+                { 0x11CAA, indic_positional_category::bottom },
+                { 0x11CB1, indic_positional_category::left },
+                { 0x11CB2, indic_positional_category::bottom },
+                { 0x11CB3, indic_positional_category::top },
+                { 0x11CB4, indic_positional_category::right },
+                { 0x11CB5, indic_positional_category::top },
+                { 0x11CB7, indic_positional_category::na },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             indic_positional_category_properties const* indic_positional_category_data = indic_positional_category_data_raw;
             std::size_t indic_positional_category_data_size = detail::size(indic_positional_category_data_raw);
         } // namespace abiv0

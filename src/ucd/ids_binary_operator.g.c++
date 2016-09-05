@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.365733Z
+// This file was automatically generated on 2016-09-05T11:29:13.376424Z
 
 // Unicode character database - IDS_Binary_Operator property
 
@@ -29,7 +29,7 @@ namespace ogonek {
                 { 0x2FFC, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             ids_binary_operator_properties const* ids_binary_operator_data = ids_binary_operator_data_raw;
             std::size_t ids_binary_operator_data_size = detail::size(ids_binary_operator_data_raw);
         } // namespace abiv0

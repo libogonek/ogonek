@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.189366Z
+// This file was automatically generated on 2016-09-05T11:29:13.176761Z
 
 // Unicode character database - Full_Composition_Exclusion property
 
@@ -171,7 +171,7 @@ namespace ogonek {
                 { 0x2FA1E, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             full_composition_exclusion_properties const* full_composition_exclusion_data = full_composition_exclusion_data_raw;
             std::size_t full_composition_exclusion_data_size = detail::size(full_composition_exclusion_data_raw);
         } // namespace abiv0

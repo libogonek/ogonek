@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.859303Z
+// This file was automatically generated on 2016-09-05T11:29:13.941919Z
 
 // Unicode character database - NFKC_Quick_Check property
 
@@ -592,7 +592,7 @@ namespace ogonek {
                 { 0x1F200, { 0 } },
                 { 0x1F203, { 1 } },
                 { 0x1F210, { 0 } },
-                { 0x1F23B, { 1 } },
+                { 0x1F23C, { 1 } },
                 { 0x1F240, { 0 } },
                 { 0x1F249, { 1 } },
                 { 0x1F250, { 0 } },
@@ -601,7 +601,7 @@ namespace ogonek {
                 { 0x2FA1E, { 1 } },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             nfkc_quick_check_properties const* nfkc_quick_check_data = nfkc_quick_check_data_raw;
             std::size_t nfkc_quick_check_data_size = detail::size(nfkc_quick_check_data_raw);
         } // namespace abiv0

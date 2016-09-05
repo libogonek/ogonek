@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.178919Z
+// This file was automatically generated on 2016-09-05T11:29:13.161877Z
 
 // Unicode character database - Diacritic property
 
@@ -291,6 +291,10 @@ namespace ogonek {
                 { 0x1136D, false },
                 { 0x11370, true },
                 { 0x11375, false },
+                { 0x11442, true },
+                { 0x11443, false },
+                { 0x11446, true },
+                { 0x11447, false },
                 { 0x114C2, true },
                 { 0x114C4, false },
                 { 0x115BF, true },
@@ -301,6 +305,8 @@ namespace ogonek {
                 { 0x116B8, false },
                 { 0x1172B, true },
                 { 0x1172C, false },
+                { 0x11C3F, true },
+                { 0x11C40, false },
                 { 0x16AF0, true },
                 { 0x16AF5, false },
                 { 0x16F8F, true },
@@ -317,9 +323,13 @@ namespace ogonek {
                 { 0x1D1AE, false },
                 { 0x1E8D0, true },
                 { 0x1E8D7, false },
+                { 0x1E944, true },
+                { 0x1E947, false },
+                { 0x1E948, true },
+                { 0x1E94B, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             diacritic_properties const* diacritic_data = diacritic_data_raw;
             std::size_t diacritic_data_size = detail::size(diacritic_data_raw);
         } // namespace abiv0

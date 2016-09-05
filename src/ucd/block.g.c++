@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:58.917142Z
+// This file was automatically generated on 2016-09-05T11:29:12.887452Z
 
 // Unicode character database - Block property
 
@@ -84,7 +84,8 @@ namespace ogonek {
                 { 0x1BC0, block::batak },
                 { 0x1C00, block::lepcha },
                 { 0x1C50, block::ol_chiki },
-                { 0x1C80, block::nb },
+                { 0x1C80, block::cyrillic_extended_c },
+                { 0x1C90, block::nb },
                 { 0x1CC0, block::sundanese_supplement },
                 { 0x1CD0, block::vedic_extensions },
                 { 0x1D00, block::phonetic_extensions },
@@ -204,7 +205,7 @@ namespace ogonek {
                 { 0x10400, block::deseret },
                 { 0x10450, block::shavian },
                 { 0x10480, block::osmanya },
-                { 0x104B0, block::nb },
+                { 0x104B0, block::osage },
                 { 0x10500, block::elbasan },
                 { 0x10530, block::caucasian_albanian },
                 { 0x10570, block::nb },
@@ -250,11 +251,12 @@ namespace ogonek {
                 { 0x112B0, block::khudawadi },
                 { 0x11300, block::grantha },
                 { 0x11380, block::nb },
+                { 0x11400, block::newa },
                 { 0x11480, block::tirhuta },
                 { 0x114E0, block::nb },
                 { 0x11580, block::siddham },
                 { 0x11600, block::modi },
-                { 0x11660, block::nb },
+                { 0x11660, block::mongolian_supplement },
                 { 0x11680, block::takri },
                 { 0x116D0, block::nb },
                 { 0x11700, block::ahom },
@@ -263,6 +265,9 @@ namespace ogonek {
                 { 0x11900, block::nb },
                 { 0x11AC0, block::pau_cin_hau },
                 { 0x11B00, block::nb },
+                { 0x11C00, block::bhaiksuki },
+                { 0x11C70, block::marchen },
+                { 0x11CC0, block::nb },
                 { 0x12000, block::cuneiform },
                 { 0x12400, block::cuneiform_numbers_and_punctuation },
                 { 0x12480, block::early_dynastic_cuneiform },
@@ -279,6 +284,10 @@ namespace ogonek {
                 { 0x16B90, block::nb },
                 { 0x16F00, block::miao },
                 { 0x16FA0, block::nb },
+                { 0x16FE0, block::ideographic_symbols_and_punctuation },
+                { 0x17000, block::tangut },
+                { 0x18800, block::tangut_components },
+                { 0x18B00, block::nb },
                 { 0x1B000, block::kana_supplement },
                 { 0x1B100, block::nb },
                 { 0x1BC00, block::duployan },
@@ -294,8 +303,12 @@ namespace ogonek {
                 { 0x1D400, block::mathematical_alphanumeric_symbols },
                 { 0x1D800, block::sutton_sign_writing },
                 { 0x1DAB0, block::nb },
+                { 0x1E000, block::glagolitic_supplement },
+                { 0x1E030, block::nb },
                 { 0x1E800, block::mende_kikakui },
                 { 0x1E8E0, block::nb },
+                { 0x1E900, block::adlam },
+                { 0x1E960, block::nb },
                 { 0x1EE00, block::arabic_mathematical_alphabetic_symbols },
                 { 0x1EF00, block::nb },
                 { 0x1F000, block::mahjong_tiles },
@@ -328,7 +341,7 @@ namespace ogonek {
                 { 0x100000, block::supplementary_private_use_area_b },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             block_properties const* block_data = block_data_raw;
             std::size_t block_data_size = detail::size(block_data_raw);
         } // namespace abiv0

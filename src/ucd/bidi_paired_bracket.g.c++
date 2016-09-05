@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:58.884738Z
+// This file was automatically generated on 2016-09-05T11:29:12.853015Z
 
 // Unicode character database - Bidi_Paired_Bracket property
 
@@ -174,7 +174,7 @@ namespace ogonek {
                 { 0xFF64, U'\xFFFFFFFF' },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             bidi_paired_bracket_properties const* bidi_paired_bracket_data = bidi_paired_bracket_data_raw;
             std::size_t bidi_paired_bracket_data_size = detail::size(bidi_paired_bracket_data_raw);
         } // namespace abiv0

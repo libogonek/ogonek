@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.511944Z
+// This file was automatically generated on 2016-09-05T11:29:13.542344Z
 
 // Unicode character database - Math property
 
@@ -301,7 +301,7 @@ namespace ogonek {
                 { 0x1EEF2, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             math_properties const* math_data = math_data_raw;
             std::size_t math_data_size = detail::size(math_data_raw);
         } // namespace abiv0

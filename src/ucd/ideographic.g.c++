@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.365285Z
+// This file was automatically generated on 2016-09-05T11:29:13.375920Z
 
 // Unicode character database - Ideographic property
 
@@ -37,6 +37,10 @@ namespace ogonek {
                 { 0xFA6E, false },
                 { 0xFA70, true },
                 { 0xFADA, false },
+                { 0x17000, true },
+                { 0x187ED, false },
+                { 0x18800, true },
+                { 0x18AF3, false },
                 { 0x20000, true },
                 { 0x2A6D7, false },
                 { 0x2A700, true },
@@ -49,7 +53,7 @@ namespace ogonek {
                 { 0x2FA1E, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             ideographic_properties const* ideographic_data = ideographic_data_raw;
             std::size_t ideographic_data_size = detail::size(ideographic_data_raw);
         } // namespace abiv0

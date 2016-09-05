@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.422079Z
+// This file was automatically generated on 2016-09-05T11:29:13.441694Z
 
 // Unicode character database - Joining_Type property
 
@@ -155,6 +155,12 @@ namespace ogonek {
                 { 0x8B1, joining_type::r },
                 { 0x8B3, joining_type::d },
                 { 0x8B5, joining_type::u },
+                { 0x8B6, joining_type::d },
+                { 0x8B9, joining_type::r },
+                { 0x8BA, joining_type::d },
+                { 0x8BE, joining_type::u },
+                { 0x8D4, joining_type::t },
+                { 0x8E2, joining_type::u },
                 { 0x8E3, joining_type::t },
                 { 0x903, joining_type::u },
                 { 0x93A, joining_type::t },
@@ -348,6 +354,7 @@ namespace ogonek {
                 { 0x180E, joining_type::u },
                 { 0x1820, joining_type::d },
                 { 0x1878, joining_type::u },
+                { 0x1885, joining_type::t },
                 { 0x1887, joining_type::d },
                 { 0x18A9, joining_type::t },
                 { 0x18AA, joining_type::d },
@@ -426,7 +433,7 @@ namespace ogonek {
                 { 0x1CFA, joining_type::u },
                 { 0x1DC0, joining_type::t },
                 { 0x1DF6, joining_type::u },
-                { 0x1DFC, joining_type::t },
+                { 0x1DFB, joining_type::t },
                 { 0x1E00, joining_type::u },
                 { 0x200B, joining_type::t },
                 { 0x200C, joining_type::u },
@@ -471,7 +478,7 @@ namespace ogonek {
                 { 0xA872, joining_type::l },
                 { 0xA873, joining_type::u },
                 { 0xA8C4, joining_type::t },
-                { 0xA8C5, joining_type::u },
+                { 0xA8C6, joining_type::u },
                 { 0xA8E0, joining_type::t },
                 { 0xA8F2, joining_type::u },
                 { 0xA926, joining_type::t },
@@ -616,6 +623,8 @@ namespace ogonek {
                 { 0x11235, joining_type::u },
                 { 0x11236, joining_type::t },
                 { 0x11238, joining_type::u },
+                { 0x1123E, joining_type::t },
+                { 0x1123F, joining_type::u },
                 { 0x112DF, joining_type::t },
                 { 0x112E0, joining_type::u },
                 { 0x112E3, joining_type::t },
@@ -630,6 +639,12 @@ namespace ogonek {
                 { 0x1136D, joining_type::u },
                 { 0x11370, joining_type::t },
                 { 0x11375, joining_type::u },
+                { 0x11438, joining_type::t },
+                { 0x11440, joining_type::u },
+                { 0x11442, joining_type::t },
+                { 0x11445, joining_type::u },
+                { 0x11446, joining_type::t },
+                { 0x11447, joining_type::u },
                 { 0x114B3, joining_type::t },
                 { 0x114B9, joining_type::u },
                 { 0x114BA, joining_type::t },
@@ -666,6 +681,20 @@ namespace ogonek {
                 { 0x11726, joining_type::u },
                 { 0x11727, joining_type::t },
                 { 0x1172C, joining_type::u },
+                { 0x11C30, joining_type::t },
+                { 0x11C37, joining_type::u },
+                { 0x11C38, joining_type::t },
+                { 0x11C3E, joining_type::u },
+                { 0x11C3F, joining_type::t },
+                { 0x11C40, joining_type::u },
+                { 0x11C92, joining_type::t },
+                { 0x11CA8, joining_type::u },
+                { 0x11CAA, joining_type::t },
+                { 0x11CB1, joining_type::u },
+                { 0x11CB2, joining_type::t },
+                { 0x11CB4, joining_type::u },
+                { 0x11CB5, joining_type::t },
+                { 0x11CB7, joining_type::u },
                 { 0x16AF0, joining_type::t },
                 { 0x16AF5, joining_type::u },
                 { 0x16B30, joining_type::t },
@@ -698,8 +727,21 @@ namespace ogonek {
                 { 0x1DAA0, joining_type::u },
                 { 0x1DAA1, joining_type::t },
                 { 0x1DAB0, joining_type::u },
+                { 0x1E000, joining_type::t },
+                { 0x1E007, joining_type::u },
+                { 0x1E008, joining_type::t },
+                { 0x1E019, joining_type::u },
+                { 0x1E01B, joining_type::t },
+                { 0x1E022, joining_type::u },
+                { 0x1E023, joining_type::t },
+                { 0x1E025, joining_type::u },
+                { 0x1E026, joining_type::t },
+                { 0x1E02B, joining_type::u },
                 { 0x1E8D0, joining_type::t },
                 { 0x1E8D7, joining_type::u },
+                { 0x1E900, joining_type::d },
+                { 0x1E944, joining_type::t },
+                { 0x1E94B, joining_type::u },
                 { 0xE0001, joining_type::t },
                 { 0xE0002, joining_type::u },
                 { 0xE0020, joining_type::t },
@@ -708,7 +750,7 @@ namespace ogonek {
                 { 0xE01F0, joining_type::u },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             joining_type_properties const* joining_type_data = joining_type_data_raw;
             std::size_t joining_type_data_size = detail::size(joining_type_data_raw);
         } // namespace abiv0

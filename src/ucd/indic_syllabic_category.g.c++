@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.401315Z
+// This file was automatically generated on 2016-09-05T11:29:13.417262Z
 
 // Unicode character database - Indic_Syllabic_Category property
 
@@ -315,6 +315,7 @@ namespace ogonek {
                 { 0xD4D, indic_syllabic_category::virama },
                 { 0xD4E, indic_syllabic_category::consonant_preceding_repha },
                 { 0xD4F, indic_syllabic_category::other },
+                { 0xD54, indic_syllabic_category::consonant_dead },
                 { 0xD57, indic_syllabic_category::vowel_dependent },
                 { 0xD58, indic_syllabic_category::other },
                 { 0xD5F, indic_syllabic_category::vowel_independent },
@@ -507,7 +508,8 @@ namespace ogonek {
                 { 0x17D3, indic_syllabic_category::syllable_modifier },
                 { 0x17D4, indic_syllabic_category::other },
                 { 0x17DC, indic_syllabic_category::avagraha },
-                { 0x17DD, indic_syllabic_category::other },
+                { 0x17DD, indic_syllabic_category::syllable_modifier },
+                { 0x17DE, indic_syllabic_category::other },
                 { 0x17E0, indic_syllabic_category::number },
                 { 0x17EA, indic_syllabic_category::other },
                 { 0x1900, indic_syllabic_category::consonant_placeholder },
@@ -610,6 +612,8 @@ namespace ogonek {
                 { 0x1CF5, indic_syllabic_category::other },
                 { 0x1CF8, indic_syllabic_category::cantillation_mark },
                 { 0x1CFA, indic_syllabic_category::other },
+                { 0x1DFB, indic_syllabic_category::syllable_modifier },
+                { 0x1DFC, indic_syllabic_category::other },
                 { 0x200C, indic_syllabic_category::non_joiner },
                 { 0x200D, indic_syllabic_category::joiner },
                 { 0x200E, indic_syllabic_category::other },
@@ -647,7 +651,8 @@ namespace ogonek {
                 { 0xA8B4, indic_syllabic_category::consonant_final },
                 { 0xA8B5, indic_syllabic_category::vowel_dependent },
                 { 0xA8C4, indic_syllabic_category::virama },
-                { 0xA8C5, indic_syllabic_category::other },
+                { 0xA8C5, indic_syllabic_category::bindu },
+                { 0xA8C6, indic_syllabic_category::other },
                 { 0xA8D0, indic_syllabic_category::number },
                 { 0xA8DA, indic_syllabic_category::other },
                 { 0xA8E0, indic_syllabic_category::cantillation_mark },
@@ -696,7 +701,8 @@ namespace ogonek {
                 { 0xAA60, indic_syllabic_category::consonant },
                 { 0xAA70, indic_syllabic_category::other },
                 { 0xAA71, indic_syllabic_category::consonant },
-                { 0xAA74, indic_syllabic_category::other },
+                { 0xAA74, indic_syllabic_category::consonant_placeholder },
+                { 0xAA77, indic_syllabic_category::other },
                 { 0xAA7A, indic_syllabic_category::consonant },
                 { 0xAA7B, indic_syllabic_category::tone_mark },
                 { 0xAA7E, indic_syllabic_category::consonant },
@@ -805,6 +811,8 @@ namespace ogonek {
                 { 0x11236, indic_syllabic_category::nukta },
                 { 0x11237, indic_syllabic_category::gemination_mark },
                 { 0x11238, indic_syllabic_category::other },
+                { 0x1123E, indic_syllabic_category::cantillation_mark },
+                { 0x1123F, indic_syllabic_category::other },
                 { 0x11280, indic_syllabic_category::vowel_independent },
                 { 0x11284, indic_syllabic_category::consonant },
                 { 0x11287, indic_syllabic_category::other },
@@ -859,6 +867,17 @@ namespace ogonek {
                 { 0x1136D, indic_syllabic_category::other },
                 { 0x11370, indic_syllabic_category::cantillation_mark },
                 { 0x11375, indic_syllabic_category::other },
+                { 0x11400, indic_syllabic_category::vowel_independent },
+                { 0x1140E, indic_syllabic_category::consonant },
+                { 0x11435, indic_syllabic_category::vowel_dependent },
+                { 0x11442, indic_syllabic_category::virama },
+                { 0x11443, indic_syllabic_category::bindu },
+                { 0x11445, indic_syllabic_category::visarga },
+                { 0x11446, indic_syllabic_category::nukta },
+                { 0x11447, indic_syllabic_category::avagraha },
+                { 0x11448, indic_syllabic_category::other },
+                { 0x11450, indic_syllabic_category::number },
+                { 0x1145A, indic_syllabic_category::other },
                 { 0x11481, indic_syllabic_category::vowel_independent },
                 { 0x1148F, indic_syllabic_category::consonant },
                 { 0x114B0, indic_syllabic_category::vowel_dependent },
@@ -911,9 +930,31 @@ namespace ogonek {
                 { 0x1172C, indic_syllabic_category::other },
                 { 0x11730, indic_syllabic_category::number },
                 { 0x1173C, indic_syllabic_category::other },
+                { 0x11C00, indic_syllabic_category::vowel_independent },
+                { 0x11C09, indic_syllabic_category::other },
+                { 0x11C0A, indic_syllabic_category::vowel_independent },
+                { 0x11C0E, indic_syllabic_category::consonant },
+                { 0x11C2F, indic_syllabic_category::vowel_dependent },
+                { 0x11C37, indic_syllabic_category::other },
+                { 0x11C38, indic_syllabic_category::vowel_dependent },
+                { 0x11C3C, indic_syllabic_category::bindu },
+                { 0x11C3E, indic_syllabic_category::visarga },
+                { 0x11C3F, indic_syllabic_category::virama },
+                { 0x11C40, indic_syllabic_category::avagraha },
+                { 0x11C41, indic_syllabic_category::other },
+                { 0x11C50, indic_syllabic_category::number },
+                { 0x11C6D, indic_syllabic_category::other },
+                { 0x11C72, indic_syllabic_category::consonant },
+                { 0x11C90, indic_syllabic_category::other },
+                { 0x11C92, indic_syllabic_category::consonant_subjoined },
+                { 0x11CA8, indic_syllabic_category::other },
+                { 0x11CA9, indic_syllabic_category::consonant_subjoined },
+                { 0x11CB0, indic_syllabic_category::vowel_dependent },
+                { 0x11CB5, indic_syllabic_category::bindu },
+                { 0x11CB7, indic_syllabic_category::other },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             indic_syllabic_category_properties const* indic_syllabic_category_data = indic_syllabic_category_data_raw;
             std::size_t indic_syllabic_category_data_size = detail::size(indic_syllabic_category_data_raw);
         } // namespace abiv0

@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.490044Z
+// This file was automatically generated on 2016-09-05T11:29:13.518577Z
 
 // Unicode character database - Logical_Order_Exception property
 
@@ -39,7 +39,7 @@ namespace ogonek {
                 { 0xAABD, false },
             };
         } // namespace
-        namespace abiv0 {
+        inline namespace abiv0 {
             logical_order_exception_properties const* logical_order_exception_data = logical_order_exception_data_raw;
             std::size_t logical_order_exception_data_size = detail::size(logical_order_exception_data_raw);
         } // namespace abiv0

@@ -9,7 +9,7 @@
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on 2016-04-18T17:07:59.939789Z
+// This file was automatically generated on 2016-09-05T11:29:14.032355Z
 
 // Unicode character database - Script property
 
@@ -25,6 +25,7 @@ namespace ogonek {
     namespace ucd {
         inline namespace abiv0 {
             enum class script {
+                adlm,
                 aghb,
                 ahom,
                 arab,
@@ -36,6 +37,7 @@ namespace ogonek {
                 bass,
                 batk,
                 beng,
+                bhks,
                 bopo,
                 brah,
                 brai,
@@ -94,6 +96,7 @@ namespace ogonek {
                 mahj,
                 mand,
                 mani,
+                marc,
                 mend,
                 merc,
                 mero,
@@ -106,11 +109,13 @@ namespace ogonek {
                 mymr,
                 narb,
                 nbat,
+                newa,
                 nkoo,
                 ogam,
                 olck,
                 orkh,
                 orya,
+                osge,
                 osma,
                 palm,
                 pauc,
@@ -141,6 +146,7 @@ namespace ogonek {
                 tale,
                 talu,
                 taml,
+                tang,
                 tavt,
                 telu,
                 tfng,
@@ -158,6 +164,7 @@ namespace ogonek {
                 zinh,
                 zyyy,
                 zzzz,
+                adlam = adlm,
                 caucasian_albanian = aghb,
                 arabic = arab,
                 imperial_aramaic = armi,
@@ -168,6 +175,7 @@ namespace ogonek {
                 bassa_vah = bass,
                 batak = batk,
                 bengali = beng,
+                bhaiksuki = bhks,
                 bopomofo = bopo,
                 brahmi = brah,
                 braille = brai,
@@ -225,6 +233,7 @@ namespace ogonek {
                 mahajani = mahj,
                 mandaic = mand,
                 manichaean = mani,
+                marchen = marc,
                 mende_kikakui = mend,
                 meroitic_cursive = merc,
                 meroitic_hieroglyphs = mero,
@@ -241,6 +250,7 @@ namespace ogonek {
                 ol_chiki = olck,
                 old_turkic = orkh,
                 oriya = orya,
+                osage = osge,
                 osmanya = osma,
                 palmyrene = palm,
                 pau_cin_hau = pauc,
@@ -271,6 +281,7 @@ namespace ogonek {
                 tai_le = tale,
                 new_tai_lue = talu,
                 tamil = taml,
+                tangut = tang,
                 tai_viet = tavt,
                 telugu = telu,
                 tifinagh = tfng,
