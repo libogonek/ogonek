@@ -11,17 +11,49 @@
 
 // Encode ranges
 
-#ifndef OGONEK_ENCODING_ENCODE_HPP
-#define OGONEK_ENCODING_ENCODE_HPP
+#ifndef OGONEK_ENCODE_HPP
+#define OGONEK_ENCODE_HPP
+
+#include "types.h++"
 
 #include <range/v3/view_adaptor.hpp>
 
-#include <vector>
 #include <iostream>
+#include <vector>
+#include <type_traits>
 
 #include <cstddef>
 
 namespace ogonek {
+    namespace detail {
+        template <typename Encoding>
+        struct encoding_state {
+            struct empty {};
+            template <typename T = Encoding>
+            static typename T::state test(int);
+            static empty test(...);
+            using type = decltype(test(0));
+        };
+        template <typename Encoding>
+        using encoding_state_t = typename encoding_state<Encoding>::type;
+
+        template <typename Encoding>
+        struct is_stateless : std::is_empty<encoding_state_t<Encoding>> {};
+
+//        template <typename Encoding>
+//        bool is_stateless_v = is_stateless<Encoding>::value;
+
+        template <typename Encoding>
+        auto encode_one(char32_t u, encoding_state_t<Encoding>& s) -> decltype(Encoding::encode_one(u, s)) {
+            return Encoding::encode_one(u, s);
+        }
+        template <typename Encoding>
+        auto encode_one(char32_t u, encoding_state_t<Encoding>&) -> decltype(Encoding::encode_one(u)) {
+            return Encoding::encode_one(u);
+        }
+
+    } // namespace detail
+
     template <typename Encoding, typename Rng>
     struct encoded_view
     : ranges::view_adaptor<
@@ -40,7 +72,7 @@ namespace ogonek {
         public:
             typename Encoding::code_unit get(ranges::range_iterator_t<Rng> it) const {
                 if(position < 0) {
-                    encoded = Encoding::encode_one(*it);
+                    encoded = detail::encode_one<Encoding>(*it, state);
                     position = 0;
                 }
                 return encoded[position];
@@ -59,6 +91,7 @@ namespace ogonek {
         private:
             mutable std::vector<typename Encoding::code_unit> encoded;
             mutable std::ptrdiff_t position = -1;
+            mutable detail::encoding_state_t<Encoding> state = detail::encoding_state_t<Encoding>();
         };
 
         adaptor begin_adaptor() const {
@@ -79,5 +112,5 @@ namespace ogonek {
 } // namespace ogonek
 
 
-#endif // OGONEK_ENCODING_ENCODE_HPP
+#endif // OGONEK_ENCODE_HPP
 

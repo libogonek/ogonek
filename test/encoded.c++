@@ -19,6 +19,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include <vector>
+#include <utility>
 
 #include <cstddef>
 #include <cstdint>
@@ -41,6 +42,19 @@ namespace test {
             return { static_cast<code_unit>(u / 0x10000), static_cast<code_unit>(u % 0x10000) };
         }
     };
+    struct stateful_encoding {
+        using code_unit = char32_t;
+        struct state { bool bom_encoded = false; };
+        static constexpr std::size_t max_width = 1;
+        static std::vector<code_unit> encode_one(char32_t u, state& s) {
+            if(not s.bom_encoded) {
+                s.bom_encoded = true;
+                return { 0x1234, u };
+            } else {
+                return { u };
+            }
+        }
+    };
 } // namespace test
 
 TEST_CASE("encode", "Encoding") {
@@ -55,6 +69,12 @@ TEST_CASE("encode", "Encoding") {
         auto str = ogonek::encode<test::one_to_many_encoding>(ranges::view::all(base))
                  | ranges::to_vector;
         CHECK(str == (std::vector<char16_t>{ u'\0', u'0', u'\0', u'8', u'\0', u'A', u'\0', u'F', u'\x1', u'\x17' }));
+    }
+    SECTION("state", "Encoding with state") {
+        std::u32string base = U"08AF";
+        auto str = ogonek::encode<test::stateful_encoding>(ranges::view::all(base))
+                 | ranges::to_vector;
+        CHECK(str == (std::vector<char32_t>{ 0x1234, U'0', U'8', U'A', U'F' }));
     }
 }
 
