@@ -13,6 +13,7 @@
 
 #include <ogonek/ucd.h++>
 
+#include <boost/optional/optional_io.hpp>
 #include "util.h++"
 #include <catch.hpp>
 #include <iomanip>
