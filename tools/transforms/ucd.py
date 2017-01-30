@@ -19,7 +19,6 @@ import errno
 import math
 import string
 from contextlib import contextmanager
-from datetime import datetime
 from itertools import chain
 if sys.version_info[0] > 2:
     from itertools import zip_longest
@@ -853,12 +852,11 @@ def write_file_header(f, description):
 // You should have received a copy of the CC0 Public Domain Dedication along with this software.
 // If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 
-// This file was automatically generated on ${date}
+// This file was automatically generated.
 
 // Unicode character database - ${description}
 """)
-    text = template.substitute(date        = datetime.utcnow().isoformat()+'Z',
-                               description = description)
+    text = template.substitute(description = description)
     f.write(text)
 
 def write_header_file(f, name, abi, file_info):

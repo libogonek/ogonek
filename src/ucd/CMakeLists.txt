@@ -8,6 +8,8 @@ set (UCD_TRANSFORM_TOOL ${PROJECT_SOURCE_DIR}/tools/transforms/ucd.py)
 
 file (GLOB_RECURSE ucd_txt_SRC ${UCD_SRC_DIR}/*)
 
+file(GLOB_RECURSE ucd_txt_SRC ${UCD_SRC_DIR}/*)
+
 execute_process (
     COMMAND python ${UCD_TRANSFORM_TOOL} --files ${UCD_SRC_DIR}
     OUTPUT_VARIABLE ucd_gen_SRC)
