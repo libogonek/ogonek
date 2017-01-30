@@ -28,6 +28,7 @@ else:
     zip_longest = izip_longest
 from fractions import Fraction
 
+list_files = False
 if __name__ != '__main__':
     dry_run = True
 elif len(sys.argv) == 5:
@@ -36,6 +37,10 @@ elif len(sys.argv) == 5:
     inc_dir = sys.argv[3]
     src_dir = sys.argv[4]
     dry_run = False
+elif len(sys.argv) == 3 and sys.argv[1] == '--files':
+    dry_run = True
+    list_files = True
+    src_dir = sys.argv[2]
 else:
     print('usage: ' + os.path.basename(sys.argv[0]) + ' <ABI label> <UCD directory> <header output> <src output>')
     sys.exit(17)
@@ -1148,3 +1153,10 @@ if not dry_run:
 
     generate_master(inc_dir, abi, output_defs)
 
+elif list_files:
+    def filenames():
+        for f in sorted(output_defs):
+            impl_name = '{0}.g.c++'.format(f)
+            yield os.path.join(src_dir, impl_name)
+
+    sys.stdout.write(';'.join(filenames()))
