@@ -31,8 +31,8 @@ namespace test {
             os << "U+";
             format_code_unit(os, u);
         }
-        template <typename T>
-        std::string convert_string(std::vector<T> const& str, void (*formatter)(std::ostream&, T)) {
+        template <typename T, typename Str>
+        std::string convert_string(Str const& str, void (*formatter)(std::ostream&, T)) {
             std::stringstream ss;
             bool is_first = true;
             ss << '<';
@@ -47,7 +47,12 @@ namespace test {
         template <typename T>
         struct code_unit_converter {
             static std::string convert(std::vector<T> const& str) {
-                return convert_string(str, format_code_unit);
+                return convert_string<T>(str, &format_code_unit);
+            }
+        };
+        struct code_point_converter {
+            static std::string convert(std::u32string const& str) {
+                return convert_string<char32_t>(str, &format_code_point);
             }
         };
     } // namespace detail
@@ -60,5 +65,7 @@ namespace Catch {
     struct StringMaker<std::vector<char16_t>> : test::detail::code_unit_converter<char16_t> {};
     template <>
     struct StringMaker<std::vector<char>> : test::detail::code_unit_converter<char> {};
+    template <>
+    struct StringMaker<std::u32string> : test::detail::code_point_converter {};
 } // namespace Catch
 

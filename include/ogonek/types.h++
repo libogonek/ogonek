@@ -17,6 +17,7 @@
 #include <cstddef>
 
 namespace ogonek {
+    //! A code point.
     using code_point = char32_t;
 
     namespace detail {
