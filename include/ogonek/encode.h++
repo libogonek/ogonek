@@ -40,8 +40,8 @@ namespace ogonek {
         template <typename Encoding>
         struct is_stateless : std::is_empty<encoding_state_t<Encoding>> {};
 
-//        template <typename Encoding>
-//        bool is_stateless_v = is_stateless<Encoding>::value;
+        template <typename Encoding>
+        bool is_stateless_v = is_stateless<Encoding>::value;
 
         template <typename Encoding>
         auto encode_one(char32_t u, encoding_state_t<Encoding>& s) -> decltype(Encoding::encode_one(u, s)) {
@@ -104,7 +104,6 @@ namespace ogonek {
         : base_type(std::move(rng))
         {}
     };
-
     template <typename Encoding, typename Rng>
     encoded_view<Encoding, Rng> encode(Rng rng) {
         return encoded_view<Encoding, Rng>(std::move(rng));

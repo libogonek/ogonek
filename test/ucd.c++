@@ -19,6 +19,8 @@
 
 namespace ucd = ogonek::ucd;
 
+using namespace test::string_literals;
+
 TEST_CASE("age", "Querying Age") {
     CHECK(ucd::get_age(U'\x0041') == ucd::version::v1_1);
     CHECK(ucd::get_age(U'\x00C5') == ucd::version::v1_1);
@@ -137,10 +139,10 @@ TEST_CASE("decomposition type", "Querying Decomposition_Type") {
     CHECK(ucd::get_decomposition_type(U'\x3000') == ucd::decomposition_type::wide);
 }
 TEST_CASE("decomposition mapping", "Querying Decomposition_Mapping") {
-    CHECK(ucd::get_decomposition_mapping(U'\x0041') == std::u32string(U"\x0041"));
-    CHECK(ucd::get_decomposition_mapping(U'\x00C5') == std::u32string(U"\x0041\x030A"));
-    CHECK(ucd::get_decomposition_mapping(U'\x1EA0') == std::u32string(U"\x0041\x0323"));
-    CHECK(ucd::get_decomposition_mapping(U'\x3000') == std::u32string(U"\x0020"));
+    CHECK(ucd::get_decomposition_mapping(U'\x0041') == U"\x0041"_s);
+    CHECK(ucd::get_decomposition_mapping(U'\x00C5') == U"\x0041\x030A"_s);
+    CHECK(ucd::get_decomposition_mapping(U'\x1EA0') == U"\x0041\x0323"_s);
+    CHECK(ucd::get_decomposition_mapping(U'\x3000') == U"\x0020"_s);
 }
 TEST_CASE("full composition exclusion", "Querying Full_Composition_Exclusion") {
     CHECK(ucd::is_excluded_from_composition(U'\x0041') == false);
@@ -255,25 +257,25 @@ TEST_CASE("simple titlecase mapping", "Querying Simple_Titlecase_Mapping") {
     CHECK(ucd::get_simple_titlecase_mapping(U'\x1F4A9') == U'\x1F4A9');
 }
 TEST_CASE("uppercase mapping", "Querying Uppercase_Mapping") {
-    CHECK(ucd::get_uppercase_mapping(U'\x0041') == std::u32string(U"\x0041"));
-    CHECK(ucd::get_uppercase_mapping(U'\x0061') == std::u32string(U"\x0041"));
-    CHECK(ucd::get_uppercase_mapping(U'\x00DF') == std::u32string(U"\x0053\x0053"));
-    CHECK(ucd::get_uppercase_mapping(U'\x1E96') == std::u32string(U"\x0048\x0331"));
-    CHECK(ucd::get_uppercase_mapping(U'\x1F4A9') == std::u32string(U"\x1F4A9"));
+    CHECK(ucd::get_uppercase_mapping(U'\x0041') == U"\x0041"_s);
+    CHECK(ucd::get_uppercase_mapping(U'\x0061') == U"\x0041"_s);
+    CHECK(ucd::get_uppercase_mapping(U'\x00DF') == U"\x0053\x0053"_s);
+    CHECK(ucd::get_uppercase_mapping(U'\x1E96') == U"\x0048\x0331"_s);
+    CHECK(ucd::get_uppercase_mapping(U'\x1F4A9') == U"\x1F4A9"_s);
 }
 TEST_CASE("lowercase mapping", "Querying Lowercase_Mapping") {
-    CHECK(ucd::get_lowercase_mapping(U'\x0041') == std::u32string(U"\x0061"));
-    CHECK(ucd::get_lowercase_mapping(U'\x0061') == std::u32string(U"\x0061"));
-    CHECK(ucd::get_lowercase_mapping(U'\x0130') == std::u32string(U"\x0069\x0307"));
-    CHECK(ucd::get_lowercase_mapping(U'\x1E96') == std::u32string(U"\x1E96"));
-    CHECK(ucd::get_lowercase_mapping(U'\x1F4A9') == std::u32string(U"\x1F4A9"));
+    CHECK(ucd::get_lowercase_mapping(U'\x0041') == U"\x0061"_s);
+    CHECK(ucd::get_lowercase_mapping(U'\x0061') == U"\x0061"_s);
+    CHECK(ucd::get_lowercase_mapping(U'\x0130') == U"\x0069\x0307"_s);
+    CHECK(ucd::get_lowercase_mapping(U'\x1E96') == U"\x1E96"_s);
+    CHECK(ucd::get_lowercase_mapping(U'\x1F4A9') == U"\x1F4A9"_s);
 }
 TEST_CASE("titlecase mapping", "Querying Titlecase_Mapping") {
-    CHECK(ucd::get_titlecase_mapping(U'\x0041') == std::u32string(U"\x0041"));
-    CHECK(ucd::get_titlecase_mapping(U'\x0061') == std::u32string(U"\x0041"));
-    CHECK(ucd::get_titlecase_mapping(U'\x00DF') == std::u32string(U"\x0053\x0073"));
-    CHECK(ucd::get_titlecase_mapping(U'\x1E96') == std::u32string(U"\x0048\x0331"));
-    CHECK(ucd::get_titlecase_mapping(U'\x1F4A9') == std::u32string(U"\x1F4A9"));
+    CHECK(ucd::get_titlecase_mapping(U'\x0041') == U"\x0041"_s);
+    CHECK(ucd::get_titlecase_mapping(U'\x0061') == U"\x0041"_s);
+    CHECK(ucd::get_titlecase_mapping(U'\x00DF') == U"\x0053\x0073"_s);
+    CHECK(ucd::get_titlecase_mapping(U'\x1E96') == U"\x0048\x0331"_s);
+    CHECK(ucd::get_titlecase_mapping(U'\x1F4A9') == U"\x1F4A9"_s);
 }
 TEST_CASE("simple case folding", "Querying Simple_Case_Folding") {
     CHECK(ucd::get_simple_case_folding(U'\x0041') == U'\x0061');
@@ -284,11 +286,11 @@ TEST_CASE("simple case folding", "Querying Simple_Case_Folding") {
     CHECK(ucd::get_simple_case_folding(U'\x1F4A9') == U'\x1F4A9');
 }
 TEST_CASE("case folding", "Querying Case_Folding") {
-    CHECK(ucd::get_case_folding(U'\x0041') == std::u32string(U"\x0061"));
-    CHECK(ucd::get_case_folding(U'\x0061') == std::u32string(U"\x0061"));
-    CHECK(ucd::get_case_folding(U'\x00DF') == std::u32string(U"\x0073\x0073"));
-    CHECK(ucd::get_case_folding(U'\x1E96') == std::u32string(U"\x0068\x0331"));
-    CHECK(ucd::get_case_folding(U'\x1F4A9') == std::u32string(U"\x1F4A9"));
+    CHECK(ucd::get_case_folding(U'\x0041') == U"\x0061"_s);
+    CHECK(ucd::get_case_folding(U'\x0061') == U"\x0061"_s);
+    CHECK(ucd::get_case_folding(U'\x00DF') == U"\x0073\x0073"_s);
+    CHECK(ucd::get_case_folding(U'\x1E96') == U"\x0068\x0331"_s);
+    CHECK(ucd::get_case_folding(U'\x1F4A9') == U"\x1F4A9"_s);
 }
 TEST_CASE("case ignorable", "Querying Case_Ignorable") {
     CHECK(ucd::is_case_ignorable(U'\x0041') == false);
@@ -372,16 +374,16 @@ TEST_CASE("changes when nfkc casefolded", "Querying Changes_When_NFKC_Casefolded
     CHECK(ucd::changes_when_nfkc_casefolded(U'\x1F4A9') == false);
 }
 TEST_CASE("nfkc casefold", "Querying NFKC_Casefold") {
-    CHECK(ucd::get_nfkc_casefold(U'\x0041') == std::u32string(U"\x0061"));
-    CHECK(ucd::get_nfkc_casefold(U'\x0061') == std::u32string(U"\x0061"));
-    CHECK(ucd::get_nfkc_casefold(U'\x00A0') == std::u32string(U"\x0020"));
-    CHECK(ucd::get_nfkc_casefold(U'\x00DF') == std::u32string(U"\x0073\x0073"));
-    CHECK(ucd::get_nfkc_casefold(U'\x0390') == std::u32string(U"\x0390"));
-    CHECK(ucd::get_nfkc_casefold(U'\x0675') == std::u32string(U"\x0627\x0674"));
-    CHECK(ucd::get_nfkc_casefold(U'\x1E96') == std::u32string(U"\x1E96"));
-    CHECK(ucd::get_nfkc_casefold(U'\x1EA0') == std::u32string(U"\x1EA1"));
-    CHECK(ucd::get_nfkc_casefold(U'\x1EA1') == std::u32string(U"\x1EA1"));
-    CHECK(ucd::get_nfkc_casefold(U'\x1F4A9') == std::u32string(U"\x1F4A9"));
+    CHECK(ucd::get_nfkc_casefold(U'\x0041') == U"\x0061"_s);
+    CHECK(ucd::get_nfkc_casefold(U'\x0061') == U"\x0061"_s);
+    CHECK(ucd::get_nfkc_casefold(U'\x00A0') == U"\x0020"_s);
+    CHECK(ucd::get_nfkc_casefold(U'\x00DF') == U"\x0073\x0073"_s);
+    CHECK(ucd::get_nfkc_casefold(U'\x0390') == U"\x0390"_s);
+    CHECK(ucd::get_nfkc_casefold(U'\x0675') == U"\x0627\x0674"_s);
+    CHECK(ucd::get_nfkc_casefold(U'\x1E96') == U"\x1E96"_s);
+    CHECK(ucd::get_nfkc_casefold(U'\x1EA0') == U"\x1EA1"_s);
+    CHECK(ucd::get_nfkc_casefold(U'\x1EA1') == U"\x1EA1"_s);
+    CHECK(ucd::get_nfkc_casefold(U'\x1F4A9') == U"\x1F4A9"_s);
 }
 TEST_CASE("script", "Querying Script") {
     CHECK(ucd::get_script(U'\x000A') == ucd::script::common);

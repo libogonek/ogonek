@@ -1,6 +1,7 @@
 cmake_minimum_required (VERSION 3.2)
 project (Ogonek)
 include (deps/catch.cmake)
+include (deps/range-v3.cmake)
 
 set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)

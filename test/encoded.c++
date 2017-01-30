@@ -17,6 +17,8 @@
 #include <range/v3/view/c_str.hpp>
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/transform.hpp>
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/take.hpp>
 
 #include <vector>
 #include <utility>
@@ -57,24 +59,30 @@ namespace test {
     };
 } // namespace test
 
+using namespace test::string_literals;
+
+using cont = std::vector<char32_t>;
+using rng = ogonek::encoded_view<test::one_to_one_encoding, decltype(ranges::view::all(cont()))>;
+CONCEPT_ASSERT(ranges::Range<rng>());
+CONCEPT_ASSERT(ranges::detail::ConvertibleToContainer<rng, cont>());
+CONCEPT_ASSERT(!ranges::is_pipeable<rng>());
 TEST_CASE("encode", "Encoding") {
     SECTION("1to1", "Encoding one-to-one") {
-        std::u32string base = U"08AF";
+        auto base = U"08AF"_s;
         auto str = ogonek::encode<test::one_to_one_encoding>(ranges::view::all(base))
-                 | ranges::to_vector;
-        CHECK(str == (std::vector<char32_t>{ U'1', U'9', U'B', U'G' }));
+                 | ranges::to_<std::u32string>();
+        CHECK(str == U"19BG"_s );
     }
     SECTION("1ton", "Encoding one-to-many") {
-        std::u32string base = U"08AF\x10017";
+        auto base = U"08AF\x10017"_s;
         auto str = ogonek::encode<test::one_to_many_encoding>(ranges::view::all(base))
-                 | ranges::to_vector;
-        CHECK(str == (std::vector<char16_t>{ u'\0', u'0', u'\0', u'8', u'\0', u'A', u'\0', u'F', u'\x1', u'\x17' }));
+                 | ranges::to_<std::u16string>();
+        CHECK(str == u"\0" u"0\08\0A\0F\x1" u"\x17"_s);
     }
     SECTION("state", "Encoding with state") {
-        std::u32string base = U"08AF";
+        auto base = U"08AF"_s;
         auto str = ogonek::encode<test::stateful_encoding>(ranges::view::all(base))
-                 | ranges::to_vector;
-        CHECK(str == (std::vector<char32_t>{ 0x1234, U'0', U'8', U'A', U'F' }));
+                 | ranges::to_<std::u32string>();
+        CHECK(str == U"\x1234" U"08AF"_s);
     }
 }
-
