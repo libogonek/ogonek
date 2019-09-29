@@ -5,10 +5,6 @@ library is still in alpha stages, so I don't recommend using it for anything
 serious, mainly because not all APIs are stabilised. You are welcome to play
 around with it for any non-serious purposes, though.
 
-Check out the [documentation] for more detailed information.
-
- [documentation]: http://flamingdangerzone.com/ogonek
-
 ## Status
 
 The latest version, 0.5.0, implements most of the important stuff. The next
@@ -26,22 +22,3 @@ You can compile that data by running `scons dist` from the command line
 file in the dist/ directory with both the headers and the library files
 necessary to use ogonek. By default, a static library is built. To build a
 shared library (DLL), add `lib=shared` to the command-line when building.
-
-Currently only compilation with 4.8.1 is being continuously tested, but support
-for both GCC 4.7.2 and Clang 3.2 is planned. Visual Studio 2013 may become a
-supported target, depending on the quality of C++11 upon release.
-
-## Helping out
-
-Any feedback is appreciated. I am still designing and fleshing out some parts of
-the APIs, so I appreciate any [bug reports][issue tracker] or design suggestions.
-
-I often discuss my design in the [C++ Lounge][lounge] on Stack Overflow. Feel
-free to join me there.
-
-Pull requests are welcome too! There is a list of tasks I want done for 1.0.0 in
-the [issue tracker]. Feel free to pick one to tackle!
-
- [lounge]: http://chat.stackoverflow.com/rooms/10/loungec
- [issue tracker]: http://bugs.flamingdangerzone.com/youtrack/issues?q=project%3A+Ogonek
-
